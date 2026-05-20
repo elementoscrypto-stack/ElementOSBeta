@@ -77,9 +77,9 @@ function Sidebar({ page, setPage }) {
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div><div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div><div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
 }
-function LoginAccount({ session, setSession, setPage }) {
+function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
   const [email, setEmail] = useState("researcher@elementos.ai");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("Paul Roper");
@@ -193,6 +193,18 @@ function LoginAccount({ session, setSession, setPage }) {
               <Button variant="primary" onClick={() => setPage("dashboard")} className="mt-4 w-full">
                 Enter ElementOS
               </Button>
+
+              {!isPro && (
+                <Button onClick={startCheckout} variant="primary" className="mt-3 w-full">
+                  <Sparkles size={16} className="inline" /> Upgrade to Pro Lab
+                </Button>
+              )}
+
+              {isPro && (
+                <div className="mt-3 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100">
+                  <CheckCircle2 size={16} className="mr-2 inline" /> Pro Lab Active
+                </div>
+              )}
 
               <Button onClick={signOut} className="mt-3 w-full">
                 Sign Out
@@ -441,7 +453,7 @@ function CalculationCore() {
   const kinetic = 0.5 * mass * velocity * velocity; const power = voltage * current;
   return <><Panel><Pill gold><Calculator size={12}/> calculation core</Pill><h1 className="mt-4 text-5xl font-black">Scientific Calculation Core</h1><Info title="Credibility upgrade">The public-facing calculator now uses normal scientific modules instead of internal theory labels. It supports visible equations, fields and instant outputs.</Info></Panel><div className="grid gap-6 xl:grid-cols-2"><Panel><h2 className="text-2xl font-black">Kinetic Energy</h2><div className="mt-4 grid gap-4 md:grid-cols-2"><label className="text-sm text-slate-400">Mass<input type="number" value={mass} onChange={(e) => setMass(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label><label className="text-sm text-slate-400">Velocity<input type="number" value={velocity} onChange={(e) => setVelocity(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label></div><div className="mt-6 text-5xl font-black text-emerald-100">{kinetic.toLocaleString()} J</div><p className="mt-2 font-mono text-sm text-slate-400">E = 0.5 × m × v²</p></Panel><Panel><h2 className="text-2xl font-black">Electrical Power</h2><div className="mt-4 grid gap-4 md:grid-cols-2"><label className="text-sm text-slate-400">Voltage<input type="number" value={voltage} onChange={(e) => setVoltage(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label><label className="text-sm text-slate-400">Current<input type="number" value={current} onChange={(e) => setCurrent(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label></div><div className="mt-6 text-5xl font-black text-emerald-100">{power.toLocaleString()} W</div><p className="mt-2 font-mono text-sm text-slate-400">P = V × I</p></Panel></div><Panel><h2 className="text-2xl font-black">Calculation Trend</h2><MiniBars values={[kinetic / 60, power / 12, 3.4, 4.2, 2.9, 4.7].map(v => Math.min(5, Math.max(.5, v)))}/><Button className="mt-5" onClick={() => downloadFile("elementos-calculation-summary.txt", `ElementOS Calculation Summary\n\nKinetic Energy: ${kinetic} J\nElectrical Power: ${power} W\nGenerated: ${new Date().toLocaleString()}`)}>Export Calculation Summary</Button></Panel></>;
 }
-function Reports({ compare, session }) {
+function Reports({ compare, session, isPro, startCheckout }) {
   const [saved, setSaved] = useState([]);
   const [status, setStatus] = useState("");
 
@@ -639,7 +651,17 @@ Status: Presentation-ready platform export.`;
         </Info>
         {!session && (
           <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
-            Sign in to save reports to the cloud. PDF export still works without signing in.
+            Sign in to save reports to the cloud. PDF export is a Pro Lab feature.
+          </div>
+        )}
+        {session && !isPro && (
+          <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
+            PDF exports are locked behind Pro Lab. Save reports to cloud now, then upgrade when you are ready to export polished PDFs.
+          </div>
+        )}
+        {session && isPro && (
+          <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100">
+            <CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab active — PDF exports unlocked.
           </div>
         )}
         {status && <p className="mt-4 text-sm font-bold text-cyan-200">{status}</p>}
@@ -655,7 +677,14 @@ Status: Presentation-ready platform export.`;
               <Button onClick={() => saveReport(title, desc)}>
                 <Save size={15} className="inline"/> Save to Cloud
               </Button>
-              <Button variant="primary" onClick={() => exportPDF(title, desc)}>
+              <Button variant="primary" onClick={() => {
+                if (!isPro) {
+                  alert("PDF exports are a Pro Lab feature.");
+                  startCheckout();
+                  return;
+                }
+                exportPDF(title, desc);
+              }}>
                 <Download size={15} className="inline"/> Export PDF
               </Button>
             </div>
@@ -676,7 +705,14 @@ Status: Presentation-ready platform export.`;
                     <b className="text-cyan-100">{r.title}</b>
                     <div className="text-sm text-slate-500">{new Date(r.created_at).toLocaleString()}</div>
                   </div>
-                  <Button onClick={() => exportPDF(r.title, r.content || "Saved ElementOS report", r.content || "") }>
+                  <Button onClick={() => {
+                    if (!isPro) {
+                      alert("PDF exports are a Pro Lab feature.");
+                      startCheckout();
+                      return;
+                    }
+                    exportPDF(r.title, r.content || "Saved ElementOS report", r.content || "");
+                  }}>
                     <Download size={15} className="inline"/> PDF
                   </Button>
                 </div>
@@ -693,20 +729,39 @@ export default function App() {
   const [selected, setSelected] = useState("Al");
   const [compare, setCompare] = useState(["Al", "Fe", "Cu", "Ti"]);
   const [session, setSession] = useState(null);
+  const [isPro, setIsPro] = useState(false);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-    });
+useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    setSession(data.session);
+  });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
 
-    return () => subscription.unsubscribe();
-  }, []);
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("checkout") === "success") {
+    setIsPro(true);
+    localStorage.setItem("elementos_pro", "true");
+    alert("ElementOS Pro activated.");
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  if (params.get("checkout") === "cancelled") {
+    alert("Checkout cancelled.");
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  if (localStorage.getItem("elementos_pro") === "true") {
+    setIsPro(true);
+  }
+
+  return () => subscription.unsubscribe();
+}, []);
 
   const saveWorkspace = async () => {
     if (!session) {
@@ -758,6 +813,32 @@ export default function App() {
     alert("Workspace restored.");
   };
 
+const startCheckout = async () => {
+  if (!session) {
+    alert("Please sign in before upgrading.");
+    setPage("login");
+    return;
+  }
+
+  const response = await fetch("/api/create-checkout-session", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: session.user.email,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (data.url) {
+    window.location.href = data.url;
+  } else {
+    alert(data.error || "Checkout failed.");
+  }
+};
+  
   const pages = useMemo(
     () => ({
       dashboard: (
@@ -766,6 +847,8 @@ export default function App() {
           saveWorkspace={saveWorkspace}
           loadWorkspace={loadWorkspace}
           session={session}
+          isPro={isPro}
+          startCheckout={startCheckout}
         />
       ),
       login: (
@@ -773,6 +856,8 @@ export default function App() {
           session={session}
           setSession={setSession}
           setPage={setPage}
+          isPro={isPro}
+          startCheckout={startCheckout}
         />
       ),
       explorer: (
@@ -815,9 +900,9 @@ export default function App() {
       ),
       isotopes: <IsotopeLab />,
       calculations: <CalculationCore />,
-      reports: <Reports compare={compare} session={session} />,
+      reports: <Reports compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} />,
     }),
-    [page, selected, compare, session]
+    [page, selected, compare, session, isPro]
   );
 
   return (
