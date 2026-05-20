@@ -78,10 +78,153 @@ function Sidebar({ page, setPage }) {
 function Dashboard({ setPage }) {
   return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div><div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
 }
-function LoginAccount({ setPage }) {
-  const [email, setEmail] = useState("researcher@elementos.ai"); const [name, setName] = useState("Paul Roper"); const [active, setActive] = useState(false); const [plan, setPlan] = useState("Pro Lab");
-  const plans = [["Explorer", "$19", "Start exploring elements and calculations."], ["Pro Lab", "$49", "Save workspaces, export reports and run deeper visual simulations."], ["Research Team", "$149", "Shared workspaces, team reporting and enterprise exports."]];
-  return <><Panel className="grid gap-8 xl:grid-cols-[1fr_.9fr]"><div><Pill gold><ShieldCheck size={12}/> secure research workspace</Pill><h1 className="mt-4 text-5xl font-black">Account & Workspace</h1><p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">This page makes ElementOS feel like a real subscriber platform: identity, plan selection, saved experiments and a returnable workspace.</p><div className="mt-7 grid gap-4 md:grid-cols-3">{[["Sync", "Restore experiments anytime."], ["Identity", "Build a research profile."], ["Reports", "Export polished outputs."]].map(([a,b]) => <div key={a} className="rounded-2xl border border-white/10 bg-black/25 p-5"><div className="text-xl font-black text-cyan-100">{a}</div><p className="mt-2 text-sm text-slate-400">{b}</p></div>)}</div></div><Panel><h2 className="text-3xl font-black">{active ? "Workspace Active" : "Create Account"}</h2>{!active ? <div className="mt-5 grid gap-4"><input value={name} onChange={(e) => setName(e.target.value)} className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/><input value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/><Button variant="primary" onClick={() => setActive(true)}>Open Workspace</Button></div> : <div className="mt-5"><div className="rounded-3xl border border-emerald-300/20 bg-emerald-300/10 p-5"><div className="text-xs uppercase tracking-[.2em] text-emerald-200">Signed in</div><div className="mt-2 text-2xl font-black text-emerald-100">{name}</div><div className="text-sm text-slate-300">{email} · {plan}</div></div><Button variant="primary" onClick={() => setPage("dashboard")} className="mt-4 w-full">Enter ElementOS</Button></div>}</Panel></Panel><Panel><h2 className="text-3xl font-black">Choose Plan</h2><div className="mt-5 grid gap-5 md:grid-cols-3">{plans.map(([p, price, desc]) => <button key={p} onClick={() => setPlan(p)} className={`rounded-[2rem] border p-6 text-left transition hover:scale-[1.02] ${plan === p ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25"}`}><div className="flex items-center justify-between"><h3 className="text-2xl font-black text-cyan-100">{p}</h3><div className="text-3xl font-black text-emerald-200">{price}</div></div><p className="mt-3 text-sm leading-6 text-slate-300">{desc}</p></button>)}</div></Panel></>;
+function LoginAccount({ session, setSession, setPage }) {
+  const [email, setEmail] = useState("researcher@elementos.ai");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("Paul Roper");
+  const [plan, setPlan] = useState("Pro Lab");
+  const [message, setMessage] = useState("");
+
+  const signUp = async () => {
+    setMessage("Creating account...");
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: name, plan } },
+    });
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    setSession(data.session);
+    setMessage("Account created. Workspace ready.");
+  };
+
+  const signIn = async () => {
+    setMessage("Signing in...");
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    setSession(data.session);
+    setMessage("Signed in successfully.");
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setSession(null);
+    setMessage("Signed out.");
+  };
+
+  const plans = [
+    ["Explorer", "$19", "Start exploring elements and calculations."],
+    ["Pro Lab", "$49", "Save workspaces, export reports and run deeper visual simulations."],
+    ["Research Team", "$149", "Shared workspaces, team reporting and enterprise exports."],
+  ];
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1fr_.9fr]">
+        <div>
+          <Pill gold><ShieldCheck size={12} /> secure research workspace</Pill>
+          <h1 className="mt-4 text-5xl font-black">Account & Workspace</h1>
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
+            Real Supabase authentication is now connected. Users can create accounts, sign in, sign out and keep sessions active.
+          </p>
+
+          {session && (
+            <Info title="Active Session">
+              Signed in as <b>{session.user.email}</b>. ElementOS is now running as a cloud-connected SaaS app.
+            </Info>
+          )}
+        </div>
+
+        <Panel>
+          <h2 className="text-3xl font-black">
+            {session ? "Workspace Active" : "Login / Create Account"}
+          </h2>
+
+          {!session ? (
+            <div className="mt-5 grid gap-4">
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Full name"
+                className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
+              />
+
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
+              />
+
+              <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                placeholder="Password"
+                className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
+              />
+
+              <Button variant="primary" onClick={signUp}>Create Account</Button>
+              <Button onClick={signIn}>Sign In</Button>
+
+              {message && <p className="text-sm text-cyan-200">{message}</p>}
+            </div>
+          ) : (
+            <div className="mt-5">
+              <div className="rounded-3xl border border-emerald-300/20 bg-emerald-300/10 p-5">
+                <div className="text-xs uppercase tracking-[.2em] text-emerald-200">Signed in</div>
+                <div className="mt-2 text-2xl font-black text-emerald-100">{session.user.email}</div>
+                <div className="text-sm text-slate-300">Plan: {plan}</div>
+              </div>
+
+              <Button variant="primary" onClick={() => setPage("dashboard")} className="mt-4 w-full">
+                Enter ElementOS
+              </Button>
+
+              <Button onClick={signOut} className="mt-3 w-full">
+                Sign Out
+              </Button>
+
+              {message && <p className="mt-3 text-sm text-cyan-200">{message}</p>}
+            </div>
+          )}
+        </Panel>
+      </Panel>
+
+      <Panel>
+        <h2 className="text-3xl font-black">Choose Plan</h2>
+        <div className="mt-5 grid gap-5 md:grid-cols-3">
+          {plans.map(([p, price, desc]) => (
+            <button
+              key={p}
+              onClick={() => setPlan(p)}
+              className={`rounded-[2rem] border p-6 text-left transition hover:scale-[1.02] ${
+                plan === p ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-black text-cyan-100">{p}</h3>
+                <div className="text-3xl font-black text-emerald-200">{price}</div>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-300">{desc}</p>
+            </button>
+          ))}
+        </div>
+      </Panel>
+    </>
+  );
 }
 function Explorer({ selected, setSelected, setCompare }) {
   const [q, setQ] = useState(""); const [cat, setCat] = useState("All");
