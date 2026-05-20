@@ -573,7 +573,7 @@ export default function App() {
       ),
       isotopes: <IsotopeLab />,
       calculations: <CalculationCore />,
-      reports: <Reports compare={compare} />,
+      reports: <Reports compare={compare} session={session} />,
     }),
     [page, selected, compare, session]
   );
