@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "./supabaseClient";
 import {
   Atom, BarChart3, BookOpen, Calculator, CheckCircle2, ChevronRight, Download,
