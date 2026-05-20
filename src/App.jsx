@@ -693,6 +693,7 @@ export default function App() {
   const [selected, setSelected] = useState("Al");
   const [compare, setCompare] = useState(["Al", "Fe", "Cu", "Ti"]);
   const [session, setSession] = useState(null);
+  const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
