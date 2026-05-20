@@ -693,33 +693,20 @@ export default function App() {
   const [selected, setSelected] = useState("Al");
   const [compare, setCompare] = useState(["Al", "Fe", "Cu", "Ti"]);
   const [session, setSession] = useState(null);
-  const [isPro, setIsPro] = useState(false);
 
-useEffect(() => {
-  supabase.auth.getSession().then(({ data }) => {
-    setSession(data.session);
-  });
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+    });
 
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-    setSession(session);
-  });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
 
-  const params = new URLSearchParams(window.location.search);
-
-  if (params.get("checkout") === "success") {
-    setIsPro(true);
-    localStorage.setItem("elementos_pro", "true");
-    alert("ElementOS Pro activated.");
-  }
-
-  if (localStorage.getItem("elementos_pro") === "true") {
-    setIsPro(true);
-  }
-
-  return () => subscription.unsubscribe();
-}, []);
+    return () => subscription.unsubscribe();
+  }, []);
 
   const saveWorkspace = async () => {
     if (!session) {
@@ -771,32 +758,6 @@ useEffect(() => {
     alert("Workspace restored.");
   };
 
-const startCheckout = async () => {
-  if (!session) {
-    alert("Please sign in before upgrading.");
-    setPage("login");
-    return;
-  }
-
-  const response = await fetch("/api/create-checkout-session", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: session.user.email,
-    }),
-  });
-
-  const data = await response.json();
-
-  if (data.url) {
-    window.location.href = data.url;
-  } else {
-    alert(data.error || "Checkout failed.");
-  }
-};
-  
   const pages = useMemo(
     () => ({
       dashboard: (
