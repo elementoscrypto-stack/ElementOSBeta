@@ -511,6 +511,86 @@ function Compare({ compare, setCompare, setPage }) {
           })}
         </div>
       </Panel>
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-black">AI Recommendations</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+              ElementOS suggests adjacent materials, substitutes and compatibility paths based on the current compare set.
+            </p>
+          </div>
+
+          <Pill gold>
+            <Sparkles size={12} /> live intelligence
+          </Pill>
+        </div>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {generateRecommendations(compare).map((group) => (
+            <div
+              key={group.source}
+              className="relative overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-slate-950 via-cyan-400/5 to-fuchsia-400/10 p-5"
+            >
+              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
+
+              <div className="relative z-10">
+                <div className="text-xs uppercase tracking-[.22em] text-cyan-300">
+                  Based on current compare element
+                </div>
+
+                <div className="mt-2 text-4xl font-black text-cyan-100">
+                  {group.source}
+                </div>
+
+                <p className="mt-3 text-sm leading-6 text-slate-400">
+                  Users comparing {elementMap[group.source]?.name || group.source} may also explore these adjacent material paths.
+                </p>
+
+                <div className="mt-5 space-y-3">
+                  {group.matches.map((m) => (
+                    <div
+                      key={m.symbol}
+                      className="rounded-2xl border border-white/10 bg-black/30 p-4"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-xl font-black text-white">
+                            {m.symbol}
+                          </div>
+
+                          <div className="text-sm text-slate-400">
+                            {m.name}
+                          </div>
+                        </div>
+
+                        <div className="text-2xl font-black text-emerald-200">
+                          {Math.max(1, Math.round(m.similarity))}%
+                        </div>
+                      </div>
+
+                      <div className="mt-3 rounded-xl border border-cyan-300/10 bg-cyan-300/5 p-3 text-sm text-cyan-100">
+                        {m.reason}
+                      </div>
+
+                      <Button
+                        className="mt-4 w-full"
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            `${group.source} → ${m.symbol} (${Math.round(m.similarity)}% match): ${m.reason}`
+                          )
+                        }
+                      >
+                        Share Discovery
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
     </>
   );
 }
