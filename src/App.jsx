@@ -695,19 +695,31 @@ export default function App() {
   const [session, setSession] = useState(null);
   const [isPro, setIsPro] = useState(false);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-    });
+useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    setSession(data.session);
+  });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
 
-    return () => subscription.unsubscribe();
-  }, []);
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("checkout") === "success") {
+    setIsPro(true);
+    localStorage.setItem("elementos_pro", "true");
+    alert("ElementOS Pro activated.");
+  }
+
+  if (localStorage.getItem("elementos_pro") === "true") {
+    setIsPro(true);
+  }
+
+  return () => subscription.unsubscribe();
+}, []);
 
   const saveWorkspace = async () => {
     if (!session) {
