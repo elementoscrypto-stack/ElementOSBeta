@@ -72,11 +72,11 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["dashboard", "Dashboard", Home], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
+  const items = [["dashboard", "Dashboard", Home], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 function Dashboard({ setPage }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div><div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div><div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
 }
 function LoginAccount({ session, setSession, setPage }) {
   const [email, setEmail] = useState("researcher@elementos.ai");
@@ -257,6 +257,184 @@ function SimilarityUniverse({ selected, setSelected }) {
   const relationships = elements.filter(e => e.symbol !== selected).map(e => { const s = score(e.symbol); const similarity = Math.max(0, 100 - (Math.abs(baseScore.conductivity - s.conductivity) + Math.abs(baseScore.thermal - s.thermal) + Math.abs(baseScore.stability - s.stability)) * 9); const reason = mode === "alloy" ? (e.category.includes("metal") && base.category.includes("metal") ? "metallic / alloy-adjacent behaviour" : "limited alloy compatibility") : mode === "conductive" ? "conductivity pathway match" : "thermal transfer pathway match"; return { ...e, similarity, reason }; }).sort((a,b) => b.similarity - a.similarity).slice(0, 12);
   return <><Panel><Pill gold><Orbit size={12}/> substitution discovery</Pill><h1 className="mt-4 text-5xl font-black">Similarity Universe</h1><Info title="Clear purpose">This page finds substitute, adjacent or compatible materials by behaviour. It turns “universe” into a real discovery engine.</Info><div className="mt-4 flex flex-wrap gap-2">{["alloy", "conductive", "thermal"].map(m => <Button key={m} onClick={() => setMode(m)} variant={mode === m ? "primary" : "ghost"}>{m}</Button>)}</div></Panel><div className="grid gap-6 xl:grid-cols-[1fr_420px]"><Panel><div className="relative h-[620px] rounded-[2rem] border border-cyan-300/15 bg-black/35"><div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-300/40 bg-amber-300/10 p-7 text-center text-3xl font-black text-amber-100">{base.symbol}</div>{relationships.map((r, i) => { const angle = (i / relationships.length) * Math.PI * 2; const radius = 160 + (i % 4) * 48; return <button key={r.symbol} onClick={() => setSelected(r.symbol)} className="absolute h-16 w-16 rounded-full border border-cyan-300/25 bg-cyan-300/10 text-sm font-black text-cyan-100 transition hover:scale-125" style={{ left: `calc(50% + ${Math.cos(angle) * radius}px - 2rem)`, top: `calc(50% + ${Math.sin(angle) * radius}px - 2rem)` }}>{r.symbol}</button>; })}</div></Panel><Panel><h2 className="text-2xl font-black">Why it matters</h2><p className="mt-3 text-sm leading-7 text-slate-300">For {base.name}, ElementOS ranks materials that may behave similarly under {mode} conditions. This supports substitution thinking, material discovery and report generation.</p><div className="mt-5 space-y-2">{relationships.slice(0, 6).map(r => <div key={r.symbol} className="rounded-2xl border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{r.symbol} · {r.name}</b><div className="text-sm text-slate-400">{r.reason} · {r.similarity.toFixed(0)}%</div></div>)}</div></Panel></div></>;
 }
+
+function IsotopeLab() {
+  const [symbol, setSymbol] = useState("Ti");
+  const [protons, setProtons] = useState(22);
+  const [neutrons, setNeutrons] = useState(26);
+  const [field, setField] = useState(62);
+  const [temperature, setTemperature] = useState(38);
+  const [pressure, setPressure] = useState(24);
+
+  const selectedElement = elementMap[symbol] || elementMap.Ti;
+  const massNumber = protons + neutrons;
+  const neutronRatio = protons > 0 ? neutrons / protons : 0;
+  const magicNumbers = [2, 8, 20, 28, 50, 82, 126];
+  const shellBonus = magicNumbers.includes(protons) || magicNumbers.includes(neutrons) ? 12 : 0;
+  const balancePenalty = Math.abs(neutrons - protons * 1.35) * 2.1;
+  const environmentBonus = field * 0.08 - temperature * 0.045 - pressure * 0.03;
+  const stability = Math.max(0, Math.min(100, 82 - balancePenalty + shellBonus + environmentBonus));
+  const decayRisk = Math.max(0, Math.min(100, 100 - stability));
+  const bindingSignal = Math.max(0, Math.min(100, 42 + stability * 0.48 + Math.sin(massNumber / 7) * 8));
+  const isotopeName = `${selectedElement.name}-${massNumber}`;
+  const shellLabel = stability > 78 ? "high stability candidate" : stability > 52 ? "moderate stability candidate" : "unstable / high decay-risk candidate";
+
+  const nucleus = Array.from({ length: Math.min(96, massNumber) }, (_, i) => ({
+    type: i % Math.max(2, Math.round(neutronRatio * 2)) === 0 ? "p" : "n",
+    angle: (i / Math.min(96, massNumber)) * Math.PI * 2,
+    ring: 34 + (i % 5) * 24,
+  }));
+
+  const applyElement = (nextSymbol) => {
+    const next = elementMap[nextSymbol] || elementMap.Ti;
+    setSymbol(next.symbol);
+    setProtons(next.atomicNumber);
+    setNeutrons(Math.max(1, Math.round(next.atomicNumber * 1.18)));
+  };
+
+  const exportSummary = () => {
+    downloadFile(
+      "elementos-isotope-lab-report.txt",
+      `ElementOS Isotope Lab Report\n\nIsotope: ${isotopeName}\nElement: ${selectedElement.name} (${selectedElement.symbol})\nProtons: ${protons}\nNeutrons: ${neutrons}\nMass Number: ${massNumber}\nNeutron Ratio: ${neutronRatio.toFixed(3)}\nStability Score: ${stability.toFixed(1)} / 100\nDecay Risk: ${decayRisk.toFixed(1)} / 100\nBinding Signal: ${bindingSignal.toFixed(1)} / 100\nInterpretation: ${shellLabel}\nGenerated: ${new Date().toLocaleString()}`
+    );
+  };
+
+  return (
+    <>
+      <Panel>
+        <Pill gold><Atom size={12}/> isotope simulation lab</Pill>
+        <h1 className="mt-4 text-5xl font-black">Isotope Lab</h1>
+        <Info title="What this page does">
+          Build isotope candidates by adjusting proton count, neutron count and environmental field assumptions. This is a visual stability simulator for ElementOS research workflows.
+        </Info>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+        <Panel>
+          <h2 className="text-2xl font-black">Isotope Builder</h2>
+
+          <label className="mt-5 block text-sm text-slate-400">
+            Base element
+            <select
+              value={symbol}
+              onChange={(e) => applyElement(e.target.value)}
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none"
+            >
+              {elements.map((e) => (
+                <option key={e.symbol} value={e.symbol}>
+                  {e.symbol} — {e.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <div className="mt-5 grid gap-4">
+            {[
+              ["Protons", protons, setProtons, 1, 118],
+              ["Neutrons", neutrons, setNeutrons, 0, 180],
+              ["Field Strength", field, setField, 0, 100],
+              ["Thermal Load", temperature, setTemperature, 0, 100],
+              ["Pressure Load", pressure, setPressure, 0, 100],
+            ].map(([label, value, setter, min, max]) => (
+              <label key={label} className="text-sm text-slate-400">
+                <div className="flex justify-between">
+                  <span>{label}</span>
+                  <span className="font-mono text-cyan-200">{value}</span>
+                </div>
+                <input
+                  type="range"
+                  min={min}
+                  max={max}
+                  value={value}
+                  onChange={(e) => setter(Number(e.target.value))}
+                  className="mt-2 w-full"
+                />
+              </label>
+            ))}
+          </div>
+
+          <Button variant="primary" onClick={exportSummary} className="mt-6 w-full">
+            <Download size={15} className="inline"/> Export Isotope Report
+          </Button>
+        </Panel>
+
+        <Panel>
+          <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+            <div>
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">Active isotope</div>
+              <h2 className="mt-2 text-5xl font-black text-cyan-100">{isotopeName}</h2>
+              <p className="mt-3 text-slate-300">
+                {selectedElement.name} nucleus with {protons} protons and {neutrons} neutrons. Mass number {massNumber}.
+              </p>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {[
+                  ["Stability", stability, 100],
+                  ["Decay Risk", decayRisk, 100],
+                  ["Binding Signal", bindingSignal, 100],
+                ].map(([label, value, max]) => (
+                  <div key={label} className="rounded-3xl border border-white/10 bg-black/25 p-4">
+                    <div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div>
+                    <div className="mt-2 text-3xl font-black text-cyan-100">{value.toFixed(1)}</div>
+                    <div className="mt-3 h-3 rounded-full bg-white/10">
+                      <div className="h-full rounded-full bg-cyan-300" style={{ width: `${Math.min(100, (value / max) * 100)}%` }}/>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Info title="Simulation Interpretation">
+                {isotopeName} is currently a <b>{shellLabel}</b>. Stability improves when neutron balance approaches the modelled stable band and when proton/neutron counts land near shell-favourable numbers.
+              </Info>
+            </div>
+
+            <div className="relative h-[420px] rounded-[2rem] border border-cyan-300/15 bg-black/35">
+              <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-300/40 bg-amber-300/10 text-center text-2xl font-black leading-[5rem] text-amber-100">
+                {selectedElement.symbol}
+              </div>
+
+              {nucleus.map((dot, i) => (
+                <div
+                  key={i}
+                  className={`absolute h-4 w-4 rounded-full ${dot.type === "p" ? "bg-cyan-300" : "bg-fuchsia-300"}`}
+                  style={{
+                    left: `calc(50% + ${Math.cos(dot.angle) * dot.ring}px - .5rem)`,
+                    top: `calc(50% + ${Math.sin(dot.angle) * dot.ring}px - .5rem)`,
+                    boxShadow: dot.type === "p" ? "0 0 18px rgba(34,211,238,.7)" : "0 0 18px rgba(217,70,239,.7)",
+                  }}
+                  title={dot.type === "p" ? "proton" : "neutron"}
+                />
+              ))}
+            </div>
+          </div>
+        </Panel>
+      </div>
+
+      <Panel>
+        <h2 className="text-3xl font-black">Isotope Readout</h2>
+        <div className="mt-5 grid gap-4 md:grid-cols-4">
+          {[
+            ["Element", `${selectedElement.name} (${selectedElement.symbol})`],
+            ["Mass Number", massNumber],
+            ["Neutron Ratio", neutronRatio.toFixed(3)],
+            ["Shell Bonus", shellBonus > 0 ? "Active" : "Inactive"],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+              <div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div>
+              <div className="mt-2 text-xl font-black text-cyan-100">{value}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-7 text-amber-100">
+          This module is a product simulation layer, not a substitute for validated nuclear physics software. It is designed for ElementOS exploration, visualization and report generation.
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+
 function CalculationCore() {
   const [mass, setMass] = useState(12); const [velocity, setVelocity] = useState(8); const [voltage, setVoltage] = useState(12); const [current, setCurrent] = useState(3);
   const kinetic = 0.5 * mass * velocity * velocity; const power = voltage * current;
@@ -393,6 +571,7 @@ export default function App() {
           setSelected={setSelected}
         />
       ),
+      isotopes: <IsotopeLab />,
       calculations: <CalculationCore />,
       reports: <Reports compare={compare} />,
     }),
