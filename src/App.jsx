@@ -279,10 +279,201 @@ function PeriodicTable({ selected, setSelected }) {
   const [layer, setLayer] = useState("conductivity"); const [cat, setCat] = useState("All");
   return <><Panel><Pill gold><Layers size={12}/> full element map</Pill><h1 className="mt-4 text-5xl font-black">Periodic Table</h1><Info title="Heat layers">Switch between behaviour metrics to reveal material response patterns across all 118 elements.</Info><div className="mt-4 flex flex-wrap gap-2">{metrics.map(l => <Button key={l} onClick={() => setLayer(l)} variant={layer === l ? "primary" : "ghost"}>{l === "alignment" ? "Alignment" : l}</Button>)}<select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">{categories.map(c => <option key={c}>{c}</option>)}</select></div></Panel><Panel className="overflow-auto"><div className="grid min-w-[1050px] gap-2">{periodicRows.map((row, ri) => <div key={ri} className="grid gap-2" style={{ gridTemplateColumns: "repeat(18,minmax(0,1fr))" }}>{row.map((sym, i) => { const el = sym ? elementMap[sym] : null; const inactive = el && cat !== "All" && el.category !== cat; return el ? <button key={sym} onClick={() => setSelected(sym)} className={`h-16 rounded-2xl border transition hover:scale-110 ${selected === sym ? "ring-2 ring-white" : ""} ${inactive ? "opacity-25" : ""}`} style={heatStyle(score(sym)[layer], layer === "alignment" ? 100 : 5)}><div className="text-[9px]">{el.atomicNumber}</div><b>{sym}</b><div className="text-[9px]">{score(sym)[layer].toFixed(layer === "alignment" ? 0 : 1)}</div></button> : <div key={i} className="h-16 rounded-2xl border border-cyan-300/5 bg-cyan-300/[.01]"/>; })}</div>)}</div></Panel></>;
 }
+
 function Compare({ compare, setCompare, setPage }) {
-  const [candidate, setCandidate] = useState("Al"); const rows = compare.map(sym => ({ ...elementMap[sym], metrics: score(sym) }));
-  return <><Panel><Pill gold><BarChart3 size={12}/> comparison engine</Pill><h1 className="mt-4 text-5xl font-black">Compare Engine</h1><Info title="Cleaned terminology">ZDAR has been renamed public-facing as <b>Alignment</b>. It remains a branded experimental score, but the table now reads like a serious material decision engine.</Info></Panel><Panel><div className="flex flex-wrap gap-3"><select value={candidate} onChange={(e) => setCandidate(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{elements.map(e => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select><Button onClick={() => setCompare(x => x.includes(candidate) ? x : [...x, candidate].slice(0, 10))} variant="primary">Add Element</Button><Button onClick={() => { setCompare([]); setTimeout(() => setCompare(["Al", "Fe", "Cu", "Ti"]), 10); }}>Reset</Button><Button onClick={() => setPage("reports")}>Create Report</Button></div><div className="mt-6 overflow-auto"><table className="w-full min-w-[980px] border-separate border-spacing-y-2"><thead><tr className="text-left text-xs uppercase tracking-[.18em] text-slate-400"><th className="px-3 py-2">Element</th>{metrics.map(k => <th key={k} className="px-2 py-2">{k === "alignment" ? "Alignment" : k}</th>)}</tr></thead><tbody>{rows.map(row => <tr key={row.symbol} className="rounded-2xl border border-white/10 bg-white/[.035]"><td className="rounded-l-2xl border-y border-l border-white/10 p-3"><b className="text-cyan-200">{row.symbol}</b><div className="text-xs text-slate-500">{row.name}</div></td>{metrics.map(k => <td key={k} className="border-y border-white/10 p-2 last:rounded-r-2xl last:border-r"><div className="rounded-xl px-3 py-2 text-center text-sm font-bold" style={heatStyle(row.metrics[k], k === "alignment" ? 100 : 5)}>{row.metrics[k].toFixed(k === "alignment" ? 0 : 2)}</div></td>)}</tr>)}</tbody></table></div></Panel><div className="grid gap-6 xl:grid-cols-2"><Panel><h2 className="text-2xl font-black">Compare Chart</h2><MiniBars values={rows.map(r => r.metrics.conductivity)}/><p className="mt-2 text-sm text-slate-400">Conductivity ranking for current compare set.</p></Panel><Panel><h2 className="text-2xl font-black">Decision Summary</h2><p className="mt-3 text-sm leading-7 text-slate-300">{rows[0]?.name || "Aluminium"} leads the current workspace. Use Reports to export this as a branded comparison brief with chart notes and simulation IDs.</p></Panel></div></>;
+  const [candidate, setCandidate] = useState("Al");
+  const rows = compare.map((sym) => ({ ...elementMap[sym], metrics: score(sym) }));
+
+  return (
+    <>
+      <Panel>
+        <Pill gold>
+          <BarChart3 size={12} /> comparison engine
+        </Pill>
+        <h1 className="mt-4 text-5xl font-black">Compare Engine</h1>
+        <Info title="Cleaned terminology">
+          ZDAR has been renamed public-facing as <b>Alignment</b>. It remains a branded experimental score, but the table now reads like a serious material decision engine.
+        </Info>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap gap-3">
+          <select
+            value={candidate}
+            onChange={(e) => setCandidate(e.target.value)}
+            className="rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none"
+          >
+            {elements.map((e) => (
+              <option key={e.symbol} value={e.symbol}>
+                {e.symbol} — {e.name}
+              </option>
+            ))}
+          </select>
+
+          <Button
+            onClick={() =>
+              setCompare((x) =>
+                x.includes(candidate) ? x : [...x, candidate].slice(0, 10)
+              )
+            }
+            variant="primary"
+          >
+            Add Element
+          </Button>
+
+          <Button
+            onClick={() => {
+              setCompare([]);
+              setTimeout(() => setCompare(["Al", "Fe", "Cu", "Ti"]), 10);
+            }}
+          >
+            Reset
+          </Button>
+
+          <Button onClick={() => setPage("reports")}>Create Report</Button>
+        </div>
+
+        <div className="mt-6 overflow-auto">
+          <table className="w-full min-w-[980px] border-separate border-spacing-y-2">
+            <thead>
+              <tr className="text-left text-xs uppercase tracking-[.18em] text-slate-400">
+                <th className="px-3 py-2">Element</th>
+                {metrics.map((k) => (
+                  <th key={k} className="px-2 py-2">
+                    {k === "alignment" ? "Alignment" : k}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.symbol} className="rounded-2xl border border-white/10 bg-white/[.035]">
+                  <td className="rounded-l-2xl border-y border-l border-white/10 p-3">
+                    <b className="text-cyan-200">{row.symbol}</b>
+                    <div className="text-xs text-slate-500">{row.name}</div>
+                  </td>
+
+                  {metrics.map((k) => (
+                    <td key={k} className="border-y border-white/10 p-2 last:rounded-r-2xl last:border-r">
+                      <div
+                        className="rounded-xl px-3 py-2 text-center text-sm font-bold"
+                        style={heatStyle(row.metrics[k], k === "alignment" ? 100 : 5)}
+                      >
+                        {row.metrics[k].toFixed(k === "alignment" ? 0 : 2)}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Panel>
+          <h2 className="text-2xl font-black">Compare Chart</h2>
+          <MiniBars values={rows.map((r) => r.metrics.conductivity)} />
+          <p className="mt-2 text-sm text-slate-400">
+            Conductivity ranking for current compare set.
+          </p>
+        </Panel>
+
+        <Panel>
+          <h2 className="text-2xl font-black">Decision Summary</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">
+            {rows[0]?.name || "Aluminium"} leads the current workspace. Use Reports to export this as a branded comparison brief with chart notes and simulation IDs.
+          </p>
+        </Panel>
+      </div>
+
+      <Panel>
+        <h2 className="text-3xl font-black">Compatibility Discoveries</h2>
+
+        <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {compare.slice(0, 6).map((sym, i) => {
+            const next = compare[(i + 1) % compare.length];
+
+            if (!next || sym === next) return null;
+
+            const value = compatibilityScore(sym, next);
+            const tier = rarityTier(value);
+            const dna = materialDNA(sym, next);
+
+            return (
+              <div
+                key={`${sym}-${next}`}
+                className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5"
+              >
+                <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs uppercase tracking-[.22em] text-cyan-200">
+                      Compatibility
+                    </div>
+
+                    <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-[10px] font-black tracking-[.18em] text-amber-100">
+                      {tier}
+                    </div>
+                  </div>
+
+                  <div className="mt-5 text-4xl font-black text-cyan-100">
+                    {value}%
+                  </div>
+
+                  <div className="mt-2 text-xl font-black text-white">
+                    {sym} + {next}
+                  </div>
+
+                  <div className="mt-3 text-sm leading-6 text-slate-300">
+                    ElementOS predicts strong behavioural alignment between{" "}
+                    {elementMap[sym]?.name} and {elementMap[next]?.name}.
+                  </div>
+
+                  <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-3">
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">
+                      Material DNA
+                    </div>
+
+                    <div className="mt-2 font-mono text-cyan-100">{dna}</div>
+                  </div>
+
+                  <div className="mt-5 flex gap-2">
+                    <Button
+                      onClick={() =>
+                        downloadFile(
+                          `${sym}-${next}-compatibility.txt`,
+                          `${sym} + ${next}\nCompatibility: ${value}%\nTier: ${tier}\nDNA: ${dna}`
+                        )
+                      }
+                    >
+                      Export
+                    </Button>
+
+                    <Button
+                      variant="primary"
+                      onClick={() =>
+                        navigator.clipboard.writeText(
+                          `${sym} + ${next} compatibility score: ${value}%`
+                        )
+                      }
+                    >
+                      Share
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
+    </>
+  );
 }
+
+
 function BehaviourAtlas({ selected, setSelected }) {
   const [layer, setLayer] = useState("conductivity"); const [environment, setEnvironment] = useState("Lab air"); const selectedElement = elementMap[selected] || elementMap.Al; const selectedScore = score(selected);
   const fieldCells = Array.from({ length: 128 }, (_, i) => { const e = elements[(i * 7) % elements.length]; const wave = Math.sin(i / 5) * 0.35; return { element: e, value: Math.max(0.2, Math.min(layer === "alignment" ? 100 : 5, score(e.symbol)[layer] + wave)) }; });
