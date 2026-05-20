@@ -75,6 +75,48 @@ function materialDNA(a, b) {
   ).toString(16).toUpperCase()}`;
 }
 
+function generateRecommendations(compare) {
+  const recommendations = [];
+
+  compare.forEach((sym) => {
+    const base = score(sym);
+
+    const matches = elements
+      .filter((e) => !compare.includes(e.symbol))
+      .map((e) => {
+        const s = score(e.symbol);
+
+        const thermalDiff = Math.abs(base.thermal - s.thermal);
+        const conductivityDiff = Math.abs(base.conductivity - s.conductivity);
+
+        const similarity =
+          100 -
+          (thermalDiff * 12 + conductivityDiff * 10);
+
+        return {
+          symbol: e.symbol,
+          name: e.name,
+          similarity,
+          reason:
+            thermalDiff < 0.4
+              ? "thermal substitute candidate"
+              : conductivityDiff < 0.4
+              ? "conductive pathway similarity"
+              : "behavioural compatibility",
+        };
+      })
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, 2);
+
+    recommendations.push({
+      source: sym,
+      matches,
+    });
+  });
+
+  return recommendations;
+}
+
 function heatStyle(value, max = 5) {
   const t = Math.max(0, Math.min(1, value / max));
   const hue = 220 - t * 170;
