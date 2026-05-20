@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import jsPDF from "jspdf";
 import { supabase } from "./supabaseClient";
 import {
   Atom, BarChart3, BookOpen, Calculator, CheckCircle2, ChevronRight, Download,
@@ -450,8 +451,23 @@ function Reports({ compare, session }) {
     ["Research Workspace Summary", "Saved simulations, selected elements, calculations and export history."],
   ];
 
+  const compareRows = compare.map((sym) => ({
+    symbol: sym,
+    name: elementMap[sym]?.name || sym,
+    metrics: score(sym),
+  }));
+
   const build = (title, desc) =>
-    `ElementOS Research Report\n\n${title}\n\n${desc}\n\nCompare Set: ${compare.join(", ")}\nGenerated: ${new Date().toLocaleString()}\n\nStatus: Presentation-ready platform export.`;
+    `ElementOS Research Report
+
+${title}
+
+${desc}
+
+Compare Set: ${compare.join(", ")}
+Generated: ${new Date().toLocaleString()}
+
+Status: Presentation-ready platform export.`;
 
   const loadReports = async () => {
     if (!session) {
@@ -486,7 +502,6 @@ function Reports({ compare, session }) {
     }
 
     const content = build(title, desc);
-
     setStatus("Saving report to cloud...");
 
     const { error } = await supabase.from("reports").insert({
@@ -507,21 +522,124 @@ function Reports({ compare, session }) {
     await loadReports();
   };
 
-  const exportReport = (title, desc) => {
-    downloadFile(`${title.toLowerCase().replaceAll(" ", "-")}.txt`, build(title, desc));
+  const exportPDF = (title, desc, savedContent = "") => {
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 16;
+    const now = new Date().toLocaleString();
+    const content = savedContent || build(title, desc);
+
+    pdf.setFillColor(2, 6, 23);
+    pdf.rect(0, 0, pageWidth, 36, "F");
+    pdf.setTextColor(103, 232, 249);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(22);
+    pdf.text("ElementOS", margin, 16);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(12);
+    pdf.text("Material Intelligence Report", margin, 25);
+
+    pdf.setTextColor(15, 23, 42);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(18);
+    pdf.text(title, margin, 50);
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(10);
+    pdf.setTextColor(71, 85, 105);
+    pdf.text(`Generated: ${now}`, margin, 58);
+    pdf.text(`User: ${session?.user?.email || "Unsigned export"}`, margin, 64);
+
+    pdf.setFontSize(11);
+    pdf.setTextColor(30, 41, 59);
+    const wrappedDesc = pdf.splitTextToSize(desc, pageWidth - margin * 2);
+    pdf.text(wrappedDesc, margin, 76);
+
+    let y = 92 + wrappedDesc.length * 5;
+
+    pdf.setFillColor(240, 249, 255);
+    pdf.roundedRect(margin, y, pageWidth - margin * 2, 18, 3, 3, "F");
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(14, 116, 144);
+    pdf.text("Compare Set", margin + 4, y + 7);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(15, 23, 42);
+    pdf.text(compare.join(", ") || "No compare set selected", margin + 4, y + 14);
+
+    y += 30;
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(15, 23, 42);
+    pdf.text("Material Metrics", margin, y);
+    y += 8;
+
+    pdf.setFontSize(9);
+    pdf.setFillColor(15, 23, 42);
+    pdf.rect(margin, y, pageWidth - margin * 2, 8, "F");
+    pdf.setTextColor(255, 255, 255);
+    pdf.text("Element", margin + 3, y + 5.5);
+    pdf.text("Stability", margin + 42, y + 5.5);
+    pdf.text("Conduct.", margin + 72, y + 5.5);
+    pdf.text("Thermal", margin + 100, y + 5.5);
+    pdf.text("Pressure", margin + 128, y + 5.5);
+    pdf.text("Align", margin + 158, y + 5.5);
+    y += 8;
+
+    compareRows.forEach((row, index) => {
+      if (y > 260) {
+        pdf.addPage();
+        y = 20;
+      }
+      pdf.setFillColor(index % 2 === 0 ? 248 : 241, 250, 252);
+      pdf.rect(margin, y, pageWidth - margin * 2, 8, "F");
+      pdf.setTextColor(15, 23, 42);
+      pdf.text(`${row.symbol} ${row.name}`, margin + 3, y + 5.5);
+      pdf.text(row.metrics.stability.toFixed(2), margin + 42, y + 5.5);
+      pdf.text(row.metrics.conductivity.toFixed(2), margin + 72, y + 5.5);
+      pdf.text(row.metrics.thermal.toFixed(2), margin + 100, y + 5.5);
+      pdf.text(row.metrics.pressure.toFixed(2), margin + 128, y + 5.5);
+      pdf.text(row.metrics.alignment.toFixed(0), margin + 158, y + 5.5);
+      y += 8;
+    });
+
+    y += 12;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(12);
+    pdf.setTextColor(15, 23, 42);
+    pdf.text("Report Notes", margin, y);
+    y += 7;
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(9);
+    pdf.setTextColor(51, 65, 85);
+    const notes = pdf.splitTextToSize(content, pageWidth - margin * 2);
+    notes.slice(0, 26).forEach((line) => {
+      if (y > 278) {
+        pdf.addPage();
+        y = 20;
+      }
+      pdf.text(line, margin, y);
+      y += 5;
+    });
+
+    pdf.setProperties({
+      title: `${title} - ElementOS`,
+      subject: "ElementOS Material Intelligence Report",
+      author: "ElementOS",
+    });
+
+    pdf.save(`${title.toLowerCase().replaceAll(" ", "-")}.pdf`);
   };
 
   return (
     <>
       <Panel>
-        <Pill gold><BookOpen size={12}/> cloud publishing layer</Pill>
+        <Pill gold><BookOpen size={12}/> PDF publishing layer</Pill>
         <h1 className="mt-4 text-5xl font-black">Reports Centre</h1>
-        <Info title="Cloud upgrade">
-          Reports now save to Supabase under the signed-in user account. This gives ElementOS persistent research history, export history and stronger subscriber value.
+        <Info title="PDF upgrade">
+          Reports now save to Supabase and export as branded PDFs with timestamps, compare sets and material metrics. This gives ElementOS a stronger paid-product export layer.
         </Info>
         {!session && (
           <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
-            Sign in to save reports to the cloud. Export still works without signing in.
+            Sign in to save reports to the cloud. PDF export still works without signing in.
           </div>
         )}
         {status && <p className="mt-4 text-sm font-bold text-cyan-200">{status}</p>}
@@ -537,8 +655,8 @@ function Reports({ compare, session }) {
               <Button onClick={() => saveReport(title, desc)}>
                 <Save size={15} className="inline"/> Save to Cloud
               </Button>
-              <Button variant="primary" onClick={() => exportReport(title, desc)}>
-                <Download size={15} className="inline"/> Export
+              <Button variant="primary" onClick={() => exportPDF(title, desc)}>
+                <Download size={15} className="inline"/> Export PDF
               </Button>
             </div>
           </Panel>
@@ -546,41 +664,22 @@ function Reports({ compare, session }) {
       </div>
 
       <Panel>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-3xl font-black">Cloud Saved Reports</h2>
-            <p className="mt-2 text-sm text-slate-400">
-              These reports are loaded from Supabase for the current signed-in user.
-            </p>
-          </div>
-          {session && <Button onClick={loadReports}>Refresh Reports</Button>}
-        </div>
-
+        <h2 className="text-3xl font-black">Saved Cloud Reports</h2>
         {saved.length === 0 ? (
-          <p className="mt-5 text-slate-400">
-            No cloud reports saved yet. Save one above to test the Supabase report workflow.
-          </p>
+          <p className="mt-3 text-slate-400">No saved cloud reports yet. Save one above to test persistent report history.</p>
         ) : (
-          <div className="mt-5 space-y-2">
+          <div className="mt-4 space-y-2">
             {saved.map((r) => (
               <div key={r.id || `${r.title}-${r.created_at}`} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <b className="text-cyan-100">{r.title}</b>
-                <div className="text-sm text-slate-500">
-                  {r.created_at ? new Date(r.created_at).toLocaleString() : r.date}
-                </div>
-                {r.compare_set && (
-                  <div className="mt-2 text-xs uppercase tracking-[.16em] text-slate-500">
-                    Compare Set: {Array.isArray(r.compare_set) ? r.compare_set.join(", ") : String(r.compare_set)}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <b className="text-cyan-100">{r.title}</b>
+                    <div className="text-sm text-slate-500">{new Date(r.created_at).toLocaleString()}</div>
                   </div>
-                )}
-                {r.content && (
-                  <Button
-                    className="mt-3"
-                    onClick={() => downloadFile(`${r.title.toLowerCase().replaceAll(" ", "-")}.txt`, r.content)}
-                  >
-                    <Download size={15} className="inline"/> Export Saved Copy
+                  <Button onClick={() => exportPDF(r.title, r.content || "Saved ElementOS report", r.content || "") }>
+                    <Download size={15} className="inline"/> PDF
                   </Button>
-                )}
+                </div>
               </div>
             ))}
           </div>
