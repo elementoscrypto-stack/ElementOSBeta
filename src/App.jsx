@@ -45,6 +45,36 @@ function score(sym) {
     alignment: Math.max(0, Math.min(100, 100 - Math.abs(n - 13) * 1.55)),
   };
 }
+
+function compatibilityScore(a, b) {
+  const sa = score(a);
+  const sb = score(b);
+
+  const diff =
+    Math.abs(sa.stability - sb.stability) +
+    Math.abs(sa.conductivity - sb.conductivity) +
+    Math.abs(sa.thermal - sb.thermal) +
+    Math.abs(sa.diffusion - sb.diffusion) +
+    Math.abs(sa.pressure - sb.pressure);
+
+  return Math.max(12, Math.min(99, Math.round(100 - diff * 7.5)));
+}
+
+function rarityTier(score) {
+  if (score >= 95) return "LEGENDARY";
+  if (score >= 88) return "ULTRA RARE";
+  if (score >= 78) return "RARE";
+  if (score >= 65) return "UNCOMMON";
+  return "COMMON";
+}
+
+function materialDNA(a, b) {
+  return `${a}-${b}-${Math.abs(
+    a.charCodeAt(0) * 7 +
+    b.charCodeAt(0) * 13
+  ).toString(16).toUpperCase()}`;
+}
+
 function heatStyle(value, max = 5) {
   const t = Math.max(0, Math.min(1, value / max));
   const hue = 220 - t * 170;
