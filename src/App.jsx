@@ -441,10 +441,153 @@ function CalculationCore() {
   return <><Panel><Pill gold><Calculator size={12}/> calculation core</Pill><h1 className="mt-4 text-5xl font-black">Scientific Calculation Core</h1><Info title="Credibility upgrade">The public-facing calculator now uses normal scientific modules instead of internal theory labels. It supports visible equations, fields and instant outputs.</Info></Panel><div className="grid gap-6 xl:grid-cols-2"><Panel><h2 className="text-2xl font-black">Kinetic Energy</h2><div className="mt-4 grid gap-4 md:grid-cols-2"><label className="text-sm text-slate-400">Mass<input type="number" value={mass} onChange={(e) => setMass(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label><label className="text-sm text-slate-400">Velocity<input type="number" value={velocity} onChange={(e) => setVelocity(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label></div><div className="mt-6 text-5xl font-black text-emerald-100">{kinetic.toLocaleString()} J</div><p className="mt-2 font-mono text-sm text-slate-400">E = 0.5 × m × v²</p></Panel><Panel><h2 className="text-2xl font-black">Electrical Power</h2><div className="mt-4 grid gap-4 md:grid-cols-2"><label className="text-sm text-slate-400">Voltage<input type="number" value={voltage} onChange={(e) => setVoltage(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label><label className="text-sm text-slate-400">Current<input type="number" value={current} onChange={(e) => setCurrent(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label></div><div className="mt-6 text-5xl font-black text-emerald-100">{power.toLocaleString()} W</div><p className="mt-2 font-mono text-sm text-slate-400">P = V × I</p></Panel></div><Panel><h2 className="text-2xl font-black">Calculation Trend</h2><MiniBars values={[kinetic / 60, power / 12, 3.4, 4.2, 2.9, 4.7].map(v => Math.min(5, Math.max(.5, v)))}/><Button className="mt-5" onClick={() => downloadFile("elementos-calculation-summary.txt", `ElementOS Calculation Summary\n\nKinetic Energy: ${kinetic} J\nElectrical Power: ${power} W\nGenerated: ${new Date().toLocaleString()}`)}>Export Calculation Summary</Button></Panel></>;
 }
 function Reports({ compare, session }) {
-  const [saved, setSaved] = useState([]); const cards = [["Material Comparison Brief", "A polished report for selected compare materials, chart notes and ranked metrics."], ["Behaviour Atlas Snapshot", "A visual summary of active behaviour fields and top material signals."], ["Research Workspace Summary", "Saved simulations, selected elements, calculations and export history."]];
-  const build = (title, desc) => `ElementOS Research Report\n\n${title}\n\n${desc}\n\nCompare Set: ${compare.join(", ")}\nGenerated: ${new Date().toLocaleString()}\n\nStatus: Presentation-ready platform export.`;
-  const save = title => setSaved(items => [{ title, date: new Date().toLocaleString() }, ...items].slice(0, 6));
-  return <><Panel><Pill gold><BookOpen size={12}/> publishing layer</Pill><h1 className="mt-4 text-5xl font-black">Reports Centre</h1><Info title="Big upgrade">Reports are now a core monetization feature. Users can turn comparisons, atlas maps and calculations into professional outputs.</Info></Panel><div className="grid gap-6 xl:grid-cols-3">{cards.map(([title, desc]) => <Panel key={title}><FileText className="text-cyan-300"/><h2 className="mt-4 text-2xl font-black">{title}</h2><p className="mt-3 text-sm leading-7 text-slate-300">{desc}</p><div className="mt-5 flex flex-wrap gap-2"><Button onClick={() => save(title)}><Save size={15} className="inline"/> Save</Button><Button variant="primary" onClick={() => downloadFile(`${title.toLowerCase().replaceAll(" ", "-")}.txt`, build(title, desc))}><Download size={15} className="inline"/> Export</Button></div></Panel>)}</div><Panel><h2 className="text-3xl font-black">Saved Reports</h2>{saved.length === 0 ? <p className="mt-3 text-slate-400">No saved reports yet. Save one above to test the workspace flow.</p> : <div className="mt-4 space-y-2">{saved.map((r, i) => <div key={`${r.title}-${i}`} className="rounded-2xl border border-white/10 bg-black/25 p-4"><b className="text-cyan-100">{r.title}</b><div className="text-sm text-slate-500">{r.date}</div></div>)}</div>}</Panel></>;
+  const [saved, setSaved] = useState([]);
+  const [status, setStatus] = useState("");
+
+  const cards = [
+    ["Material Comparison Brief", "A polished report for selected compare materials, chart notes and ranked metrics."],
+    ["Behaviour Atlas Snapshot", "A visual summary of active behaviour fields and top material signals."],
+    ["Research Workspace Summary", "Saved simulations, selected elements, calculations and export history."],
+  ];
+
+  const build = (title, desc) =>
+    `ElementOS Research Report\n\n${title}\n\n${desc}\n\nCompare Set: ${compare.join(", ")}\nGenerated: ${new Date().toLocaleString()}\n\nStatus: Presentation-ready platform export.`;
+
+  const loadReports = async () => {
+    if (!session) {
+      setSaved([]);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("reports")
+      .select("*")
+      .eq("user_id", session.user.id)
+      .order("created_at", { ascending: false })
+      .limit(12);
+
+    if (error) {
+      console.error(error);
+      setStatus("Could not load cloud reports.");
+      return;
+    }
+
+    setSaved(data || []);
+  };
+
+  useEffect(() => {
+    loadReports();
+  }, [session]);
+
+  const saveReport = async (title, desc) => {
+    if (!session) {
+      alert("Please sign in before saving reports.");
+      return;
+    }
+
+    const content = build(title, desc);
+
+    setStatus("Saving report to cloud...");
+
+    const { error } = await supabase.from("reports").insert({
+      user_id: session.user.id,
+      title,
+      content,
+      compare_set: compare,
+    });
+
+    if (error) {
+      console.error(error);
+      setStatus("Report save failed.");
+      alert("Report save failed.");
+      return;
+    }
+
+    setStatus("Report saved to Supabase.");
+    await loadReports();
+  };
+
+  const exportReport = (title, desc) => {
+    downloadFile(`${title.toLowerCase().replaceAll(" ", "-")}.txt`, build(title, desc));
+  };
+
+  return (
+    <>
+      <Panel>
+        <Pill gold><BookOpen size={12}/> cloud publishing layer</Pill>
+        <h1 className="mt-4 text-5xl font-black">Reports Centre</h1>
+        <Info title="Cloud upgrade">
+          Reports now save to Supabase under the signed-in user account. This gives ElementOS persistent research history, export history and stronger subscriber value.
+        </Info>
+        {!session && (
+          <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
+            Sign in to save reports to the cloud. Export still works without signing in.
+          </div>
+        )}
+        {status && <p className="mt-4 text-sm font-bold text-cyan-200">{status}</p>}
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        {cards.map(([title, desc]) => (
+          <Panel key={title}>
+            <FileText className="text-cyan-300"/>
+            <h2 className="mt-4 text-2xl font-black">{title}</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-300">{desc}</p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Button onClick={() => saveReport(title, desc)}>
+                <Save size={15} className="inline"/> Save to Cloud
+              </Button>
+              <Button variant="primary" onClick={() => exportReport(title, desc)}>
+                <Download size={15} className="inline"/> Export
+              </Button>
+            </div>
+          </Panel>
+        ))}
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-3xl font-black">Cloud Saved Reports</h2>
+            <p className="mt-2 text-sm text-slate-400">
+              These reports are loaded from Supabase for the current signed-in user.
+            </p>
+          </div>
+          {session && <Button onClick={loadReports}>Refresh Reports</Button>}
+        </div>
+
+        {saved.length === 0 ? (
+          <p className="mt-5 text-slate-400">
+            No cloud reports saved yet. Save one above to test the Supabase report workflow.
+          </p>
+        ) : (
+          <div className="mt-5 space-y-2">
+            {saved.map((r) => (
+              <div key={r.id || `${r.title}-${r.created_at}`} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <b className="text-cyan-100">{r.title}</b>
+                <div className="text-sm text-slate-500">
+                  {r.created_at ? new Date(r.created_at).toLocaleString() : r.date}
+                </div>
+                {r.compare_set && (
+                  <div className="mt-2 text-xs uppercase tracking-[.16em] text-slate-500">
+                    Compare Set: {Array.isArray(r.compare_set) ? r.compare_set.join(", ") : String(r.compare_set)}
+                  </div>
+                )}
+                {r.content && (
+                  <Button
+                    className="mt-3"
+                    onClick={() => downloadFile(`${r.title.toLowerCase().replaceAll(" ", "-")}.txt`, r.content)}
+                  >
+                    <Download size={15} className="inline"/> Export Saved Copy
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </Panel>
+    </>
+  );
 }
 export default function App() {
   const [page, setPage] = useState("dashboard");
