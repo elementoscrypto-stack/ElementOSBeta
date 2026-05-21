@@ -156,13 +156,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["dashboard", "Dashboard", Home], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
+  const items = [["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <Panel>
   <div className="flex flex-wrap items-center justify-between gap-4">
     <div>
@@ -294,6 +294,144 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
 
 <div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
 }
+
+function Discover({ setPage }) {
+  const trending = [
+    ["Ti", "W", "94%", "ULTRA RARE", "Thermal-pressure pathway trending across aerospace-style comparisons."],
+    ["Cu", "Ag", "91%", "ULTRA RARE", "High-conductivity corridor with strong substitute-search behaviour."],
+    ["Al", "Fe", "88%", "RARE", "Structural compatibility discovery with strong report sharing potential."],
+    ["Si", "Ge", "86%", "RARE", "Semiconductor-adjacent behaviour match gaining research attention."],
+    ["Al", "Ti", "92%", "ULTRA RARE", "Lightweight structural pairing with strong premium-report value."],
+    ["Ni", "Co", "89%", "RARE", "Transition-metal pathway with balanced pressure and stability signals."],
+  ];
+
+  const mostShared = [
+    ["Al-Ti-X9A2", "Lightweight structures", "1,284 shares"],
+    ["Cu-Ag-Q4F7", "Conductivity corridor", "982 shares"],
+    ["Ti-W-L8P1", "Thermal pressure", "861 shares"],
+    ["Si-Ge-M2N5", "Semiconductor adjacency", "604 shares"],
+  ];
+
+  const exploring = ["Aluminium + Titanium", "Copper + Silver", "Tungsten substitutes", "High-pressure alloys", "Thermal stability pairs", "Semiconductor neighbours"];
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
+        <div>
+          <Pill gold><Sparkles size={12}/> public discovery layer</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Discover <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">ElementOS Research</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            A public-facing discovery homepage for trending material pairings, shared reports and research activity across the ElementOS ecosystem.
+          </p>
+          <Info title="Growth purpose">
+            This page gives visitors something to browse before signing up. It creates public traffic, repeat visits, screenshot value and a stronger reason to share ElementOS reports.
+          </Info>
+        </div>
+
+        <Panel>
+          <h2 className="text-2xl font-black">Discover Loop</h2>
+          <div className="mt-4 space-y-3">
+            {[
+              ["Trending pairings", "See what researchers are comparing now."],
+              ["Most shared reports", "Surface public research assets."],
+              ["Research activity", "Make ElementOS feel alive."],
+              ["Signup conversion", "Turn browsing into accounts."],
+            ].map(([title, desc]) => (
+              <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="font-black text-cyan-100">{title}</div>
+                <div className="mt-1 text-sm leading-6 text-slate-400">{desc}</div>
+              </div>
+            ))}
+          </div>
+          <Button onClick={() => setPage("compare")} variant="primary" className="mt-5 w-full">
+            Run Your Own Discovery
+          </Button>
+        </Panel>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill><Network size={12}/> trending now</Pill>
+            <h2 className="mt-3 text-4xl font-black">Trending Material Discoveries</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              High-signal compatibility discoveries designed for public browsing, sharing and subscriber curiosity.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">
+            ● Live Discovery Feed
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {trending.map(([a, b, value, tier, desc]) => (
+            <div key={`${a}-${b}`} className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5">
+              <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Compatibility</div>
+                  <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-[10px] font-black tracking-[.18em] text-amber-100">{tier}</div>
+                </div>
+                <div className="mt-5 text-5xl font-black text-cyan-100">{value}</div>
+                <div className="mt-2 text-2xl font-black text-white">{a} + {b}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{desc}</p>
+                <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-3">
+                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Public discovery ID</div>
+                  <div className="mt-2 font-mono text-cyan-100">{materialDNA(a, b)}</div>
+                </div>
+                <div className="mt-5 flex gap-2">
+                  <Button onClick={() => navigator.clipboard.writeText(`${a} + ${b} trending on ElementOS: ${value}`)}>Copy</Button>
+                  <Button variant="primary" onClick={() => setPage("compare")}>Compare</Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+        <Panel>
+          <Pill gold><BookOpen size={12}/> most shared</Pill>
+          <h2 className="mt-3 text-3xl font-black">Most Shared Reports</h2>
+          <div className="mt-5 space-y-3">
+            {mostShared.map(([id, topic, shares]) => (
+              <div key={id} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="font-mono text-cyan-100">{id}</div>
+                    <div className="mt-1 text-sm text-slate-400">{topic}</div>
+                  </div>
+                  <div className="rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-sm font-black text-emerald-100">{shares}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill><Radar size={12}/> researchers are exploring</Pill>
+          <h2 className="mt-3 text-3xl font-black">Researchers Are Exploring</h2>
+          <div className="mt-5 flex flex-wrap gap-3">
+            {exploring.map((item) => (
+              <button key={item} onClick={() => setPage("explorer")} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100 transition hover:scale-[1.02]">
+                {item}
+              </button>
+            ))}
+          </div>
+          <div className="mt-6 rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-5">
+            <div className="text-xs uppercase tracking-[.22em] text-amber-100">Public growth engine</div>
+            <p className="mt-3 text-sm leading-7 text-amber-50/90">
+              Discovery pages make ElementOS browseable even before login. That supports public links, search traffic, social sharing and stronger conversion into accounts.
+            </p>
+          </div>
+        </Panel>
+      </div>
+    </>
+  );
+}
+
 function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
   const [email, setEmail] = useState("researcher@elementos.ai");
   const [password, setPassword] = useState("");
@@ -1430,6 +1568,7 @@ function PublicReportView({ report, status }) {
 function MobileBottomNav({ page, setPage }) {
   const items = [
     ["dashboard", "Home", Home],
+    ["discover", "Discover", Sparkles],
     ["explorer", "Explore", Search],
     ["compare", "Compare", BarChart3],
     ["reports", "Reports", BookOpen],
@@ -1438,7 +1577,7 @@ function MobileBottomNav({ page, setPage }) {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#030712]/95 px-2 pb-3 pt-2 backdrop-blur-2xl lg:hidden">
-      <div className="grid grid-cols-5 gap-1">
+      <div className="grid grid-cols-6 gap-1">
         {items.map(([id, label, Icon]) => (
           <button
             key={id}
@@ -1654,6 +1793,7 @@ const startCheckout = async () => {
           startCheckout={startCheckout}
         />
       ),
+      discover: <Discover setPage={setPage} />,
       login: (
         <LoginAccount
           session={session}
