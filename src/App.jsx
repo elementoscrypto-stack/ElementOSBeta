@@ -334,6 +334,11 @@ function guidanceForPage(page) {
       description: "The Time Machine simulates how materials change across 1, 10, 50 and 100 year horizons under heat, pressure, corrosion, stress and environmental exposure.",
       next: "Choose a material and environment, scan the future-state cards, then export the timeline or compare the strongest result.",
     },
+    scenario: {
+      title: "What Scenario Builder does",
+      description: "Scenario Builder turns plain-English material situations into risk scores, lifespan estimates, failure probabilities, substitute suggestions and exportable scenario reports.",
+      next: "Type a real-world scenario, run the simulation, then export or send the result into Time Machine.",
+    },
     reports: {
       title: "What reports do",
       description: "Reports turn your comparisons into exportable, shareable research assets with summaries, compatibility scores and premium PDF output.",
@@ -456,13 +461,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
+  const items = [["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -859,6 +864,250 @@ function Discover({ setPage }) {
           ))}
         </div>
       </Panel>
+    </>
+  );
+}
+
+
+function ScenarioBuilder({ selected, setSelected, setPage }) {
+  const [scenarioText, setScenarioText] = useState("Titanium hull in saltwater for 25 years under high pressure");
+  const [material, setMaterial] = useState(selected || "Ti");
+  const [environment, setEnvironment] = useState("Saltwater / coastal");
+  const [duration, setDuration] = useState(25);
+  const [intensity, setIntensity] = useState(62);
+
+  const normalized = scenarioText.toLowerCase();
+
+  const detectedMaterial = useMemo(() => {
+    const found = elements.find((e) =>
+      normalized.includes(e.name.toLowerCase()) ||
+      normalized.includes(e.symbol.toLowerCase())
+    );
+    return found?.symbol || material;
+  }, [scenarioText, material]);
+
+  const activeMaterial = elementMap[detectedMaterial] || elementMap[material] || elementMap.Ti;
+  const activeScore = score(activeMaterial.symbol);
+
+  const inferredEnvironment = useMemo(() => {
+    if (normalized.includes("salt") || normalized.includes("ocean") || normalized.includes("sea") || normalized.includes("coastal")) return "Saltwater / coastal";
+    if (normalized.includes("heat") || normalized.includes("hot") || normalized.includes("industrial")) return "Industrial heat";
+    if (normalized.includes("space") || normalized.includes("vacuum")) return "Space / vacuum";
+    if (normalized.includes("pressure") || normalized.includes("deep") || normalized.includes("compression")) return "High pressure";
+    if (normalized.includes("cold") || normalized.includes("cryo")) return "Cryogenic";
+    if (normalized.includes("lab") || normalized.includes("storage")) return "Lab storage";
+    return environment;
+  }, [scenarioText, environment, normalized]);
+
+  const inferredYears = useMemo(() => {
+    const match = normalized.match(/(\d+)\s*(year|years|yr|yrs)/);
+    if (match) return Math.max(1, Math.min(500, Number(match[1])));
+    return duration;
+  }, [normalized, duration]);
+
+  const environmentRisk = {
+    "Lab storage": 0.55,
+    "Saltwater / coastal": 1.45,
+    "Industrial heat": 1.35,
+    "High pressure": 1.25,
+    "Space / vacuum": 1.05,
+    "Cryogenic": 0.85,
+  }[inferredEnvironment] || 1;
+
+  const stressWords = ["extreme", "high", "pressure", "heat", "stress", "corrosion", "salt", "industrial", "deep", "load"];
+  const wordStress = stressWords.reduce((sum, word) => sum + (normalized.includes(word) ? 5 : 0), 0);
+  const scenarioIntensity = Math.max(10, Math.min(100, intensity + wordStress));
+
+  const durabilitySignal = activeScore.stability * 15 + activeScore.pressure * 8 + activeScore.thermal * 7 + activeScore.conductivity * 3;
+  const exposureLoad = environmentRisk * 14 + Math.log10(inferredYears + 1) * 19 + scenarioIntensity * 0.42;
+  const riskScore = Math.max(4, Math.min(96, Math.round(exposureLoad - durabilitySignal * 0.18 + 42)));
+  const survivalYears = Math.max(2, Math.round((durabilitySignal / Math.max(1, environmentRisk * scenarioIntensity)) * 22));
+  const failureProbability = Math.max(1, Math.min(99, Math.round(riskScore * 0.72 + inferredYears * environmentRisk * 0.22)));
+  const confidence = Math.max(72, Math.min(98, Math.round(100 - Math.abs(50 - scenarioIntensity) * 0.28 - environmentRisk * 3 + activeScore.stability * 1.8)));
+  const remainingIntegrity = Math.max(3, Math.min(99, Math.round(100 - failureProbability * 0.62)));
+
+  const failureMode =
+    inferredEnvironment.includes("Saltwater") ? "corrosion and surface pitting" :
+    inferredEnvironment.includes("heat") ? "thermal fatigue and conductivity drift" :
+    inferredEnvironment.includes("pressure") ? "compression fatigue and pressure drift" :
+    inferredEnvironment.includes("Space") ? "radiation exposure and thermal cycling" :
+    inferredEnvironment.includes("Cryogenic") ? "cold brittleness and contraction stress" :
+    "slow environmental ageing";
+
+  const substitutes = elements
+    .filter((e) => e.symbol !== activeMaterial.symbol)
+    .map((e) => {
+      const s = score(e.symbol);
+      const fit = Math.round(s.stability * 12 + s.pressure * 8 + s.thermal * 6 - environmentRisk * 5 - Math.abs(s.rarity - activeScore.rarity) * 2);
+      return { ...e, fit: Math.max(1, Math.min(99, fit)) };
+    })
+    .sort((a, b) => b.fit - a.fit)
+    .slice(0, 4);
+
+  const timeline = [0, Math.max(1, Math.round(inferredYears * 0.25)), Math.max(1, Math.round(inferredYears * 0.5)), inferredYears].map((year) => {
+    const ageing = Math.log10(year + 1) * environmentRisk * 17 + scenarioIntensity * 0.12;
+    return {
+      year,
+      integrity: Math.max(3, Math.round(100 - ageing - riskScore * 0.18)),
+      risk: Math.min(99, Math.round(riskScore * (0.35 + year / Math.max(1, inferredYears) * 0.65))),
+    };
+  });
+
+  const verdict = riskScore >= 72 ? "High-risk scenario" : riskScore >= 45 ? "Manageable with protection" : "Strong scenario candidate";
+
+  const exportScenario = () => {
+    const content = `ElementOS Scenario Builder Report\n\nScenario: ${scenarioText}\nMaterial: ${activeMaterial.name} (${activeMaterial.symbol})\nEnvironment: ${inferredEnvironment}\nDuration: ${inferredYears} years\nRisk score: ${riskScore}%\nFailure probability: ${failureProbability}%\nEstimated survival: ${survivalYears} years\nRemaining integrity: ${remainingIntegrity}%\nAI confidence: ${confidence}%\nLikely failure mode: ${failureMode}\nRecommended substitute: ${substitutes[0]?.name} (${substitutes[0]?.symbol})\n\nVerdict: ${verdict}\n\nTimeline:\n${timeline.map((t) => `Year ${t.year}: integrity ${t.integrity}%, risk ${t.risk}%`).join("\n")}\n\nGenerated by ElementOS Scenario Builder`;
+    downloadFile(`${activeMaterial.symbol}-scenario-builder-report.txt`, content);
+  };
+
+  const runDetected = () => {
+    setMaterial(detectedMaterial);
+    setEnvironment(inferredEnvironment);
+    setDuration(inferredYears);
+    setSelected?.(detectedMaterial);
+  };
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.08fr_.92fr]">
+        <div>
+          <Pill gold><FileText size={12}/> AI scenario engine</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Scenario <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Builder</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Type a real-world material situation and ElementOS converts it into risk, lifespan, failure probability, timeline drift and substitute recommendations.
+          </p>
+          <Info title="Plain-English simulation">
+            This page is designed for users who do not know where to start. They describe a situation, then ElementOS turns it into a structured material decision report.
+          </Info>
+        </div>
+
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Scenario result</div>
+          <h2 className="mt-3 text-4xl font-black text-cyan-100">{activeMaterial.symbol} · {verdict}</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4">
+              <div className="text-xs uppercase tracking-[.2em] text-rose-100">Risk score</div>
+              <div className="mt-2 text-4xl font-black text-rose-100">{riskScore}%</div>
+            </div>
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4">
+              <div className="text-xs uppercase tracking-[.2em] text-emerald-100">Survival estimate</div>
+              <div className="mt-2 text-4xl font-black text-emerald-100">{survivalYears}y</div>
+            </div>
+          </div>
+          <p className="mt-4 text-sm leading-7 text-slate-300">Likely failure mode: <b>{failureMode}</b>. AI confidence: <b>{confidence}%</b>.</p>
+          <Button onClick={exportScenario} variant="primary" className="mt-5 w-full">Export Scenario Report</Button>
+        </Panel>
+      </Panel>
+
+      <GuidePanel page="scenario" />
+
+      <Panel>
+        <div className="grid gap-5 xl:grid-cols-[1.15fr_.85fr]">
+          <div>
+            <h2 className="text-3xl font-black">Describe your material scenario</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Example: “Aluminium bracket in coastal air for 10 years” or “Copper wire under industrial heat for 25 years”.</p>
+            <textarea
+              value={scenarioText}
+              onChange={(e) => setScenarioText(e.target.value)}
+              className="mt-5 min-h-[150px] w-full rounded-[2rem] border border-white/10 bg-black/30 p-5 text-lg leading-8 outline-none focus:border-cyan-300/40"
+              placeholder="Describe the material, environment and timescale..."
+            />
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Button onClick={runDetected} variant="primary"><Sparkles size={16} className="inline"/> Run Scenario</Button>
+              <Button onClick={() => setPage("timemachine")}><Clock3 size={16} className="inline"/> Open Time Machine</Button>
+              <Button onClick={() => navigator.clipboard.writeText(`ElementOS Scenario: ${scenarioText} · Risk ${riskScore}% · Survival ${survivalYears} years`)}>Copy Summary</Button>
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
+            <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Detected inputs</div>
+            <div className="mt-4 space-y-3">
+              {[
+                ["Material", `${activeMaterial.name} (${activeMaterial.symbol})`],
+                ["Environment", inferredEnvironment],
+                ["Duration", `${inferredYears} years`],
+                ["Intensity", `${scenarioIntensity}%`],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+                  <div className="mt-1 text-xl font-black text-cyan-100">{value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-4">
+        {[
+          ["Failure probability", `${failureProbability}%`, "Likelihood of unacceptable degradation within the scenario window."],
+          ["Remaining integrity", `${remainingIntegrity}%`, "Estimated usable material integrity at the end of the scenario."],
+          ["AI confidence", `${confidence}%`, "Confidence in the scenario classification based on available simulated signals."],
+          ["Best substitute", substitutes[0] ? `${substitutes[0].symbol}` : "—", substitutes[0] ? `${substitutes[0].name} has the strongest replacement fit.` : "No substitute found."],
+        ].map(([title, value, desc]) => (
+          <Panel key={title}>
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
+            <div className="mt-3 text-4xl font-black text-cyan-100">{value}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+          </Panel>
+        ))}
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><Clock3 size={12}/> scenario timeline</Pill>
+            <h2 className="mt-3 text-4xl font-black">Future-State Projection</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">A simple timeline showing how risk rises and integrity falls across the scenario period.</p>
+          </div>
+          <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm font-bold text-amber-100">{verdict}</div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {timeline.map((t) => (
+            <div key={t.year} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">Year {t.year}</div>
+              <div className="mt-3 text-4xl font-black text-emerald-200">{t.integrity}%</div>
+              <div className="mt-1 text-sm text-slate-400">integrity remaining</div>
+              <div className="mt-4 h-3 overflow-hidden rounded-full bg-black/40">
+                <div className="h-full rounded-full bg-cyan-300" style={{ width: `${t.integrity}%` }} />
+              </div>
+              <div className="mt-3 text-sm text-rose-100">Risk: {t.risk}%</div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
+        <Panel>
+          <Pill gold><Sparkles size={12}/> substitute engine</Pill>
+          <h2 className="mt-3 text-3xl font-black">Recommended Substitutes</h2>
+          <div className="mt-5 space-y-3">
+            {substitutes.map((s) => (
+              <div key={s.symbol} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div>
+                  <div className="text-xl font-black text-cyan-100">{s.symbol} · {s.name}</div>
+                  <div className="mt-1 text-sm text-slate-400">replacement fit for {inferredEnvironment}</div>
+                </div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xl font-black text-emerald-100">{s.fit}%</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill><FileText size={12}/> AI recommendation</Pill>
+          <h2 className="mt-3 text-3xl font-black">Scenario Decision Summary</h2>
+          <p className="mt-4 text-sm leading-7 text-slate-300">
+            {activeMaterial.name} in <b>{inferredEnvironment}</b> for <b>{inferredYears} years</b> is classified as <b>{verdict}</b>. The main concern is <b>{failureMode}</b>. ElementOS recommends evaluating <b>{substitutes[0]?.name}</b> as the first substitute candidate and sending this scenario into the Time Machine for a longer future-state view.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <Button onClick={() => setPage("timemachine")} variant="primary">Open Time Machine</Button>
+            <Button onClick={exportScenario}>Export Report</Button>
+          </div>
+        </Panel>
+      </div>
     </>
   );
 }
@@ -2226,6 +2475,7 @@ function MobileBottomNav({ page, setPage }) {
     ["dashboard", "Home", Home],
     ["discover", "Discover", Sparkles],
     ["timemachine", "Time", Clock3],
+    ["scenario", "Scenario", FileText],
     ["explorer", "Explore", Search],
     ["compare", "Compare", BarChart3],
     ["reports", "Reports", BookOpen],
@@ -2234,7 +2484,7 @@ function MobileBottomNav({ page, setPage }) {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#030712]/95 px-2 pb-3 pt-2 backdrop-blur-2xl lg:hidden">
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-8 gap-1">
         {items.map(([id, label, Icon]) => (
           <button
             key={id}
@@ -2452,6 +2702,7 @@ const startCheckout = async () => {
       ),
       discover: <Discover setPage={setPage} />,
       timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} />,
+      scenario: <ScenarioBuilder selected={selected} setSelected={setSelected} setPage={setPage} />,
       login: (
         <LoginAccount
           session={session}
