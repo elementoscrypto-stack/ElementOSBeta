@@ -868,15 +868,16 @@ Status: Presentation-ready platform export.`;
     }
 
     const content = build(title, desc);
+    const publicId = createPublicId(compare);
     setStatus("Saving report to cloud...");
 
-const { error } = await supabase.from("reports").insert({
-  user_id: session.user.id,
-  title,
-  content,
-  compare_set: compare,
-  public_id: publicId,
-});
+    const { error } = await supabase.from("reports").insert({
+      user_id: session.user.id,
+      title,
+      content,
+      compare_set: compare,
+      public_id: publicId,
+    });
 
     if (error) {
       console.error(error);
@@ -1060,16 +1061,30 @@ const { error } = await supabase.from("reports").insert({
                     <b className="text-cyan-100">{r.title}</b>
                     <div className="text-sm text-slate-500">{new Date(r.created_at).toLocaleString()}</div>
                   </div>
-                  <Button onClick={() => {
-                    if (!isPro) {
-                      alert("PDF exports are a Pro Lab feature.");
-                      startCheckout();
-                      return;
-                    }
-                    exportPDF(r.title, r.content || "Saved ElementOS report", r.content || "");
-                  }}>
-                    <Download size={15} className="inline"/> PDF
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    {r.public_id && (
+                      <Button
+                        onClick={() => {
+                          const url = `${window.location.origin}/?report=${r.public_id}`;
+                          navigator.clipboard.writeText(url);
+                          setStatus("Public share link copied.");
+                        }}
+                      >
+                        Share Link
+                      </Button>
+                    )}
+
+                    <Button onClick={() => {
+                      if (!isPro) {
+                        alert("PDF exports are a Pro Lab feature.");
+                        startCheckout();
+                        return;
+                      }
+                      exportPDF(r.title, r.content || "Saved ElementOS report", r.content || "");
+                    }}>
+                      <Download size={15} className="inline"/> PDF
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1079,12 +1094,101 @@ const { error } = await supabase.from("reports").insert({
     </>
   );
 }
+
+function PublicReportView({ report, status }) {
+  if (!report) {
+    return (
+      <div className="min-h-screen bg-[#020617] text-slate-100">
+        <Background />
+        <main className="relative z-10 mx-auto max-w-5xl space-y-6 p-6 lg:p-10">
+          <Panel>
+            <Pill gold><BookOpen size={12}/> public report</Pill>
+            <h1 className="mt-4 text-5xl font-black">ElementOS Public Report</h1>
+            <p className="mt-4 text-slate-300">{status || "Loading report..."}</p>
+          </Panel>
+        </main>
+      </div>
+    );
+  }
+
+  const compareSet = Array.isArray(report.compare_set) ? report.compare_set : [];
+  const created = report.created_at ? new Date(report.created_at).toLocaleString() : "Unknown date";
+
+  return (
+    <div className="min-h-screen bg-[#020617] text-slate-100">
+      <Background />
+
+      <main className="relative z-10 mx-auto max-w-6xl space-y-6 p-6 lg:p-10">
+        <Panel>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <Pill gold><BookOpen size={12}/> public ElementOS report</Pill>
+              <h1 className="mt-4 text-5xl font-black">{report.title}</h1>
+              <p className="mt-3 text-sm text-slate-400">
+                Public ID: <span className="font-mono text-cyan-200">{report.public_id}</span> · {created}
+              </p>
+            </div>
+
+            <Button
+              variant="primary"
+              onClick={() => navigator.clipboard.writeText(window.location.href)}
+            >
+              Share This Report
+            </Button>
+          </div>
+
+          <Info title="Public research snapshot">
+            This shareable ElementOS report can be opened without signing in, creating a public discovery link for materials research, comparisons and exported findings.
+          </Info>
+        </Panel>
+
+        <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+          <Panel>
+            <h2 className="text-3xl font-black">Report Content</h2>
+            <div className="mt-5 whitespace-pre-wrap rounded-3xl border border-white/10 bg-black/30 p-5 text-sm leading-7 text-slate-200">
+              {report.content || "No report content found."}
+            </div>
+          </Panel>
+
+          <Panel>
+            <h2 className="text-2xl font-black">Compare Set</h2>
+            {compareSet.length === 0 ? (
+              <p className="mt-3 text-sm text-slate-400">No compare set attached.</p>
+            ) : (
+              <div className="mt-4 space-y-3">
+                {compareSet.map((sym) => (
+                  <div key={sym} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                    <div className="text-3xl font-black text-cyan-100">{sym}</div>
+                    <div className="text-sm text-slate-400">{elementMap[sym]?.name || "Unknown material"}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <Button
+              className="mt-5 w-full"
+              onClick={() => {
+                window.location.href = window.location.origin;
+              }}
+            >
+              Open ElementOS
+            </Button>
+          </Panel>
+        </div>
+      </main>
+    </div>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState("dashboard");
   const [selected, setSelected] = useState("Al");
   const [compare, setCompare] = useState(["Al", "Fe", "Cu", "Ti"]);
   const [session, setSession] = useState(null);
   const [isPro, setIsPro] = useState(false);
+  const [publicReportRequested, setPublicReportRequested] = useState(false);
+  const [publicReport, setPublicReport] = useState(null);
+  const [publicReportStatus, setPublicReportStatus] = useState("");
 
 useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -1098,6 +1202,28 @@ useEffect(() => {
   });
 
   const params = new URLSearchParams(window.location.search);
+  const reportId = params.get("report");
+
+  if (reportId) {
+    setPublicReportRequested(true);
+    setPublicReportStatus("Loading public report...");
+
+    supabase
+      .from("reports")
+      .select("*")
+      .eq("public_id", reportId)
+      .single()
+      .then(({ data, error }) => {
+        if (error || !data) {
+          console.error(error);
+          setPublicReportStatus("Public report not found.");
+          return;
+        }
+
+        setPublicReport(data);
+        setPublicReportStatus("");
+      });
+  }
 
   if (params.get("checkout") === "success") {
     setIsPro(true);
@@ -1259,6 +1385,10 @@ const startCheckout = async () => {
     }),
     [page, selected, compare, session, isPro]
   );
+
+  if (publicReportRequested) {
+    return <PublicReportView report={publicReport} status={publicReportStatus} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100">
