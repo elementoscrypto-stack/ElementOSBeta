@@ -364,6 +364,11 @@ function guidanceForPage(page) {
       description: "The Advanced Visualization Engine turns scenarios, time horizons and material metrics into survival curves, degradation timelines, AI confidence waveforms and cinematic telemetry cards.",
       next: "Pick a material, inspect the survival curve, compare the pulse cards, then export the visual telemetry summary.",
     },
+    simreports: {
+      title: "What Universal Simulation Reports do",
+      description: "Universal Simulation Reports combine Time Machine, Scenario Builder, Experimental Well Driller and Seismo outputs into one polished research-ready simulation dossier.",
+      next: "Choose a simulation source, review the combined intelligence cards, then export the universal report.",
+    },
     reports: {
       title: "What reports do",
       description: "Reports turn your comparisons into exportable, shareable research assets with summaries, compatibility scores and premium PDF output.",
@@ -486,13 +491,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["landing", "Landing", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
+  const items = [["landing", "Landing", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -1144,187 +1149,232 @@ function TimeMachine({ selected, setSelected, setPage }) {
   const [stress, setStress] = useState(55);
   const [temperature, setTemperature] = useState(35);
   const [pressure, setPressure] = useState(40);
+  const [humidity, setHumidity] = useState(62);
+  const [radiation, setRadiation] = useState(18);
 
   const base = elementMap[material] || elementMap.Al;
   const baseScore = score(material);
 
   const environmentProfiles = {
-    "Lab storage": { corrosion: 0.55, heat: 0.55, pressure: 0.45, label: "controlled low-risk environment" },
-    "Coastal air": { corrosion: 1.3, heat: 0.75, pressure: 0.6, label: "salt and moisture exposure" },
-    "Industrial heat": { corrosion: 0.9, heat: 1.55, pressure: 0.95, label: "thermal cycling and fatigue" },
-    "High pressure": { corrosion: 0.7, heat: 0.85, pressure: 1.65, label: "compression and stress load" },
-    "Cryogenic": { corrosion: 0.45, heat: 0.35, pressure: 0.85, label: "cold stability challenge" },
-    "Space exposure": { corrosion: 0.25, heat: 1.25, pressure: 0.35, label: "radiation and vacuum-like exposure" },
+    "Lab storage": { corrosion: 0.45, heat: 0.45, pressure: 0.35, radiation: 0.15, label: "controlled low-risk environment" },
+    "Coastal air": { corrosion: 1.35, heat: 0.75, pressure: 0.6, radiation: 0.22, label: "salt, humidity and surface oxidation exposure" },
+    "Industrial heat": { corrosion: 0.9, heat: 1.65, pressure: 0.95, radiation: 0.28, label: "thermal cycling, hot surfaces and fatigue" },
+    "High pressure": { corrosion: 0.7, heat: 0.85, pressure: 1.75, radiation: 0.2, label: "compression, cyclic loading and stress concentration" },
+    "Cryogenic": { corrosion: 0.45, heat: 0.35, pressure: 0.9, radiation: 0.18, label: "cold contraction and brittleness challenge" },
+    "Space exposure": { corrosion: 0.25, heat: 1.25, pressure: 0.35, radiation: 1.45, label: "radiation, thermal swing and vacuum-like exposure" },
   };
 
-  const profile = environmentProfiles[environment];
-  const horizons = [0, 1, 10, 50, 100];
+  const profile = environmentProfiles[environment] || environmentProfiles["Coastal air"];
+  const horizons = [0, 1, 5, 10, 25, 50, 100];
 
   const resilience = Math.round(
     Math.min(
-      98,
+      99,
       Math.max(
-        18,
-        baseScore.stability * 14 +
+        12,
+        baseScore.stability * 15 +
           baseScore.pressure * 7 +
-          baseScore.thermal * 5 -
+          baseScore.thermal * 6 +
+          baseScore.conductivity * 2 -
           profile.corrosion * 8 -
-          stress * 0.08 -
-          temperature * 0.06 -
-          pressure * 0.05
+          stress * 0.075 -
+          temperature * 0.055 -
+          pressure * 0.055 -
+          humidity * profile.corrosion * 0.055 -
+          radiation * profile.radiation * 0.08
       )
     )
   );
 
   const timeline = horizons.map((year) => {
-    const ageingLoad = Math.log10(year + 1) * (profile.corrosion * 10 + profile.heat * 7 + profile.pressure * 6);
-    const externalLoad = stress * 0.045 + temperature * 0.04 + pressure * 0.04;
-    const stability = Math.max(5, Math.round(resilience - ageingLoad - externalLoad));
-    const corrosion = Math.min(99, Math.round(year * profile.corrosion * 0.55 + stress * 0.08));
-    const fatigue = Math.min(99, Math.round(year * profile.heat * 0.42 + temperature * 0.22));
-    const pressureDrift = Math.min(99, Math.round(year * profile.pressure * 0.38 + pressure * 0.2));
-    return { year, stability, corrosion, fatigue, pressureDrift };
+    const ageing = Math.log10(year + 1) * (profile.corrosion * 11 + profile.heat * 8 + profile.pressure * 7 + profile.radiation * 6);
+    const load = stress * 0.04 + temperature * 0.045 + pressure * 0.04 + humidity * profile.corrosion * 0.035 + radiation * profile.radiation * 0.05;
+    const stability = Math.max(2, Math.round(resilience - ageing - load));
+    const corrosion = Math.min(99, Math.round(year * profile.corrosion * 0.52 + humidity * profile.corrosion * 0.23));
+    const fatigue = Math.min(99, Math.round(year * profile.heat * 0.43 + temperature * 0.24 + stress * 0.08));
+    const pressureDrift = Math.min(99, Math.round(year * profile.pressure * 0.39 + pressure * 0.2));
+    const radiationDrift = Math.min(99, Math.round(year * profile.radiation * 0.35 + radiation * 0.26));
+    return { year, stability, corrosion, fatigue, pressureDrift, radiationDrift };
   });
 
   const finalState = timeline[timeline.length - 1];
+  const survivalYear = Math.max(2, Math.round((resilience / Math.max(0.5, profile.corrosion + profile.heat + profile.pressure + profile.radiation)) * 6.8));
+  const futureVerdict = finalState.stability >= 72 ? "Excellent long-horizon candidate" : finalState.stability >= 48 ? "Strong candidate with protection" : finalState.stability >= 28 ? "Conditional candidate with monitoring" : "High-risk across long horizons";
+  const timeRisk = Math.max(1, Math.min(99, Math.round(100 - finalState.stability + finalState.corrosion * 0.22 + finalState.fatigue * 0.18)));
+
   const recommended = elements
     .filter((e) => e.symbol !== material)
     .map((e) => {
       const s = score(e.symbol);
-      const durability = Math.round(s.stability * 12 + s.pressure * 7 + s.thermal * 5 - profile.corrosion * 6);
+      const durability = Math.round(s.stability * 13 + s.pressure * 7 + s.thermal * 6 - profile.corrosion * 5 - profile.radiation * 3);
       return { ...e, durability: Math.max(1, Math.min(99, durability)) };
     })
     .sort((a, b) => b.durability - a.durability)
     .slice(0, 5);
 
-  const survivalYear = Math.max(5, Math.round((resilience / (profile.corrosion + profile.heat + profile.pressure)) * 7));
-  const futureVerdict = finalState.stability >= 70 ? "Excellent long-term candidate" : finalState.stability >= 45 ? "Useful but needs protection" : "High-risk over long horizons";
+  const chartPoints = timeline
+    .map((t, index) => {
+      const x = 8 + (index / Math.max(1, timeline.length - 1)) * 84;
+      const y = 92 - t.stability * 0.78;
+      return `${x},${Math.max(12, Math.min(92, y))}`;
+    })
+    .join(" ");
 
   const exportTimeline = () => {
-    const content = `ElementOS Time Machine Report\n\nMaterial: ${base.name} (${base.symbol})\nEnvironment: ${environment}\nScenario: ${profile.label}\nResilience Index: ${resilience}%\nPredicted survival horizon: ${survivalYear} years\nVerdict: ${futureVerdict}\n\nTimeline:\n${timeline.map((t) => `Year ${t.year}: stability ${t.stability}%, corrosion ${t.corrosion}%, fatigue ${t.fatigue}%, pressure drift ${t.pressureDrift}%`).join("\n")}\n\nGenerated by ElementOS Time Machine`;
+    const content = `ElementOS Time Machine Report\n\nMaterial: ${base.name} (${base.symbol})\nEnvironment: ${environment}\nScenario: ${profile.label}\nResilience Index: ${resilience}%\n100-Year Risk: ${timeRisk}%\nPredicted survival horizon: ${survivalYear} years\nVerdict: ${futureVerdict}\n\nInputs:\nStress: ${stress}%\nTemperature: ${temperature} C\nPressure: ${pressure}%\nHumidity: ${humidity}%\nRadiation: ${radiation}%\n\nTimeline:\n${timeline.map((t) => `Year ${t.year}: stability ${t.stability}%, corrosion ${t.corrosion}%, fatigue ${t.fatigue}%, pressure drift ${t.pressureDrift}%, radiation drift ${t.radiationDrift}%`).join("\n")}\n\nGenerated by ElementOS Time Machine`;
     downloadFile(`${base.symbol}-time-machine-report.txt`, content);
+  };
+
+  const setMaterialAndSelected = (value) => {
+    setMaterial(value);
+    setSelected?.(value);
   };
 
   return (
     <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.08fr_.92fr]">
+      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
         <div>
-          <Pill gold><Clock3 size={12}/> material time simulation</Pill>
+          <Pill gold><Clock3 size={12}/> temporal material simulator</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">
             Time <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Machine</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Simulate how a material may behave across time under corrosion, heat, pressure and stress. This is a future-state research tool for ageing, fatigue and long-horizon compatibility thinking.
+            Project how a material evolves across corrosion, fatigue, pressure drift, radiation exposure and environmental ageing. This page now behaves like a cinematic future-state lab.
           </p>
-          <Info title="What this page does">
-            Pick a material, choose an environment, adjust stress/temperature/pressure and watch ElementOS project 1-year, 10-year, 50-year and 100-year material states.
+          <Info title="Temporal intelligence upgrade">
+            Choose a material and environment, tune the exposure controls, then inspect the survival curve, future-state cards, 3D time tunnel and recommended long-horizon substitutes.
           </Info>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Time Report</Button>
+            <Button onClick={() => setPage("scenario")}>Send to Scenario Builder</Button>
+            <Button onClick={() => setPage("visualization")}>Open Visual Engine</Button>
+          </div>
         </div>
 
         <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Future material state</div>
-          <h2 className="mt-3 text-4xl font-black text-cyan-100">{base.symbol} · {base.name}</h2>
-          <div className="mt-3 text-6xl font-black text-emerald-200">{finalState.stability}%</div>
-          <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">projected year 100 stability</div>
-          <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-50/90">
-            <b>{futureVerdict}.</b> Estimated survival horizon: {survivalYear} years in {environment.toLowerCase()}.
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Future-state verdict</div>
+          <div className="mt-3 text-5xl font-black text-cyan-100">{base.symbol}</div>
+          <div className="mt-2 text-xl font-black text-white">{base.name}</div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4">
+              <div className="text-3xl font-black text-emerald-100">{resilience}%</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">resilience</div>
+            </div>
+            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">
+              <div className="text-3xl font-black text-amber-100">{survivalYear}y</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">survival</div>
+            </div>
+            <div className="rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4">
+              <div className="text-3xl font-black text-rose-100">{timeRisk}%</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">100y risk</div>
+            </div>
           </div>
-          <Button onClick={exportTimeline} variant="primary" className="mt-5 w-full">Export Time Simulation</Button>
+          <p className="mt-5 text-sm leading-7 text-slate-300">{futureVerdict}. Environment profile: {profile.label}.</p>
         </Panel>
       </Panel>
 
       <GuidePanel page="timemachine" />
 
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
         <Panel>
-          <h2 className="text-2xl font-black">Simulation Controls</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Use these controls to create a material ageing scenario. Higher stress, heat and pressure reduce long-term stability.</p>
-          <label className="mt-5 block text-sm text-slate-400">Material
-            <select value={material} onChange={(e) => { setMaterial(e.target.value); setSelected?.(e.target.value); }} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
-              {elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
-            </select>
-          </label>
-          <label className="mt-4 block text-sm text-slate-400">Environment
-            <select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
-              {Object.keys(environmentProfiles).map((x) => <option key={x}>{x}</option>)}
-            </select>
-          </label>
-          {[["Stress load", stress, setStress], ["Temperature load", temperature, setTemperature], ["Pressure load", pressure, setPressure]].map(([label, value, setter]) => (
-            <label key={label} className="mt-5 block text-sm text-slate-400">{label}: <b className="text-cyan-100">{value}%</b>
-              <input type="range" min="0" max="100" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" />
+          <h2 className="text-3xl font-black">Temporal Controls</h2>
+          <div className="mt-5 grid gap-4">
+            <label className="grid gap-2">
+              <span className="text-xs uppercase tracking-[.2em] text-slate-500">Material</span>
+              <select value={material} onChange={(e) => setMaterialAndSelected(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
+                {elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
+              </select>
             </label>
-          ))}
-          <Button onClick={() => setPage?.("compare")} className="mt-6 w-full">Compare Material</Button>
-        </Panel>
-
-        <Panel>
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <Pill><Clock3 size={12}/> temporal forecast</Pill>
-              <h2 className="mt-3 text-4xl font-black">Material Timeline</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-400">Each card shows how the selected material is projected to change over time.</p>
-            </div>
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">{profile.label}</div>
-          </div>
-
-          <div className="mt-6 grid gap-4 md:grid-cols-5">
-            {timeline.map((t) => (
-              <div key={t.year} className="rounded-[2rem] border border-white/10 bg-black/25 p-4">
-                <div className="text-xs uppercase tracking-[.2em] text-slate-500">Year</div>
-                <div className="mt-1 text-4xl font-black text-cyan-100">{t.year}</div>
-                <div className="mt-4 text-3xl font-black text-emerald-200">{t.stability}%</div>
-                <div className="text-xs uppercase tracking-[.18em] text-slate-500">stability</div>
-                <div className="mt-4 space-y-2 text-xs text-slate-300">
-                  <div>Corrosion: {t.corrosion}%</div>
-                  <div>Fatigue: {t.fatigue}%</div>
-                  <div>Pressure drift: {t.pressureDrift}%</div>
+            <label className="grid gap-2">
+              <span className="text-xs uppercase tracking-[.2em] text-slate-500">Environment</span>
+              <select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
+                {Object.keys(environmentProfiles).map((k) => <option key={k}>{k}</option>)}
+              </select>
+            </label>
+            {[
+              ["Stress Load", stress, setStress, "%"],
+              ["Temperature", temperature, setTemperature, "°C"],
+              ["Pressure Load", pressure, setPressure, "%"],
+              ["Humidity / Corrosion Feed", humidity, setHumidity, "%"],
+              ["Radiation / Field Exposure", radiation, setRadiation, "%"],
+            ].map(([label, value, setter, unit]) => (
+              <label key={label} className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-bold text-slate-200">{label}</span>
+                  <span className="font-black text-cyan-100">{value}{unit}</span>
                 </div>
-              </div>
+                <input type="range" min="0" max="100" value={value} onChange={(e) => setter(Number(e.target.value))} />
+              </label>
             ))}
           </div>
+        </Panel>
 
-          <div className="mt-6 rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
-            <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Timeline graph</div>
-            <MiniBars values={timeline.map((t) => Math.max(0.4, t.stability / 20))} />
-            <p className="mt-3 text-sm leading-6 text-slate-300">The graph shows projected stability decay across the selected time horizons.</p>
+        <Panel>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <Pill><Radar size={12}/> 3D time tunnel</Pill>
+              <h2 className="mt-3 text-3xl font-black">Future-State Simulation</h2>
+            </div>
+            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm font-bold text-cyan-100">LIVE</div>
           </div>
-        </Panel>
-      </div>
 
-      <div className="grid gap-6 xl:grid-cols-3">
-        <Panel>
-          <Pill gold><ShieldCheck size={12}/> future verdict</Pill>
-          <h2 className="mt-3 text-3xl font-black">{futureVerdict}</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">{base.name} starts with a resilience index of {resilience}%. In this environment, the main long-term risks are corrosion accumulation, thermal fatigue and pressure drift.</p>
-        </Panel>
-        <Panel>
-          <Pill gold><Radar size={12}/> recovered material</Pill>
-          <h2 className="mt-3 text-3xl font-black">Ancient Survival Estimate</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">ElementOS estimates that protected {base.name} could remain meaningfully identifiable for approximately <b className="text-cyan-100">{survivalYear * 12}</b> years under improved storage conditions.</p>
-        </Panel>
-        <Panel>
-          <Pill gold><Sparkles size={12}/> AI next step</Pill>
-          <h2 className="mt-3 text-3xl font-black">Try a stronger future path</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">If the year-100 stability falls below 70%, test one of the suggested substitutes below or move the result into Compare.</p>
+          <div className="mt-6 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-slate-950/80 p-6 [perspective:1100px]">
+            <div className="relative mx-auto h-[360px] max-w-3xl [transform-style:preserve-3d] [transform:rotateX(58deg)_rotateZ(-32deg)]">
+              {timeline.map((t, index) => (
+                <div
+                  key={t.year}
+                  className="absolute left-1/2 top-1/2 grid place-items-center rounded-[2rem] border border-cyan-300/25 bg-cyan-300/10 text-center shadow-[0_0_40px_rgba(34,211,238,.14)]"
+                  style={{
+                    width: `${300 + index * 28}px`,
+                    height: `${72 + index * 8}px`,
+                    transform: `translate(-50%, -50%) translateZ(${index * 28}px)`,
+                    opacity: 1 - index * 0.075,
+                  }}
+                >
+                  <div className="text-xs uppercase tracking-[.22em] text-cyan-100">Year {t.year}</div>
+                  <div className="text-2xl font-black text-white">{t.stability}%</div>
+                </div>
+              ))}
+              <div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 shadow-[0_0_80px_rgba(251,191,36,.85)]" />
+            </div>
+          </div>
+
+          <svg viewBox="0 0 100 100" className="mt-6 h-64 w-full rounded-[2rem] border border-white/10 bg-black/25 p-4">
+            <polyline points={chartPoints} fill="none" stroke="rgba(34,211,238,.95)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            <polyline points={timeline.map((t, i) => `${8 + (i / Math.max(1, timeline.length - 1)) * 84},${92 - t.corrosion * .65}`).join(" ")} fill="none" stroke="rgba(251,191,36,.8)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            {[20,40,60,80].map((y) => <line key={y} x1="6" x2="94" y1={y} y2={y} stroke="rgba(255,255,255,.08)" />)}
+            {timeline.map((t, i) => <text key={t.year} x={8 + (i / Math.max(1, timeline.length - 1)) * 84} y="98" textAnchor="middle" className="fill-slate-400 text-[3px]">{t.year}</text>)}
+          </svg>
         </Panel>
       </div>
 
       <Panel>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <Pill><Sparkles size={12}/> most resilient alternatives</Pill>
-            <h2 className="mt-3 text-4xl font-black">Future-Proof Material Suggestions</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">ElementOS ranks alternative materials that may hold stronger future-state behaviour in the same environment.</p>
-          </div>
-          <Button onClick={() => setPage?.("reports")} variant="primary">Generate Report</Button>
+        <h2 className="text-4xl font-black">Temporal Milestone Cards</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {timeline.slice(1).map((t) => (
+            <div key={t.year} className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-black/35 to-amber-400/10 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">year {t.year}</div>
+              <div className="mt-3 text-4xl font-black text-cyan-100">{t.stability}%</div>
+              <div className="mt-3 space-y-2 text-sm text-slate-300">
+                <div>Corrosion: <b className="text-amber-100">{t.corrosion}%</b></div>
+                <div>Fatigue: <b className="text-rose-100">{t.fatigue}%</b></div>
+                <div>Pressure drift: <b className="text-cyan-100">{t.pressureDrift}%</b></div>
+                <div>Radiation drift: <b className="text-fuchsia-100">{t.radiationDrift}%</b></div>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-5">
+      </Panel>
+
+      <Panel>
+        <h2 className="text-3xl font-black">Best Long-Horizon Substitutes</h2>
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {recommended.map((e) => (
-            <button key={e.symbol} onClick={() => { setMaterial(e.symbol); setSelected?.(e.symbol); }} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 to-black/30 p-5 text-left transition hover:scale-[1.02]">
+            <button key={e.symbol} onClick={() => setMaterialAndSelected(e.symbol)} className="rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5 text-left transition hover:scale-[1.02]">
               <div className="text-4xl font-black text-cyan-100">{e.symbol}</div>
-              <div className="mt-1 text-sm text-slate-400">{e.name}</div>
-              <div className="mt-4 text-3xl font-black text-emerald-200">{e.durability}%</div>
-              <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">future resilience</div>
+              <div className="mt-1 text-sm text-slate-300">{e.name}</div>
+              <div className="mt-4 text-2xl font-black text-emerald-200">{e.durability}%</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">future fit</div>
             </button>
           ))}
         </div>
@@ -1332,6 +1382,8 @@ function TimeMachine({ selected, setSelected, setPage }) {
     </>
   );
 }
+
+
 
 function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
   const [email, setEmail] = useState("researcher@elementos.ai");
@@ -3014,112 +3066,458 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
 }
 
 function ExperimentalWellDriller({ setPage }) {
-  const [depth, setDepth] = useState(2800);
+  const [depth, setDepth] = useState(3200);
   const [pressure, setPressure] = useState(62);
   const [rpm, setRpm] = useState(118);
   const [mud, setMud] = useState(48);
-  const reservoirScore = Math.round(Math.min(99, Math.max(5, depth / 55 + pressure * 0.42 - mud * 0.18)));
-  const stability = Math.round(Math.min(99, Math.max(1, 100 - pressure * 0.45 + mud * 0.35 - rpm * 0.05)));
+  const [inclination, setInclination] = useState(22);
+  const [formation, setFormation] = useState("Layered sandstone");
 
-  const exportWell = () => downloadFile("elementos-well-driller-report.txt", `Experimental Well Driller Report\n\nDepth: ${depth} m\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nReservoir score: ${reservoirScore}%\nBore stability: ${stability}%`);
+  const formationProfiles = {
+    "Layered sandstone": { hardness: 0.85, porosity: 72, instability: 0.7, color: "from-amber-300/20 to-orange-500/10" },
+    "Shale pressure zone": { hardness: 1.15, porosity: 44, instability: 1.25, color: "from-slate-400/20 to-cyan-500/10" },
+    "Basalt cap rock": { hardness: 1.55, porosity: 24, instability: 0.85, color: "from-zinc-200/20 to-slate-700/20" },
+    "Carbonate reservoir": { hardness: 0.95, porosity: 82, instability: 0.75, color: "from-emerald-300/20 to-cyan-500/10" },
+  };
+
+  const fp = formationProfiles[formation] || formationProfiles["Layered sandstone"];
+  const depthKm = depth / 1000;
+  const torque = Math.round(rpm * fp.hardness + pressure * 1.8 - mud * 0.5 + inclination * 0.75);
+  const reservoirScore = Math.round(Math.min(99, Math.max(5, depth / 55 + pressure * 0.42 + fp.porosity * 0.18 - mud * 0.16)));
+  const boreStability = Math.round(Math.min(99, Math.max(1, 100 - pressure * fp.instability * 0.42 + mud * 0.46 - rpm * 0.045 - inclination * 0.18)));
+  const kickRisk = Math.round(Math.min(99, Math.max(1, pressure * 0.72 + depthKm * 7 - mud * 0.45 + fp.instability * 11)));
+  const rateOfPenetration = Math.round(Math.max(2, Math.min(80, rpm * 0.12 - fp.hardness * 6 + mud * 0.08 + pressure * 0.04)));
+  const casingLoad = Math.round(Math.min(99, Math.max(10, depthKm * 16 + inclination * 0.5 + pressure * 0.2)));
+
+  const strata = [
+    ["Surface cap", 12, "bg-cyan-300/15"],
+    ["Clay seal", 16, "bg-slate-400/15"],
+    ["Sand channel", 18, "bg-amber-300/15"],
+    ["Pressure lens", 20, "bg-rose-300/15"],
+    ["Target reservoir", 24, "bg-emerald-300/20"],
+  ];
+
+  const exportWell = () => downloadFile(
+    "elementos-experimental-well-driller-report.txt",
+    `ElementOS Experimental Well Driller Report\n\nFormation: ${formation}\nDepth: ${depth} m\nInclination: ${inclination} deg\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nTorque index: ${torque}\nReservoir score: ${reservoirScore}%\nBore stability: ${boreStability}%\nKick risk: ${kickRisk}%\nRate of penetration: ${rateOfPenetration} m/hr\nCasing load: ${casingLoad}%`
+  );
 
   return (
     <>
-      <Panel className="grid gap-8 xl:grid-cols-[1fr_.9fr]">
+      <Panel className="grid gap-8 xl:grid-cols-[1fr_.95fr]">
         <div>
           <Pill gold><Radar size={12}/> experimental subsurface simulator</Pill>
-          <h1 className="mt-4 text-5xl font-black sm:text-7xl">Experimental <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Well Driller</span></h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Model a cinematic drilling column through layered geology. Tune depth, pressure, RPM and mud balance, then jump into Seismo to compare P-wave and S-wave behaviour.</p>
-          <Info title="Connected workflow">Well Driller is now directly connected to Seismo: drill path first, seismic wave interpretation second, exportable readouts after.</Info>
-          <div className="mt-5 flex flex-wrap gap-3"><Button onClick={() => setPage("seismo")} variant="primary">Open Seismo</Button><Button onClick={exportWell}><Download size={16} className="inline"/> Export Well Report</Button></div>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Experimental <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Well Driller</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            A cinematic subsurface drilling simulator for wellbore geometry, formation pressure, mud balance, kick risk, target reservoir quality and seismic readiness.
+          </p>
+          <Info title="3D drilling intelligence">
+            This page now shows a visible 3D-style wellbore, layered geology, drilling telemetry, reservoir target scoring and direct handoff into Seismo for P-wave/S-wave analysis.
+          </Info>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Button onClick={exportWell} variant="primary"><Download size={16} className="inline"/> Export Well Report</Button>
+            <Button onClick={() => setPage("seismo")}>Open Seismo</Button>
+            <Button onClick={() => setPage("calculations")}>Open Calculation Core</Button>
+          </div>
         </div>
+
         <Panel>
-          <h2 className="text-3xl font-black">Drilling Controls</h2>
-          <div className="mt-5 grid gap-4">
-            {[["Depth", depth, setDepth, 500, 6500, "m"], ["Formation Pressure", pressure, setPressure, 1, 100, "%"], ["Drill RPM", rpm, setRpm, 40, 220, "rpm"], ["Mud Balance", mud, setMud, 1, 100, "%"]].map(([label, value, setter, min, max, unit]) => (
-              <label key={label} className="block text-sm text-slate-300"><div className="flex justify-between"><span>{label}</span><b className="text-cyan-100">{value} {unit}</b></div><input type="range" min={min} max={max} value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" /></label>
-            ))}
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Drilling command readout</div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4">
+              <div className="text-4xl font-black text-emerald-100">{reservoirScore}%</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">reservoir score</div>
+            </div>
+            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4">
+              <div className="text-4xl font-black text-cyan-100">{boreStability}%</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">bore stability</div>
+            </div>
+            <div className="rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4">
+              <div className="text-4xl font-black text-rose-100">{kickRisk}%</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">kick risk</div>
+            </div>
+            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">
+              <div className="text-4xl font-black text-amber-100">{rateOfPenetration}</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">m/hr rop</div>
+            </div>
           </div>
         </Panel>
       </Panel>
 
+      <GuidePanel page="welldriller" />
+
       <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
         <Panel>
-          <h2 className="text-3xl font-black">3D Well Profile</h2>
-          <div className="mt-6 h-[560px] rounded-[2rem] border border-cyan-300/15 bg-gradient-to-b from-slate-900 via-black to-slate-950 p-6" style={{ perspective: "1000px" }}>
-            <div className="relative mx-auto h-full max-w-sm" style={{ transform: "rotateX(58deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
-              {[0,1,2,3,4,5,6].map((i) => <div key={i} className="absolute left-0 right-0 h-16 rounded-3xl border border-white/10 bg-cyan-300/10" style={{ top: `${i*70}px`, transform: `translateZ(${-i*24}px)` }} />)}
-              <div className="absolute left-1/2 top-4 h-[455px] w-10 -translate-x-1/2 rounded-full border border-amber-200/40 bg-amber-300/20 shadow-[0_0_60px_rgba(251,191,36,.55)]" style={{ transform: "translateZ(80px)" }} />
-              <div className="absolute bottom-6 left-1/2 h-24 w-44 -translate-x-1/2 rounded-[50%] border border-emerald-300/40 bg-emerald-300/20 shadow-[0_0_80px_rgba(16,185,129,.65)]" style={{ transform: "translateZ(45px)" }} />
+          <h2 className="text-3xl font-black">Well Controls</h2>
+          <div className="mt-5 grid gap-4">
+            <label className="grid gap-2">
+              <span className="text-xs uppercase tracking-[.2em] text-slate-500">Formation</span>
+              <select value={formation} onChange={(e) => setFormation(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
+                {Object.keys(formationProfiles).map((k) => <option key={k}>{k}</option>)}
+              </select>
+            </label>
+            {[
+              ["Target Depth", depth, setDepth, 800, 6200, "m"],
+              ["Formation Pressure", pressure, setPressure, 5, 100, "%"],
+              ["Drill RPM", rpm, setRpm, 30, 220, "rpm"],
+              ["Mud Balance", mud, setMud, 5, 100, "%"],
+              ["Well Inclination", inclination, setInclination, 0, 72, "°"],
+            ].map(([label, value, setter, min, max, unit]) => (
+              <label key={label} className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-bold text-slate-200">{label}</span>
+                  <span className="font-black text-cyan-100">{value}{unit}</span>
+                </div>
+                <input type="range" min={min} max={max} value={value} onChange={(e) => setter(Number(e.target.value))} />
+              </label>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <Pill gold><Layers size={12}/> 3D subsurface profile</Pill>
+              <h2 className="mt-3 text-4xl font-black">Live Wellbore Geometry</h2>
+            </div>
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-sm font-bold text-emerald-100">Target {depth}m</div>
+          </div>
+
+          <div className="mt-6 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-slate-950/90 p-6 [perspective:1100px]">
+            <div className="relative mx-auto h-[520px] max-w-4xl [transform-style:preserve-3d] [transform:rotateX(58deg)_rotateZ(-24deg)]">
+              {strata.map(([label, height, cls], index) => (
+                <div
+                  key={label}
+                  className={`absolute left-1/2 top-1/2 rounded-[2rem] border border-white/10 ${cls} shadow-[0_0_50px_rgba(34,211,238,.08)]`}
+                  style={{
+                    width: `${500 - index * 32}px`,
+                    height: `${height * 7}px`,
+                    transform: `translate(-50%, ${-230 + index * 78}px) translateZ(${-index * 22}px)`,
+                  }}
+                >
+                  <div className="p-4 text-xs font-black uppercase tracking-[.2em] text-slate-300">{label}</div>
+                </div>
+              ))}
+
+              <div
+                className="absolute left-1/2 top-5 h-[450px] w-12 -translate-x-1/2 rounded-full border border-cyan-200/50 bg-cyan-300/20 shadow-[0_0_80px_rgba(34,211,238,.45)]"
+                style={{ transform: `translateX(${inclination * 1.4 - 40}px) rotateZ(${inclination / 2}deg)` }}
+              />
+              <div
+                className="absolute left-1/2 top-[380px] h-20 w-20 -translate-x-1/2 rounded-full border border-amber-200/60 bg-amber-300/30 shadow-[0_0_80px_rgba(251,191,36,.65)]"
+                style={{ transform: `translateX(${inclination * 1.8 - 54}px)` }}
+              />
+              <div
+                className="absolute left-1/2 top-[430px] h-14 w-52 -translate-x-1/2 rounded-full border border-emerald-200/40 bg-emerald-300/20 shadow-[0_0_90px_rgba(52,211,153,.35)]"
+                style={{ transform: `translateX(${inclination * 1.8 - 54}px) translateZ(30px)` }}
+              />
             </div>
           </div>
         </Panel>
-        <Panel>
-          <h2 className="text-3xl font-black">Reservoir Intelligence</h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {[["Reservoir Score", reservoirScore], ["Bore Stability", stability], ["Pressure Load", pressure], ["Mud Control", mud]].map(([label, value]) => <div key={label} className="rounded-[2rem] border border-white/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div><div className="mt-3 text-5xl font-black text-cyan-100">{value}%</div></div>)}
-          </div>
-          <div className="mt-6 grid h-72 grid-cols-10 items-end gap-2 rounded-[2rem] border border-white/10 bg-black/25 p-5">
-            {Array.from({ length: 10 }).map((_, i) => <div key={i} className="rounded-t-2xl bg-emerald-300/70" style={{ height: `${Math.max(10, reservoirScore - i*4 + Math.sin(i)*12)}%` }} />)}
-          </div>
-        </Panel>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        {[
+          ["Torque Index", torque, "rotary load through formation hardness"],
+          ["Casing Load", `${casingLoad}%`, "structural demand on well casing"],
+          ["Porosity Signal", `${fp.porosity}%`, "estimated reservoir openness"],
+        ].map(([title, value, desc]) => (
+          <Panel key={title}>
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
+            <div className="mt-3 text-5xl font-black text-cyan-100">{value}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+            <div className="mt-5 h-28 rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-black/30 to-fuchsia-400/10 [transform:perspective(700px)_rotateX(54deg)_rotateZ(-8deg)] shadow-[0_30px_80px_rgba(34,211,238,.12)]" />
+          </Panel>
+        ))}
       </div>
     </>
   );
 }
+
+
 
 function SeismoSimulator({ setPage }) {
   const [distance, setDistance] = useState(80);
   const [pVelocity, setPVelocity] = useState(6200);
   const [sVelocity, setSVelocity] = useState(3600);
   const [depth, setDepth] = useState(2800);
-  const pArrival = (distance * 1000) / pVelocity;
-  const sArrival = (distance * 1000) / sVelocity;
-  const gap = sArrival - pArrival;
-  const confidence = Math.round(Math.min(99, Math.max(45, 100 - gap * 1.4 + depth / 180)));
-  const exportSeismo = () => downloadFile("elementos-seismo-report.txt", `Seismo P/S Wave Report\n\nDistance: ${distance} km\nDepth: ${depth} m\nP-wave velocity: ${pVelocity} m/s\nS-wave velocity: ${sVelocity} m/s\nP arrival: ${pArrival.toFixed(2)} s\nS arrival: ${sArrival.toFixed(2)} s\nArrival gap: ${gap.toFixed(2)} s\nConfidence: ${confidence}%`);
+  const [noise, setNoise] = useState(18);
+  const [density, setDensity] = useState(62);
+
+  const pArrival = (distance * 1000) / Math.max(1, pVelocity);
+  const sArrival = (distance * 1000) / Math.max(1, sVelocity);
+  const gap = Math.max(0, sArrival - pArrival);
+  const epicentralEstimate = Math.round(gap * 8.4);
+  const clarity = Math.round(Math.min(99, Math.max(20, 100 - noise * 0.55 + density * 0.18 - gap * 0.7)));
+  const confidence = Math.round(Math.min(99, Math.max(35, clarity * 0.62 + depth / 180 - Math.abs(pVelocity - sVelocity) / 900)));
+  const waveRatio = (pVelocity / Math.max(1, sVelocity)).toFixed(2);
+
+  const waveSamples = Array.from({ length: 42 }, (_, i) => {
+    const x = 4 + i * 2.25;
+    const p = 50 + Math.sin(i * 0.75) * (10 + density * 0.05);
+    const s = 50 + Math.sin(i * 0.43 + 1.2) * (18 + noise * 0.08);
+    return { x, p, s };
+  });
+
+  const exportSeismo = () => downloadFile(
+    "elementos-seismo-ps-wave-report.txt",
+    `ElementOS Seismo P/S Wave Report\n\nDistance: ${distance} km\nDepth: ${depth} m\nP-wave velocity: ${pVelocity} m/s\nS-wave velocity: ${sVelocity} m/s\nP arrival: ${pArrival.toFixed(2)} s\nS arrival: ${sArrival.toFixed(2)} s\nArrival gap: ${gap.toFixed(2)} s\nEpicentral estimate: ${epicentralEstimate} km\nWave ratio: ${waveRatio}\nSignal clarity: ${clarity}%\nConfidence: ${confidence}%\nNoise: ${noise}%\nDensity contrast: ${density}%`
+  );
 
   return (
     <>
-      <Panel className="grid gap-8 xl:grid-cols-[1fr_.9fr]">
+      <Panel className="grid gap-8 xl:grid-cols-[1fr_.95fr]">
         <div>
           <Pill gold><Network size={12}/> seismic wave simulator</Pill>
-          <h1 className="mt-4 text-5xl font-black sm:text-7xl">Seismo <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">P/S Wave Simulator</span></h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Compare primary and secondary wave travel through a simulated subsurface volume. Designed to support the Experimental Well Driller workflow.</p>
-          <Info title="What this page does">P-waves arrive first, S-waves arrive later. The gap helps interpret distance, depth and subsurface response.</Info>
-          <div className="mt-5 flex flex-wrap gap-3"><Button onClick={() => setPage("welldriller")} variant="primary">Back to Well Driller</Button><Button onClick={exportSeismo}><Download size={16} className="inline"/> Export Seismo Report</Button></div>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Seismo <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">P/S Wave Lab</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Compare P-wave and S-wave travel through a simulated subsurface field. See arrival gaps, velocity ratios, depth response, clarity, and 3D wave propagation.
+          </p>
+          <Info title="Seismic intelligence upgrade">
+            P-waves arrive first and S-waves arrive later. The gap between them helps estimate distance, formation response and seismic clarity for the well path.
+          </Info>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Button onClick={exportSeismo} variant="primary"><Download size={16} className="inline"/> Export Seismo Report</Button>
+            <Button onClick={() => setPage("welldriller")}>Return to Well Driller</Button>
+            <Button onClick={() => setPage("visualization")}>Open Visual Engine</Button>
+          </div>
         </div>
+
         <Panel>
-          <h2 className="text-3xl font-black">Wave Controls</h2>
-          <div className="mt-5 grid gap-4">
-            {[["Distance", distance, setDistance, 5, 220, "km"], ["P-wave Velocity", pVelocity, setPVelocity, 3000, 9000, "m/s"], ["S-wave Velocity", sVelocity, setSVelocity, 1400, 5600, "m/s"], ["Depth", depth, setDepth, 500, 6500, "m"]].map(([label, value, setter, min, max, unit]) => (
-              <label key={label} className="block text-sm text-slate-300"><div className="flex justify-between"><span>{label}</span><b className="text-cyan-100">{value} {unit}</b></div><input type="range" min={min} max={max} step="10" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" /></label>
-            ))}
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Seismic readout</div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4">
+              <div className="text-4xl font-black text-cyan-100">{pArrival.toFixed(2)}s</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">P arrival</div>
+            </div>
+            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">
+              <div className="text-4xl font-black text-amber-100">{sArrival.toFixed(2)}s</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">S arrival</div>
+            </div>
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4">
+              <div className="text-4xl font-black text-emerald-100">{gap.toFixed(2)}s</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">arrival gap</div>
+            </div>
+            <div className="rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-4">
+              <div className="text-4xl font-black text-fuchsia-100">{confidence}%</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">confidence</div>
+            </div>
           </div>
         </Panel>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
+      <GuidePanel page="seismo" />
+
+      <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
         <Panel>
-          <h2 className="text-3xl font-black">3D Wavefield</h2>
-          <div className="mt-6 h-[520px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-b from-slate-950 via-black to-slate-950 p-8" style={{ perspective: "1000px" }}>
-            <div className="relative mx-auto h-full max-w-4xl" style={{ transform: "rotateX(58deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
-              {[0,1,2,3,4,5,6].map((i) => <div key={i} className="absolute left-4 right-4 h-12 rounded-2xl border border-white/10 bg-white/[.035]" style={{ top: `${i*62}px`, transform: `translateZ(${-i*20}px)` }} />)}
-              {[0,1,2,3,4,5].map((i) => <div key={`p-${i}`} className="absolute h-10 w-10 rounded-full border border-cyan-200/60 bg-cyan-300/30 shadow-[0_0_55px_rgba(34,211,238,.9)]" style={{ left: `${8 + i*14}%`, top: `${95 + i*28}px`, transform: `translateZ(${120-i*8}px) scale(${1+i*.08})` }} />)}
-              {[0,1,2,3,4,5].map((i) => <div key={`s-${i}`} className="absolute h-12 w-12 rounded-full border border-fuchsia-200/60 bg-fuchsia-400/25 shadow-[0_0_55px_rgba(217,70,239,.85)]" style={{ left: `${12 + i*12}%`, top: `${170 + i*24}px`, transform: `translateZ(${70-i*8}px) rotate(45deg) scale(${1+i*.06})` }} />)}
+          <h2 className="text-3xl font-black">Wave Controls</h2>
+          <div className="mt-5 grid gap-4">
+            {[
+              ["Sensor Distance", distance, setDistance, 10, 220, "km"],
+              ["Depth", depth, setDepth, 200, 7200, "m"],
+              ["P-Wave Velocity", pVelocity, setPVelocity, 3200, 9200, "m/s"],
+              ["S-Wave Velocity", sVelocity, setSVelocity, 1200, 6200, "m/s"],
+              ["Signal Noise", noise, setNoise, 0, 100, "%"],
+              ["Density Contrast", density, setDensity, 0, 100, "%"],
+            ].map(([label, value, setter, min, max, unit]) => (
+              <label key={label} className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-bold text-slate-200">{label}</span>
+                  <span className="font-black text-cyan-100">{value}{unit}</span>
+                </div>
+                <input type="range" min={min} max={max} value={value} onChange={(e) => setter(Number(e.target.value))} />
+              </label>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <Pill gold><Orbit size={12}/> 3D seismic wavefield</Pill>
+              <h2 className="mt-3 text-4xl font-black">P/S Wave Tunnel</h2>
+            </div>
+            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm font-bold text-cyan-100">Ratio {waveRatio}x</div>
+          </div>
+
+          <div className="mt-6 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-slate-950/90 p-6 [perspective:1100px]">
+            <div className="relative mx-auto h-[420px] max-w-4xl [transform-style:preserve-3d] [transform:rotateX(62deg)_rotateZ(-30deg)]">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute left-1/2 top-1/2 rounded-full border border-cyan-300/20 bg-cyan-300/5"
+                  style={{
+                    width: `${120 + i * 70}px`,
+                    height: `${54 + i * 32}px`,
+                    transform: `translate(-50%, -50%) translateZ(${i * 18}px)`,
+                    boxShadow: i % 2 === 0 ? "0 0 42px rgba(34,211,238,.16)" : "0 0 42px rgba(251,191,36,.12)",
+                  }}
+                />
+              ))}
+              <div className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 shadow-[0_0_80px_rgba(251,191,36,.85)]" />
+              <div className="absolute left-[15%] top-[45%] h-5 w-[70%] rounded-full bg-cyan-300/40 shadow-[0_0_70px_rgba(34,211,238,.5)]" />
+              <div className="absolute left-[22%] top-[58%] h-5 w-[56%] rounded-full bg-amber-300/35 shadow-[0_0_70px_rgba(251,191,36,.45)]" />
             </div>
           </div>
         </Panel>
-        <Panel>
-          <h2 className="text-3xl font-black">Arrival Readout</h2>
-          <div className="mt-5 space-y-4">
-            {[["P arrival", `${pArrival.toFixed(2)}s`], ["S arrival", `${sArrival.toFixed(2)}s`], ["S-P gap", `${gap.toFixed(2)}s`], ["Confidence", `${confidence}%`]].map(([label, value]) => <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div><div className="mt-2 text-4xl font-black text-cyan-100">{value}</div></div>)}
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <Pill><BarChart3 size={12}/> seismogram</Pill>
+            <h2 className="mt-3 text-4xl font-black">P-Wave / S-Wave Trace</h2>
           </div>
-        </Panel>
+          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-sm font-bold text-emerald-100">
+            Epicentral estimate: {epicentralEstimate} km
+          </div>
+        </div>
+        <svg viewBox="0 0 100 100" className="mt-6 h-72 w-full rounded-[2rem] border border-white/10 bg-black/25 p-4">
+          {[20,40,60,80].map((y) => <line key={y} x1="4" x2="96" y1={y} y2={y} stroke="rgba(255,255,255,.08)" />)}
+          <polyline points={waveSamples.map((s) => `${s.x},${s.p}`).join(" ")} fill="none" stroke="rgba(34,211,238,.95)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+          <polyline points={waveSamples.map((s) => `${s.x},${s.s}`).join(" ")} fill="none" stroke="rgba(251,191,36,.92)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          <text x="6" y="10" className="fill-cyan-100 text-[4px]">P-wave trace</text>
+          <text x="6" y="18" className="fill-amber-100 text-[4px]">S-wave trace</text>
+        </svg>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-4">
+        {[
+          ["Wave Ratio", `${waveRatio}x`, "P-wave speed compared to S-wave speed"],
+          ["Signal Clarity", `${clarity}%`, "readability after noise and density contrast"],
+          ["Arrival Gap", `${gap.toFixed(2)}s`, "difference between P and S arrival"],
+          ["Depth Response", `${Math.round(depth / 100) / 10}km`, "current simulated event depth"],
+        ].map(([title, value, desc]) => (
+          <Panel key={title}>
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
+            <div className="mt-3 text-4xl font-black text-cyan-100">{value}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+          </Panel>
+        ))}
       </div>
     </>
   );
 }
+
+
+
+
+function UniversalSimulationReports({ selected = "Al", compare = [], session, isPro, startCheckout, setPage }) {
+  const [source, setSource] = useState("Complete Simulation Dossier");
+  const active = elementMap[selected] || elementMap.Al;
+  const activeScore = score(active.symbol);
+  const compareSet = compare?.length ? compare : ["Al", "Fe", "Ti", "Cu"];
+  const compatibility = compareSet.length >= 2 ? compatibilityScore(compareSet[0], compareSet[1]) : 84;
+  const timeRisk = Math.max(5, Math.min(95, Math.round(100 - activeScore.stability * 15 + activeScore.rarity * 2)));
+  const drillingRisk = Math.max(8, Math.min(96, Math.round(42 + activeScore.pressure * 7 - activeScore.stability * 3)));
+  const seismoClarity = Math.max(55, Math.min(99, Math.round(62 + activeScore.pressure * 6 + activeScore.thermal * 3)));
+  const scenarioConfidence = Math.max(70, Math.min(98, Math.round(76 + activeScore.stability * 3 + compatibility * 0.08)));
+  const universalScore = Math.max(1, Math.min(99, Math.round((compatibility + scenarioConfidence + seismoClarity + (100 - timeRisk)) / 4)));
+
+  const reportRows = [
+    ["Time Machine", `${100 - timeRisk}%`, "Long-horizon stability signal across environmental exposure and fatigue."],
+    ["Scenario Builder", `${scenarioConfidence}%`, "Plain-English scenario confidence based on material durability and inferred stress."],
+    ["Experimental Well Driller", `${100 - drillingRisk}%`, "Subsurface drilling readiness from pressure, depth and formation response."],
+    ["Seismo", `${seismoClarity}%`, "P-wave/S-wave clarity estimate for subsurface response interpretation."],
+  ];
+
+  const timeline = [0, 1, 10, 25, 50, 100].map((year) => {
+    const stability = Math.max(8, Math.round(96 - Math.log10(year + 1) * (timeRisk * 0.72)));
+    const pressure = Math.min(99, Math.round(24 + Math.log10(year + 1) * drillingRisk * 0.55));
+    const signal = Math.max(15, Math.round(seismoClarity - Math.log10(year + 1) * 8));
+    return { year, stability, pressure, signal };
+  });
+
+  const exportUniversalReport = () => {
+    const content = `ElementOS Universal Simulation Report\n\nSource: ${source}\nMaterial focus: ${active.name} (${active.symbol})\nCompare set: ${compareSet.join(" + ")}\nUniversal simulation score: ${universalScore}%\n\nModules:\n${reportRows.map(([name, value, desc]) => `${name}: ${value} — ${desc}`).join("\n")}\n\nTimeline:\n${timeline.map((t) => `Year ${t.year}: stability ${t.stability}%, drilling pressure ${t.pressure}%, seismic signal ${t.signal}%`).join("\n")}\n\nRecommended next step: validate the strongest module in Time Machine, Well Driller or Seismo, then export a focused report.\n\nGenerated by ElementOS.`;
+    downloadFile(`ElementOS-universal-simulation-report-${active.symbol}.txt`, content);
+  };
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.08fr_.92fr]">
+        <div>
+          <Pill gold><BookOpen size={12}/> universal simulation report engine</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Simulation <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Report Engine</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Combine Time Machine, Scenario Builder, Experimental Well Driller and Seismo into one polished research-ready dossier. This turns ElementOS simulations into outputs users can save, share and present.
+          </p>
+          <Info title="Why this matters">
+            A simulator is interesting. A simulator that generates a professional report becomes a product. This page connects all major intelligence modules into a single exportable simulation narrative.
+          </Info>
+        </div>
+
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Universal score</div>
+          <div className="mt-3 text-7xl font-black text-cyan-100">{universalScore}%</div>
+          <p className="mt-3 text-sm leading-6 text-slate-400">Combined confidence across material compatibility, future-state stability, drilling readiness and seismic clarity.</p>
+          <select value={source} onChange={(e) => setSource(e.target.value)} className="mt-5 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
+            {["Complete Simulation Dossier", "Time Machine Focus", "Scenario Builder Focus", "Well Driller Focus", "Seismo Focus"].map((x) => <option key={x}>{x}</option>)}
+          </select>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <Button onClick={exportUniversalReport} variant="primary"><Download size={16} className="inline"/> Export Report</Button>
+            {!isPro ? <Button onClick={session ? startCheckout : () => setPage("login")}>Unlock Pro PDF</Button> : <Button onClick={() => setPage("reports")}>Open Reports</Button>}
+          </div>
+        </Panel>
+      </Panel>
+
+      <GuidePanel page="simreports" />
+
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        {reportRows.map(([name, value, desc]) => (
+          <Panel key={name}>
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">{name}</div>
+            <div className="mt-3 text-5xl font-black text-cyan-100">{value}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+          </Panel>
+        ))}
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill><BarChart3 size={12}/> integrated timeline</Pill>
+            <h2 className="mt-3 text-4xl font-black">Cross-Simulation Timeline</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">One visual timeline blending long-term material stability, drilling pressure load and seismic signal quality.</p>
+          </div>
+          <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm font-bold text-amber-100">{active.symbol} focus · {compareSet.join(" + ")}</div>
+        </div>
+
+        <svg viewBox="0 0 100 100" className="mt-6 h-80 w-full rounded-[2rem] border border-white/10 bg-black/25 p-4">
+          {[20,40,60,80].map((y) => <line key={y} x1="4" x2="96" y1={y} y2={y} stroke="rgba(255,255,255,.08)" />)}
+          <polyline points={timeline.map((t, i) => `${8 + i * 17},${96 - t.stability}`).join(" ")} fill="none" stroke="rgba(34,211,238,.95)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+          <polyline points={timeline.map((t, i) => `${8 + i * 17},${96 - t.signal}`).join(" ")} fill="none" stroke="rgba(251,191,36,.92)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          <polyline points={timeline.map((t, i) => `${8 + i * 17},${t.pressure}`).join(" ")} fill="none" stroke="rgba(244,63,94,.85)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          {timeline.map((t, i) => <text key={t.year} x={8 + i * 17} y="98" textAnchor="middle" className="fill-slate-400 text-[3.5px]">Y{t.year}</text>)}
+          <text x="5" y="8" className="fill-cyan-100 text-[4px]">Stability</text>
+          <text x="5" y="15" className="fill-amber-100 text-[4px]">Seismic signal</text>
+          <text x="5" y="22" className="fill-rose-100 text-[4px]">Pressure load</text>
+        </svg>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        {[
+          ["Open Time Machine", "timemachine", "Validate long-horizon ageing and degradation."],
+          ["Open Well Driller", "welldriller", "Inspect subsurface path, depth and reservoir targeting."],
+          ["Open Seismo", "seismo", "Compare P-wave and S-wave response."],
+        ].map(([title, target, desc]) => (
+          <Panel key={title}>
+            <h3 className="text-2xl font-black text-cyan-100">{title}</h3>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+            <Button onClick={() => setPage(target)} className="mt-5 w-full" variant="primary">Launch Module</Button>
+          </Panel>
+        ))}
+      </div>
+    </>
+  );
+}
+
 
 function MobileBottomNav({ page, setPage }) {
   const items = [
@@ -3132,6 +3530,7 @@ function MobileBottomNav({ page, setPage }) {
     ["visualization", "Visual", BarChart3],
     ["welldriller", "Well", Radar],
     ["seismo", "Seismo", Network],
+    ["simreports", "Reports+", BookOpen],
     ["calculations", "Calc", Calculator],
     ["explorer", "Explore", Search],
     ["compare", "Compare", BarChart3],
@@ -3365,6 +3764,7 @@ const startCheckout = async () => {
       visualization: <AdvancedVisualization selected={selected} compare={compare} setPage={setPage} />,
       welldriller: <ExperimentalWellDriller setPage={setPage} />,
       seismo: <SeismoSimulator setPage={setPage} />,
+      simreports: <UniversalSimulationReports selected={selected} compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} setPage={setPage} />,
       login: (
         <LoginAccount
           session={session}
