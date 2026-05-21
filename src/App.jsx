@@ -344,6 +344,16 @@ function guidanceForPage(page) {
       description: "Scenario Builder turns plain-English material situations into risk scores, lifespan estimates, failure probabilities, substitute suggestions and exportable scenario reports.",
       next: "Type a real-world scenario, run the simulation, then export or send the result into Time Machine.",
     },
+    welldriller: {
+      title: "What Experimental Well Driller does",
+      description: "The Experimental Well Driller models a deep subsurface bore path, drilling load, formation pressure, reservoir depth and seismic-readiness using clear visual simulation cards.",
+      next: "Adjust depth and formation pressure, inspect the 3D-style well profile, then open Seismo to compare P-wave and S-wave behaviour.",
+    },
+    seismo: {
+      title: "What Seismo does",
+      description: "Seismo compares P-wave and S-wave travel through a simulated subsurface field so users can understand arrival gaps, wave speed and depth response.",
+      next: "Tune distance, depth and wave speeds, then export the seismic readout or return to Well Driller.",
+    },
     lab: {
       title: "What My Lab does",
       description: "My Lab collects saved scenarios, favourite materials, recent simulations and report-ready discovery assets in one workspace-style page.",
@@ -353,16 +363,6 @@ function guidanceForPage(page) {
       title: "What Advanced Visualization does",
       description: "The Advanced Visualization Engine turns scenarios, time horizons and material metrics into survival curves, degradation timelines, AI confidence waveforms and cinematic telemetry cards.",
       next: "Pick a material, inspect the survival curve, compare the pulse cards, then export the visual telemetry summary.",
-    },
-    welldriller: {
-      title: "What Experimental Well Driller does",
-      description: "The Well Driller is a 3D-style subsurface simulator for exploring layered geology, drilling depth, reservoir targets, pressure windows and seismic risk before sending the scenario to Seismo.",
-      next: "Adjust depth, formation pressure and drill speed, inspect the 3D well column, then open Seismo to compare P-wave and S-wave response.",
-    },
-    seismo: {
-      title: "What Seismo does",
-      description: "Seismo simulates P-wave and S-wave travel across depth so users can compare arrival times, velocity differences, wave separation and subsurface response.",
-      next: "Set depth and wave speeds, compare arrival times, then return to Well Driller with the seismic readout.",
     },
     reports: {
       title: "What reports do",
@@ -486,13 +486,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["landing", "Landing", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["welldriller", "Well Driller", Radar], ["seismo", "Seismo", Network], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
+  const items = [["landing", "Landing", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -2003,126 +2003,78 @@ function IsotopeLab() {
 
 
 function CalculationCore() {
-  const [mass, setMass] = useState(12);
-  const [velocity, setVelocity] = useState(8);
-  const [voltage, setVoltage] = useState(12);
-  const [current, setCurrent] = useState(3);
-  const [depth, setDepth] = useState(2400);
-  const [density, setDensity] = useState(2.65);
-  const [area, setArea] = useState(0.12);
-  const [pressureGradient, setPressureGradient] = useState(10.8);
+  const [density, setDensity] = useState(7850);
+  const [volume, setVolume] = useState(0.42);
+  const [force, setForce] = useState(12500);
+  const [area, setArea] = useState(0.18);
+  const [distance, setDistance] = useState(75);
+  const [time, setTime] = useState(14);
 
-  const kinetic = 0.5 * mass * velocity * velocity;
-  const power = voltage * current;
-  const hydrostatic = depth * pressureGradient;
-  const force = hydrostatic * area;
-  const formationSignal = Math.min(99, Math.max(1, Math.round((density * 18 + pressureGradient * 3 + depth / 120) / 1.35)));
-  const pWave = Math.round(1450 + density * 950 + pressureGradient * 40);
-  const sWave = Math.round(pWave * 0.58);
-  const impedance = Math.round(density * pWave);
+  const mass = density * volume;
+  const pressure = force / Math.max(area, 0.001);
+  const velocity = distance / Math.max(time, 0.001);
+  const energy = 0.5 * mass * velocity * velocity;
+  const signal = Math.round(Math.min(99, Math.max(1, pressure / 1800 + energy / 25000)));
 
-  const exportSummary = () => {
+  const exportCalc = () => {
     downloadFile(
       "elementos-calculation-core-report.txt",
-      `ElementOS Calculation Core Report
-
-Kinetic Energy: ${kinetic.toFixed(2)} J
-Electrical Power: ${power.toFixed(2)} W
-Hydrostatic Index: ${hydrostatic.toFixed(2)} kPa
-Force Window: ${force.toFixed(2)} kN
-P-wave Estimate: ${pWave} m/s
-S-wave Estimate: ${sWave} m/s
-Acoustic Impedance: ${impedance}
-Formation Signal: ${formationSignal}%
-Generated: ${new Date().toLocaleString()}`
+      `ElementOS Calculation Core Report\n\nDensity: ${density} kg/m3\nVolume: ${volume} m3\nMass: ${mass.toFixed(2)} kg\nForce: ${force} N\nArea: ${area} m2\nPressure: ${pressure.toFixed(2)} Pa\nDistance: ${distance} m\nTime: ${time} s\nVelocity: ${velocity.toFixed(2)} m/s\nEnergy proxy: ${energy.toFixed(2)} J\nTelemetry signal: ${signal}%`
     );
   };
 
   return (
     <>
-      <Panel>
-        <Pill gold><Calculator size={12}/> calculation core</Pill>
-        <h1 className="mt-4 text-5xl font-black sm:text-7xl">Calculation <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Core</span></h1>
-        <Info title="Premium calculation upgrade">
-          This page now behaves like a scientific control room: energy, electrical power, well-depth pressure, seismic estimates and formation signal are calculated together and can be exported as a research note.
-        </Info>
+      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
+        <div>
+          <Pill gold><Calculator size={12}/> premium calculation engine</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">Calculation <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Core</span></h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A serious engineering-style calculation page for mass, pressure, velocity, kinetic energy and simulation signal. This is now designed to support reports, drilling scenarios, Seismo analysis and material decisions.</p>
+          <Info title="What to do here">Change the physical inputs, watch the output cards update instantly, then export a calculation report for your research workflow.</Info>
+        </div>
+        <Panel>
+          <h2 className="text-3xl font-black">Live Inputs</h2>
+          <div className="mt-5 grid gap-4">
+            {[
+              ["Density", density, setDensity, 500, 20000, "kg/m³"],
+              ["Volume", volume, setVolume, 0.05, 3, "m³"],
+              ["Force", force, setForce, 100, 50000, "N"],
+              ["Area", area, setArea, 0.02, 2, "m²"],
+              ["Distance", distance, setDistance, 1, 250, "m"],
+              ["Time", time, setTime, 1, 60, "s"],
+            ].map(([label, value, setter, min, max, unit]) => (
+              <label key={label} className="block text-sm text-slate-300">
+                <div className="flex justify-between"><span>{label}</span><b className="text-cyan-100">{Number(value).toFixed(label === "Volume" || label === "Area" ? 2 : 0)} {unit}</b></div>
+                <input type="range" min={min} max={max} step={label === "Volume" || label === "Area" ? 0.01 : 1} value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" />
+              </label>
+            ))}
+          </div>
+        </Panel>
       </Panel>
 
       <div className="grid gap-6 xl:grid-cols-4">
         {[
-          ["Kinetic Energy", `${kinetic.toLocaleString()} J`, "E = 0.5 × m × v²"],
-          ["Electrical Power", `${power.toLocaleString()} W`, "P = V × I"],
-          ["Hydrostatic Index", `${hydrostatic.toLocaleString()} kPa`, "Depth × gradient"],
-          ["Formation Signal", `${formationSignal}%`, "density + pressure + depth"],
-        ].map(([title, value, formula]) => (
-          <Panel key={title}>
-            <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
-            <div className="mt-3 text-4xl font-black text-cyan-100">{value}</div>
-            <div className="mt-2 font-mono text-xs text-slate-400">{formula}</div>
-          </Panel>
+          ["Mass", `${mass.toFixed(1)} kg`, "density × volume"],
+          ["Pressure", `${pressure.toFixed(0)} Pa`, "force ÷ area"],
+          ["Velocity", `${velocity.toFixed(2)} m/s`, "distance ÷ time"],
+          ["Energy", `${energy.toFixed(0)} J`, "kinetic proxy"],
+        ].map(([title, value, desc]) => (
+          <Panel key={title}><div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div><div className="mt-3 text-4xl font-black text-cyan-100">{value}</div><p className="mt-2 text-sm text-slate-400">{desc}</p></Panel>
         ))}
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-2">
-        <Panel>
-          <h2 className="text-3xl font-black">Energy + Power Controls</h2>
-          <div className="mt-5 grid gap-4 md:grid-cols-2">
-            {[
-              ["Mass", mass, setMass, "kg"],
-              ["Velocity", velocity, setVelocity, "m/s"],
-              ["Voltage", voltage, setVoltage, "V"],
-              ["Current", current, setCurrent, "A"],
-            ].map(([label, value, setter, unit]) => (
-              <label key={label} className="text-sm text-slate-400">
-                {label} ({unit})
-                <input type="number" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none" />
-              </label>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel>
-          <h2 className="text-3xl font-black">Well + Seismic Controls</h2>
-          <div className="mt-5 grid gap-4 md:grid-cols-2">
-            {[
-              ["Depth", depth, setDepth, "m"],
-              ["Density", density, setDensity, "g/cc"],
-              ["Bore Area", area, setArea, "m²"],
-              ["Pressure Gradient", pressureGradient, setPressureGradient, "kPa/m"],
-            ].map(([label, value, setter, unit]) => (
-              <label key={label} className="text-sm text-slate-400">
-                {label} ({unit})
-                <input type="number" value={value} step="0.01" onChange={(e) => setter(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none" />
-              </label>
-            ))}
-          </div>
-        </Panel>
       </div>
 
       <Panel>
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="text-3xl font-black">3D Calculation Telemetry Surface</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">A visible 3D-style graph surface summarises the calculation field: energy, power, pressure, wave speed and formation signal.</p>
-          </div>
-          <Button onClick={exportSummary} variant="primary"><Download size={16} className="inline"/> Export Calculation Report</Button>
+          <div><Pill><BarChart3 size={12}/> visual calculation telemetry</Pill><h2 className="mt-3 text-4xl font-black">Calculation Signal Surface</h2><p className="mt-2 text-sm leading-6 text-slate-400">A premium visual readout connecting pressure, mass and energy into one simulation confidence layer.</p></div>
+          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-5 py-4 text-3xl font-black text-emerald-100">{signal}%</div>
         </div>
-        <div className="mt-8 grid gap-5 md:grid-cols-5" style={{ perspective: "900px" }}>
-          {[
-            ["Energy", Math.min(100, kinetic / 10)],
-            ["Power", Math.min(100, power * 2)],
-            ["Pressure", Math.min(100, hydrostatic / 300)],
-            ["P-wave", Math.min(100, pWave / 45)],
-            ["Signal", formationSignal],
-          ].map(([label, value], i) => (
-            <div key={label} className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-4" style={{ transform: `rotateX(58deg) rotateZ(${-14 + i * 7}deg) translateY(${i % 2 ? 6 : -6}px)`, transformStyle: "preserve-3d" }}>
-              <div className="h-40 rounded-2xl border border-white/10 bg-black/30 p-3">
-                <div className="mt-auto rounded-xl bg-cyan-300/80 shadow-[0_0_35px_rgba(34,211,238,.55)]" style={{ height: `${Math.max(10, value)}%` }} />
-              </div>
-              <div className="mt-4 text-center text-sm font-black text-cyan-100">{label}</div>
-            </div>
-          ))}
+        <div className="mt-8 grid h-64 grid-cols-12 items-end gap-2 rounded-[2rem] border border-white/10 bg-black/25 p-5">
+          {Array.from({ length: 12 }).map((_, i) => {
+            const h = Math.max(12, Math.min(100, signal + Math.sin(i * 0.9) * 22 + i * 2));
+            return <div key={i} className="rounded-t-2xl bg-cyan-300/80 shadow-[0_0_30px_rgba(34,211,238,.35)]" style={{ height: `${h}%` }} />;
+          })}
         </div>
+        <div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportCalc} variant="primary"><Download size={16} className="inline"/> Export Calculation Report</Button></div>
       </Panel>
     </>
   );
@@ -3062,72 +3014,53 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
 }
 
 function ExperimentalWellDriller({ setPage }) {
-  const [depth, setDepth] = useState(3200);
-  const [bitSpeed, setBitSpeed] = useState(74);
-  const [mudWeight, setMudWeight] = useState(12.4);
-  const [formationPressure, setFormationPressure] = useState(68);
+  const [depth, setDepth] = useState(2800);
+  const [pressure, setPressure] = useState(62);
+  const [rpm, setRpm] = useState(118);
+  const [mud, setMud] = useState(48);
+  const reservoirScore = Math.round(Math.min(99, Math.max(5, depth / 55 + pressure * 0.42 - mud * 0.18)));
+  const stability = Math.round(Math.min(99, Math.max(1, 100 - pressure * 0.45 + mud * 0.35 - rpm * 0.05)));
 
-  const targetDepth = 4200;
-  const progress = Math.min(100, Math.round((depth / targetDepth) * 100));
-  const stability = Math.max(4, Math.min(99, Math.round(100 - Math.abs(formationPressure - mudWeight * 5.2) - bitSpeed * 0.12)));
-  const risk = Math.max(1, Math.min(99, 100 - stability));
-  const reservoirSignal = Math.max(1, Math.min(99, Math.round(depth / 55 + formationPressure * 0.35)));
-
-  const exportReport = () => {
-    downloadFile(
-      "elementos-well-driller-report.txt",
-      `ElementOS Experimental Well Driller Report\n\nDepth: ${depth} m\nTarget Depth: ${targetDepth} m\nProgress: ${progress}%\nBit Speed: ${bitSpeed} RPM\nMud Weight: ${mudWeight} ppg\nFormation Pressure: ${formationPressure}%\nBore Stability: ${stability}%\nDrilling Risk: ${risk}%\nReservoir Signal: ${reservoirSignal}%\nGenerated: ${new Date().toLocaleString()}`
-    );
-  };
+  const exportWell = () => downloadFile("elementos-well-driller-report.txt", `Experimental Well Driller Report\n\nDepth: ${depth} m\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nReservoir score: ${reservoirScore}%\nBore stability: ${stability}%`);
 
   return (
     <>
       <Panel className="grid gap-8 xl:grid-cols-[1fr_.9fr]">
         <div>
-          <Pill gold><Radar size={12}/> experimental drilling simulator</Pill>
+          <Pill gold><Radar size={12}/> experimental subsurface simulator</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">Experimental <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Well Driller</span></h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A 3D-style subsurface simulator for drilling depth, pressure windows, formation layers, bore stability and seismic handoff.</p>
-          <Info title="3D drilling mode">This page now has visible perspective geometry: layered strata slabs, a central wellbore, drill string, target reservoir and 3D telemetry surfaces.</Info>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Model a cinematic drilling column through layered geology. Tune depth, pressure, RPM and mud balance, then jump into Seismo to compare P-wave and S-wave behaviour.</p>
+          <Info title="Connected workflow">Well Driller is now directly connected to Seismo: drill path first, seismic wave interpretation second, exportable readouts after.</Info>
+          <div className="mt-5 flex flex-wrap gap-3"><Button onClick={() => setPage("seismo")} variant="primary">Open Seismo</Button><Button onClick={exportWell}><Download size={16} className="inline"/> Export Well Report</Button></div>
         </div>
         <Panel>
-          <h2 className="text-3xl font-black">Drilling Readout</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {[["Progress", `${progress}%`], ["Bore Stability", `${stability}%`], ["Risk", `${risk}%`], ["Reservoir", `${reservoirSignal}%`]].map(([a,b]) => (
-              <div key={a} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{a}</div><div className="mt-2 text-3xl font-black text-cyan-100">{b}</div></div>
+          <h2 className="text-3xl font-black">Drilling Controls</h2>
+          <div className="mt-5 grid gap-4">
+            {[["Depth", depth, setDepth, 500, 6500, "m"], ["Formation Pressure", pressure, setPressure, 1, 100, "%"], ["Drill RPM", rpm, setRpm, 40, 220, "rpm"], ["Mud Balance", mud, setMud, 1, 100, "%"]].map(([label, value, setter, min, max, unit]) => (
+              <label key={label} className="block text-sm text-slate-300"><div className="flex justify-between"><span>{label}</span><b className="text-cyan-100">{value} {unit}</b></div><input type="range" min={min} max={max} value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" /></label>
             ))}
           </div>
-          <div className="mt-5 flex flex-wrap gap-2"><Button onClick={() => setPage("seismo")} variant="primary">Open Seismo</Button><Button onClick={exportReport}>Export Well Report</Button></div>
         </Panel>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[.75fr_1.25fr]">
+      <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
         <Panel>
-          <h2 className="text-3xl font-black">Drilling Controls</h2>
-          <div className="mt-5 space-y-5">
-            {[
-              ["Depth", depth, setDepth, 500, 5200, "m"],
-              ["Bit Speed", bitSpeed, setBitSpeed, 10, 140, "RPM"],
-              ["Mud Weight", mudWeight, setMudWeight, 7, 20, "ppg"],
-              ["Formation Pressure", formationPressure, setFormationPressure, 5, 98, "%"],
-            ].map(([label, value, setter, min, max, unit]) => (
-              <label key={label} className="block text-sm text-slate-400">{label}: <b className="text-cyan-100">{value} {unit}</b><input type="range" min={min} max={max} step="1" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" /></label>
-            ))}
+          <h2 className="text-3xl font-black">3D Well Profile</h2>
+          <div className="mt-6 h-[560px] rounded-[2rem] border border-cyan-300/15 bg-gradient-to-b from-slate-900 via-black to-slate-950 p-6" style={{ perspective: "1000px" }}>
+            <div className="relative mx-auto h-full max-w-sm" style={{ transform: "rotateX(58deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
+              {[0,1,2,3,4,5,6].map((i) => <div key={i} className="absolute left-0 right-0 h-16 rounded-3xl border border-white/10 bg-cyan-300/10" style={{ top: `${i*70}px`, transform: `translateZ(${-i*24}px)` }} />)}
+              <div className="absolute left-1/2 top-4 h-[455px] w-10 -translate-x-1/2 rounded-full border border-amber-200/40 bg-amber-300/20 shadow-[0_0_60px_rgba(251,191,36,.55)]" style={{ transform: "translateZ(80px)" }} />
+              <div className="absolute bottom-6 left-1/2 h-24 w-44 -translate-x-1/2 rounded-[50%] border border-emerald-300/40 bg-emerald-300/20 shadow-[0_0_80px_rgba(16,185,129,.65)]" style={{ transform: "translateZ(45px)" }} />
+            </div>
           </div>
         </Panel>
-
         <Panel>
-          <h2 className="text-3xl font-black">3D Wellbore Scene</h2>
-          <div className="mt-8 h-[520px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-b from-slate-950 via-slate-900 to-black p-8" style={{ perspective: "1000px" }}>
-            <div className="relative mx-auto h-full max-w-3xl" style={{ transform: "rotateX(62deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
-              {[0,1,2,3,4,5].map((i) => (
-                <div key={i} className="absolute left-4 right-4 h-16 rounded-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,.35)]" style={{ top: `${i*72}px`, transform: `translateZ(${-i*18}px)`, background: `linear-gradient(90deg, rgba(${20+i*24},${80+i*18},${105+i*12},.45), rgba(15,23,42,.9))` }}>
-                  <div className="px-4 py-2 text-xs uppercase tracking-[.18em] text-cyan-100">Formation layer {i+1}</div>
-                </div>
-              ))}
-              <div className="absolute left-1/2 top-2 h-[430px] w-10 -translate-x-1/2 rounded-full border border-cyan-200/60 bg-cyan-300/20 shadow-[0_0_60px_rgba(34,211,238,.75)]" style={{ transform: "translateZ(90px)" }} />
-              <div className="absolute left-1/2 top-0 h-[360px] w-3 -translate-x-1/2 rounded-full bg-amber-200 shadow-[0_0_35px_rgba(251,191,36,.8)]" style={{ transform: "translateZ(125px)" }} />
-              <div className="absolute left-1/2 h-20 w-20 -translate-x-1/2 rounded-full border border-emerald-300/40 bg-emerald-300/20 shadow-[0_0_60px_rgba(16,185,129,.8)]" style={{ top: `${Math.min(390, progress * 3.8)}px`, transform: "translateZ(150px)" }} />
-            </div>
+          <h2 className="text-3xl font-black">Reservoir Intelligence</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {[["Reservoir Score", reservoirScore], ["Bore Stability", stability], ["Pressure Load", pressure], ["Mud Control", mud]].map(([label, value]) => <div key={label} className="rounded-[2rem] border border-white/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div><div className="mt-3 text-5xl font-black text-cyan-100">{value}%</div></div>)}
+          </div>
+          <div className="mt-6 grid h-72 grid-cols-10 items-end gap-2 rounded-[2rem] border border-white/10 bg-black/25 p-5">
+            {Array.from({ length: 10 }).map((_, i) => <div key={i} className="rounded-t-2xl bg-emerald-300/70" style={{ height: `${Math.max(10, reservoirScore - i*4 + Math.sin(i)*12)}%` }} />)}
           </div>
         </Panel>
       </div>
@@ -3139,70 +3072,48 @@ function SeismoSimulator({ setPage }) {
   const [distance, setDistance] = useState(80);
   const [pVelocity, setPVelocity] = useState(6200);
   const [sVelocity, setSVelocity] = useState(3600);
-  const [depth, setDepth] = useState(2600);
+  const [depth, setDepth] = useState(2800);
   const pArrival = (distance * 1000) / pVelocity;
   const sArrival = (distance * 1000) / sVelocity;
-  const separation = Math.max(0, sArrival - pArrival);
-  const waveRatio = pVelocity / sVelocity;
-  const confidence = Math.max(1, Math.min(99, Math.round(100 - Math.abs(waveRatio - 1.72) * 28)));
-
-  const exportReport = () => {
-    downloadFile(
-      "elementos-seismo-report.txt",
-      `ElementOS Seismo P/S Wave Report\n\nDistance: ${distance} km\nDepth: ${depth} m\nP-wave velocity: ${pVelocity} m/s\nS-wave velocity: ${sVelocity} m/s\nP arrival: ${pArrival.toFixed(2)} s\nS arrival: ${sArrival.toFixed(2)} s\nP/S separation: ${separation.toFixed(2)} s\nWave confidence: ${confidence}%\nGenerated: ${new Date().toLocaleString()}`
-    );
-  };
+  const gap = sArrival - pArrival;
+  const confidence = Math.round(Math.min(99, Math.max(45, 100 - gap * 1.4 + depth / 180)));
+  const exportSeismo = () => downloadFile("elementos-seismo-report.txt", `Seismo P/S Wave Report\n\nDistance: ${distance} km\nDepth: ${depth} m\nP-wave velocity: ${pVelocity} m/s\nS-wave velocity: ${sVelocity} m/s\nP arrival: ${pArrival.toFixed(2)} s\nS arrival: ${sArrival.toFixed(2)} s\nArrival gap: ${gap.toFixed(2)} s\nConfidence: ${confidence}%`);
 
   return (
     <>
       <Panel className="grid gap-8 xl:grid-cols-[1fr_.9fr]">
         <div>
           <Pill gold><Network size={12}/> seismic wave simulator</Pill>
-          <h1 className="mt-4 text-5xl font-black sm:text-7xl">Seismo <span className="bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-transparent">P/S Wave Simulator</span></h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Model P-wave and S-wave travel times, arrival separation and subsurface response with a visible 3D seismic tunnel.</p>
-          <Info title="3D seismic mode">P-waves are shown as fast cyan compression pulses. S-waves are shown as slower magenta shear pulses moving through the same depth tunnel.</Info>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">Seismo <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">P/S Wave Simulator</span></h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Compare primary and secondary wave travel through a simulated subsurface volume. Designed to support the Experimental Well Driller workflow.</p>
+          <Info title="What this page does">P-waves arrive first, S-waves arrive later. The gap helps interpret distance, depth and subsurface response.</Info>
+          <div className="mt-5 flex flex-wrap gap-3"><Button onClick={() => setPage("welldriller")} variant="primary">Back to Well Driller</Button><Button onClick={exportSeismo}><Download size={16} className="inline"/> Export Seismo Report</Button></div>
         </div>
         <Panel>
-          <h2 className="text-3xl font-black">Wave Readout</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {[["P Arrival", `${pArrival.toFixed(2)}s`], ["S Arrival", `${sArrival.toFixed(2)}s`], ["Separation", `${separation.toFixed(2)}s`], ["Confidence", `${confidence}%`]].map(([a,b]) => (
-              <div key={a} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{a}</div><div className="mt-2 text-3xl font-black text-cyan-100">{b}</div></div>
+          <h2 className="text-3xl font-black">Wave Controls</h2>
+          <div className="mt-5 grid gap-4">
+            {[["Distance", distance, setDistance, 5, 220, "km"], ["P-wave Velocity", pVelocity, setPVelocity, 3000, 9000, "m/s"], ["S-wave Velocity", sVelocity, setSVelocity, 1400, 5600, "m/s"], ["Depth", depth, setDepth, 500, 6500, "m"]].map(([label, value, setter, min, max, unit]) => (
+              <label key={label} className="block text-sm text-slate-300"><div className="flex justify-between"><span>{label}</span><b className="text-cyan-100">{value} {unit}</b></div><input type="range" min={min} max={max} step="10" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" /></label>
             ))}
           </div>
-          <div className="mt-5 flex flex-wrap gap-2"><Button onClick={() => setPage("welldriller")} variant="primary">Back to Well Driller</Button><Button onClick={exportReport}>Export Seismo Report</Button></div>
         </Panel>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[.75fr_1.25fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
         <Panel>
-          <h2 className="text-3xl font-black">Wave Controls</h2>
-          <div className="mt-5 space-y-5">
-            {[
-              ["Distance", distance, setDistance, 5, 220, "km"],
-              ["P-wave Velocity", pVelocity, setPVelocity, 3000, 9000, "m/s"],
-              ["S-wave Velocity", sVelocity, setSVelocity, 1400, 5600, "m/s"],
-              ["Depth", depth, setDepth, 500, 6500, "m"],
-            ].map(([label, value, setter, min, max, unit]) => (
-              <label key={label} className="block text-sm text-slate-400">{label}: <b className="text-cyan-100">{value} {unit}</b><input type="range" min={min} max={max} step="10" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" /></label>
-            ))}
+          <h2 className="text-3xl font-black">3D Wavefield</h2>
+          <div className="mt-6 h-[520px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-b from-slate-950 via-black to-slate-950 p-8" style={{ perspective: "1000px" }}>
+            <div className="relative mx-auto h-full max-w-4xl" style={{ transform: "rotateX(58deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
+              {[0,1,2,3,4,5,6].map((i) => <div key={i} className="absolute left-4 right-4 h-12 rounded-2xl border border-white/10 bg-white/[.035]" style={{ top: `${i*62}px`, transform: `translateZ(${-i*20}px)` }} />)}
+              {[0,1,2,3,4,5].map((i) => <div key={`p-${i}`} className="absolute h-10 w-10 rounded-full border border-cyan-200/60 bg-cyan-300/30 shadow-[0_0_55px_rgba(34,211,238,.9)]" style={{ left: `${8 + i*14}%`, top: `${95 + i*28}px`, transform: `translateZ(${120-i*8}px) scale(${1+i*.08})` }} />)}
+              {[0,1,2,3,4,5].map((i) => <div key={`s-${i}`} className="absolute h-12 w-12 rounded-full border border-fuchsia-200/60 bg-fuchsia-400/25 shadow-[0_0_55px_rgba(217,70,239,.85)]" style={{ left: `${12 + i*12}%`, top: `${170 + i*24}px`, transform: `translateZ(${70-i*8}px) rotate(45deg) scale(${1+i*.06})` }} />)}
+            </div>
           </div>
         </Panel>
-
         <Panel>
-          <h2 className="text-3xl font-black">3D P-wave / S-wave Tunnel</h2>
-          <div className="mt-8 h-[520px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-b from-slate-950 via-black to-slate-950 p-8" style={{ perspective: "1000px" }}>
-            <div className="relative mx-auto h-full max-w-4xl" style={{ transform: "rotateX(58deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
-              {[0,1,2,3,4,5,6].map((i) => (
-                <div key={i} className="absolute left-4 right-4 h-12 rounded-2xl border border-white/10 bg-white/[.035]" style={{ top: `${i*62}px`, transform: `translateZ(${-i*20}px)` }} />
-              ))}
-              {[0,1,2,3,4,5].map((i) => (
-                <div key={`p-${i}`} className="absolute h-10 w-10 rounded-full border border-cyan-200/60 bg-cyan-300/30 shadow-[0_0_55px_rgba(34,211,238,.9)]" style={{ left: `${8 + i*14}%`, top: `${95 + i*28}px`, transform: `translateZ(${120-i*8}px) scale(${1+i*.08})` }} />
-              ))}
-              {[0,1,2,3,4,5].map((i) => (
-                <div key={`s-${i}`} className="absolute h-12 w-12 rounded-full border border-fuchsia-200/60 bg-fuchsia-400/25 shadow-[0_0_55px_rgba(217,70,239,.85)]" style={{ left: `${12 + i*12}%`, top: `${170 + i*24}px`, transform: `translateZ(${70-i*8}px) rotate(45deg) scale(${1+i*.06})` }} />
-              ))}
-              <div className="absolute bottom-8 left-8 right-8 h-16 rounded-[50%] border border-emerald-300/40 bg-emerald-300/10 shadow-[0_0_70px_rgba(16,185,129,.7)]" style={{ transform: "translateZ(45px)" }} />
-            </div>
+          <h2 className="text-3xl font-black">Arrival Readout</h2>
+          <div className="mt-5 space-y-4">
+            {[["P arrival", `${pArrival.toFixed(2)}s`], ["S arrival", `${sArrival.toFixed(2)}s`], ["S-P gap", `${gap.toFixed(2)}s`], ["Confidence", `${confidence}%`]].map(([label, value]) => <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div><div className="mt-2 text-4xl font-black text-cyan-100">{value}</div></div>)}
           </div>
         </Panel>
       </div>
@@ -3221,6 +3132,7 @@ function MobileBottomNav({ page, setPage }) {
     ["visualization", "Visual", BarChart3],
     ["welldriller", "Well", Radar],
     ["seismo", "Seismo", Network],
+    ["calculations", "Calc", Calculator],
     ["explorer", "Explore", Search],
     ["compare", "Compare", BarChart3],
     ["reports", "Reports", BookOpen],
@@ -3229,7 +3141,7 @@ function MobileBottomNav({ page, setPage }) {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#030712]/95 px-2 pb-3 pt-2 backdrop-blur-2xl lg:hidden">
-      <div className="grid grid-cols-11 gap-1">
+      <div className="grid grid-cols-7 gap-1 sm:grid-cols-14">
         {items.map(([id, label, Icon]) => (
           <button
             key={id}
@@ -3541,7 +3453,7 @@ const startCheckout = async () => {
         </div>
 
         <PageHelpStrip page={page} />
-        {pages[page]}
+        {pages[page] || pages.dashboard}
       </main>
 
       <MobileActionBar
