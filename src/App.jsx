@@ -866,12 +866,13 @@ Status: Presentation-ready platform export.`;
     const content = build(title, desc);
     setStatus("Saving report to cloud...");
 
-    const { error } = await supabase.from("reports").insert({
-      user_id: session.user.id,
-      title,
-      content,
-      compare_set: compare,
-    });
+const { error } = await supabase.from("reports").insert({
+  user_id: session.user.id,
+  title,
+  content,
+  compare_set: compare,
+  public_id: publicId,
+});
 
     if (error) {
       console.error(error);
