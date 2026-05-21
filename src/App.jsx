@@ -1426,6 +1426,82 @@ function PublicReportView({ report, status }) {
   );
 }
 
+
+function MobileBottomNav({ page, setPage }) {
+  const items = [
+    ["dashboard", "Home", Home],
+    ["explorer", "Explore", Search],
+    ["compare", "Compare", BarChart3],
+    ["reports", "Reports", BookOpen],
+    ["login", "Account", Lock],
+  ];
+
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#030712]/95 px-2 pb-3 pt-2 backdrop-blur-2xl lg:hidden">
+      <div className="grid grid-cols-5 gap-1">
+        {items.map(([id, label, Icon]) => (
+          <button
+            key={id}
+            onClick={() => setPage(id)}
+            className={`rounded-2xl px-2 py-2 text-center text-[10px] font-black uppercase tracking-[.12em] transition ${
+              page === id
+                ? "border border-cyan-300/30 bg-cyan-300/10 text-cyan-100"
+                : "text-slate-400"
+            }`}
+          >
+            <Icon size={16} className="mx-auto mb-1 text-cyan-300" />
+            {label}
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+function MobileActionBar({ page, setPage, compare, session, isPro, startCheckout }) {
+  if (page === "login") return null;
+
+  const primaryLabel = page === "compare" ? "Create Report" : "Run Compare";
+  const primaryTarget = page === "compare" ? "reports" : "compare";
+
+  return (
+    <div className="fixed inset-x-3 bottom-[86px] z-40 lg:hidden">
+      <div className="rounded-[1.65rem] border border-cyan-300/20 bg-slate-950/90 p-3 shadow-[0_0_50px_rgba(34,211,238,.22)] backdrop-blur-2xl">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="truncate text-xs uppercase tracking-[.2em] text-slate-500">
+              Mobile Research Session
+            </div>
+            <div className="mt-1 truncate text-sm font-black text-cyan-100">
+              {(compare || []).slice(0, 4).join(" + ") || "No compare set"}
+            </div>
+          </div>
+
+          <div className="flex shrink-0 gap-2">
+            {!session ? (
+              <Button onClick={() => setPage("login")} variant="primary" className="px-3 py-2 text-xs">
+                Sign In
+              </Button>
+            ) : !isPro ? (
+              <Button onClick={startCheckout} variant="primary" className="px-3 py-2 text-xs">
+                Pro
+              </Button>
+            ) : (
+              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-xs font-black text-emerald-100">
+                Pro
+              </div>
+            )}
+
+            <Button onClick={() => setPage(primaryTarget)} className="px-3 py-2 text-xs">
+              {primaryLabel}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState("dashboard");
   const [selected, setSelected] = useState("Al");
@@ -1641,7 +1717,7 @@ const startCheckout = async () => {
       <Background />
       <Sidebar page={page} setPage={setPage} />
 
-      <main className="relative z-10 space-y-6 p-4 lg:ml-[310px] lg:p-8">
+      <main className="relative z-10 space-y-6 p-4 pb-40 lg:ml-[310px] lg:p-8 lg:pb-8">
         <div className="flex flex-wrap items-center justify-between gap-3 lg:hidden">
           <div>
             <div className="text-2xl font-black tracking-[.18em] text-cyan-100">
@@ -1667,6 +1743,16 @@ const startCheckout = async () => {
 
         {pages[page]}
       </main>
+
+      <MobileActionBar
+        page={page}
+        setPage={setPage}
+        compare={compare}
+        session={session}
+        isPro={isPro}
+        startCheckout={startCheckout}
+      />
+      <MobileBottomNav page={page} setPage={setPage} />
     </div>
   );
 }
