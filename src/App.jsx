@@ -77,11 +77,15 @@ function materialDNA(a, b) {
 
 function createPublicId(compare) {
   const base = compare.join("-") || "REPORT";
+
   const hash = Math.random()
     .toString(36)
     .substring(2, 7)
     .toUpperCase();
-  
+
+  return `${base}-${hash}`;
+}
+
 function generateRecommendations(compare) {
   const recommendations = [];
 
