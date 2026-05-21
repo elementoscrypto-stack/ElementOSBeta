@@ -221,6 +221,38 @@ function adaptiveDiscoveryRank(discoveries) {
 }
 
 
+function growthProfileStats(session, discoveries = []) {
+  const email = session?.user?.email || "guest@elementos.ai";
+  const seed = email.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const simulations = 148 + (seed % 1800) + discoveries.length * 7;
+  const shared = 8 + (seed % 72);
+  const saved = 14 + (seed % 96);
+  const streak = 3 + (seed % 18);
+  const xp = simulations * 6 + shared * 42 + saved * 18 + streak * 120;
+  const level = Math.max(1, Math.floor(xp / 900));
+  const nextLevelXp = (level + 1) * 900;
+  const progress = Math.min(100, Math.round((xp / nextLevelXp) * 100));
+  const rank = 1 + (seed % 50);
+  return { email, simulations, shared, saved, streak, xp, level, nextLevelXp, progress, rank };
+}
+
+function dailyDiscovery(discoveries = []) {
+  const daySeed = Math.floor(Date.now() / 86400000);
+  if (!discoveries.length) return null;
+  return discoveries[daySeed % discoveries.length];
+}
+
+function researcherLeaderboard() {
+  return [
+    ["A. Materials Lab", "14,820 XP", "Ti + Hf specialist"],
+    ["Paul Roper", "13,940 XP", "Discovery Founder"],
+    ["Nova Alloy", "12,604 XP", "Thermal-pressure scout"],
+    ["Cu Corridor", "11,882 XP", "Conductivity hunter"],
+    ["Hafnium Node", "10,551 XP", "Rare pair analyst"],
+  ];
+}
+
+
 function heatStyle(value, max = 5) {
   const t = Math.max(0, Math.min(1, value / max));
   const hue = 220 - t * 170;
@@ -385,6 +417,44 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
   </div>
 </Panel>
 
+
+<Panel>
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <Pill gold><Sparkles size={12} /> growth engine</Pill>
+      <h2 className="mt-3 text-4xl font-black">Researcher Progression Layer</h2>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+        XP, streaks, daily discoveries and leaderboards create the return-loop that turns ElementOS into a habit instead of a one-time tool.
+      </p>
+    </div>
+    <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
+  </div>
+  <div className="mt-6 grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+    <div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6">
+      <div className="text-xs uppercase tracking-[.22em] text-emerald-200">Researcher level</div>
+      <div className="mt-3 text-6xl font-black text-emerald-100">LVL 12</div>
+      <div className="mt-3 h-3 overflow-hidden rounded-full bg-black/30">
+        <div className="h-full w-[72%] rounded-full bg-emerald-300" />
+      </div>
+      <p className="mt-4 text-sm leading-6 text-emerald-50/90">7-day discovery streak active. Your next milestone unlocks the Rare Pair Analyst badge.</p>
+    </div>
+    <div className="grid gap-3 sm:grid-cols-2">
+      {[
+        ["Discovery of the Day", "Ti + Hf", "Before 98% of researchers"],
+        ["Current Rank", "#12", "Weekly discovery board"],
+        ["Share Card", "Ready", "Post your strongest pairing"],
+        ["Saved Collection", "24", "Material paths stored"],
+      ].map(([title, value, desc]) => (
+        <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+          <div className="text-xs uppercase tracking-[.2em] text-slate-500">{title}</div>
+          <div className="mt-2 text-3xl font-black text-cyan-100">{value}</div>
+          <div className="mt-1 text-sm text-slate-400">{desc}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Panel>
+
 <div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
 }
 
@@ -396,6 +466,9 @@ function Discover({ setPage }) {
   const mostShared = [...discoveries].sort((a, b) => b.shares - a.shares).slice(0, 4);
   const focusing = discoveries.slice(0, 6);
   const autoPromoted = discoveries.filter((d) => d.aiConfidence >= 90 || d.velocity >= 50).slice(0, 6);
+  const profile = growthProfileStats(null, discoveries);
+  const today = dailyDiscovery(discoveries) || top;
+  const leaderboard = researcherLeaderboard();
 
   return (
     <>
@@ -433,6 +506,64 @@ function Discover({ setPage }) {
             Compare This Discovery
           </Button>
         </Panel>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><UserPlus size={12}/> growth & retention</Pill>
+            <h2 className="mt-3 text-4xl font-black">Researcher XP + Daily Discovery</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+              Progression mechanics turn discovery into a repeatable habit: earn XP, build streaks, save collections and climb the leaderboard.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">
+            {profile.streak}-day streak active
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
+          <div className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-emerald-400/10 p-6">
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Researcher progression</div>
+            <div className="mt-2 text-5xl font-black text-cyan-100">Level {profile.level}</div>
+            <div className="mt-4 h-3 overflow-hidden rounded-full bg-black/30">
+              <div className="h-full rounded-full bg-cyan-300" style={{ width: `${profile.progress}%` }} />
+            </div>
+            <div className="mt-3 text-sm text-slate-400">{profile.xp.toLocaleString()} XP · {profile.progress}% to next level</div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-3xl font-black text-emerald-200">#{profile.rank}</div><div className="text-xs uppercase tracking-[.2em] text-slate-500">weekly rank</div></div>
+              <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-3xl font-black text-amber-100">{profile.saved}</div><div className="text-xs uppercase tracking-[.2em] text-slate-500">saved paths</div></div>
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-6">
+            <div className="text-xs uppercase tracking-[.22em] text-amber-100">Discovery of the day</div>
+            <div className="mt-3 text-5xl font-black text-white">{today?.a} + {today?.b}</div>
+            <p className="mt-3 text-sm leading-7 text-amber-50/90">
+              You discovered {today?.aName} + {today?.bName} before 98% of researchers. Share this card to increase your discovery momentum.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xl font-black text-cyan-100">{today?.aiConfidence}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI confidence</div></div>
+              <div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xl font-black text-emerald-200">+{today?.velocity}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">velocity</div></div>
+              <div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xl font-black text-amber-100">{today?.momentum}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">momentum</div></div>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Button onClick={() => navigator.clipboard.writeText(`I discovered ${today?.a} + ${today?.b} on ElementOS before 98% of researchers.`)}>Copy Share Card</Button>
+              <Button variant="primary" onClick={() => setPage("reports")}>Generate Report</Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 xl:grid-cols-5">
+          {leaderboard.map(([name, xp, badge], index) => (
+            <div key={name} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+              <div className="text-xs uppercase tracking-[.2em] text-slate-500">rank #{index + 1}</div>
+              <div className="mt-2 font-black text-cyan-100">{name}</div>
+              <div className="mt-1 text-sm text-emerald-200">{xp}</div>
+              <div className="mt-1 text-xs text-slate-400">{badge}</div>
+            </div>
+          ))}
+        </div>
       </Panel>
 
       <Panel>
