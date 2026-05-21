@@ -7,7 +7,7 @@ import {
   ShieldCheck, Sparkles, UserPlus
 } from "lucide-react";
 
-const rawElements = `H|Hydrogen|1|Nonmetal,He|Helium|2|Noble gas,Li|Lithium|3|Alkali metal,Be|Beryllium|4|Alkaline earth metal,B|Boron|5|Metalloid,C|Carbon|6|Nonmetal,N|Nitrogen|7|Nonmetal,O|Oxygen|8|Nonmetal,F|Fluorine|9|Halogen,Ne|Neon|10|Noble gas,Na|Sodium|11|Alkali metal,Mg|Magnesium|12|Alkaline earth metal,Al|Aluminium|13|Post-transition metal,Si|Silicon|14|Metalloid,P|Phosphorus|15|Nonmetal,SA|Sulfur|16|Nonmetal,Cl|Chlorine|17|Halogen,Ar|Argon|18|Noble gas,K|Potassium|19|Alkali metal,Ca|Calcium|20|Alkaline earth metal,Sc|Scandium|21|Transition metal,Ti|Titanium|22|Transition metal,V|Vanadium|23|Transition metal,Cr|Chromium|24|Transition metal,Mn|Manganese|25|Transition metal,Fe|Iron|26|Transition metal,Co|Cobalt|27|Transition metal,Ni|Nickel|28|Transition metal,Cu|Copper|29|Transition metal,Zn|Zinc|30|Transition metal,Ga|Gallium|31|Post-transition metal,Ge|Germanium|32|Metalloid,As|Arsenic|33|Metalloid,Se|Selenium|34|Nonmetal,Br|Bromine|35|Halogen,Kr|Krypton|36|Noble gas,Rb|Rubidium|37|Alkali metal,Sr|Strontium|38|Alkaline earth metal,Y|Yttrium|39|Transition metal,Zr|Zirconium|40|Transition metal,Nb|Niobium|41|Transition metal,Mo|Molybdenum|42|Transition metal,Tc|Technetium|43|Transition metal,Ru|Ruthenium|44|Transition metal,Rh|Rhodium|45|Transition metal,Pd|Palladium|46|Transition metal,Ag|Silver|47|Transition metal,Cd|Cadmium|48|Transition metal,In|Indium|49|Post-transition metal,Sn|Tin|50|Post-transition metal,Sb|Antimony|51|Metalloid,Te|Tellurium|52|Metalloid,I|Iodine|53|Halogen,Xe|Xenon|54|Noble gas,Cs|Caesium|55|Alkali metal,Ba|Barium|56|Alkaline earth metal,La|Lanthanum|57|Lanthanide,Ce|Cerium|58|Lanthanide,Pr|Praseodymium|59|Lanthanide,Nd|Neodymium|60|Lanthanide,Pm|Promethium|61|Lanthanide,Sm|Samarium|62|Lanthanide,Eu|Europium|63|Lanthanide,Gd|Gadolinium|64|Lanthanide,Tb|Terbium|65|Lanthanide,Dy|Dysprosium|66|Lanthanide,Ho|Holmium|67|Lanthanide,Er|Erbium|68|Lanthanide,Tm|Thulium|69|Lanthanide,Yb|Ytterbium|70|Lanthanide,Lu|Lutetium|71|Lanthanide,Hf|Hafnium|72|Transition metal,Ta|Tantalum|73|Transition metal,W|Tungsten|74|Transition metal,Re|Rhenium|75|Transition metal,Os|Osmium|76|Transition metal,Ir|Iridium|77|Transition metal,Pt|Platinum|78|Transition metal,Au|Gold|79|Transition metal,Hg|Mercury|80|Transition metal,Tl|Thallium|81|Post-transition metal,Pb|Lead|82|Post-transition metal,Bi|Bismuth|83|Post-transition metal,Po|Polonium|84|Metalloid,At|Astatine|85|Halogen,Rn|Radon|86|Noble gas,Fr|Francium|87|Alkali metal,Ra|Radium|88|Alkaline earth metal,Ac|Actinium|89|Actinide,Th|Thorium|90|Actinide,Pa|Protactinium|91|Actinide,U|Uranium|92|Actinide,Np|Neptunium|93|Actinide,Pu|Plutonium|94|Actinide,Am|Americium|95|Actinide,Cm|Curium|96|Actinide,Bk|Berkelium|97|Actinide,Cf|Californium|98|Actinide,Es|Einsteinium|99|Actinide,Fm|Fermium|100|Actinide,Md|Mendelevium|101|Actinide,No|Nobelium|102|Actinide,Lr|Lawrencium|103|Actinide,Rf|Rutherfordium|104|Transition metal,Db|Dubnium|105|Transition metal,Sg|Seaborgium|106|Transition metal,Bh|Bohrium|107|Transition metal,Hs|Hassium|108|Transition metal,Mt|Meitnerium|109|Unknown,Ds|Darmstadtium|110|Unknown,Rg|Roentgenium|111|Unknown,Cn|Copernicium|112|Transition metal,Nh|Nihonium|113|Unknown,Fl|Flerovium|114|Unknown,Mc|Moscovium|115|Unknown,Lv|Livermorium|116|Unknown,Ts|Tennessine|117|Unknown,Og|Oganesson|118|Unknown`;
+const rawElements = `H|Hydrogen|1|Nonmetal,He|Helium|2|Noble gas,Li|Lithium|3|Alkali metal,Be|Beryllium|4|Alkaline earth metal,B|Boron|5|Metalloid,C|Carbon|6|Nonmetal,N|Nitrogen|7|Nonmetal,O|Oxygen|8|Nonmetal,F|Fluorine|9|Halogen,Ne|Neon|10|Noble gas,Na|Sodium|11|Alkali metal,Mg|Magnesium|12|Alkaline earth metal,Al|Aluminium|13|Post-transition metal,Si|Silicon|14|Metalloid,P|Phosphorus|15|Nonmetal,S|Sulfur|16|Nonmetal,Cl|Chlorine|17|Halogen,Ar|Argon|18|Noble gas,K|Potassium|19|Alkali metal,Ca|Calcium|20|Alkaline earth metal,Sc|Scandium|21|Transition metal,Ti|Titanium|22|Transition metal,V|Vanadium|23|Transition metal,Cr|Chromium|24|Transition metal,Mn|Manganese|25|Transition metal,Fe|Iron|26|Transition metal,Co|Cobalt|27|Transition metal,Ni|Nickel|28|Transition metal,Cu|Copper|29|Transition metal,Zn|Zinc|30|Transition metal,Ga|Gallium|31|Post-transition metal,Ge|Germanium|32|Metalloid,As|Arsenic|33|Metalloid,Se|Selenium|34|Nonmetal,Br|Bromine|35|Halogen,Kr|Krypton|36|Noble gas,Rb|Rubidium|37|Alkali metal,Sr|Strontium|38|Alkaline earth metal,Y|Yttrium|39|Transition metal,Zr|Zirconium|40|Transition metal,Nb|Niobium|41|Transition metal,Mo|Molybdenum|42|Transition metal,Tc|Technetium|43|Transition metal,Ru|Ruthenium|44|Transition metal,Rh|Rhodium|45|Transition metal,Pd|Palladium|46|Transition metal,Ag|Silver|47|Transition metal,Cd|Cadmium|48|Transition metal,In|Indium|49|Post-transition metal,Sn|Tin|50|Post-transition metal,Sb|Antimony|51|Metalloid,Te|Tellurium|52|Metalloid,I|Iodine|53|Halogen,Xe|Xenon|54|Noble gas,Cs|Caesium|55|Alkali metal,Ba|Barium|56|Alkaline earth metal,La|Lanthanum|57|Lanthanide,Ce|Cerium|58|Lanthanide,Pr|Praseodymium|59|Lanthanide,Nd|Neodymium|60|Lanthanide,Pm|Promethium|61|Lanthanide,Sm|Samarium|62|Lanthanide,Eu|Europium|63|Lanthanide,Gd|Gadolinium|64|Lanthanide,Tb|Terbium|65|Lanthanide,Dy|Dysprosium|66|Lanthanide,Ho|Holmium|67|Lanthanide,Er|Erbium|68|Lanthanide,Tm|Thulium|69|Lanthanide,Yb|Ytterbium|70|Lanthanide,Lu|Lutetium|71|Lanthanide,Hf|Hafnium|72|Transition metal,Ta|Tantalum|73|Transition metal,W|Tungsten|74|Transition metal,Re|Rhenium|75|Transition metal,Os|Osmium|76|Transition metal,Ir|Iridium|77|Transition metal,Pt|Platinum|78|Transition metal,Au|Gold|79|Transition metal,Hg|Mercury|80|Transition metal,Tl|Thallium|81|Post-transition metal,Pb|Lead|82|Post-transition metal,Bi|Bismuth|83|Post-transition metal,Po|Polonium|84|Metalloid,At|Astatine|85|Halogen,Rn|Radon|86|Noble gas,Fr|Francium|87|Alkali metal,Ra|Radium|88|Alkaline earth metal,Ac|Actinium|89|Actinide,Th|Thorium|90|Actinide,Pa|Protactinium|91|Actinide,U|Uranium|92|Actinide,Np|Neptunium|93|Actinide,Pu|Plutonium|94|Actinide,Am|Americium|95|Actinide,Cm|Curium|96|Actinide,Bk|Berkelium|97|Actinide,Cf|Californium|98|Actinide,Es|Einsteinium|99|Actinide,Fm|Fermium|100|Actinide,Md|Mendelevium|101|Actinide,No|Nobelium|102|Actinide,Lr|Lawrencium|103|Actinide,Rf|Rutherfordium|104|Transition metal,Db|Dubnium|105|Transition metal,Sg|Seaborgium|106|Transition metal,Bh|Bohrium|107|Transition metal,Hs|Hassium|108|Transition metal,Mt|Meitnerium|109|Unknown,Ds|Darmstadtium|110|Unknown,Rg|Roentgenium|111|Unknown,Cn|Copernicium|112|Transition metal,Nh|Nihonium|113|Unknown,Fl|Flerovium|114|Unknown,Mc|Moscovium|115|Unknown,Lv|Livermorium|116|Unknown,Ts|Tennessine|117|Unknown,Og|Oganesson|118|Unknown`;
 
 const elements = rawElements.split(",").map(row => {
   const [symbol, name, atomicNumber, category] = row.split("|");
@@ -279,11 +279,6 @@ function realTimeActivityFeed(discoveries = []) {
 
 function guidanceForPage(page) {
   const guide = {
-    landing: {
-      title: "What ElementOS does",
-      description: "ElementOS is an AI-native material intelligence platform for exploring elements, comparing behaviours, simulating future states, building real-world scenarios and exporting research-ready reports.",
-      next: "Start with the demo, open Time Machine or create a free account when you are ready to save work.",
-    },
     dashboard: {
       title: "What this dashboard does",
       description: "This is your command centre. Start a comparison, open the discovery feed, save your workspace, or upgrade to Pro Lab when you are ready to export premium reports.",
@@ -476,7 +471,7 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["landing", "Landing", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
+  const items = [["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
@@ -2783,156 +2778,8 @@ function MyLab({ session, selected, compare, setPage }) {
   );
 }
 
-
-function LandingPage({ setPage, session, isPro, startCheckout }) {
-  const showcases = [
-    ["Time Machine", "Simulate how materials age across 1, 10, 50 and 100-year horizons under corrosion, heat, pressure and stress.", Clock3, "timemachine"],
-    ["Scenario Builder", "Type real-world material situations and receive risk scores, failure modes, lifespan estimates and substitute suggestions.", FileText, "scenario"],
-    ["Visual Engine", "Turn survival curves, degradation timelines and AI confidence signals into cinematic dashboard visuals.", BarChart3, "visualization"],
-    ["AI Discovery", "Browse ranked material pairings, rare compatibility signals, velocity trends and discovery cards.", Sparkles, "discover"],
-  ];
-
-  const stats = [
-    ["118", "elements mapped"],
-    ["7", "behaviour metrics"],
-    ["100y", "time horizons"],
-    ["Pro", "export workflow"],
-  ];
-
-  const plans = [
-    ["Explorer", "$19/mo", "For solo material exploration", ["Element explorer", "Discovery feed", "Basic compare tools"]],
-    ["Pro Lab", "$49/mo", "For serious saved research", ["Premium exports", "Scenario reports", "Saved workspace", "Time Machine workflows"]],
-    ["Research Team", "$149/mo", "For teams and demos", ["Team-ready positioning", "Advanced visual reports", "Shared research workflows", "Enterprise-style dashboards"]],
-  ];
-
-  return (
-    <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
-        <div>
-          <Pill gold><Sparkles size={12} /> AI material intelligence SaaS</Pill>
-          <h1 className="mt-5 text-5xl font-black sm:text-7xl">
-            Predict, compare and explain material behaviour with <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">ElementOS</span>
-          </h1>
-          <p className="mt-6 max-w-4xl text-lg leading-8 text-slate-300">
-            ElementOS helps users explore elements, compare material behaviour, simulate future degradation, build real-world scenarios and export research-ready reports from one cinematic workspace.
-          </p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Button onClick={() => setPage("scenario")} variant="primary">Try Scenario Builder</Button>
-            <Button onClick={() => setPage("timemachine")}>Open Time Machine</Button>
-            {!session ? (
-              <Button onClick={() => setPage("login")}>Start Free</Button>
-            ) : !isPro ? (
-              <Button onClick={startCheckout}>Upgrade Pro</Button>
-            ) : (
-              <Button onClick={() => setPage("dashboard")}>Enter Workspace</Button>
-            )}
-          </div>
-          <Info title="What is ElementOS?">
-            A material intelligence operating system for turning element data, compatibility scores, environmental exposure and long-term simulation into understandable decisions, visuals and reports.
-          </Info>
-        </div>
-
-        <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Live product demo</div>
-          <h2 className="mt-3 text-4xl font-black text-cyan-100">Titanium hull in saltwater</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">Scenario Builder detects material, environment and time horizon, then generates a risk score, survival estimate and recommended substitute path.</p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4"><div className="text-3xl font-black text-rose-100">34%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">risk</div></div>
-            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-3xl font-black text-emerald-100">82y</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">survival</div></div>
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-3xl font-black text-cyan-100">94%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">confidence</div></div>
-          </div>
-          <div className="mt-6 h-3 overflow-hidden rounded-full bg-black/30">
-            <div className="h-full w-[82%] rounded-full bg-cyan-300" />
-          </div>
-          <div className="mt-4 text-sm text-slate-400">Visual survival curve · corrosion timeline · exportable result card</div>
-        </Panel>
-      </Panel>
-
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {stats.map(([value, label]) => (
-          <Panel key={label}>
-            <div className="text-4xl font-black text-cyan-100">{value}</div>
-            <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{label}</div>
-          </Panel>
-        ))}
-      </div>
-
-      <Panel>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <Pill gold><Sparkles size={12} /> platform showcase</Pill>
-            <h2 className="mt-3 text-4xl font-black">Built for discovery, simulation and conversion</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each core page gives visitors a clear reason to sign up: discover materials, simulate long-term behaviour, build scenarios and save results inside My Lab.</p>
-          </div>
-          <Button onClick={() => setPage("dashboard")} variant="primary">Launch Workspace</Button>
-        </div>
-
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {showcases.map(([title, desc, Icon, target]) => (
-            <button key={title} onClick={() => setPage(target)} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5 text-left transition hover:scale-[1.02] hover:border-cyan-300/35">
-              <Icon size={24} className="text-cyan-300" />
-              <h3 className="mt-4 text-2xl font-black text-cyan-100">{title}</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
-              <div className="mt-5 text-xs font-black uppercase tracking-[.2em] text-amber-100">Open feature →</div>
-            </button>
-          ))}
-        </div>
-      </Panel>
-
-      <Panel>
-        <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
-          <div>
-            <Pill gold><CheckCircle2 size={12} /> why users upgrade</Pill>
-            <h2 className="mt-3 text-4xl font-black">From curiosity to saved research</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-300">The conversion path is simple: visitors try public demos, create an account to save work, then upgrade when they need reports, exports and persistent research history.</p>
-            <div className="mt-5 space-y-3">
-              {["Understand materials faster", "Create scenario reports", "Save discoveries in My Lab", "Export professional PDFs", "Use Time Machine and visual telemetry"].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300" />{item}</div>
-              ))}
-            </div>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {plans.map(([name, price, desc, bullets], index) => (
-              <div key={name} className={`rounded-[2rem] border p-5 ${index === 1 ? "border-amber-300/30 bg-amber-300/10" : "border-white/10 bg-black/25"}`}>
-                <div className="text-2xl font-black text-cyan-100">{name}</div>
-                <div className="mt-2 text-4xl font-black text-emerald-200">{price}</div>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{desc}</p>
-                <div className="mt-5 space-y-2">
-                  {bullets.map((b) => <div key={b} className="text-sm text-slate-300">✓ {b}</div>)}
-                </div>
-                <Button onClick={index === 1 ? startCheckout : () => setPage("login")} variant={index === 1 ? "primary" : "ghost"} className="mt-5 w-full">
-                  {index === 1 ? "Upgrade Pro" : "Start"}
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Panel>
-
-      <Panel>
-        <Pill><BookOpen size={12} /> FAQ</Pill>
-        <h2 className="mt-3 text-4xl font-black">Questions visitors will ask</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {[
-            ["Is this for engineers only?", "No. The interface explains each page clearly so beginners can try scenarios while advanced users explore deeper comparison logic."],
-            ["What does the Time Machine do?", "It projects material behaviour across future time horizons under exposure, heat, pressure, stress and corrosion-style conditions."],
-            ["Why create an account?", "Accounts unlock saved workspaces, My Lab history, scenario collections and subscription-ready research continuity."],
-            ["What makes Pro useful?", "Pro positioning focuses on premium exports, reusable reports, saved research assets and professional visual outputs."],
-          ].map(([q, a]) => (
-            <div key={q} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-              <div className="text-xl font-black text-cyan-100">{q}</div>
-              <p className="mt-3 text-sm leading-7 text-slate-400">{a}</p>
-            </div>
-          ))}
-        </div>
-      </Panel>
-    </>
-  );
-}
-
 function MobileBottomNav({ page, setPage }) {
   const items = [
-    ["landing", "Start", Sparkles],
     ["dashboard", "Home", Home],
     ["discover", "Discover", Sparkles],
     ["timemachine", "Time", Clock3],
@@ -2947,7 +2794,7 @@ function MobileBottomNav({ page, setPage }) {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#030712]/95 px-2 pb-3 pt-2 backdrop-blur-2xl lg:hidden">
-      <div className="grid grid-cols-11 gap-1">
+      <div className="grid grid-cols-10 gap-1">
         {items.map(([id, label, Icon]) => (
           <button
             key={id}
@@ -2968,7 +2815,7 @@ function MobileBottomNav({ page, setPage }) {
 }
 
 function MobileActionBar({ page, setPage, compare, session, isPro, startCheckout }) {
-  if (page === "login" || page === "landing") return null;
+  if (page === "login") return null;
 
   const primaryLabel = page === "compare" ? "Create Report" : "Run Compare";
   const primaryTarget = page === "compare" ? "reports" : "compare";
@@ -3012,7 +2859,7 @@ function MobileActionBar({ page, setPage, compare, session, isPro, startCheckout
 }
 
 export default function App() {
-  const [page, setPage] = useState("landing");
+  const [page, setPage] = useState("dashboard");
   const [selected, setSelected] = useState("Al");
   const [compare, setCompare] = useState(["Al", "Fe", "Cu", "Ti"]);
   const [session, setSession] = useState(null);
@@ -3153,7 +3000,6 @@ const startCheckout = async () => {
   
   const pages = useMemo(
     () => ({
-      landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       dashboard: (
         <Dashboard
           setPage={setPage}
