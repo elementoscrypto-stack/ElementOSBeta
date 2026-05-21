@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import jsPDF from "jspdf";
 import { supabase } from "./supabaseClient";
 import {
-  Atom, BarChart3, BookOpen, Calculator, CheckCircle2, ChevronRight, Download,
+  Atom, BarChart3, BookOpen, Calculator, CheckCircle2, ChevronRight, Clock3, Download,
   FileText, Home, Layers, Lock, Network, Orbit, Radar, Save, Search,
   ShieldCheck, Sparkles, UserPlus
 } from "lucide-react";
@@ -329,6 +329,11 @@ function guidanceForPage(page) {
       description: "This page gives the product a calculation and analysis layer so reports feel more serious and research-oriented.",
       next: "Use the calculation blocks to support your report narrative.",
     },
+    timemachine: {
+      title: "What the Time Machine does",
+      description: "The Time Machine simulates how materials change across 1, 10, 50 and 100 year horizons under heat, pressure, corrosion, stress and environmental exposure.",
+      next: "Choose a material and environment, scan the future-state cards, then export the timeline or compare the strongest result.",
+    },
     reports: {
       title: "What reports do",
       description: "Reports turn your comparisons into exportable, shareable research assets with summaries, compatibility scores and premium PDF output.",
@@ -451,13 +456,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
+  const items = [["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -851,6 +856,202 @@ function Discover({ setPage }) {
               <p className="mt-3 text-sm leading-7 text-amber-50/90">{d.reason}. Trending velocity is +{d.velocity}% with {d.shares.toLocaleString()} shares.</p>
               <div className="mt-4 rounded-2xl border border-white/10 bg-black/25 p-3 font-mono text-xs text-cyan-100">{d.dna}</div>
             </div>
+          ))}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+
+function TimeMachine({ selected, setSelected, setPage }) {
+  const [material, setMaterial] = useState(selected || "Al");
+  const [environment, setEnvironment] = useState("Coastal air");
+  const [stress, setStress] = useState(55);
+  const [temperature, setTemperature] = useState(35);
+  const [pressure, setPressure] = useState(40);
+
+  const base = elementMap[material] || elementMap.Al;
+  const baseScore = score(material);
+
+  const environmentProfiles = {
+    "Lab storage": { corrosion: 0.55, heat: 0.55, pressure: 0.45, label: "controlled low-risk environment" },
+    "Coastal air": { corrosion: 1.3, heat: 0.75, pressure: 0.6, label: "salt and moisture exposure" },
+    "Industrial heat": { corrosion: 0.9, heat: 1.55, pressure: 0.95, label: "thermal cycling and fatigue" },
+    "High pressure": { corrosion: 0.7, heat: 0.85, pressure: 1.65, label: "compression and stress load" },
+    "Cryogenic": { corrosion: 0.45, heat: 0.35, pressure: 0.85, label: "cold stability challenge" },
+    "Space exposure": { corrosion: 0.25, heat: 1.25, pressure: 0.35, label: "radiation and vacuum-like exposure" },
+  };
+
+  const profile = environmentProfiles[environment];
+  const horizons = [0, 1, 10, 50, 100];
+
+  const resilience = Math.round(
+    Math.min(
+      98,
+      Math.max(
+        18,
+        baseScore.stability * 14 +
+          baseScore.pressure * 7 +
+          baseScore.thermal * 5 -
+          profile.corrosion * 8 -
+          stress * 0.08 -
+          temperature * 0.06 -
+          pressure * 0.05
+      )
+    )
+  );
+
+  const timeline = horizons.map((year) => {
+    const ageingLoad = Math.log10(year + 1) * (profile.corrosion * 10 + profile.heat * 7 + profile.pressure * 6);
+    const externalLoad = stress * 0.045 + temperature * 0.04 + pressure * 0.04;
+    const stability = Math.max(5, Math.round(resilience - ageingLoad - externalLoad));
+    const corrosion = Math.min(99, Math.round(year * profile.corrosion * 0.55 + stress * 0.08));
+    const fatigue = Math.min(99, Math.round(year * profile.heat * 0.42 + temperature * 0.22));
+    const pressureDrift = Math.min(99, Math.round(year * profile.pressure * 0.38 + pressure * 0.2));
+    return { year, stability, corrosion, fatigue, pressureDrift };
+  });
+
+  const finalState = timeline[timeline.length - 1];
+  const recommended = elements
+    .filter((e) => e.symbol !== material)
+    .map((e) => {
+      const s = score(e.symbol);
+      const durability = Math.round(s.stability * 12 + s.pressure * 7 + s.thermal * 5 - profile.corrosion * 6);
+      return { ...e, durability: Math.max(1, Math.min(99, durability)) };
+    })
+    .sort((a, b) => b.durability - a.durability)
+    .slice(0, 5);
+
+  const survivalYear = Math.max(5, Math.round((resilience / (profile.corrosion + profile.heat + profile.pressure)) * 7));
+  const futureVerdict = finalState.stability >= 70 ? "Excellent long-term candidate" : finalState.stability >= 45 ? "Useful but needs protection" : "High-risk over long horizons";
+
+  const exportTimeline = () => {
+    const content = `ElementOS Time Machine Report\n\nMaterial: ${base.name} (${base.symbol})\nEnvironment: ${environment}\nScenario: ${profile.label}\nResilience Index: ${resilience}%\nPredicted survival horizon: ${survivalYear} years\nVerdict: ${futureVerdict}\n\nTimeline:\n${timeline.map((t) => `Year ${t.year}: stability ${t.stability}%, corrosion ${t.corrosion}%, fatigue ${t.fatigue}%, pressure drift ${t.pressureDrift}%`).join("\n")}\n\nGenerated by ElementOS Time Machine`;
+    downloadFile(`${base.symbol}-time-machine-report.txt`, content);
+  };
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.08fr_.92fr]">
+        <div>
+          <Pill gold><Clock3 size={12}/> material time simulation</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Time <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Machine</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Simulate how a material may behave across time under corrosion, heat, pressure and stress. This is a future-state research tool for ageing, fatigue and long-horizon compatibility thinking.
+          </p>
+          <Info title="What this page does">
+            Pick a material, choose an environment, adjust stress/temperature/pressure and watch ElementOS project 1-year, 10-year, 50-year and 100-year material states.
+          </Info>
+        </div>
+
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Future material state</div>
+          <h2 className="mt-3 text-4xl font-black text-cyan-100">{base.symbol} · {base.name}</h2>
+          <div className="mt-3 text-6xl font-black text-emerald-200">{finalState.stability}%</div>
+          <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">projected year 100 stability</div>
+          <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-50/90">
+            <b>{futureVerdict}.</b> Estimated survival horizon: {survivalYear} years in {environment.toLowerCase()}.
+          </div>
+          <Button onClick={exportTimeline} variant="primary" className="mt-5 w-full">Export Time Simulation</Button>
+        </Panel>
+      </Panel>
+
+      <GuidePanel page="timemachine" />
+
+      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+        <Panel>
+          <h2 className="text-2xl font-black">Simulation Controls</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Use these controls to create a material ageing scenario. Higher stress, heat and pressure reduce long-term stability.</p>
+          <label className="mt-5 block text-sm text-slate-400">Material
+            <select value={material} onChange={(e) => { setMaterial(e.target.value); setSelected?.(e.target.value); }} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
+              {elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
+            </select>
+          </label>
+          <label className="mt-4 block text-sm text-slate-400">Environment
+            <select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
+              {Object.keys(environmentProfiles).map((x) => <option key={x}>{x}</option>)}
+            </select>
+          </label>
+          {[["Stress load", stress, setStress], ["Temperature load", temperature, setTemperature], ["Pressure load", pressure, setPressure]].map(([label, value, setter]) => (
+            <label key={label} className="mt-5 block text-sm text-slate-400">{label}: <b className="text-cyan-100">{value}%</b>
+              <input type="range" min="0" max="100" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" />
+            </label>
+          ))}
+          <Button onClick={() => setPage?.("compare")} className="mt-6 w-full">Compare Material</Button>
+        </Panel>
+
+        <Panel>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <Pill><Clock3 size={12}/> temporal forecast</Pill>
+              <h2 className="mt-3 text-4xl font-black">Material Timeline</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-400">Each card shows how the selected material is projected to change over time.</p>
+            </div>
+            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">{profile.label}</div>
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-5">
+            {timeline.map((t) => (
+              <div key={t.year} className="rounded-[2rem] border border-white/10 bg-black/25 p-4">
+                <div className="text-xs uppercase tracking-[.2em] text-slate-500">Year</div>
+                <div className="mt-1 text-4xl font-black text-cyan-100">{t.year}</div>
+                <div className="mt-4 text-3xl font-black text-emerald-200">{t.stability}%</div>
+                <div className="text-xs uppercase tracking-[.18em] text-slate-500">stability</div>
+                <div className="mt-4 space-y-2 text-xs text-slate-300">
+                  <div>Corrosion: {t.corrosion}%</div>
+                  <div>Fatigue: {t.fatigue}%</div>
+                  <div>Pressure drift: {t.pressureDrift}%</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
+            <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Timeline graph</div>
+            <MiniBars values={timeline.map((t) => Math.max(0.4, t.stability / 20))} />
+            <p className="mt-3 text-sm leading-6 text-slate-300">The graph shows projected stability decay across the selected time horizons.</p>
+          </div>
+        </Panel>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        <Panel>
+          <Pill gold><ShieldCheck size={12}/> future verdict</Pill>
+          <h2 className="mt-3 text-3xl font-black">{futureVerdict}</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">{base.name} starts with a resilience index of {resilience}%. In this environment, the main long-term risks are corrosion accumulation, thermal fatigue and pressure drift.</p>
+        </Panel>
+        <Panel>
+          <Pill gold><Radar size={12}/> recovered material</Pill>
+          <h2 className="mt-3 text-3xl font-black">Ancient Survival Estimate</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">ElementOS estimates that protected {base.name} could remain meaningfully identifiable for approximately <b className="text-cyan-100">{survivalYear * 12}</b> years under improved storage conditions.</p>
+        </Panel>
+        <Panel>
+          <Pill gold><Sparkles size={12}/> AI next step</Pill>
+          <h2 className="mt-3 text-3xl font-black">Try a stronger future path</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">If the year-100 stability falls below 70%, test one of the suggested substitutes below or move the result into Compare.</p>
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill><Sparkles size={12}/> most resilient alternatives</Pill>
+            <h2 className="mt-3 text-4xl font-black">Future-Proof Material Suggestions</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">ElementOS ranks alternative materials that may hold stronger future-state behaviour in the same environment.</p>
+          </div>
+          <Button onClick={() => setPage?.("reports")} variant="primary">Generate Report</Button>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-5">
+          {recommended.map((e) => (
+            <button key={e.symbol} onClick={() => { setMaterial(e.symbol); setSelected?.(e.symbol); }} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 to-black/30 p-5 text-left transition hover:scale-[1.02]">
+              <div className="text-4xl font-black text-cyan-100">{e.symbol}</div>
+              <div className="mt-1 text-sm text-slate-400">{e.name}</div>
+              <div className="mt-4 text-3xl font-black text-emerald-200">{e.durability}%</div>
+              <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">future resilience</div>
+            </button>
           ))}
         </div>
       </Panel>
@@ -2024,6 +2225,7 @@ function MobileBottomNav({ page, setPage }) {
   const items = [
     ["dashboard", "Home", Home],
     ["discover", "Discover", Sparkles],
+    ["timemachine", "Time", Clock3],
     ["explorer", "Explore", Search],
     ["compare", "Compare", BarChart3],
     ["reports", "Reports", BookOpen],
@@ -2032,7 +2234,7 @@ function MobileBottomNav({ page, setPage }) {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#030712]/95 px-2 pb-3 pt-2 backdrop-blur-2xl lg:hidden">
-      <div className="grid grid-cols-6 gap-1">
+      <div className="grid grid-cols-7 gap-1">
         {items.map(([id, label, Icon]) => (
           <button
             key={id}
@@ -2249,6 +2451,7 @@ const startCheckout = async () => {
         />
       ),
       discover: <Discover setPage={setPage} />,
+      timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} />,
       login: (
         <LoginAccount
           session={session}
