@@ -364,6 +364,11 @@ function guidanceForPage(page) {
       description: "The Advanced Visualization Engine turns scenarios, time horizons and material metrics into survival curves, degradation timelines, AI confidence waveforms and cinematic telemetry cards.",
       next: "Pick a material, inspect the survival curve, compare the pulse cards, then export the visual telemetry summary.",
     },
+    viralcards: {
+      title: "What Viral Card Studio does",
+      description: "Viral Card Studio turns discoveries, Time Machine forecasts, Scenario Builder results, Well Driller paths and Seismo readouts into cinematic share cards for social growth.",
+      next: "Choose a source, generate a card, export SVG or copy the social post text, then share it with a public report link.",
+    },
     simreports: {
       title: "What Universal Simulation Reports do",
       description: "Universal Simulation Reports combine Time Machine, Scenario Builder, Experimental Well Driller and Seismo outputs into one polished research-ready simulation dossier.",
@@ -491,13 +496,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["landing", "Landing", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
+  const items = [["landing", "Landing", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -3406,6 +3411,258 @@ function SeismoSimulator({ setPage }) {
 
 
 
+function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
+  const [mode, setMode] = useState("Discovery");
+  const [cardIndex, setCardIndex] = useState(0);
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(16)), []);
+  const activeMaterial = elementMap[selected] || elementMap.Al;
+  const compareSet = compare?.length ? compare : ["Al", "Ti", "Hf", "W"];
+  const discovery = discoveries[cardIndex % discoveries.length] || discoveries[0];
+  const compatibility = compareSet.length >= 2 ? compatibilityScore(compareSet[0], compareSet[1]) : 92;
+
+  const cardData = useMemo(() => {
+    const base = {
+      label: "ElementOS Viral Card",
+      badge: "AI-NATIVE SIMULATION",
+      title: `${discovery?.a || "Ti"} + ${discovery?.b || "Hf"}`,
+      subtitle: discovery?.type || "Rare material pathway",
+      score: discovery?.aiConfidence || 94,
+      metric: "AI confidence",
+      statA: `+${discovery?.velocity || 42}% velocity`,
+      statB: `${discovery?.shares?.toLocaleString?.() || "1,284"} shares`,
+      statC: discovery?.tier || "ULTRA RARE",
+      narrative: discovery?.reason || "High-signal material pairing with strong discovery potential.",
+    };
+
+    if (mode === "Time Machine") {
+      return {
+        ...base,
+        badge: "TIME MACHINE FORECAST",
+        title: `${activeMaterial.name} (${activeMaterial.symbol})` ,
+        subtitle: "100-year survivability simulation",
+        score: Math.max(55, Math.min(98, Math.round(score(activeMaterial.symbol).stability * 18 + score(activeMaterial.symbol).pressure * 5))),
+        metric: "future stability",
+        statA: "100 year horizon",
+        statB: "thermal fatigue mapped",
+        statC: "FORECAST",
+        narrative: "Projected material behaviour across corrosion, fatigue, heat and pressure exposure.",
+      };
+    }
+
+    if (mode === "Seismo") {
+      return {
+        ...base,
+        badge: "SEISMO WAVE CARD",
+        title: "P-Wave / S-Wave Field",
+        subtitle: "arrival gap and subsurface clarity",
+        score: 91,
+        metric: "signal clarity",
+        statA: "P-wave fast path",
+        statB: "S-wave lag detected",
+        statC: "SEISMIC",
+        narrative: "A cinematic seismic readout designed for sharing wave speed, arrival gap and depth response.",
+      };
+    }
+
+    if (mode === "Well Driller") {
+      return {
+        ...base,
+        badge: "EXPERIMENTAL WELL DRILLER",
+        title: "Deep Well Pathway",
+        subtitle: "bore path, strata and pressure load",
+        score: 88,
+        metric: "drill confidence",
+        statA: "target reservoir",
+        statB: "pressure profile",
+        statC: "SUBSURFACE",
+        narrative: "A shareable subsurface simulation card showing wellbore direction, formation layers and drilling signal.",
+      };
+    }
+
+    if (mode === "Scenario") {
+      return {
+        ...base,
+        badge: "SCENARIO BUILDER CARD",
+        title: `${compareSet.slice(0, 2).join(" + ")}`,
+        subtitle: "real-world material scenario",
+        score: Math.max(50, Math.min(99, compatibility)),
+        metric: "scenario fit",
+        statA: "risk mapped",
+        statB: "lifespan estimated",
+        statC: "REPORTABLE",
+        narrative: "Plain-English material situation transformed into a premium shareable simulation output.",
+      };
+    }
+
+    return base;
+  }, [mode, discovery, activeMaterial, compareSet, compatibility]);
+
+  const safeText = (value) => String(value ?? "").replace(/[&<>\"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  const exportSVG = () => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1600" viewBox="0 0 1200 1600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#061827"/><stop offset="0.45" stop-color="#020617"/><stop offset="1" stop-color="#2b123f"/></linearGradient>
+    <radialGradient id="pulse" cx="50%" cy="35%" r="60%"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.55"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="1600" fill="url(#bg)"/>
+  <circle cx="820" cy="360" r="420" fill="url(#pulse)"/>
+  <circle cx="240" cy="1240" r="360" fill="#f59e0b" opacity="0.12"/>
+  <rect x="86" y="86" width="1028" height="1428" rx="70" fill="rgba(255,255,255,0.055)" stroke="#22d3ee" stroke-opacity="0.35" stroke-width="3"/>
+  <text x="120" y="170" fill="#fef3c7" font-family="Arial" font-size="32" font-weight="800" letter-spacing="8">${safeText(cardData.badge)}</text>
+  <text x="120" y="330" fill="#e0f2fe" font-family="Arial" font-size="92" font-weight="900">${safeText(cardData.title)}</text>
+  <text x="120" y="405" fill="#94a3b8" font-family="Arial" font-size="38" font-weight="700">${safeText(cardData.subtitle)}</text>
+  <circle cx="600" cy="735" r="250" fill="none" stroke="#22d3ee" stroke-opacity="0.25" stroke-width="24"/>
+  <circle cx="600" cy="735" r="186" fill="none" stroke="#f59e0b" stroke-opacity="0.30" stroke-width="18"/>
+  <text x="600" y="725" fill="#67e8f9" font-family="Arial" font-size="150" font-weight="900" text-anchor="middle">${safeText(cardData.score)}%</text>
+  <text x="600" y="790" fill="#cbd5e1" font-family="Arial" font-size="34" font-weight="800" text-anchor="middle">${safeText(cardData.metric)}</text>
+  <rect x="130" y="1040" width="285" height="150" rx="34" fill="#020617" stroke="#22d3ee" stroke-opacity="0.35"/>
+  <rect x="457" y="1040" width="285" height="150" rx="34" fill="#020617" stroke="#22d3ee" stroke-opacity="0.35"/>
+  <rect x="784" y="1040" width="285" height="150" rx="34" fill="#020617" stroke="#f59e0b" stroke-opacity="0.45"/>
+  <text x="272" y="1125" fill="#e0f2fe" font-family="Arial" font-size="34" font-weight="900" text-anchor="middle">${safeText(cardData.statA)}</text>
+  <text x="600" y="1125" fill="#e0f2fe" font-family="Arial" font-size="34" font-weight="900" text-anchor="middle">${safeText(cardData.statB)}</text>
+  <text x="927" y="1125" fill="#fef3c7" font-family="Arial" font-size="34" font-weight="900" text-anchor="middle">${safeText(cardData.statC)}</text>
+  <text x="120" y="1325" fill="#cbd5e1" font-family="Arial" font-size="34" font-weight="700">${safeText(cardData.narrative).slice(0, 82)}</text>
+  <text x="120" y="1450" fill="#22d3ee" font-family="Arial" font-size="34" font-weight="900" letter-spacing="5">ELEMENTOS.AI</text>
+</svg>`;
+    downloadFile(`ElementOS-${mode.replace(/\s+/g, "-")}-viral-card.svg`, svg, "image/svg+xml");
+  };
+
+  const copyCard = () => {
+    const text = `${cardData.title}\n${cardData.badge}\n${cardData.score}% ${cardData.metric}\n${cardData.statA} · ${cardData.statB} · ${cardData.statC}\n${cardData.narrative}\nGenerated in ElementOS`;
+    navigator.clipboard?.writeText(text);
+    alert("Viral card copy saved to clipboard.");
+  };
+
+  const modes = ["Discovery", "Time Machine", "Scenario", "Seismo", "Well Driller"];
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
+        <div>
+          <Pill gold><Sparkles size={12}/> viral growth engine</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Viral <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Card Studio</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Turn discoveries, Time Machine forecasts, Seismo readouts, Well Driller paths and Scenario Builder outputs into cinematic share cards for X, Reddit, LinkedIn, TikTok screenshots and public reports.
+          </p>
+          <Info title="Growth doctrine">
+            People share visuals, not dashboards. This studio turns every strong simulation into a social asset with rarity, AI confidence, telemetry and exportable SVG cards.
+          </Info>
+        </div>
+
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Card source</div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {modes.map((m) => (
+              <button
+                key={m}
+                onClick={() => setMode(m)}
+                className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition ${mode === m ? "border-cyan-300/40 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-black/20 text-slate-300"}`}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+          <div className="mt-5 flex gap-2">
+            <Button onClick={() => setCardIndex((v) => v + 1)}>Next Card</Button>
+            <Button onClick={copyCard}>Copy Text</Button>
+            <Button onClick={exportSVG} variant="primary">Export SVG</Button>
+          </div>
+        </Panel>
+      </Panel>
+
+      <GuidePanel page="viralcards" />
+
+      <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
+        <div className="relative min-h-[720px] overflow-hidden rounded-[2.5rem] border border-cyan-300/25 bg-gradient-to-br from-cyan-400/15 via-slate-950 to-fuchsia-500/20 p-6 shadow-[0_0_120px_rgba(34,211,238,.20)]">
+          <div className="absolute -right-28 top-10 h-80 w-80 rounded-full bg-cyan-300/20 blur-3xl" />
+          <div className="absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-amber-300/10 blur-3xl" />
+          <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:42px_42px]" />
+
+          <div className="relative z-10 flex h-full flex-col justify-between rounded-[2rem] border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <Pill gold>{cardData.badge}</Pill>
+                <div className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.2em] text-cyan-100">Share-ready</div>
+              </div>
+              <h2 className="mt-8 text-6xl font-black leading-none text-cyan-100 sm:text-7xl">{cardData.title}</h2>
+              <p className="mt-4 text-xl font-bold text-slate-300">{cardData.subtitle}</p>
+            </div>
+
+            <div className="my-10 grid place-items-center">
+              <div className="relative grid h-72 w-72 place-items-center rounded-full border-[18px] border-cyan-300/20 bg-cyan-300/5 shadow-[0_0_90px_rgba(34,211,238,.28)]">
+                <div className="absolute h-52 w-52 rounded-full border-[14px] border-amber-300/25" />
+                <div className="absolute h-36 w-36 rounded-full border border-white/15" />
+                <div className="text-center">
+                  <div className="text-7xl font-black text-cyan-100">{cardData.score}%</div>
+                  <div className="mt-2 text-xs uppercase tracking-[.24em] text-slate-400">{cardData.metric}</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <p className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-5 text-sm leading-7 text-slate-200">{cardData.narrative}</p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                {[cardData.statA, cardData.statB, cardData.statC].map((stat) => (
+                  <div key={stat} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-center text-sm font-black text-cyan-100">{stat}</div>
+                ))}
+              </div>
+              <div className="mt-6 flex items-center justify-between gap-4 text-xs uppercase tracking-[.24em] text-slate-500">
+                <span>ELEMENTOS.AI</span>
+                <span>{mode}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Panel>
+          <Pill><Network size={12}/> viral ranking</Pill>
+          <h2 className="mt-3 text-4xl font-black">Trending Card Queue</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-400">
+            Use these cards as your content engine: export one SVG, post it, and send users back into the matching simulation page.
+          </p>
+          <div className="mt-6 space-y-3">
+            {discoveries.slice(0, 7).map((d, index) => (
+              <div key={`${d.dna}-viral`} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div>
+                  <div className="text-lg font-black text-cyan-100">#{index + 1} · {d.a} + {d.b}</div>
+                  <div className="mt-1 text-sm text-slate-400">{d.type} · {d.tier}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-black text-emerald-200">{d.aiConfidence}%</div>
+                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <Button onClick={() => setPage("discover")} className="w-full">Open Discover</Button>
+            <Button onClick={() => setPage("simreports")} variant="primary" className="w-full">Open Reports</Button>
+          </div>
+        </Panel>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-4">
+        {[
+          ["X / Twitter", "Post one compact card with a sharp hook and link to the public report."],
+          ["Reddit", "Use the card as proof-of-concept visual, then explain the simulation plainly."],
+          ["LinkedIn", "Frame cards as exploratory material intelligence reports."],
+          ["TikTok", "Screen-record the card generation and export moment."],
+        ].map(([title, desc]) => (
+          <Panel key={title}>
+            <div className="text-xl font-black text-cyan-100">{title}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+          </Panel>
+        ))}
+      </div>
+    </>
+  );
+}
+
+
+
 function UniversalSimulationReports({ selected = "Al", compare = [], session, isPro, startCheckout, setPage }) {
   const [source, setSource] = useState("Complete Simulation Dossier");
   const active = elementMap[selected] || elementMap.Al;
@@ -3531,6 +3788,7 @@ function MobileBottomNav({ page, setPage }) {
     ["welldriller", "Well", Radar],
     ["seismo", "Seismo", Network],
     ["simreports", "Reports+", BookOpen],
+    ["viralcards", "Cards", Sparkles],
     ["calculations", "Calc", Calculator],
     ["explorer", "Explore", Search],
     ["compare", "Compare", BarChart3],
@@ -3765,6 +4023,7 @@ const startCheckout = async () => {
       welldriller: <ExperimentalWellDriller setPage={setPage} />,
       seismo: <SeismoSimulator setPage={setPage} />,
       simreports: <UniversalSimulationReports selected={selected} compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} setPage={setPage} />,
+      viralcards: <ViralDiscoveryCardStudio selected={selected} compare={compare} setPage={setPage} />,
       login: (
         <LoginAccount
           session={session}
