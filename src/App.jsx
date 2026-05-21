@@ -210,6 +210,88 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
     ))}
   </div>
 </Panel>
+
+<Panel>
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <Pill gold>
+        <UserPlus size={12} /> researcher profile
+      </Pill>
+      <h2 className="mt-3 text-4xl font-black">Researcher Identity Layer</h2>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+        Profiles and discovery stats make ElementOS feel personal, returnable and community-driven.
+      </p>
+    </div>
+    <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">
+      Top Titanium Researcher
+    </div>
+  </div>
+
+  <div className="mt-6 grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+    <div className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-6">
+      <div className="flex items-center gap-4">
+        <div className="grid h-16 w-16 place-items-center rounded-3xl border border-cyan-300/30 bg-cyan-300/10 text-2xl font-black text-cyan-100">
+          {(session?.user?.email || "R").slice(0, 1).toUpperCase()}
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Research profile</div>
+          <div className="mt-1 text-2xl font-black text-cyan-100">
+            {session?.user?.email || "Guest Researcher"}
+          </div>
+          <div className="mt-1 text-sm text-slate-400">ElementOS Discovery Network</div>
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        {[
+          ["1,248", "simulations"],
+          ["32", "exports"],
+          ["14", "shared discoveries"],
+          ["97%", "profile signal"],
+        ].map(([value, label]) => (
+          <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+            <div className="text-3xl font-black text-emerald-200">{value}</div>
+            <div className="mt-1 text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">
+        Badge unlocked: <b>Material Discovery Founder</b>. Users now have a reason to return and grow their research identity.
+      </div>
+    </div>
+
+    <div className="rounded-[2rem] border border-white/10 bg-black/25 p-6">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Public ecosystem</div>
+          <h3 className="mt-2 text-2xl font-black">Recent Public Discoveries</h3>
+        </div>
+        <Pill><Sparkles size={12} /> live feed</Pill>
+      </div>
+
+      <div className="mt-5 space-y-3">
+        {[
+          ["Ti + W", "94%", "Ultra rare thermal-pressure pathway"],
+          ["Cu + Ag", "91%", "High-conductivity substitute corridor"],
+          ["Al + Fe", "88%", "Structural compatibility report shared"],
+          ["Si + Ge", "86%", "Semiconductor-adjacent behaviour match"],
+        ].map(([pair, value, desc]) => (
+          <div key={pair} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/70 p-4">
+            <div>
+              <div className="text-lg font-black text-cyan-100">{pair}</div>
+              <div className="mt-1 text-sm text-slate-400">{desc}</div>
+            </div>
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xl font-black text-emerald-100">
+              {value}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Panel>
+
 <div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
 }
 function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
