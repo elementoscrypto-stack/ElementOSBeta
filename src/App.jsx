@@ -191,6 +191,35 @@ function generateDiscoveryHeadline(discovery) {
   return `ElementOS discovered ${discovery.a} + ${discovery.b} at ${discovery.score}%`;
 }
 
+function adaptiveDiscoveryMetrics(discovery, index = 0) {
+  const seed = discovery.dna
+    .split("")
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+  const views = 420 + ((seed * 17 + index * 91) % 4200);
+  const shares = 24 + ((seed * 11 + index * 37) % 720);
+  const saves = 12 + ((seed * 7 + index * 19) % 360);
+  const velocity = 8 + ((seed + index * 13) % 64);
+  const aiConfidence = Math.max(71, Math.min(99, Math.round(discovery.score * 0.72 + velocity * 0.28)));
+  const momentum = Math.round(discovery.score * 0.48 + aiConfidence * 0.24 + velocity * 0.18 + Math.min(100, shares / 8) * 0.1);
+
+  return {
+    ...discovery,
+    views,
+    shares,
+    saves,
+    velocity,
+    aiConfidence,
+    momentum,
+  };
+}
+
+function adaptiveDiscoveryRank(discoveries) {
+  return discoveries
+    .map((discovery, index) => adaptiveDiscoveryMetrics(discovery, index))
+    .sort((a, b) => b.momentum - a.momentum);
+}
+
 
 function heatStyle(value, max = 5) {
   const t = Math.max(0, Math.min(1, value / max));
@@ -360,35 +389,44 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
 }
 
 function Discover({ setPage }) {
-  const discoveries = useMemo(() => generateDiscoveryEngine(18), []);
+  const generated = useMemo(() => generateDiscoveryEngine(24), []);
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generated), [generated]);
   const top = discoveries[0];
-  const corridor = discoveries.find((d) => d.type === "Conductivity corridor") || discoveries[1];
-  const thermal = discoveries.find((d) => d.type === "Thermal-pressure cluster") || discoveries[2];
-  const rare = discoveries.find((d) => d.type === "Rare pair discovery") || discoveries[3];
-  const spotlight = [top, corridor, thermal, rare].filter(Boolean);
+  const mostViewed = [...discoveries].sort((a, b) => b.views - a.views).slice(0, 4);
+  const mostShared = [...discoveries].sort((a, b) => b.shares - a.shares).slice(0, 4);
+  const focusing = discoveries.slice(0, 6);
+  const autoPromoted = discoveries.filter((d) => d.aiConfidence >= 90 || d.velocity >= 50).slice(0, 6);
 
   return (
     <>
       <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
         <div>
-          <Pill gold><Sparkles size={12}/> discovery engine</Pill>
+          <Pill gold><Sparkles size={12}/> adaptive intelligence</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">
-            ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery Engine</span>
+            ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Adaptive Discovery Intelligence</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            The platform now scans element pairings automatically and surfaces high-signal material discoveries: hidden substitutes, conductivity corridors, rare pairings and thermal-pressure clusters.
+            The discovery engine now ranks material pairings by compatibility, AI confidence, share momentum, view signal and trending velocity.
           </p>
-          <Info title="Why this matters">
-            ElementOS is no longer only a place where users inspect elements. It now generates discovery candidates users can click, share, compare and export into reports.
+          <Info title="Living intelligence layer">
+            This turns ElementOS from a static discovery page into a momentum-weighted research network: the strongest discoveries rise automatically and create a fresher homepage every time users return.
           </Info>
         </div>
 
         <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Top generated discovery</div>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Auto-promoted discovery</div>
           <h2 className="mt-3 text-4xl font-black text-cyan-100">{top?.a} + {top?.b}</h2>
-          <div className="mt-3 text-6xl font-black text-emerald-200">{top?.score}%</div>
-          <div className="mt-4 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-amber-100">
-            {top?.tier} · {top?.type}
+          <div className="mt-3 text-6xl font-black text-emerald-200">{top?.momentum}</div>
+          <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">adaptive momentum score</div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
+              <div className="text-xs uppercase tracking-[.2em] text-cyan-200">AI confidence</div>
+              <div className="mt-2 text-3xl font-black text-cyan-100">{top?.aiConfidence}%</div>
+            </div>
+            <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/10 p-4">
+              <div className="text-xs uppercase tracking-[.2em] text-emerald-200">Velocity</div>
+              <div className="mt-2 text-3xl font-black text-emerald-100">+{top?.velocity}%</div>
+            </div>
           </div>
           <p className="mt-4 text-sm leading-7 text-slate-300">{top?.reason}</p>
           <Button onClick={() => setPage("compare")} variant="primary" className="mt-5 w-full">
@@ -400,41 +438,52 @@ function Discover({ setPage }) {
       <Panel>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <Pill><Network size={12}/> auto-scanned intelligence</Pill>
-            <h2 className="mt-3 text-4xl font-black">ElementOS Discovered</h2>
+            <Pill><Network size={12}/> adaptive ranking engine</Pill>
+            <h2 className="mt-3 text-4xl font-black">Researchers Are Focusing On</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">
-              Ranked from a full element-pair scan across compatibility, thermal-pressure behaviour, conductivity similarity, stability balance and rarity signal.
+              Momentum-weighted material discoveries ranked by AI confidence, velocity, simulated views, shares and saves.
             </p>
           </div>
           <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">
-            ● {discoveries.length} generated discoveries
+            ● Living Discovery Feed
           </div>
         </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {discoveries.slice(0, 9).map((d) => (
-            <div key={d.dna} className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5">
+          {focusing.map((d) => (
+            <div key={`${d.dna}-adaptive`} className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5">
               <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
               <div className="relative z-10">
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-xs uppercase tracking-[.22em] text-cyan-200">{d.type}</div>
                   <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-[10px] font-black tracking-[.18em] text-amber-100">{d.tier}</div>
                 </div>
-                <div className="mt-5 text-5xl font-black text-cyan-100">{d.score}%</div>
-                <div className="mt-2 text-2xl font-black text-white">{d.a} + {d.b}</div>
+                <div className="mt-5 text-5xl font-black text-cyan-100">{d.a} + {d.b}</div>
                 <p className="mt-3 text-sm leading-6 text-slate-300">{generateDiscoveryHeadline(d)}: {d.reason}.</p>
-                <div className="mt-5 grid gap-2 sm:grid-cols-2">
+
+                <div className="mt-5 grid gap-2 sm:grid-cols-3">
                   <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
-                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Compatibility</div>
-                    <div className="mt-2 text-xl font-black text-emerald-200">{d.compatibility}%</div>
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI</div>
+                    <div className="mt-2 text-xl font-black text-cyan-100">{d.aiConfidence}%</div>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
-                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">DNA</div>
-                    <div className="mt-2 font-mono text-xs text-cyan-100">{d.dna}</div>
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Velocity</div>
+                    <div className="mt-2 text-xl font-black text-emerald-200">+{d.velocity}%</div>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Momentum</div>
+                    <div className="mt-2 text-xl font-black text-amber-100">{d.momentum}</div>
                   </div>
                 </div>
+
+                <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-slate-300">{d.views.toLocaleString()} views</div>
+                  <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-slate-300">{d.shares.toLocaleString()} shares</div>
+                  <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-slate-300">{d.saves.toLocaleString()} saves</div>
+                </div>
+
                 <div className="mt-5 flex gap-2">
-                  <Button onClick={() => navigator.clipboard.writeText(`${generateDiscoveryHeadline(d)} — ${d.reason}`)}>Copy</Button>
+                  <Button onClick={() => navigator.clipboard.writeText(`${generateDiscoveryHeadline(d)} — AI confidence ${d.aiConfidence}% — velocity +${d.velocity}%`)}>Copy</Button>
                   <Button variant="primary" onClick={() => setPage("compare")}>Compare</Button>
                 </div>
               </div>
@@ -443,19 +492,62 @@ function Discover({ setPage }) {
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-3">
-        {spotlight.map((d) => (
-          <Panel key={`${d.dna}-spotlight`}>
-            <Pill gold><Radar size={12}/> {d.type}</Pill>
-            <h2 className="mt-3 text-3xl font-black">{d.aName} + {d.bName}</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-300">{d.reason}. This card is auto-generated from the ElementOS scoring engine.</p>
-            <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
-              <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Discovery score</div>
-              <div className="mt-2 text-4xl font-black text-cyan-100">{d.score}%</div>
-            </div>
-          </Panel>
-        ))}
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Panel>
+          <Pill gold><Radar size={12}/> most viewed</Pill>
+          <h2 className="mt-3 text-3xl font-black">Most Viewed Discoveries</h2>
+          <div className="mt-5 space-y-3">
+            {mostViewed.map((d) => (
+              <div key={`${d.dna}-views`} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div>
+                  <div className="text-lg font-black text-cyan-100">{d.a} + {d.b}</div>
+                  <div className="mt-1 text-sm text-slate-400">{d.type}</div>
+                </div>
+                <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xl font-black text-cyan-100">{d.views.toLocaleString()}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><Sparkles size={12}/> most shared</Pill>
+          <h2 className="mt-3 text-3xl font-black">Most Shared Discoveries</h2>
+          <div className="mt-5 space-y-3">
+            {mostShared.map((d) => (
+              <div key={`${d.dna}-shares`} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div>
+                  <div className="text-lg font-black text-cyan-100">{d.a} + {d.b}</div>
+                  <div className="mt-1 text-sm text-slate-400">{d.reason}</div>
+                </div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xl font-black text-emerald-100">{d.shares.toLocaleString()}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
       </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill><CheckCircle2 size={12}/> auto-promoted by ElementOS</Pill>
+            <h2 className="mt-3 text-4xl font-black">Auto-Promoted Discoveries</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              Discoveries with high AI confidence or fast trend velocity are promoted into this premium feed.
+            </p>
+          </div>
+          <Button onClick={() => setPage("reports")} variant="primary">Generate Report</Button>
+        </div>
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {autoPromoted.map((d) => (
+            <div key={`${d.dna}-promoted`} className="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-amber-100">AI confidence {d.aiConfidence}%</div>
+              <div className="mt-3 text-3xl font-black text-white">{d.aName} + {d.bName}</div>
+              <p className="mt-3 text-sm leading-7 text-amber-50/90">{d.reason}. Trending velocity is +{d.velocity}% with {d.shares.toLocaleString()} shares.</p>
+              <div className="mt-4 rounded-2xl border border-white/10 bg-black/25 p-3 font-mono text-xs text-cyan-100">{d.dna}</div>
+            </div>
+          ))}
+        </div>
+      </Panel>
     </>
   );
 }
