@@ -344,16 +344,6 @@ function guidanceForPage(page) {
       description: "Scenario Builder turns plain-English material situations into risk scores, lifespan estimates, failure probabilities, substitute suggestions and exportable scenario reports.",
       next: "Type a real-world scenario, run the simulation, then export or send the result into Time Machine.",
     },
-    welldriller: {
-      title: "What Experimental Well Driller does",
-      description: "The Experimental Well Driller models a deep subsurface bore path, drilling load, formation pressure, reservoir depth and seismic-readiness using clear visual simulation cards.",
-      next: "Adjust depth and formation pressure, inspect the 3D-style well profile, then open Seismo to compare P-wave and S-wave behaviour.",
-    },
-    seismo: {
-      title: "What Seismo does",
-      description: "Seismo compares P-wave and S-wave travel through a simulated subsurface field so users can understand arrival gaps, wave speed and depth response.",
-      next: "Tune distance, depth and wave speeds, then export the seismic readout or return to Well Driller.",
-    },
     lab: {
       title: "What My Lab does",
       description: "My Lab collects saved scenarios, favourite materials, recent simulations and report-ready discovery assets in one workspace-style page.",
@@ -2003,25 +1993,35 @@ function IsotopeLab() {
 
 
 function CalculationCore() {
-  const [density, setDensity] = useState(7850);
-  const [volume, setVolume] = useState(0.42);
-  const [force, setForce] = useState(12500);
-  const [area, setArea] = useState(0.18);
-  const [distance, setDistance] = useState(75);
-  const [time, setTime] = useState(14);
+  const [density, setDensity] = useState(2700);
+  const [volume, setVolume] = useState(2.4);
+  const [force, setForce] = useState(125000);
+  const [area, setArea] = useState(4.2);
+  const [distance, setDistance] = useState(1400);
+  const [time, setTime] = useState(18);
 
   const mass = density * volume;
   const pressure = force / Math.max(area, 0.001);
   const velocity = distance / Math.max(time, 0.001);
-  const energy = 0.5 * mass * velocity * velocity;
-  const signal = Math.round(Math.min(99, Math.max(1, pressure / 1800 + energy / 25000)));
+  const kineticProxy = 0.5 * mass * velocity * velocity;
+  const telemetry = Math.max(1, Math.min(99, Math.round((Math.log10(kineticProxy + pressure + 1) / 8) * 100)));
+  const stability = Math.max(1, Math.min(99, Math.round(100 - pressure / 9500 + density / 130)));
 
   const exportCalc = () => {
     downloadFile(
       "elementos-calculation-core-report.txt",
-      `ElementOS Calculation Core Report\n\nDensity: ${density} kg/m3\nVolume: ${volume} m3\nMass: ${mass.toFixed(2)} kg\nForce: ${force} N\nArea: ${area} m2\nPressure: ${pressure.toFixed(2)} Pa\nDistance: ${distance} m\nTime: ${time} s\nVelocity: ${velocity.toFixed(2)} m/s\nEnergy proxy: ${energy.toFixed(2)} J\nTelemetry signal: ${signal}%`
+      `ElementOS Calculation Core Report\n\nDensity: ${density} kg/m3\nVolume: ${volume} m3\nMass: ${mass.toFixed(2)} kg\nForce: ${force} N\nArea: ${area} m2\nPressure: ${pressure.toFixed(2)} Pa\nDistance: ${distance} m\nTime: ${time} s\nVelocity: ${velocity.toFixed(2)} m/s\nEnergy proxy: ${kineticProxy.toFixed(2)} J\nTelemetry signal: ${telemetry}%\nStability signal: ${stability}%`
     );
   };
+
+  const fields = [
+    ["Density", density, setDensity, 500, 22000, "kg/m³"],
+    ["Volume", volume, setVolume, 0.1, 20, "m³"],
+    ["Force", force, setForce, 1000, 500000, "N"],
+    ["Area", area, setArea, 0.1, 50, "m²"],
+    ["Distance", distance, setDistance, 10, 10000, "m"],
+    ["Time", time, setTime, 1, 120, "s"],
+  ];
 
   return (
     <>
@@ -2029,52 +2029,50 @@ function CalculationCore() {
         <div>
           <Pill gold><Calculator size={12}/> premium calculation engine</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">Calculation <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Core</span></h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A serious engineering-style calculation page for mass, pressure, velocity, kinetic energy and simulation signal. This is now designed to support reports, drilling scenarios, Seismo analysis and material decisions.</p>
-          <Info title="What to do here">Change the physical inputs, watch the output cards update instantly, then export a calculation report for your research workflow.</Info>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A stronger analysis page for mass, force, pressure, velocity, energy proxy and telemetry-style confidence. It gives ElementOS a serious engineering calculator feel.</p>
+          <Info title="What this page does">Move the inputs and the calculation cards update instantly. Export a calculation report when the numbers look useful.</Info>
         </div>
         <Panel>
           <h2 className="text-3xl font-black">Live Inputs</h2>
           <div className="mt-5 grid gap-4">
-            {[
-              ["Density", density, setDensity, 500, 20000, "kg/m³"],
-              ["Volume", volume, setVolume, 0.05, 3, "m³"],
-              ["Force", force, setForce, 100, 50000, "N"],
-              ["Area", area, setArea, 0.02, 2, "m²"],
-              ["Distance", distance, setDistance, 1, 250, "m"],
-              ["Time", time, setTime, 1, 60, "s"],
-            ].map(([label, value, setter, min, max, unit]) => (
+            {fields.map(([label, value, setter, min, max, unit]) => (
               <label key={label} className="block text-sm text-slate-300">
-                <div className="flex justify-between"><span>{label}</span><b className="text-cyan-100">{Number(value).toFixed(label === "Volume" || label === "Area" ? 2 : 0)} {unit}</b></div>
-                <input type="range" min={min} max={max} step={label === "Volume" || label === "Area" ? 0.01 : 1} value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" />
+                <div className="flex justify-between gap-3"><span>{label}</span><b className="text-cyan-100">{Number(value).toFixed(label === "Volume" || label === "Area" ? 1 : 0)} {unit}</b></div>
+                <input className="mt-3 w-full" type="range" min={min} max={max} step={label === "Volume" || label === "Area" ? 0.1 : 1} value={value} onChange={(e) => setter(Number(e.target.value))} />
               </label>
             ))}
           </div>
         </Panel>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-4">
-        {[
-          ["Mass", `${mass.toFixed(1)} kg`, "density × volume"],
-          ["Pressure", `${pressure.toFixed(0)} Pa`, "force ÷ area"],
-          ["Velocity", `${velocity.toFixed(2)} m/s`, "distance ÷ time"],
-          ["Energy", `${energy.toFixed(0)} J`, "kinetic proxy"],
-        ].map(([title, value, desc]) => (
-          <Panel key={title}><div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div><div className="mt-3 text-4xl font-black text-cyan-100">{value}</div><p className="mt-2 text-sm text-slate-400">{desc}</p></Panel>
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        {[["Mass", `${mass.toFixed(1)} kg`, "density × volume"], ["Pressure", `${pressure.toFixed(0)} Pa`, "force ÷ area"], ["Velocity", `${velocity.toFixed(2)} m/s`, "distance ÷ time"], ["Energy Proxy", `${kineticProxy.toExponential(2)} J`, "½mv² estimate"]].map(([title, value, desc]) => (
+          <Panel key={title}>
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
+            <div className="mt-3 text-3xl font-black text-cyan-100">{value}</div>
+            <p className="mt-2 text-sm text-slate-400">{desc}</p>
+          </Panel>
         ))}
       </div>
 
       <Panel>
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div><Pill><BarChart3 size={12}/> visual calculation telemetry</Pill><h2 className="mt-3 text-4xl font-black">Calculation Signal Surface</h2><p className="mt-2 text-sm leading-6 text-slate-400">A premium visual readout connecting pressure, mass and energy into one simulation confidence layer.</p></div>
-          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-5 py-4 text-3xl font-black text-emerald-100">{signal}%</div>
+          <div>
+            <Pill><BarChart3 size={12}/> visual calculation telemetry</Pill>
+            <h2 className="mt-3 text-4xl font-black">Calculation Signal Surface</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">A clean visual readout connecting pressure, mass, velocity and stability into one premium calculation display.</p>
+          </div>
+          <Button onClick={exportCalc} variant="primary"><Download size={16} className="inline"/> Export Calculation Report</Button>
         </div>
-        <div className="mt-8 grid h-64 grid-cols-12 items-end gap-2 rounded-[2rem] border border-white/10 bg-black/25 p-5">
-          {Array.from({ length: 12 }).map((_, i) => {
-            const h = Math.max(12, Math.min(100, signal + Math.sin(i * 0.9) * 22 + i * 2));
-            return <div key={i} className="rounded-t-2xl bg-cyan-300/80 shadow-[0_0_30px_rgba(34,211,238,.35)]" style={{ height: `${h}%` }} />;
-          })}
+        <div className="mt-6 grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+          <div className="grid h-72 grid-cols-12 items-end gap-2 rounded-[2rem] border border-cyan-300/15 bg-black/25 p-5">
+            {Array.from({ length: 12 }).map((_, i) => <div key={i} className="rounded-t-2xl bg-cyan-300/80 shadow-[0_0_25px_rgba(34,211,238,.45)]" style={{ height: `${Math.max(8, Math.min(100, telemetry - i * 3 + Math.sin(i) * 18))}%` }} />)}
+          </div>
+          <div className="grid gap-4">
+            <div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5"><div className="text-xs uppercase tracking-[.22em] text-emerald-200">Telemetry signal</div><div className="mt-2 text-5xl font-black text-emerald-100">{telemetry}%</div></div>
+            <div className="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-5"><div className="text-xs uppercase tracking-[.22em] text-amber-100">Stability signal</div><div className="mt-2 text-5xl font-black text-amber-100">{stability}%</div></div>
+          </div>
         </div>
-        <div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportCalc} variant="primary"><Download size={16} className="inline"/> Export Calculation Report</Button></div>
       </Panel>
     </>
   );
@@ -3014,14 +3012,13 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
 }
 
 function ExperimentalWellDriller({ setPage }) {
-  const [depth, setDepth] = useState(2800);
-  const [pressure, setPressure] = useState(62);
-  const [rpm, setRpm] = useState(118);
-  const [mud, setMud] = useState(48);
-  const reservoirScore = Math.round(Math.min(99, Math.max(5, depth / 55 + pressure * 0.42 - mud * 0.18)));
-  const stability = Math.round(Math.min(99, Math.max(1, 100 - pressure * 0.45 + mud * 0.35 - rpm * 0.05)));
-
-  const exportWell = () => downloadFile("elementos-well-driller-report.txt", `Experimental Well Driller Report\n\nDepth: ${depth} m\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nReservoir score: ${reservoirScore}%\nBore stability: ${stability}%`);
+  const [depth, setDepth] = useState(3200);
+  const [pressure, setPressure] = useState(68);
+  const [mud, setMud] = useState(52);
+  const [temperature, setTemperature] = useState(88);
+  const reservoirScore = Math.max(1, Math.min(99, Math.round(100 - Math.abs(depth - 3600) / 80 - pressure * 0.12 + mud * 0.28 - temperature * 0.08)));
+  const stability = Math.max(1, Math.min(99, Math.round(76 + mud * 0.22 - pressure * 0.18 - temperature * 0.06)));
+  const exportWell = () => downloadFile("elementos-well-driller-report.txt", `ElementOS Experimental Well Driller Report\n\nDepth: ${depth} m\nFormation pressure: ${pressure}%\nMud control: ${mud}%\nTemperature: ${temperature} C\nReservoir score: ${reservoirScore}%\nBore stability: ${stability}%`);
 
   return (
     <>
@@ -3029,38 +3026,35 @@ function ExperimentalWellDriller({ setPage }) {
         <div>
           <Pill gold><Radar size={12}/> experimental subsurface simulator</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">Experimental <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Well Driller</span></h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Model a cinematic drilling column through layered geology. Tune depth, pressure, RPM and mud balance, then jump into Seismo to compare P-wave and S-wave behaviour.</p>
-          <Info title="Connected workflow">Well Driller is now directly connected to Seismo: drill path first, seismic wave interpretation second, exportable readouts after.</Info>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Simulate a conceptual well path through layered subsurface material, pressure zones and reservoir targets. It links directly with Seismo for P-wave and S-wave interpretation.</p>
+          <Info title="What this page does">Adjust depth, pressure, mud control and temperature. The visual wellbore, strata and reservoir cards update immediately.</Info>
           <div className="mt-5 flex flex-wrap gap-3"><Button onClick={() => setPage("seismo")} variant="primary">Open Seismo</Button><Button onClick={exportWell}><Download size={16} className="inline"/> Export Well Report</Button></div>
         </div>
         <Panel>
           <h2 className="text-3xl font-black">Drilling Controls</h2>
           <div className="mt-5 grid gap-4">
-            {[["Depth", depth, setDepth, 500, 6500, "m"], ["Formation Pressure", pressure, setPressure, 1, 100, "%"], ["Drill RPM", rpm, setRpm, 40, 220, "rpm"], ["Mud Balance", mud, setMud, 1, 100, "%"]].map(([label, value, setter, min, max, unit]) => (
+            {[["Depth", depth, setDepth, 500, 7000, "m"], ["Formation Pressure", pressure, setPressure, 1, 100, "%"], ["Mud Control", mud, setMud, 1, 100, "%"], ["Temperature", temperature, setTemperature, 20, 220, "°C"]].map(([label, value, setter, min, max, unit]) => (
               <label key={label} className="block text-sm text-slate-300"><div className="flex justify-between"><span>{label}</span><b className="text-cyan-100">{value} {unit}</b></div><input type="range" min={min} max={max} value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" /></label>
             ))}
           </div>
         </Panel>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
         <Panel>
-          <h2 className="text-3xl font-black">3D Well Profile</h2>
-          <div className="mt-6 h-[560px] rounded-[2rem] border border-cyan-300/15 bg-gradient-to-b from-slate-900 via-black to-slate-950 p-6" style={{ perspective: "1000px" }}>
-            <div className="relative mx-auto h-full max-w-sm" style={{ transform: "rotateX(58deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
-              {[0,1,2,3,4,5,6].map((i) => <div key={i} className="absolute left-0 right-0 h-16 rounded-3xl border border-white/10 bg-cyan-300/10" style={{ top: `${i*70}px`, transform: `translateZ(${-i*24}px)` }} />)}
-              <div className="absolute left-1/2 top-4 h-[455px] w-10 -translate-x-1/2 rounded-full border border-amber-200/40 bg-amber-300/20 shadow-[0_0_60px_rgba(251,191,36,.55)]" style={{ transform: "translateZ(80px)" }} />
-              <div className="absolute bottom-6 left-1/2 h-24 w-44 -translate-x-1/2 rounded-[50%] border border-emerald-300/40 bg-emerald-300/20 shadow-[0_0_80px_rgba(16,185,129,.65)]" style={{ transform: "translateZ(45px)" }} />
+          <h2 className="text-3xl font-black">3D Well Design View</h2>
+          <div className="mt-6 h-[520px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-b from-slate-900 via-black to-slate-950 p-8" style={{ perspective: "900px" }}>
+            <div className="relative mx-auto h-full max-w-3xl" style={{ transform: "rotateX(58deg) rotateZ(-7deg)", transformStyle: "preserve-3d" }}>
+              {[0,1,2,3,4,5,6].map((i) => <div key={i} className="absolute left-4 right-4 h-14 rounded-2xl border border-white/10" style={{ top: `${i*62}px`, background: i % 2 ? "rgba(217,119,6,.16)" : "rgba(34,211,238,.10)", transform: `translateZ(${-i*22}px)` }} />)}
+              <div className="absolute left-1/2 top-4 h-[420px] w-10 -translate-x-1/2 rounded-full border border-cyan-200/50 bg-cyan-300/20 shadow-[0_0_70px_rgba(34,211,238,.8)]" style={{ transform: "translateZ(150px)" }} />
+              <div className="absolute left-[44%] top-[320px] h-28 w-40 rounded-[50%] border border-emerald-200/60 bg-emerald-300/20 shadow-[0_0_80px_rgba(16,185,129,.8)]" style={{ transform: "translateZ(80px) rotateZ(8deg)" }} />
             </div>
           </div>
         </Panel>
         <Panel>
-          <h2 className="text-3xl font-black">Reservoir Intelligence</h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {[["Reservoir Score", reservoirScore], ["Bore Stability", stability], ["Pressure Load", pressure], ["Mud Control", mud]].map(([label, value]) => <div key={label} className="rounded-[2rem] border border-white/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div><div className="mt-3 text-5xl font-black text-cyan-100">{value}%</div></div>)}
-          </div>
-          <div className="mt-6 grid h-72 grid-cols-10 items-end gap-2 rounded-[2rem] border border-white/10 bg-black/25 p-5">
-            {Array.from({ length: 10 }).map((_, i) => <div key={i} className="rounded-t-2xl bg-emerald-300/70" style={{ height: `${Math.max(10, reservoirScore - i*4 + Math.sin(i)*12)}%` }} />)}
+          <h2 className="text-3xl font-black">Well Readout</h2>
+          <div className="mt-5 grid gap-4">
+            {[["Reservoir Score", reservoirScore], ["Bore Stability", stability], ["Formation Pressure", pressure], ["Mud Control", mud]].map(([label, value]) => <div key={label} className="rounded-[2rem] border border-white/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div><div className="mt-2 text-5xl font-black text-cyan-100">{value}%</div></div>)}
           </div>
         </Panel>
       </div>
@@ -3076,8 +3070,8 @@ function SeismoSimulator({ setPage }) {
   const pArrival = (distance * 1000) / pVelocity;
   const sArrival = (distance * 1000) / sVelocity;
   const gap = sArrival - pArrival;
-  const confidence = Math.round(Math.min(99, Math.max(45, 100 - gap * 1.4 + depth / 180)));
-  const exportSeismo = () => downloadFile("elementos-seismo-report.txt", `Seismo P/S Wave Report\n\nDistance: ${distance} km\nDepth: ${depth} m\nP-wave velocity: ${pVelocity} m/s\nS-wave velocity: ${sVelocity} m/s\nP arrival: ${pArrival.toFixed(2)} s\nS arrival: ${sArrival.toFixed(2)} s\nArrival gap: ${gap.toFixed(2)} s\nConfidence: ${confidence}%`);
+  const confidence = Math.max(1, Math.min(99, Math.round(100 - gap * 1.3 + depth / 220)));
+  const exportSeismo = () => downloadFile("elementos-seismo-report.txt", `ElementOS Seismo Report\n\nDistance: ${distance} km\nDepth: ${depth} m\nP-wave velocity: ${pVelocity} m/s\nS-wave velocity: ${sVelocity} m/s\nP arrival: ${pArrival.toFixed(2)} s\nS arrival: ${sArrival.toFixed(2)} s\nS-P gap: ${gap.toFixed(2)} s\nConfidence: ${confidence}%`);
 
   return (
     <>
@@ -3085,8 +3079,8 @@ function SeismoSimulator({ setPage }) {
         <div>
           <Pill gold><Network size={12}/> seismic wave simulator</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">Seismo <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">P/S Wave Simulator</span></h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Compare primary and secondary wave travel through a simulated subsurface volume. Designed to support the Experimental Well Driller workflow.</p>
-          <Info title="What this page does">P-waves arrive first, S-waves arrive later. The gap helps interpret distance, depth and subsurface response.</Info>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Compare primary and secondary wave travel through a simulated subsurface volume. This helps the Well Driller feel like a connected geological intelligence system.</p>
+          <Info title="What this page does">P-waves arrive first, S-waves arrive later. The S-P gap helps interpret distance, depth and subsurface response.</Info>
           <div className="mt-5 flex flex-wrap gap-3"><Button onClick={() => setPage("welldriller")} variant="primary">Back to Well Driller</Button><Button onClick={exportSeismo}><Download size={16} className="inline"/> Export Seismo Report</Button></div>
         </div>
         <Panel>
@@ -3099,9 +3093,9 @@ function SeismoSimulator({ setPage }) {
         </Panel>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
         <Panel>
-          <h2 className="text-3xl font-black">3D Wavefield</h2>
+          <h2 className="text-3xl font-black">3D Seismic Wavefield</h2>
           <div className="mt-6 h-[520px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-b from-slate-950 via-black to-slate-950 p-8" style={{ perspective: "1000px" }}>
             <div className="relative mx-auto h-full max-w-4xl" style={{ transform: "rotateX(58deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
               {[0,1,2,3,4,5,6].map((i) => <div key={i} className="absolute left-4 right-4 h-12 rounded-2xl border border-white/10 bg-white/[.035]" style={{ top: `${i*62}px`, transform: `translateZ(${-i*20}px)` }} />)}
@@ -3112,13 +3106,24 @@ function SeismoSimulator({ setPage }) {
         </Panel>
         <Panel>
           <h2 className="text-3xl font-black">Arrival Readout</h2>
-          <div className="mt-5 space-y-4">
-            {[["P arrival", `${pArrival.toFixed(2)}s`], ["S arrival", `${sArrival.toFixed(2)}s`], ["S-P gap", `${gap.toFixed(2)}s`], ["Confidence", `${confidence}%`]].map(([label, value]) => <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div><div className="mt-2 text-4xl font-black text-cyan-100">{value}</div></div>)}
+          <div className="mt-5 grid gap-4">
+            {[["P arrival", `${pArrival.toFixed(2)}s`], ["S arrival", `${sArrival.toFixed(2)}s`], ["S-P gap", `${gap.toFixed(2)}s`], ["Confidence", `${confidence}%`]].map(([label, value]) => <div key={label} className="rounded-[2rem] border border-white/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div><div className="mt-2 text-4xl font-black text-cyan-100">{value}</div></div>)}
           </div>
         </Panel>
       </div>
     </>
   );
+}
+
+class ElementOSErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  render() {
+    if (this.state.error) {
+      return <Panel><h1 className="text-4xl font-black text-rose-100">ElementOS page error</h1><p className="mt-3 text-slate-300">A page crashed instead of blanking the entire app.</p><pre className="mt-4 overflow-auto rounded-2xl border border-rose-300/20 bg-black/40 p-4 text-sm text-rose-100">{String(this.state.error?.message || this.state.error)}</pre></Panel>;
+    }
+    return this.props.children;
+  }
 }
 
 function MobileBottomNav({ page, setPage }) {
@@ -3141,7 +3146,7 @@ function MobileBottomNav({ page, setPage }) {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#030712]/95 px-2 pb-3 pt-2 backdrop-blur-2xl lg:hidden">
-      <div className="grid grid-cols-7 gap-1 sm:grid-cols-14">
+      <div className="grid grid-cols-11 gap-1">
         {items.map(([id, label, Icon]) => (
           <button
             key={id}
@@ -3453,7 +3458,7 @@ const startCheckout = async () => {
         </div>
 
         <PageHelpStrip page={page} />
-        {pages[page] || pages.dashboard}
+        {pages[page]}
       </main>
 
       <MobileActionBar
