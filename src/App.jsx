@@ -2003,73 +2003,136 @@ function IsotopeLab() {
 
 
 
-function SeismicTrace({ pArrival, sArrival, distance }) {
-  const maxT = Math.max(1, sArrival * 1.18);
-  const pX = Math.min(96, Math.max(4, (pArrival / maxT) * 100));
-  const sX = Math.min(96, Math.max(4, (sArrival / maxT) * 100));
+
+function WaveRibbon3D({ pArrival, sArrival, distance }) {
+  const pX = Math.min(92, Math.max(8, (pArrival / Math.max(sArrival, 1)) * 78));
+  const sX = Math.min(96, Math.max(18, (sArrival / Math.max(sArrival, 1)) * 88));
+  const layers = ["Surface sensors", "Sediment", "Fractured rock", "Dense formation", "Deep basement"];
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-      <div className="flex items-center justify-between text-xs uppercase tracking-[.2em] text-slate-500">
-        <span>Seismic Trace</span><span>{distance} km</span>
+    <div className="relative min-h-[460px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_50%_0%,rgba(34,211,238,.18),transparent_35%),linear-gradient(180deg,rgba(15,23,42,.95),rgba(2,6,23,.95))] p-6" style={{ perspective: "1200px" }}>
+      <div className="absolute inset-x-8 top-8 h-10 rounded-full bg-cyan-300/10 blur-2xl" />
+      <div className="relative mx-auto h-[360px] max-w-4xl" style={{ transform: "rotateX(58deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
+        {layers.map((layer, i) => (
+          <div key={layer} className="absolute left-0 right-0 rounded-[1.5rem] border border-white/10 bg-white/[.035]" style={{ top: `${i * 64}px`, height: "56px", transform: `translateZ(${-i * 26}px)`, boxShadow: "0 24px 60px rgba(0,0,0,.28)" }}>
+            <div className="flex h-full items-center justify-between px-5 text-xs uppercase tracking-[.18em] text-slate-400">
+              <span>{layer}</span><span>{Math.round((i + 1) * distance / 5)} km</span>
+            </div>
+          </div>
+        ))}
+        {[0,1,2,3,4].map((i) => (
+          <div key={`p-${i}`} className="absolute h-3 rounded-full bg-cyan-300 shadow-[0_0_32px_rgba(34,211,238,.75)]" style={{ left: `${8 + i * (pX / 5)}%`, top: `${35 + i * 55}px`, width: `${28 + i * 18}px`, transform: `translateZ(${40 - i * 15}px) rotateZ(${i * 3}deg)` }} />
+        ))}
+        {[0,1,2,3,4].map((i) => (
+          <div key={`s-${i}`} className="absolute h-3 rounded-full bg-amber-300 shadow-[0_0_32px_rgba(251,191,36,.75)]" style={{ left: `${12 + i * (sX / 5)}%`, top: `${63 + i * 58}px`, width: `${34 + i * 22}px`, transform: `translateZ(${22 - i * 15}px) rotateZ(${-i * 4}deg)` }} />
+        ))}
       </div>
-      <div className="relative mt-6 h-32 overflow-hidden rounded-3xl border border-cyan-300/15 bg-slate-950/80">
-        {[0,1,2,3,4,5].map((i) => <div key={i} className="absolute inset-y-0 border-l border-white/10" style={{ left: `${i * 20}%` }} />)}
-        <div className="absolute left-0 right-0 top-1/2 h-px bg-cyan-300/20" />
-        <div className="absolute top-6 h-20 w-1 rounded-full bg-cyan-300 shadow-[0_0_25px_rgba(34,211,238,.75)]" style={{ left: `${pX}%` }} />
-        <div className="absolute top-6 h-20 w-1 rounded-full bg-fuchsia-300 shadow-[0_0_25px_rgba(217,70,239,.75)]" style={{ left: `${sX}%` }} />
-        <div className="absolute bottom-3 text-xs font-black text-cyan-100" style={{ left: `${Math.max(2, pX - 4)}%` }}>P</div>
-        <div className="absolute bottom-3 text-xs font-black text-fuchsia-100" style={{ left: `${Math.max(2, sX - 4)}%` }}>S</div>
+      <div className="relative mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-cyan-200">P-wave front</div><div className="mt-2 text-3xl font-black text-cyan-100">{pArrival.toFixed(2)}s</div></div>
+        <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-amber-100">S-wave front</div><div className="mt-2 text-3xl font-black text-amber-100">{sArrival.toFixed(2)}s</div></div>
+        <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-emerald-200">Travel gap</div><div className="mt-2 text-3xl font-black text-emerald-100">{(sArrival - pArrival).toFixed(2)}s</div></div>
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-3"><div className="text-xs uppercase tracking-[.18em] text-cyan-200">P arrival</div><div className="mt-1 text-2xl font-black text-cyan-100">{pArrival.toFixed(2)}s</div></div>
-        <div className="rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-3"><div className="text-xs uppercase tracking-[.18em] text-fuchsia-200">S arrival</div><div className="mt-1 text-2xl font-black text-fuchsia-100">{sArrival.toFixed(2)}s</div></div>
-        <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-3"><div className="text-xs uppercase tracking-[.18em] text-amber-100">Gap</div><div className="mt-1 text-2xl font-black text-amber-100">{(sArrival - pArrival).toFixed(2)}s</div></div>
+    </div>
+  );
+}
+
+function WellBore3D({ depth, hardness, mudWeight, formationPressure, bitRpm, waveGap }) {
+  const strata = [
+    ["surface cap", "from-cyan-300/25 to-slate-950"],
+    ["sediment shelf", "from-amber-300/20 to-slate-950"],
+    ["fracture band", "from-fuchsia-300/20 to-slate-950"],
+    ["pressure zone", "from-rose-300/20 to-slate-950"],
+    ["target reservoir", "from-emerald-300/20 to-slate-950"],
+  ];
+  const drillDepth = Math.min(92, Math.max(12, depth / 100));
+  const torque = Math.min(100, Math.round((hardness * 0.42) + (formationPressure / 250) + (bitRpm * 0.08)));
+  return (
+    <div className="relative min-h-[620px] overflow-hidden rounded-[2.25rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_50%_0%,rgba(34,211,238,.16),transparent_35%),linear-gradient(180deg,rgba(15,23,42,.95),rgba(2,6,23,.98))] p-6" style={{ perspective: "1300px" }}>
+      <div className="absolute left-1/2 top-4 h-[560px] w-36 -translate-x-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
+      <div className="relative mx-auto h-[470px] max-w-4xl" style={{ transform: "rotateX(58deg) rotateZ(0deg)", transformStyle: "preserve-3d" }}>
+        {strata.map(([label, grad], i) => (
+          <div key={label} className={`absolute left-[8%] right-[8%] rounded-[1.5rem] border border-white/10 bg-gradient-to-r ${grad}`} style={{ top: `${i * 82}px`, height: "74px", transform: `translateZ(${-i * 38}px)`, boxShadow: "0 28px 80px rgba(0,0,0,.32)" }}>
+            <div className="flex h-full items-center justify-between px-6 text-xs uppercase tracking-[.2em] text-slate-300"><span>{label}</span><span>{Math.round((i + 1) * depth / 5)}m</span></div>
+          </div>
+        ))}
+        <div className="absolute left-1/2 top-0 h-[420px] w-10 -translate-x-1/2 rounded-full border border-cyan-200/40 bg-cyan-200/15 shadow-[0_0_60px_rgba(34,211,238,.5)]" style={{ transform: "translateZ(55px)" }} />
+        <div className="absolute left-1/2 top-0 w-4 -translate-x-1/2 rounded-full bg-amber-200 shadow-[0_0_36px_rgba(251,191,36,.75)]" style={{ height: `${drillDepth * 4.1}px`, transform: "translateZ(90px)" }} />
+        <div className="absolute left-1/2 rounded-full border border-amber-200/50 bg-amber-300/30 shadow-[0_0_70px_rgba(251,191,36,.7)]" style={{ top: `${Math.min(390, drillDepth * 4.1)}px`, width: "82px", height: "34px", marginLeft: "-41px", transform: "translateZ(108px) rotateX(72deg)" }} />
+        {[0,1,2,3,4,5].map(i => <div key={i} className="absolute left-1/2 h-2 rounded-full bg-cyan-300/60" style={{ top: `${50 + i * 57}px`, width: `${120 + i * 28}px`, marginLeft: `${-(60+i*14)}px`, transform: `translateZ(${80 - i * 11}px)`, opacity: .38 }} />)}
+      </div>
+      <div className="relative grid gap-3 sm:grid-cols-3">
+        <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-cyan-200">3D depth</div><div className="mt-2 text-3xl font-black text-cyan-100">{depth}m</div></div>
+        <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-amber-100">Torque load</div><div className="mt-2 text-3xl font-black text-amber-100">{torque}%</div></div>
+        <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-emerald-200">Mud / seismic</div><div className="mt-2 text-3xl font-black text-emerald-100">{mudWeight} / {waveGap}s</div></div>
+      </div>
+    </div>
+  );
+}
+
+function SurfaceGraph3D({ title, values = [] }) {
+  const max = Math.max(1, ...values);
+  return (
+    <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5" style={{ perspective: "900px" }}>
+      <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
+      <div className="mt-5 flex h-52 items-end justify-center gap-3 rounded-[1.5rem] border border-cyan-300/10 bg-slate-950/60 p-5" style={{ transform: "rotateX(54deg) rotateZ(-8deg)", transformStyle: "preserve-3d" }}>
+        {values.map((v, i) => (
+          <div key={i} className="relative w-10 rounded-t-xl bg-cyan-300/80 shadow-[0_0_30px_rgba(34,211,238,.35)]" style={{ height: `${Math.max(16, (v / max) * 160)}px`, transform: `translateZ(${i * 8}px)` }}>
+            <div className="absolute inset-x-0 -top-2 h-3 rounded-full bg-cyan-100/90" />
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
 function SeismoSimulator({ setPage }) {
-  const [distance, setDistance] = useState(30);
-  const [pSpeed, setPSpeed] = useState(6.2);
-  const [sSpeed, setSSpeed] = useState(3.6);
-  const [medium, setMedium] = useState("Granite crust");
-  const pArrival = distance / Math.max(0.1, pSpeed);
-  const sArrival = distance / Math.max(0.1, sSpeed);
+  const [distance, setDistance] = useState(180);
+  const [depth, setDepth] = useState(32);
+  const [medium, setMedium] = useState("Continental crust");
+  const [energy, setEnergy] = useState(68);
+  const mediumMap = {
+    "Loose sediment": [2.2, 1.1, 1.45],
+    "Continental crust": [6.1, 3.5, 1],
+    "Oceanic crust": [6.8, 3.9, .92],
+    "Dense mantle": [8.2, 4.7, .72],
+    "Fractured reservoir": [4.6, 2.3, 1.3],
+  };
+  const [pSpeed, sSpeed, scatter] = mediumMap[medium];
+  const travel = Math.sqrt(distance ** 2 + depth ** 2);
+  const pArrival = travel / pSpeed;
+  const sArrival = travel / sSpeed;
   const gap = sArrival - pArrival;
-  const confidence = Math.max(62, Math.min(99, Math.round(100 - Math.abs(gap - 4) * 4)));
-  const risk = Math.max(1, Math.min(99, Math.round(gap * 8 + distance * 0.35)));
-  const exportSeismo = () => downloadFile("elementos-seismo-report.txt", `ElementOS Seismo Report\n\nMedium: ${medium}\nDistance: ${distance} km\nP-wave speed: ${pSpeed} km/s\nS-wave speed: ${sSpeed} km/s\nP arrival: ${pArrival.toFixed(2)} s\nS arrival: ${sArrival.toFixed(2)} s\nArrival gap: ${gap.toFixed(2)} s\nSignal confidence: ${confidence}%\nInterpretation risk: ${risk}%\n\nGenerated: ${new Date().toLocaleString()}`);
+  const confidence = Math.max(45, Math.min(98, Math.round(100 - scatter * gap * .8 + energy * .08)));
+  const risk = Math.max(3, Math.min(96, Math.round(gap * scatter * 3.1 + depth * .32)));
+  const exportSeismo = () => downloadFile("elementos-3d-seismo-report.txt", `ElementOS 3D Seismo Report\n\nMedium: ${medium}\nDistance: ${distance} km\nDepth: ${depth} km\nEnergy: ${energy}%\nP-wave speed: ${pSpeed} km/s\nS-wave speed: ${sSpeed} km/s\nP arrival: ${pArrival.toFixed(2)} s\nS arrival: ${sArrival.toFixed(2)} s\nArrival gap: ${gap.toFixed(2)} s\nSignal confidence: ${confidence}%\nInterpretation risk: ${risk}%\n\nGenerated: ${new Date().toLocaleString()}`);
   return (
     <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.08fr_.92fr]">
-        <div><Pill gold><Network size={12}/> seismic simulator</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">Seismo <span className="bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-transparent">P/S Wave Simulator</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Compare P-wave and S-wave arrival times through different subsurface media. Use it on its own or with Experimental Well Driller to estimate drilling-zone signal behaviour.</p><Info title="What this page does">P-waves are faster compressional waves. S-waves are slower shear waves. The arrival-time gap helps estimate structure, distance and subsurface behaviour.</Info></div>
-        <Panel><h2 className="text-2xl font-black">Seismic Controls</h2><div className="mt-5 grid gap-4"><label className="text-sm text-slate-400">Medium<select value={medium} onChange={(e)=>setMedium(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-4 outline-none">{["Granite crust","Sedimentary basin","Basalt layer","Wet shale","Deep mantle model"].map(x=><option key={x}>{x}</option>)}</select></label><label className="text-sm text-slate-400">Distance km<input type="number" value={distance} onChange={(e)=>setDistance(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label><label className="text-sm text-slate-400">P-wave speed km/s<input type="number" step="0.1" value={pSpeed} onChange={(e)=>setPSpeed(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label><label className="text-sm text-slate-400">S-wave speed km/s<input type="number" step="0.1" value={sSpeed} onChange={(e)=>setSSpeed(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label></div></Panel>
-      </Panel>
+      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]"><div><Pill gold><Network size={12}/> 3D seismic simulator</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">Seismo <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">3D Wave Lab</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Model P-wave and S-wave travel through subsurface media with a cinematic 3D-style wave-field, travel-time comparison and drilling-ready interpretation signals.</p><Info title="Why this matters">P-waves arrive first and S-waves arrive later. The arrival gap becomes a subsurface signal that can feed the Experimental Well Driller.</Info></div><Panel><h2 className="text-2xl font-black">Seismic Controls</h2><div className="mt-5 grid gap-4 md:grid-cols-2"><label className="text-sm text-slate-400">Medium<select value={medium} onChange={(e)=>setMedium(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-4 outline-none">{Object.keys(mediumMap).map(m=><option key={m}>{m}</option>)}</select></label>{[["Distance km",distance,setDistance,10,1000,10],["Event depth km",depth,setDepth,1,250,1],["Signal energy %",energy,setEnergy,1,100,1]].map(([label,val,setter,min,max,step])=><label key={label} className="text-sm text-slate-400">{label}<input type="range" min={min} max={max} step={step} value={val} onChange={(e)=>setter(Number(e.target.value))} className="mt-4 w-full"/><div className="mt-2 rounded-xl bg-black/25 p-2 text-cyan-100">{val}</div></label>)}</div></Panel></Panel>
       <GuidePanel page="seismo" />
-      <div className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]"><SeismicTrace pArrival={pArrival} sArrival={sArrival} distance={distance}/><Panel><h2 className="text-3xl font-black">Seismic Readout</h2><div className="mt-5 grid gap-4 sm:grid-cols-2">{[["Signal confidence", `${confidence}%`],["Interpretation risk", `${risk}%`],["Arrival gap", `${gap.toFixed(2)} s`],["Velocity ratio", `${(pSpeed / Math.max(.1,sSpeed)).toFixed(2)}x`]].map(([a,b])=><div key={a} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{a}</div><div className="mt-2 text-3xl font-black text-cyan-100">{b}</div></div>)}</div><div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportSeismo} variant="primary">Export Seismo Report</Button><Button onClick={()=>setPage("well")}>Open Well Driller</Button><Button onClick={()=>setPage("calculations")}>Open Calculation Core</Button></div></Panel></div>
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]"><WaveRibbon3D pArrival={pArrival} sArrival={sArrival} distance={distance}/><Panel><h2 className="text-3xl font-black">3D Seismic Readout</h2><div className="mt-5 grid gap-4 sm:grid-cols-2">{[["Signal confidence", `${confidence}%`],["Interpretation risk", `${risk}%`],["Arrival gap", `${gap.toFixed(2)} s`],["Velocity ratio", `${(pSpeed / Math.max(.1,sSpeed)).toFixed(2)}x`]].map(([a,b])=><div key={a} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{a}</div><div className="mt-2 text-3xl font-black text-cyan-100">{b}</div></div>)}</div><div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportSeismo} variant="primary">Export 3D Seismo Report</Button><Button onClick={()=>setPage("well")}>Send to Well Driller</Button><Button onClick={()=>setPage("calculations")}>Open Calculation Core</Button></div></Panel></div>
+      <div className="grid gap-6 xl:grid-cols-3"><SurfaceGraph3D title="P/S travel-time columns" values={[pArrival, sArrival, gap, confidence/2, risk/2]} /><SurfaceGraph3D title="Depth energy surface" values={[depth/2, energy, distance/12, pSpeed*10, sSpeed*10]} /><Panel><h2 className="text-3xl font-black">Well Driller Link</h2><p className="mt-3 text-sm leading-7 text-slate-300">Use the arrival gap and confidence values as inputs for well planning, bore stability and formation-complexity estimation.</p><Button onClick={()=>setPage("well")} variant="primary" className="mt-5 w-full">Open 3D Well Driller</Button></Panel></div>
     </>
   );
 }
 
 function ExperimentalWellDriller({ setPage }) {
-  const [depth, setDepth] = useState(2400);
-  const [hardness, setHardness] = useState(68);
-  const [mudWeight, setMudWeight] = useState(11.8);
-  const [formationPressure, setFormationPressure] = useState(8200);
+  const [depth, setDepth] = useState(3200);
+  const [hardness, setHardness] = useState(64);
+  const [mudWeight, setMudWeight] = useState(10.8);
+  const [formationPressure, setFormationPressure] = useState(7200);
   const [bitRpm, setBitRpm] = useState(145);
-  const [waveGap, setWaveGap] = useState(4.6);
-  const drillDifficulty = Math.max(1, Math.min(99, Math.round(hardness * 0.46 + depth / 90 + formationPressure / 360 + waveGap * 3 - mudWeight * 2)));
-  const stability = Math.max(1, Math.min(99, Math.round(104 - drillDifficulty + mudWeight * 1.8 - waveGap * 2)));
-  const wear = Math.max(1, Math.min(99, Math.round(hardness * 0.55 + bitRpm * 0.18 + depth / 120)));
-  const penetrationRate = Math.max(1, Math.round(42 - hardness * 0.18 - formationPressure / 900 + mudWeight * 0.7));
-  const exportWell = () => downloadFile("elementos-experimental-well-driller.txt", `ElementOS Experimental Well Driller\n\nDepth: ${depth} m\nFormation hardness: ${hardness}%\nMud weight: ${mudWeight} ppg\nFormation pressure: ${formationPressure} psi\nBit RPM: ${bitRpm}\nSeismic P/S gap: ${waveGap} s\n\nDrilling difficulty: ${drillDifficulty}%\nBore stability: ${stability}%\nBit wear: ${wear}%\nEstimated penetration rate: ${penetrationRate} m/hr\n\nGenerated: ${new Date().toLocaleString()}`);
+  const [waveGap, setWaveGap] = useState(8.4);
+  const drillDifficulty = Math.max(1, Math.min(99, Math.round(hardness * .45 + formationPressure / 250 + waveGap * 1.8 - mudWeight * 1.2)));
+  const stability = Math.max(1, Math.min(99, Math.round(100 - drillDifficulty * .5 + mudWeight * 2.2 - waveGap)));
+  const wear = Math.max(1, Math.min(99, Math.round(hardness * .62 + bitRpm * .12 + formationPressure / 520)));
+  const penetrationRate = Math.max(1, Math.min(80, Math.round(bitRpm / 8 - hardness / 7 + mudWeight * 1.7 - waveGap * .4)));
+  const casingSignal = Math.max(1, Math.min(99, Math.round(stability * .55 + mudWeight * 3 - waveGap * 1.4)));
+  const exportWell = () => downloadFile("elementos-3d-experimental-well-driller.txt", `ElementOS 3D Experimental Well Driller\n\nDepth: ${depth} m\nFormation hardness: ${hardness}%\nMud weight: ${mudWeight} ppg\nFormation pressure: ${formationPressure} psi\nBit RPM: ${bitRpm}\nSeismic P/S gap: ${waveGap} s\n\nDrilling difficulty: ${drillDifficulty}%\nBore stability: ${stability}%\nBit wear: ${wear}%\nEstimated penetration rate: ${penetrationRate} m/hr\nCasing confidence: ${casingSignal}%\n\nGenerated: ${new Date().toLocaleString()}`);
   return (
     <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]"><div><Pill gold><Radar size={12}/> experimental drilling simulator</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">Experimental <span className="bg-gradient-to-r from-amber-200 via-white to-cyan-200 bg-clip-text text-transparent">Well Driller</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Model a conceptual drilling zone using depth, formation hardness, mud weight, pressure, RPM and seismic P/S wave delay. It links drilling decisions with material and seismic intelligence.</p><Info title="How this connects to Seismo">Use Seismo to estimate the P/S arrival gap, then bring that signal into Well Driller as a subsurface confidence input.</Info></div><Panel><h2 className="text-2xl font-black">Drilling Controls</h2><div className="mt-5 grid gap-4 md:grid-cols-2">{[["Depth m",depth,setDepth,100,10000,100],["Formation hardness %",hardness,setHardness,1,100,1],["Mud weight ppg",mudWeight,setMudWeight,7,18,.1],["Formation pressure psi",formationPressure,setFormationPressure,500,15000,100],["Bit RPM",bitRpm,setBitRpm,20,300,5],["P/S wave gap s",waveGap,setWaveGap,.5,20,.1]].map(([label,val,setter,min,max,step])=><label key={label} className="text-sm text-slate-400">{label}<input type="number" min={min} max={max} step={step} value={val} onChange={(e)=>setter(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"/></label>)}</div></Panel></Panel>
+      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]"><div><Pill gold><Radar size={12}/> 3D drilling simulator</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">Experimental <span className="bg-gradient-to-r from-amber-200 via-white to-cyan-200 bg-clip-text text-transparent">Well Driller 3D</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A cinematic subsurface drilling simulator with 3D-style strata, borehole geometry, pressure zones, bit telemetry and seismic P/S wave integration.</p><Info title="3D upgrade">The page now visualizes the wellbore, strata layers, drilling column, target reservoir, torque load, pressure response and seismic uncertainty in one integrated view.</Info></div><Panel><h2 className="text-2xl font-black">3D Drilling Controls</h2><div className="mt-5 grid gap-4 md:grid-cols-2">{[["Depth m",depth,setDepth,100,10000,100],["Formation hardness %",hardness,setHardness,1,100,1],["Mud weight ppg",mudWeight,setMudWeight,7,18,.1],["Formation pressure psi",formationPressure,setFormationPressure,500,15000,100],["Bit RPM",bitRpm,setBitRpm,20,300,5],["P/S wave gap s",waveGap,setWaveGap,.5,20,.1]].map(([label,val,setter,min,max,step])=><label key={label} className="text-sm text-slate-400">{label}<input type="range" min={min} max={max} step={step} value={val} onChange={(e)=>setter(Number(e.target.value))} className="mt-4 w-full"/><div className="mt-2 rounded-xl bg-black/25 p-2 text-cyan-100">{val}</div></label>)}</div></Panel></Panel>
       <GuidePanel page="well" />
-      <div className="grid gap-6 xl:grid-cols-4">{[["Drilling difficulty",`${drillDifficulty}%`],["Bore stability",`${stability}%`],["Bit wear",`${wear}%`],["Penetration rate",`${penetrationRate} m/hr`]].map(([a,b])=><Panel key={a}><div className="text-xs uppercase tracking-[.22em] text-slate-500">{a}</div><div className="mt-3 text-5xl font-black text-cyan-100">{b}</div></Panel>)}</div>
-      <Panel><h2 className="text-3xl font-black">Integrated Drilling Telemetry</h2><MiniBars values={[drillDifficulty, stability, wear, penetrationRate, hardness, waveGap*8].map(v=>Math.max(.5,Math.min(5,v/20)))} /><div className="mt-5 grid gap-4 md:grid-cols-3"><div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="font-black text-cyan-100">Best action</div><p className="mt-2 text-sm text-slate-300">{drillDifficulty > 70 ? "Reduce RPM, increase monitoring and validate seismic uncertainty." : "Proceed with controlled drilling and continue watching bore stability."}</p></div><div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4"><div className="font-black text-amber-100">Seismic link</div><p className="mt-2 text-sm text-slate-300">P/S gap is acting as a subsurface complexity multiplier inside this model.</p></div><div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="font-black text-emerald-100">Material link</div><p className="mt-2 text-sm text-slate-300">Use ElementOS material comparison to evaluate casing and bit material candidates.</p></div></div><div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportWell} variant="primary">Export Well Report</Button><Button onClick={()=>setPage("seismo")}>Open Seismo</Button><Button onClick={()=>setPage("calculations")}>Open Calculation Core</Button></div></Panel>
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]"><WellBore3D depth={depth} hardness={hardness} mudWeight={mudWeight} formationPressure={formationPressure} bitRpm={bitRpm} waveGap={waveGap}/><Panel><h2 className="text-3xl font-black">3D Drilling Readout</h2><div className="mt-5 grid gap-4 sm:grid-cols-2">{[["Drilling difficulty", `${drillDifficulty}%`],["Bore stability", `${stability}%`],["Bit wear", `${wear}%`],["Penetration rate", `${penetrationRate} m/hr`],["Casing confidence", `${casingSignal}%`],["P/S complexity", `${waveGap}s`]].map(([a,b])=><div key={a} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.2em] text-slate-500">{a}</div><div className="mt-2 text-3xl font-black text-cyan-100">{b}</div></div>)}</div><div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportWell} variant="primary">Export 3D Well Report</Button><Button onClick={()=>setPage("seismo")}>Open Seismo 3D</Button><Button onClick={()=>setPage("calculations")}>Open Calculation Core</Button></div></Panel></div>
+      <Panel><h2 className="text-3xl font-black">3D Integrated Drilling Telemetry</h2><MiniBars values={[drillDifficulty, stability, wear, penetrationRate, hardness, waveGap*8].map(v=>Math.max(.5,Math.min(5,v/20)))} /><div className="mt-5 grid gap-4 md:grid-cols-3"><div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="font-black text-cyan-100">Best action</div><p className="mt-2 text-sm text-slate-300">{drillDifficulty > 70 ? "Reduce RPM, raise monitoring and validate seismic uncertainty before advancing." : "Proceed with controlled drilling and continue watching bore stability."}</p></div><div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4"><div className="font-black text-amber-100">3D seismic link</div><p className="mt-2 text-sm text-slate-300">P/S gap is acting as a subsurface complexity multiplier inside this model.</p></div><div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="font-black text-emerald-100">Material link</div><p className="mt-2 text-sm text-slate-300">Use ElementOS material comparison to evaluate casing, bit and pressure-zone candidates.</p></div></div></Panel>
     </>
   );
 }
