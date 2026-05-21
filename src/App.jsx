@@ -344,6 +344,11 @@ function guidanceForPage(page) {
       description: "My Lab collects saved scenarios, favourite materials, recent simulations and report-ready discovery assets in one workspace-style page.",
       next: "Review saved scenario cards, reopen Scenario Builder or Time Machine, then export your strongest cases.",
     },
+    visualization: {
+      title: "What Advanced Visualization does",
+      description: "The Advanced Visualization Engine turns scenarios, time horizons and material metrics into survival curves, degradation timelines, AI confidence waveforms and cinematic telemetry cards.",
+      next: "Pick a material, inspect the survival curve, compare the pulse cards, then export the visual telemetry summary.",
+    },
     reports: {
       title: "What reports do",
       description: "Reports turn your comparisons into exportable, shareable research assets with summaries, compatibility scores and premium PDF output.",
@@ -466,13 +471,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["lab", "My Lab", Save], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
+  const items = [["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["calculations", "Calculation Core", Calculator], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["My Lab", "lab", Save], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -2476,6 +2481,147 @@ function PublicReportView({ report, status }) {
 
 
 
+
+function AdvancedVisualization({ selected, compare, setPage }) {
+  const [material, setMaterial] = useState(selected || compare?.[0] || "Ti");
+  const [mode, setMode] = useState("Survival Curve");
+  const active = elementMap[material] || elementMap.Ti;
+  const s = score(active.symbol);
+  const years = [0, 1, 5, 10, 25, 50, 75, 100];
+  const baseResilience = Math.round(s.stability * 14 + s.pressure * 9 + s.thermal * 7 + s.conductivity * 4);
+  const curve = years.map((year, index) => {
+    const decay = Math.log10(year + 1) * (8 + (5 - s.stability) * 4) + index * 1.2;
+    const survival = Math.max(7, Math.min(99, Math.round(baseResilience - decay)));
+    const thermal = Math.max(4, Math.min(99, Math.round(s.thermal * 18 - Math.log10(year + 1) * 9 + 30)));
+    const pressure = Math.max(4, Math.min(99, Math.round(s.pressure * 18 - Math.log10(year + 1) * 7 + 26)));
+    const confidence = Math.max(61, Math.min(98, Math.round(survival * 0.68 + thermal * 0.18 + pressure * 0.14)));
+    return { year, survival, thermal, pressure, confidence };
+  });
+
+  const latest = curve[curve.length - 1];
+  const path = curve.map((p, i) => `${i === 0 ? "M" : "L"} ${12 + i * 48} ${120 - p.survival}`).join(" ");
+  const thermalPath = curve.map((p, i) => `${i === 0 ? "M" : "L"} ${12 + i * 48} ${120 - p.thermal}`).join(" ");
+  const pressurePath = curve.map((p, i) => `${i === 0 ? "M" : "L"} ${12 + i * 48} ${120 - p.pressure}`).join(" ");
+
+  const visualCards = [
+    ["100-year survival", `${latest.survival}%`, "Long-horizon structural signal"],
+    ["Thermal pulse", `${latest.thermal}%`, "Projected heat-response retention"],
+    ["Pressure evolution", `${latest.pressure}%`, "Compression and stress signal"],
+    ["AI waveform", `${latest.confidence}%`, "Confidence-weighted visual telemetry"],
+  ];
+
+  const exportVisual = () => {
+    const content = `ElementOS Advanced Visualization Report\n\nMaterial: ${active.name} (${active.symbol})\nMode: ${mode}\n\n${curve.map((p) => `Year ${p.year}: survival ${p.survival}%, thermal ${p.thermal}%, pressure ${p.pressure}%, AI confidence ${p.confidence}%`).join("\n")}\n\nGenerated by ElementOS Visual Intelligence Engine`;
+    downloadFile(`${active.symbol}-visual-intelligence-report.txt`, content);
+  };
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.08fr_.92fr]">
+        <div>
+          <Pill gold><BarChart3 size={12}/> advanced visualization</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Visual <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Intelligence Engine</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Turn material scenarios into cinematic survival curves, degradation timelines, thermal pulses, pressure evolution graphs and AI confidence waveforms.
+          </p>
+          <Info title="What this page does">
+            This page makes ElementOS visually unforgettable. It converts your material model into chart-ready visuals for demos, screenshots, reports and investor presentations.
+          </Info>
+        </div>
+
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Selected material</div>
+          <select value={material} onChange={(e) => setMaterial(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
+            {elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
+          </select>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {["Survival Curve", "Thermal Pulse", "Pressure Evolution", "AI Waveform"].map((m) => (
+              <Button key={m} onClick={() => setMode(m)} variant={mode === m ? "primary" : "ghost"}>{m}</Button>
+            ))}
+          </div>
+          <Button onClick={exportVisual} variant="primary" className="mt-5 w-full"><Download size={16} className="inline"/> Export Visual Report</Button>
+        </Panel>
+      </Panel>
+
+      <GuidePanel page="visualization" />
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill><Sparkles size={12}/> cinematic telemetry</Pill>
+            <h2 className="mt-3 text-4xl font-black">{active.name} Visual Timeline</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              The survival curve tracks material integrity across a 100-year horizon. Secondary traces show thermal response and pressure stability drifting over time.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">
+            AI confidence {latest.confidence}%
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-[2rem] border border-cyan-300/15 bg-black/30 p-5">
+          <svg viewBox="0 0 360 140" className="h-72 w-full overflow-visible">
+            {[20, 40, 60, 80, 100].map((y) => (
+              <line key={y} x1="12" x2="348" y1={120 - y} y2={120 - y} stroke="rgba(255,255,255,.08)" />
+            ))}
+            <path d={path} fill="none" stroke="rgba(34,211,238,.95)" strokeWidth="4" strokeLinecap="round" />
+            <path d={thermalPath} fill="none" stroke="rgba(251,191,36,.78)" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="6 6" />
+            <path d={pressurePath} fill="none" stroke="rgba(52,211,153,.78)" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="4 7" />
+            {curve.map((p, i) => (
+              <g key={p.year}>
+                <circle cx={12 + i * 48} cy={120 - p.survival} r="4" fill="rgba(34,211,238,.95)" />
+                <text x={12 + i * 48} y="136" textAnchor="middle" className="fill-slate-400 text-[8px]">Y{p.year}</text>
+              </g>
+            ))}
+          </svg>
+          <div className="mt-3 flex flex-wrap gap-3 text-xs uppercase tracking-[.18em] text-slate-400">
+            <span className="text-cyan-100">● Survival</span>
+            <span className="text-amber-100">● Thermal</span>
+            <span className="text-emerald-100">● Pressure</span>
+          </div>
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-4">
+        {visualCards.map(([title, value, desc]) => (
+          <Panel key={title}>
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
+            <div className="mt-3 text-5xl font-black text-cyan-100">{value}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-black/30">
+              <div className="h-full rounded-full bg-cyan-300" style={{ width: value }} />
+            </div>
+          </Panel>
+        ))}
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><Network size={12}/> visual relationship map</Pill>
+            <h2 className="mt-3 text-4xl font-black">Relationship Pulse Map</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">A cinematic snapshot of materials visually adjacent to {active.name} for reports, demos and discovery navigation.</p>
+          </div>
+          <Button onClick={() => setPage("scenario")} variant="primary">Build Scenario</Button>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+          {generateRecommendations([active.symbol])[0]?.matches.concat(generateDiscoveryEngine(3).map(d => ({ symbol: d.b, name: d.bName, similarity: d.score, reason: d.type }))).slice(0,5).map((m) => (
+            <div key={`${m.symbol}-visual`} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5">
+              <div className="text-4xl font-black text-cyan-100">{m.symbol}</div>
+              <div className="mt-1 text-sm text-slate-300">{m.name}</div>
+              <div className="mt-4 text-3xl font-black text-emerald-200">{Math.round(m.similarity)}%</div>
+              <div className="mt-2 text-xs uppercase tracking-[.18em] text-slate-500">pulse match</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{m.reason}</p>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
 function MyLab({ session, selected, compare, setPage }) {
   const generated = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(18)), []);
   const profile = growthProfileStats(session, generated);
@@ -2639,6 +2785,7 @@ function MobileBottomNav({ page, setPage }) {
     ["timemachine", "Time", Clock3],
     ["scenario", "Scenario", FileText],
     ["lab", "Lab", Save],
+    ["visualization", "Visual", BarChart3],
     ["explorer", "Explore", Search],
     ["compare", "Compare", BarChart3],
     ["reports", "Reports", BookOpen],
@@ -2647,7 +2794,7 @@ function MobileBottomNav({ page, setPage }) {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-300/15 bg-[#030712]/95 px-2 pb-3 pt-2 backdrop-blur-2xl lg:hidden">
-      <div className="grid grid-cols-9 gap-1">
+      <div className="grid grid-cols-10 gap-1">
         {items.map(([id, label, Icon]) => (
           <button
             key={id}
@@ -2867,6 +3014,7 @@ const startCheckout = async () => {
       timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} />,
       scenario: <ScenarioBuilder selected={selected} setSelected={setSelected} setPage={setPage} />,
       lab: <MyLab session={session} selected={selected} compare={compare} setPage={setPage} />,
+      visualization: <AdvancedVisualization selected={selected} compare={compare} setPage={setPage} />,
       login: (
         <LoginAccount
           session={session}
