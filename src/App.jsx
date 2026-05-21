@@ -128,6 +128,70 @@ function generateRecommendations(compare) {
   return recommendations;
 }
 
+function generateDiscoveryEngine(limit = 18) {
+  const pairs = [];
+
+  for (let i = 0; i < elements.length; i += 1) {
+    for (let j = i + 1; j < elements.length; j += 1) {
+      const a = elements[i];
+      const b = elements[j];
+      const sa = score(a.symbol);
+      const sb = score(b.symbol);
+      const compatibility = compatibilityScore(a.symbol, b.symbol);
+      const thermalPressure = 100 - (Math.abs(sa.thermal - sb.thermal) + Math.abs(sa.pressure - sb.pressure)) * 12;
+      const conductivity = 100 - Math.abs(sa.conductivity - sb.conductivity) * 18;
+      const stability = 100 - Math.abs(sa.stability - sb.stability) * 14;
+      const rarityBoost = ((sa.rarity + sb.rarity) / 10) * 18;
+      const total = Math.max(
+        1,
+        Math.min(
+          99,
+          Math.round(compatibility * 0.45 + thermalPressure * 0.2 + conductivity * 0.15 + stability * 0.12 + rarityBoost)
+        )
+      );
+
+      let type = "Hidden compatibility signal";
+      let reason = "balanced behavioural compatibility across stability, thermal and pressure metrics";
+
+      if (thermalPressure >= 88) {
+        type = "Thermal-pressure cluster";
+        reason = "rare thermal and pressure alignment suitable for advanced structural comparison";
+      } else if (conductivity >= 90) {
+        type = "Conductivity corridor";
+        reason = "strong conductive-pathway similarity with substitute-discovery potential";
+      } else if (compatibility >= 92) {
+        type = "Rare pair discovery";
+        reason = "unusually high compatibility signature across the ElementOS scoring engine";
+      } else if (Math.abs(a.atomicNumber - b.atomicNumber) <= 3) {
+        type = "Neighbourhood substitute";
+        reason = "nearby atomic neighbourhood with similar behavioural response profile";
+      }
+
+      pairs.push({
+        a: a.symbol,
+        b: b.symbol,
+        aName: a.name,
+        bName: b.name,
+        score: total,
+        compatibility,
+        tier: rarityTier(total),
+        type,
+        reason,
+        dna: materialDNA(a.symbol, b.symbol),
+      });
+    }
+  }
+
+  return pairs
+    .sort((x, y) => y.score - x.score)
+    .slice(0, limit);
+}
+
+function generateDiscoveryHeadline(discovery) {
+  return `ElementOS discovered ${discovery.a} + ${discovery.b} at ${discovery.score}%`;
+}
+
+
 function heatStyle(value, max = 5) {
   const t = Math.max(0, Math.min(1, value / max));
   const hue = 220 - t * 170;
@@ -296,57 +360,39 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
 }
 
 function Discover({ setPage }) {
-  const trending = [
-    ["Ti", "W", "94%", "ULTRA RARE", "Thermal-pressure pathway trending across aerospace-style comparisons."],
-    ["Cu", "Ag", "91%", "ULTRA RARE", "High-conductivity corridor with strong substitute-search behaviour."],
-    ["Al", "Fe", "88%", "RARE", "Structural compatibility discovery with strong report sharing potential."],
-    ["Si", "Ge", "86%", "RARE", "Semiconductor-adjacent behaviour match gaining research attention."],
-    ["Al", "Ti", "92%", "ULTRA RARE", "Lightweight structural pairing with strong premium-report value."],
-    ["Ni", "Co", "89%", "RARE", "Transition-metal pathway with balanced pressure and stability signals."],
-  ];
-
-  const mostShared = [
-    ["Al-Ti-X9A2", "Lightweight structures", "1,284 shares"],
-    ["Cu-Ag-Q4F7", "Conductivity corridor", "982 shares"],
-    ["Ti-W-L8P1", "Thermal pressure", "861 shares"],
-    ["Si-Ge-M2N5", "Semiconductor adjacency", "604 shares"],
-  ];
-
-  const exploring = ["Aluminium + Titanium", "Copper + Silver", "Tungsten substitutes", "High-pressure alloys", "Thermal stability pairs", "Semiconductor neighbours"];
+  const discoveries = useMemo(() => generateDiscoveryEngine(18), []);
+  const top = discoveries[0];
+  const corridor = discoveries.find((d) => d.type === "Conductivity corridor") || discoveries[1];
+  const thermal = discoveries.find((d) => d.type === "Thermal-pressure cluster") || discoveries[2];
+  const rare = discoveries.find((d) => d.type === "Rare pair discovery") || discoveries[3];
+  const spotlight = [top, corridor, thermal, rare].filter(Boolean);
 
   return (
     <>
       <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
         <div>
-          <Pill gold><Sparkles size={12}/> public discovery layer</Pill>
+          <Pill gold><Sparkles size={12}/> discovery engine</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">
-            Discover <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">ElementOS Research</span>
+            ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery Engine</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            A public-facing discovery homepage for trending material pairings, shared reports and research activity across the ElementOS ecosystem.
+            The platform now scans element pairings automatically and surfaces high-signal material discoveries: hidden substitutes, conductivity corridors, rare pairings and thermal-pressure clusters.
           </p>
-          <Info title="Growth purpose">
-            This page gives visitors something to browse before signing up. It creates public traffic, repeat visits, screenshot value and a stronger reason to share ElementOS reports.
+          <Info title="Why this matters">
+            ElementOS is no longer only a place where users inspect elements. It now generates discovery candidates users can click, share, compare and export into reports.
           </Info>
         </div>
 
         <Panel>
-          <h2 className="text-2xl font-black">Discover Loop</h2>
-          <div className="mt-4 space-y-3">
-            {[
-              ["Trending pairings", "See what researchers are comparing now."],
-              ["Most shared reports", "Surface public research assets."],
-              ["Research activity", "Make ElementOS feel alive."],
-              ["Signup conversion", "Turn browsing into accounts."],
-            ].map(([title, desc]) => (
-              <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="font-black text-cyan-100">{title}</div>
-                <div className="mt-1 text-sm leading-6 text-slate-400">{desc}</div>
-              </div>
-            ))}
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Top generated discovery</div>
+          <h2 className="mt-3 text-4xl font-black text-cyan-100">{top?.a} + {top?.b}</h2>
+          <div className="mt-3 text-6xl font-black text-emerald-200">{top?.score}%</div>
+          <div className="mt-4 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-amber-100">
+            {top?.tier} · {top?.type}
           </div>
+          <p className="mt-4 text-sm leading-7 text-slate-300">{top?.reason}</p>
           <Button onClick={() => setPage("compare")} variant="primary" className="mt-5 w-full">
-            Run Your Own Discovery
+            Compare This Discovery
           </Button>
         </Panel>
       </Panel>
@@ -354,35 +400,41 @@ function Discover({ setPage }) {
       <Panel>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <Pill><Network size={12}/> trending now</Pill>
-            <h2 className="mt-3 text-4xl font-black">Trending Material Discoveries</h2>
+            <Pill><Network size={12}/> auto-scanned intelligence</Pill>
+            <h2 className="mt-3 text-4xl font-black">ElementOS Discovered</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">
-              High-signal compatibility discoveries designed for public browsing, sharing and subscriber curiosity.
+              Ranked from a full element-pair scan across compatibility, thermal-pressure behaviour, conductivity similarity, stability balance and rarity signal.
             </p>
           </div>
           <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">
-            ● Live Discovery Feed
+            ● {discoveries.length} generated discoveries
           </div>
         </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {trending.map(([a, b, value, tier, desc]) => (
-            <div key={`${a}-${b}`} className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5">
+          {discoveries.slice(0, 9).map((d) => (
+            <div key={d.dna} className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5">
               <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
               <div className="relative z-10">
                 <div className="flex items-center justify-between gap-3">
-                  <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Compatibility</div>
-                  <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-[10px] font-black tracking-[.18em] text-amber-100">{tier}</div>
+                  <div className="text-xs uppercase tracking-[.22em] text-cyan-200">{d.type}</div>
+                  <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-[10px] font-black tracking-[.18em] text-amber-100">{d.tier}</div>
                 </div>
-                <div className="mt-5 text-5xl font-black text-cyan-100">{value}</div>
-                <div className="mt-2 text-2xl font-black text-white">{a} + {b}</div>
-                <p className="mt-3 text-sm leading-6 text-slate-300">{desc}</p>
-                <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-3">
-                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Public discovery ID</div>
-                  <div className="mt-2 font-mono text-cyan-100">{materialDNA(a, b)}</div>
+                <div className="mt-5 text-5xl font-black text-cyan-100">{d.score}%</div>
+                <div className="mt-2 text-2xl font-black text-white">{d.a} + {d.b}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{generateDiscoveryHeadline(d)}: {d.reason}.</p>
+                <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Compatibility</div>
+                    <div className="mt-2 text-xl font-black text-emerald-200">{d.compatibility}%</div>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">DNA</div>
+                    <div className="mt-2 font-mono text-xs text-cyan-100">{d.dna}</div>
+                  </div>
                 </div>
                 <div className="mt-5 flex gap-2">
-                  <Button onClick={() => navigator.clipboard.writeText(`${a} + ${b} trending on ElementOS: ${value}`)}>Copy</Button>
+                  <Button onClick={() => navigator.clipboard.writeText(`${generateDiscoveryHeadline(d)} — ${d.reason}`)}>Copy</Button>
                   <Button variant="primary" onClick={() => setPage("compare")}>Compare</Button>
                 </div>
               </div>
@@ -391,42 +443,18 @@ function Discover({ setPage }) {
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
-        <Panel>
-          <Pill gold><BookOpen size={12}/> most shared</Pill>
-          <h2 className="mt-3 text-3xl font-black">Most Shared Reports</h2>
-          <div className="mt-5 space-y-3">
-            {mostShared.map(([id, topic, shares]) => (
-              <div key={id} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="font-mono text-cyan-100">{id}</div>
-                    <div className="mt-1 text-sm text-slate-400">{topic}</div>
-                  </div>
-                  <div className="rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-sm font-black text-emerald-100">{shares}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel>
-          <Pill><Radar size={12}/> researchers are exploring</Pill>
-          <h2 className="mt-3 text-3xl font-black">Researchers Are Exploring</h2>
-          <div className="mt-5 flex flex-wrap gap-3">
-            {exploring.map((item) => (
-              <button key={item} onClick={() => setPage("explorer")} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100 transition hover:scale-[1.02]">
-                {item}
-              </button>
-            ))}
-          </div>
-          <div className="mt-6 rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-5">
-            <div className="text-xs uppercase tracking-[.22em] text-amber-100">Public growth engine</div>
-            <p className="mt-3 text-sm leading-7 text-amber-50/90">
-              Discovery pages make ElementOS browseable even before login. That supports public links, search traffic, social sharing and stronger conversion into accounts.
-            </p>
-          </div>
-        </Panel>
+      <div className="grid gap-6 xl:grid-cols-3">
+        {spotlight.map((d) => (
+          <Panel key={`${d.dna}-spotlight`}>
+            <Pill gold><Radar size={12}/> {d.type}</Pill>
+            <h2 className="mt-3 text-3xl font-black">{d.aName} + {d.bName}</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-300">{d.reason}. This card is auto-generated from the ElementOS scoring engine.</p>
+            <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
+              <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Discovery score</div>
+              <div className="mt-2 text-4xl font-black text-cyan-100">{d.score}%</div>
+            </div>
+          </Panel>
+        ))}
       </div>
     </>
   );
@@ -867,6 +895,30 @@ function Compare({ compare, setCompare, setPage }) {
                   ))}
                 </div>
               </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-black">Discovery Engine Scan</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+              Auto-generated material discoveries ranked from the full ElementOS element-pair scan.
+            </p>
+          </div>
+          <Pill gold><Sparkles size={12} /> generated intelligence</Pill>
+        </div>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {generateDiscoveryEngine(6).map((d) => (
+            <div key={`${d.dna}-compare`} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-slate-950 via-cyan-400/5 to-fuchsia-400/10 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-cyan-300">{d.type}</div>
+              <div className="mt-3 text-4xl font-black text-cyan-100">{d.a} + {d.b}</div>
+              <div className="mt-2 text-3xl font-black text-emerald-200">{d.score}%</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{d.reason}</p>
+              <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-3 font-mono text-xs text-cyan-100">{d.dna}</div>
             </div>
           ))}
         </div>
