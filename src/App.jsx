@@ -294,15 +294,10 @@ function guidanceForPage(page) {
       description: "AI Copilot is the command center for ElementOS. It turns plain-language goals into material suggestions, scenario ideas, reports, simulations and viral-card actions.",
       next: "Ask a goal like deep ocean pressure for 40 years, then launch the suggested simulation, report or viral card.",
     },
-    missions: {
+    mission: {
       title: "What Mission Control does",
-      description: "Mission Control gives every new user a guided path through ElementOS: compare materials, run Time Machine, build a scenario, create a viral card and export a simulation report.",
-      next: "Complete the missions in order, then invite users into the beta or upgrade into Pro Lab.",
-    },
-    native: {
-      title: "What Native App Feel does",
-      description: "Native App Feel is the polish layer: smooth transitions, command suggestions, sticky workflow prompts, mobile-first cards and animated telemetry so ElementOS feels like premium software.",
-      next: "Use the recommended workflow cards, test mobile behaviour and keep the interface fast, guided and cinematic.",
+      description: "Mission Control gives new users a clear guided path through ElementOS: compare, forecast, build a scenario, generate a viral card, export a simulation report and join the beta.",
+      next: "Complete the first mission, then follow the guided path until the user reaches a report, card or upgrade moment.",
     },
     dashboard: {
       title: "What this dashboard does",
@@ -516,13 +511,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["landing", "Landing", Sparkles], ["beta", "Beta Launch", UserPlus], ["copilot", "AI Copilot", Sparkles], ["missions", "Mission Control", CheckCircle2], ["native", "Native Feel", Orbit], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
+  const items = [["landing", "Landing", Sparkles], ["beta", "Beta Launch", UserPlus], ["copilot", "AI Copilot", Sparkles], ["mission", "Mission Control", CheckCircle2], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Beta Launch", "beta", UserPlus], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "missions", CheckCircle2], ["Native Feel", "native", Orbit], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Beta Launch", "beta", UserPlus], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -4227,191 +4222,108 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
     </>
   );
 }
-\n\nfunction MissionControlSystem({ session, compare = [], setPage, startCheckout }) {
+
+
+
+function MissionControl({ setPage, session, isPro, startCheckout }) {
   const missionSteps = [
-    ["01", "Run your first comparison", "Compare two or more materials and understand the compatibility signal.", "compare", "2 min"],
-    ["02", "Forecast material ageing", "Open Time Machine and inspect future states across 1–100 years.", "timemachine", "3 min"],
-    ["03", "Build a real scenario", "Turn a plain-English situation into risk, lifespan and substitute suggestions.", "scenario", "4 min"],
-    ["04", "Generate a viral card", "Create a cinematic card from a discovery, scenario or simulation result.", "viralcards", "2 min"],
-    ["05", "Export a simulation report", "Create a polished report from Seismo, Well Driller, Time Machine or Scenario Builder.", "simreports", "3 min"],
-    ["06", session ? "Upgrade or invite testers" : "Create your researcher account", "Save progress, build identity and move into the Founding Researcher loop.", session ? "beta" : "login", "1 min"],
+    ["01", "Run your first comparison", "Compare two or more materials and understand the compatibility signal.", "compare", "2 min", "Start analysis"],
+    ["02", "Generate a Time Machine forecast", "Simulate future material behaviour across long-term environments.", "timemachine", "3 min", "Forecast future"],
+    ["03", "Build a real scenario", "Turn a plain-English use case into risk, lifespan and substitute suggestions.", "scenario", "4 min", "Build scenario"],
+    ["04", "Create a viral discovery card", "Turn the strongest result into a cinematic social asset for sharing.", "viralcards", "1 min", "Create card"],
+    ["05", "Export a simulation report", "Generate a polished research-style dossier from the active simulation ecosystem.", "simreports", "2 min", "Export report"],
+    ["06", "Join beta or upgrade", "Claim the Founding Researcher path and unlock stronger workspace value.", session ? "beta" : "login", "1 min", session ? "Open beta" : "Create account"],
   ];
 
-  const completed = Math.min(5, Math.max(1, Array.isArray(compare) ? compare.length : 0));
-  const progress = Math.round((completed / missionSteps.length) * 100);
+  const proofSignals = [
+    ["Clarity", "New users always know what to do next."],
+    ["Momentum", "Each action leads into a report, card, save or upgrade moment."],
+    ["Retention", "Missions create a reason to return and continue the lab journey."],
+    ["Conversion", "Guided paths reduce confusion before the subscription decision."],
+  ];
 
   return (
     <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
+      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
         <div>
-          <Pill gold><CheckCircle2 size={12}/> onboarding system</Pill>
-          <h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Mission Control</span></h1>
+          <Pill gold><CheckCircle2 size={12}/> onboarding engine</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Mission Control</span>
+          </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            A guided mission path for new users. Instead of dropping visitors into a huge platform, ElementOS now gives them a clear sequence: compare, simulate, report, share and return.
-          </p>
-          <Info title="Conversion purpose">
-            Mission Control reduces confusion, increases feature discovery and turns the first session into a confident product journey.
-          </Info>
-        </div>
-        <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Journey completion</div>
-          <div className="mt-3 text-6xl font-black text-cyan-100">{progress}%</div>
-          <div className="mt-4 h-3 overflow-hidden rounded-full bg-black/30">
-            <div className="h-full rounded-full bg-cyan-300 transition-all" style={{ width: `${progress}%` }} />
-          </div>
-          <p className="mt-4 text-sm leading-7 text-slate-300">
-            Current lab signal: {(compare || []).join(" + ") || "choose materials to begin"}. Each completed mission should unlock a stronger reason to save, share or upgrade.
-          </p>
-          <Button onClick={() => setPage("compare")} variant="primary" className="mt-5 w-full">Start Mission Path</Button>
-        </Panel>
-      </Panel>
-
-      <GuidePanel page="missions" />
-
-      <Panel>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <Pill><Sparkles size={12}/> first-session journey</Pill>
-            <h2 className="mt-3 text-4xl font-black">Six Missions to Activation</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-              These cards are designed for one-thumb navigation, screenshots, onboarding videos and guided product demos.
-            </p>
-          </div>
-          <Button onClick={() => setPage("viralcards")} variant="primary">Create Share Card</Button>
-        </div>
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {missionSteps.map(([num, title, desc, target, eta], index) => (
-            <button key={title} onClick={() => setPage(target)} className="group relative overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:shadow-[0_0_45px_rgba(34,211,238,.18)]">
-              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl transition group-hover:bg-cyan-300/20" />
-              <div className="relative z-10">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-xs uppercase tracking-[.24em] text-cyan-200">Mission {num}</div>
-                  <div className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] uppercase tracking-[.18em] text-slate-300">{eta}</div>
-                </div>
-                <h3 className="mt-5 text-2xl font-black text-white">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
-                <div className="mt-5 flex items-center justify-between rounded-2xl border border-white/10 bg-black/25 p-3 text-sm text-cyan-100">
-                  <span>{index < completed ? "✓ Suggested next action" : "○ Locked by curiosity"}</span>
-                  <ChevronRight size={16}/>
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </Panel>
-
-      <Panel>
-        <div className="grid gap-5 xl:grid-cols-3">
-          {[
-            ["Retention", "Users know what to do next instead of bouncing."],
-            ["Conversion", "Reports, cards and saved labs become clear upgrade moments."],
-            ["Virality", "Every mission creates something worth sharing or screenshotting."],
-          ].map(([title, desc]) => (
-            <div key={title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-              <div className="text-3xl font-black text-cyan-100">{title}</div>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </Panel>
-    </>
-  );
-}
-
-function NativeAppFeelLayer({ page, setPage, compare = [], session, isPro, startCheckout }) {
-  const workflows = [
-    ["Continue research", "Resume your current material path and generate the next output.", page === "landing" ? "dashboard" : page],
-    ["Create visual output", "Turn the current session into a viral card or visual report.", "viralcards"],
-    ["Run premium report", "Package Seismo, Well Driller, Time Machine and Scenario results into a dossier.", "simreports"],
-    ["Open command mode", "Use CTRL+K for fast navigation and smart actions.", "copilot"],
-  ];
-  const telemetry = [72, 88, 64, 93, 79, 97, 84];
-
-  return (
-    <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
-        <div>
-          <Pill gold><Orbit size={12}/> valuation multiplier</Pill>
-          <h1 className="mt-4 text-5xl font-black sm:text-7xl">Native-App <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Feel Layer</span></h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            This page defines the polish standard: fast workflows, mobile-first action bars, ambient telemetry, guided prompts and premium command-center behaviour.
+            A guided first-run pathway that helps users understand the platform, complete meaningful simulations, generate shareable outputs and reach the subscription moment without feeling lost.
           </p>
           <Info title="Why this matters">
-            Users judge quality before they understand features. This layer makes ElementOS feel expensive, alive and easier to navigate.
+            Mission Control turns ElementOS from a huge interface into a guided research journey. Users are shown exactly where to start, what to do next and why each step has value.
           </Info>
         </div>
-        <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-slate-950 p-6">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,.28),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(168,85,247,.22),transparent_32%)]" />
-          <div className="relative z-10 grid h-full place-items-center">
-            <div className="relative h-64 w-64 rounded-full border border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_80px_rgba(34,211,238,.22)]">
-              <div className="absolute inset-6 rounded-full border border-fuchsia-300/20" />
-              <div className="absolute inset-12 rounded-full border border-emerald-300/20" />
-              <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-[2rem] border border-amber-300/30 bg-amber-300/10 shadow-[0_0_50px_rgba(251,191,36,.18)]" />
-              {telemetry.map((v, i) => (
-                <div key={i} className="absolute left-1/2 top-1/2 h-2 rounded-full bg-cyan-200/80" style={{ width: `${40 + v}px`, transform: `rotate(${i * 51}deg) translateX(30px)`, transformOrigin: "0 50%" }} />
-              ))}
-            </div>
+
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Current mission status</div>
+          <div className="mt-3 text-6xl font-black text-cyan-100">6</div>
+          <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">guided launch missions</div>
+          <div className="mt-5 h-3 overflow-hidden rounded-full bg-black/30">
+            <div className="h-full w-[42%] rounded-full bg-cyan-300" />
           </div>
-        </div>
+          <p className="mt-4 text-sm leading-7 text-slate-300">
+            Complete missions to move from curious visitor to active researcher. The path is designed to end in a report, a viral card or a Pro Lab upgrade decision.
+          </p>
+          {!isPro && (
+            <Button onClick={startCheckout} variant="primary" className="mt-5 w-full">
+              Unlock Pro Lab
+            </Button>
+          )}
+        </Panel>
       </Panel>
 
-      <GuidePanel page="native" />
+      <GuidePanel page="mission" />
 
-      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
-        <Panel>
-          <Pill><BarChart3 size={12}/> app quality signals</Pill>
-          <h2 className="mt-3 text-4xl font-black">Premium Interaction Checklist</h2>
-          <div className="mt-6 space-y-3">
-            {[
-              "Every page has one obvious next action",
-              "Mobile bottom actions stay reachable by thumb",
-              "CTRL+K exposes power-user workflows",
-              "Cards generate screenshots worth sharing",
-              "Reports and exports create upgrade moments",
-              "Guidance appears before confusion",
-            ].map((item) => (
-              <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm text-slate-300">
-                <CheckCircle2 size={16} className="mr-2 inline text-emerald-300" /> {item}
+      <div className="grid gap-5 xl:grid-cols-3">
+        {missionSteps.map(([num, title, desc, target, time, cta], index) => (
+          <Panel key={num} className="group">
+            <div className="flex items-start justify-between gap-4">
+              <div className="grid h-14 w-14 place-items-center rounded-3xl border border-cyan-300/25 bg-cyan-300/10 text-xl font-black text-cyan-100">
+                {num}
               </div>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel>
-          <Pill gold><Sparkles size={12}/> suggested workflows</Pill>
-          <h2 className="mt-3 text-4xl font-black">Smart Next Actions</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">These workflow cards should appear across the product wherever users might hesitate.</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {workflows.map(([title, desc, target]) => (
-              <button key={title} onClick={() => setPage(target)} className="rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/15">
-                <div className="text-xl font-black text-cyan-100">{title}</div>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{desc}</p>
-                <div className="mt-4 text-xs uppercase tracking-[.22em] text-cyan-200">Open →</div>
-              </button>
-            ))}
-          </div>
-        </Panel>
+              <Pill gold={index < 3}>{time}</Pill>
+            </div>
+            <h2 className="mt-5 text-2xl font-black">{title}</h2>
+            <p className="mt-3 min-h-[72px] text-sm leading-6 text-slate-400">{desc}</p>
+            <div className="mt-5 rounded-2xl border border-white/10 bg-black/25 p-3">
+              <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Outcome</div>
+              <div className="mt-1 text-sm font-bold text-cyan-100">
+                {index === 0 && "User understands the core comparison value."}
+                {index === 1 && "User sees future-state simulation depth."}
+                {index === 2 && "User creates a personal use case."}
+                {index === 3 && "User has something worth sharing."}
+                {index === 4 && "User reaches export/report value."}
+                {index === 5 && "User enters the beta or account funnel."}
+              </div>
+            </div>
+            <Button onClick={() => setPage(target)} variant={index === 0 ? "primary" : "ghost"} className="mt-5 w-full">
+              {cta}
+            </Button>
+          </Panel>
+        ))}
       </div>
 
       <Panel>
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <Pill><Network size={12}/> session state</Pill>
-            <h2 className="mt-3 text-4xl font-black">Current Research Context</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Use this as the model for sticky context across the whole platform.</p>
+            <Pill gold><Sparkles size={12}/> conversion psychology</Pill>
+            <h2 className="mt-3 text-4xl font-black">Guided Journey Intelligence</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+              The mission system is designed around one simple product truth: users do not pay for pages, they pay when the platform repeatedly gives them useful moments, clear next steps and impressive outputs.
+            </p>
           </div>
-          {!session ? <Button onClick={() => setPage("login")} variant="primary">Save This Session</Button> : !isPro ? <Button onClick={startCheckout} variant="primary">Upgrade Pro</Button> : <Pill gold>Pro Lab Active</Pill>}
+          <Button onClick={() => setPage("copilot")} variant="primary">Ask AI Copilot</Button>
         </div>
+
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {[
-            ["Active Page", page],
-            ["Compare Set", (compare || []).join(" + ") || "None"],
-            ["Session", session ? "Signed in" : "Guest"],
-            ["Mode", isPro ? "Pro Lab" : "Free Lab"],
-          ].map(([label, value]) => (
-            <div key={label} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-              <div className="text-xs uppercase tracking-[.22em] text-slate-500">{label}</div>
-              <div className="mt-3 text-2xl font-black text-cyan-100">{value}</div>
+          {proofSignals.map(([title, desc]) => (
+            <div key={title} className="rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
+              <div className="text-2xl font-black text-cyan-100">{title}</div>
+              <p className="mt-2 text-sm leading-6 text-slate-300">{desc}</p>
             </div>
           ))}
         </div>
@@ -4426,8 +4338,7 @@ function MobileBottomNav({ page, setPage }) {
     ["landing", "Start", Sparkles],
     ["beta", "Beta", UserPlus],
     ["copilot", "AI", Sparkles],
-    ["missions", "Mission", CheckCircle2],
-    ["native", "Native", Orbit],
+    ["mission", "Mission", CheckCircle2],
     ["dashboard", "Home", Home],
     ["discover", "Discover", Sparkles],
     ["timemachine", "Time", Clock3],
@@ -4529,6 +4440,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const pageActions = [
     ["dashboard", "Open Dashboard", "Command centre, live network, researcher identity and launch workspace.", "Navigation", "Dashboard"],
     ["copilot", "Ask AI Copilot", "Turn a plain-English research goal into simulations, reports and cards.", "AI", "Copilot"],
+    ["mission", "Open Mission Control", "Guided onboarding missions for comparison, Time Machine, Scenario Builder, Viral Cards and reports.", "Onboarding", "Mission"],
     ["discover", "Open Discover", "Trending pairings, momentum scores and AI-ranked material discoveries.", "Discovery", "Discover"],
     ["timemachine", "Run Time Machine", "Forecast ageing, corrosion, degradation and future material states.", "Simulation", "Time"],
     ["scenario", "Build Scenario", "Convert a real-world material situation into risk, lifespan and substitute outputs.", "Simulation", "Scenario"],
@@ -4975,8 +4887,7 @@ const startCheckout = async () => {
       landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
       copilot: <AICopilotCommandCenter selected={selected} compare={compare} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
-      missions: <MissionControlSystem session={session} compare={compare} setPage={setPage} startCheckout={startCheckout} />,
-      native: <NativeAppFeelLayer page={page} setPage={setPage} compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} />,
+      mission: <MissionControl setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       dashboard: (
         <Dashboard
           setPage={setPage}
