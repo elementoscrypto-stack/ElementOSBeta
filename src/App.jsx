@@ -4310,63 +4310,95 @@ function MobileActionBar({ page, setPage, compare, session, isPro, startCheckout
 
 function CommandPalette({ open, onClose, page, setPage, selected, setSelected, compare, setCompare, session, isPro, startCheckout }) {
   const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     if (open) {
       setQuery("");
+      setActiveIndex(0);
     }
   }, [open]);
 
   if (!open) return null;
 
   const q = query.toLowerCase().trim();
+  const currentCompare = Array.isArray(compare) ? compare : [];
 
   const pageActions = [
-    ["dashboard", "Open Dashboard", "Command centre, activity, researcher identity", "Navigation"],
-    ["copilot", "Ask AI Copilot", "Turn plain-English goals into simulations and reports", "AI"],
-    ["discover", "Open Discover", "Trending materials, momentum and AI-ranked pairings", "Discovery"],
-    ["timemachine", "Run Time Machine", "Future material behaviour across time", "Simulation"],
-    ["scenario", "Build Scenario", "Plain-English material risk simulation", "Simulation"],
-    ["welldriller", "Open Experimental Well Driller", "Subsurface bore path and formation pressure", "Simulation"],
-    ["seismo", "Open Seismo", "P-wave and S-wave travel simulator", "Simulation"],
-    ["simreports", "Create Simulation Report", "Universal dossier across simulation engines", "Reports"],
-    ["viralcards", "Create Viral Card", "Export cinematic social discovery card", "Growth"],
-    ["calculations", "Open Calculation Core", "Research calculation blocks and outputs", "Tools"],
-    ["lab", "Open My Lab", "Saved scenarios, reports and research assets", "Workspace"],
-    ["visualization", "Open Visual Engine", "Survival curves, telemetry cards and waveforms", "Visuals"],
-    ["compare", "Open Compare", "Compare stability, thermal, pressure and behaviour", "Analysis"],
-    ["explorer", "Search Elements", "Inspect element behaviour profiles", "Elements"],
-    ["periodic", "Open Periodic Table", "Heat-map all 118 elements", "Elements"],
-    ["beta", "Open Beta Launch", "Founding Researcher, roadmap and feedback layer", "Growth"],
-    ["reports", "Open Reports", "Exportable comparison reports", "Reports"],
-    ["login", session ? "Open Account" : "Sign In / Create Account", "Save workspaces and upgrade", "Account"],
+    ["dashboard", "Open Dashboard", "Command centre, live network, researcher identity and launch workspace.", "Navigation", "Dashboard"],
+    ["copilot", "Ask AI Copilot", "Turn a plain-English research goal into simulations, reports and cards.", "AI", "Copilot"],
+    ["discover", "Open Discover", "Trending pairings, momentum scores and AI-ranked material discoveries.", "Discovery", "Discover"],
+    ["timemachine", "Run Time Machine", "Forecast ageing, corrosion, degradation and future material states.", "Simulation", "Time"],
+    ["scenario", "Build Scenario", "Convert a real-world material situation into risk, lifespan and substitute outputs.", "Simulation", "Scenario"],
+    ["welldriller", "Open Experimental Well Driller", "Model a deep bore path, reservoir target and pressure profile.", "Simulation", "Well"],
+    ["seismo", "Open Seismo", "Compare P-wave and S-wave travel, arrival gaps and wave response.", "Simulation", "Seismo"],
+    ["simreports", "Create Simulation Report", "Create a universal dossier across Time Machine, Seismo, Scenario and Well Driller.", "Reports", "Report"],
+    ["viralcards", "Create Viral Card", "Generate a cinematic share card for discoveries, simulations and reports.", "Growth", "Viral"],
+    ["beta", "Open Beta Launch", "Founding Researcher badge, roadmap, feedback and waitlist conversion.", "Growth", "Beta"],
+    ["calculations", "Open Calculation Core", "Use premium calculation blocks to support report narratives.", "Tools", "Calc"],
+    ["lab", "Open My Lab", "Return to saved scenarios, reports, discoveries and research assets.", "Workspace", "Lab"],
+    ["visualization", "Open Visual Engine", "Survival curves, telemetry cards, pulse graphs and cinematic visuals.", "Visuals", "Visual"],
+    ["compare", "Open Compare", "Compare stability, thermal, pressure, diffusion, rarity and alignment.", "Analysis", "Compare"],
+    ["explorer", "Search Elements", "Inspect an element profile before adding it to a comparison.", "Elements", "Search"],
+    ["periodic", "Open Periodic Table", "Browse all 118 elements with behaviour heat-map logic.", "Elements", "Periodic"],
+    ["reports", "Open Reports", "Create public reports, premium PDFs and shareable outputs.", "Reports", "PDF"],
+    ["login", session ? "Open Account" : "Sign In / Create Account", "Save workspaces, restore labs and upgrade to Pro.", "Account", "Account"],
   ];
 
   const elementActions = elements.slice(0, 118).map((e) => [
     `element:${e.symbol}`,
     `${e.symbol} — ${e.name}`,
-    `${e.category} · atomic ${e.atomicNumber} · add to comparison or inspect`,
+    `${e.category} · atomic ${e.atomicNumber} · add to comparison and inspect behaviour profile.`,
     "Element",
+    e.symbol,
   ]);
 
-  const smartActions = [
-    ["smart:ocean", "Simulate deep ocean pressure for 40 years", "Sets Titanium and opens Scenario Builder", "Smart Action"],
-    ["smart:seismic", "Compare P-wave / S-wave arrival gap", "Opens Seismo for seismic response", "Smart Action"],
-    ["smart:well", "Model a deep experimental well path", "Opens Well Driller simulation", "Smart Action"],
-    ["smart:time", "Forecast material decay across 100 years", "Opens Time Machine", "Smart Action"],
-    ["smart:viral", "Turn this into a viral share card", "Opens Viral Card Studio", "Smart Action"],
-    ["smart:report", "Generate a universal simulation report", "Opens Simulation Reports", "Smart Action"],
-    ["smart:checkout", isPro ? "Pro Lab is active" : "Upgrade to Pro Lab", "Unlock premium export and workspace features", "Billing"],
+  const pairActions = [
+    ["pair:Al-Fe", "Compare Aluminium + Iron", "Classic structural pairing for stability, pressure and behaviour comparison.", "Pair", "Al Fe"],
+    ["pair:Ti-Hf", "Compare Titanium + Hafnium", "High-value advanced pairing for futuristic structural simulation cards.", "Pair", "Ti Hf"],
+    ["pair:Cu-Ag", "Compare Copper + Silver", "Conductivity corridor comparison for electrical/material exploration.", "Pair", "Cu Ag"],
+    ["pair:Si-Ge", "Compare Silicon + Germanium", "Semiconductor-adjacent behaviour pairing for advanced reports.", "Pair", "Si Ge"],
+    ["pair:W-Ta", "Compare Tungsten + Tantalum", "Heavy high-pressure thermal candidate pair for Time Machine testing.", "Pair", "W Ta"],
   ];
 
-  const allActions = [...pageActions, ...smartActions, ...elementActions];
+  const smartActions = [
+    ["smart:ocean", "Simulate deep ocean pressure for 40 years", "Sets Titanium, Hafnium, Tungsten and Aluminium then opens Scenario Builder.", "Smart Action", "Ocean"],
+    ["smart:heat", "Find strongest high-heat material pair", "Loads Tungsten, Tantalum, Hafnium and Titanium into Compare.", "Smart Action", "Heat"],
+    ["smart:seismic", "Compare P-wave / S-wave arrival gap", "Opens Seismo for seismic travel and arrival-gap response.", "Smart Action", "Seismic"],
+    ["smart:well", "Model a deep experimental well path", "Opens Experimental Well Driller with drilling simulation focus.", "Smart Action", "Well"],
+    ["smart:time", "Forecast material decay across 100 years", "Opens Time Machine for long-horizon material survivability.", "Smart Action", "Time"],
+    ["smart:viral", "Turn current work into a viral share card", "Opens Viral Card Studio with social-growth workflow.", "Smart Action", "Viral"],
+    ["smart:report", "Generate a universal simulation report", "Opens Simulation Reports for a polished export dossier.", "Smart Action", "Report"],
+    ["smart:mission", "Start the user onboarding mission path", "Opens Beta Launch as the current conversion and early-user pathway.", "Smart Action", "Mission"],
+    ["smart:checkout", isPro ? "Pro Lab is active" : "Upgrade to Pro Lab", "Unlock premium export and workspace features.", "Billing", "Pro"],
+  ];
+
+  const allActions = [...smartActions, ...pageActions, ...pairActions, ...elementActions];
+
+  const scoreMatch = ([id, title, desc, tag, alias]) => {
+    if (!q) return tag === "Smart Action" ? 20 : tag === "Navigation" ? 12 : 8;
+    const hay = `${id} ${title} ${desc} ${tag} ${alias || ""}`.toLowerCase();
+    let score = 0;
+    if (hay.includes(q)) score += 50;
+    if (title.toLowerCase().startsWith(q)) score += 25;
+    q.split(/\s+/).forEach((word) => {
+      if (word && hay.includes(word)) score += 10;
+    });
+    if (tag === "Smart Action") score += 8;
+    if (tag === "Element" && q.length <= 2 && (alias || "").toLowerCase().startsWith(q)) score += 35;
+    return score;
+  };
 
   const filtered = allActions
-    .filter(([, title, desc, tag]) => {
-      if (!q) return true;
-      return `${title} ${desc} ${tag}`.toLowerCase().includes(q);
-    })
-    .slice(0, 18);
+    .map((action) => ({ action, rank: scoreMatch(action) }))
+    .filter(({ rank }) => !q || rank > 0)
+    .sort((a, b) => b.rank - a.rank)
+    .slice(0, 18)
+    .map(({ action }) => action);
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [query]);
 
   const runAction = (id) => {
     if (id.startsWith("element:")) {
@@ -4378,10 +4410,27 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
       return;
     }
 
+    if (id.startsWith("pair:")) {
+      const pair = id.replace("pair:", "").split("-");
+      setSelected(pair[0]);
+      setCompare(pair.slice(0, 6));
+      setPage("compare");
+      onClose();
+      return;
+    }
+
     if (id === "smart:ocean") {
       setSelected("Ti");
       setCompare(["Ti", "Hf", "W", "Al"]);
       setPage("scenario");
+      onClose();
+      return;
+    }
+
+    if (id === "smart:heat") {
+      setSelected("W");
+      setCompare(["W", "Ta", "Hf", "Ti"]);
+      setPage("compare");
       onClose();
       return;
     }
@@ -4416,6 +4465,12 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
       return;
     }
 
+    if (id === "smart:mission") {
+      setPage("beta");
+      onClose();
+      return;
+    }
+
     if (id === "smart:checkout") {
       if (!isPro) startCheckout?.();
       onClose();
@@ -4426,61 +4481,127 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     onClose();
   };
 
+  const onKeyDown = (e) => {
+    if (e.key === "Escape") onClose();
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.min(filtered.length - 1, i + 1));
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.max(0, i - 1));
+    }
+    if (e.key === "Enter" && filtered[activeIndex]) {
+      e.preventDefault();
+      runAction(filtered[activeIndex][0]);
+    }
+  };
+
+  const quickPrompts = [
+    "deep ocean pressure",
+    "titanium",
+    "viral card",
+    "seismo",
+    "universal report",
+    "high heat pair",
+  ];
+
+  const currentContext = currentCompare.length ? currentCompare.slice(0, 5).join(" + ") : selected;
+
   return (
-    <div className="fixed inset-0 z-[80] bg-black/70 p-4 backdrop-blur-xl" onClick={onClose}>
-      <div className="mx-auto mt-10 max-w-4xl overflow-hidden rounded-[2rem] border border-cyan-300/25 bg-slate-950/95 shadow-[0_0_120px_rgba(34,211,238,.25)]" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[80] bg-black/75 p-4 backdrop-blur-xl" onClick={onClose} onKeyDown={onKeyDown}>
+      <div className="mx-auto mt-6 max-w-5xl overflow-hidden rounded-[2rem] border border-cyan-300/25 bg-slate-950/95 shadow-[0_0_140px_rgba(34,211,238,.28)]" onClick={(e) => e.stopPropagation()}>
         <div className="border-b border-white/10 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <Pill gold><Sparkles size={12}/> command palette</Pill>
-              <h2 className="mt-3 text-3xl font-black">ElementOS Global Search</h2>
-              <p className="mt-1 text-sm text-slate-400">Navigate, search elements, launch simulations, generate reports and create viral cards instantly.</p>
+              <Pill gold><Sparkles size={12}/> command engine</Pill>
+              <h2 className="mt-3 text-4xl font-black">ElementOS Command Engine</h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">
+                Navigate, search elements, launch smart simulations, build reports, create viral cards and move through the platform like a real research operating system.
+              </p>
             </div>
             <button onClick={onClose} className="rounded-2xl border border-white/10 px-4 py-2 text-sm text-slate-300">Esc</button>
           </div>
 
-          <div className="mt-5 flex items-center gap-3 rounded-2xl border border-cyan-300/20 bg-black/40 px-4 py-3">
+          <div className="mt-5 flex items-center gap-3 rounded-2xl border border-cyan-300/20 bg-black/45 px-4 py-3 shadow-[inset_0_0_35px_rgba(34,211,238,.08)]">
             <Search size={18} className="text-cyan-200" />
             <input
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search pages, elements, simulations, reports..."
+              placeholder="Try: titanium, deep ocean pressure, viral card, seismo, report..."
               className="w-full bg-transparent text-lg font-bold text-white outline-none placeholder:text-slate-500"
             />
             <span className="hidden rounded-xl border border-white/10 px-3 py-1 text-xs text-slate-400 sm:inline">CTRL K</span>
           </div>
-        </div>
 
-        <div className="max-h-[62vh] overflow-y-auto p-4">
-          <div className="grid gap-3">
-            {filtered.map(([id, title, desc, tag]) => (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {quickPrompts.map((prompt) => (
               <button
-                key={`${id}-${title}`}
-                onClick={() => runAction(id)}
-                className="group flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10"
+                key={prompt}
+                onClick={() => setQuery(prompt)}
+                className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40"
               >
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-lg font-black text-cyan-100">{title}</span>
-                    <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{tag}</span>
-                  </div>
-                  <div className="mt-1 text-sm leading-6 text-slate-400">{desc}</div>
-                </div>
-                <ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" />
+                {prompt}
               </button>
             ))}
-
-            {!filtered.length && (
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-8 text-center text-slate-400">
-                No command found. Try “seismo”, “titanium”, “report”, “viral” or “time”.
-              </div>
-            )}
           </div>
         </div>
 
-        <div className="border-t border-white/10 p-4 text-xs leading-5 text-slate-500">
-          Pro move: press CTRL+K anytime to jump across ElementOS like a real command-center SaaS platform.
+        <div className="grid max-h-[66vh] overflow-hidden lg:grid-cols-[1fr_310px]">
+          <div className="overflow-y-auto p-4">
+            <div className="grid gap-3">
+              {filtered.map(([id, title, desc, tag], index) => (
+                <button
+                  key={`${id}-${title}`}
+                  onClick={() => runAction(id)}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  className={`group flex items-center justify-between gap-4 rounded-2xl border p-4 text-left transition ${
+                    index === activeIndex
+                      ? "border-cyan-300/45 bg-cyan-300/12 shadow-[0_0_35px_rgba(34,211,238,.14)]"
+                      : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"
+                  }`}
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-lg font-black text-cyan-100">{title}</span>
+                      <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{tag}</span>
+                    </div>
+                    <div className="mt-1 text-sm leading-6 text-slate-400">{desc}</div>
+                  </div>
+                  <ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" />
+                </button>
+              ))}
+
+              {!filtered.length && (
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-8 text-center text-slate-400">
+                  No command found. Try “seismo”, “titanium”, “report”, “viral”, “ocean” or “time”.
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 bg-black/20 p-5 lg:border-l lg:border-t-0">
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Current context</div>
+            <div className="mt-2 text-2xl font-black text-cyan-100">{currentContext}</div>
+            <div className="mt-1 text-sm text-slate-400">Active page: {page}</div>
+
+            <div className="mt-5 grid gap-3">
+              <button onClick={() => runAction("smart:report")} className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-left text-sm text-emerald-100">
+                <b>Generate dossier</b><br />Turn current work into a universal simulation report.
+              </button>
+              <button onClick={() => runAction("smart:viral")} className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-left text-sm text-amber-100">
+                <b>Create share card</b><br />Make this screenshot-worthy for social growth.
+              </button>
+              <button onClick={() => runAction("smart:ocean")} className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-left text-sm text-cyan-100">
+                <b>Launch smart simulation</b><br />Deep ocean pressure scenario with advanced materials.
+              </button>
+            </div>
+
+            <div className="mt-5 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-xs leading-5 text-slate-400">
+              Keyboard: ↑ ↓ to move · Enter to launch · Esc to close. This is the OS layer that makes ElementOS feel premium.
+            </div>
+          </div>
         </div>
       </div>
     </div>
