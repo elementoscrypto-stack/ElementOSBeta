@@ -289,6 +289,11 @@ function guidanceForPage(page) {
       description: "Beta Launch turns curious visitors into early users with a waitlist, Founding Researcher badges, feature requests, roadmap visibility and feedback loops.",
       next: "Join the beta, copy the launch post, request a feature, then invite early testers to become Founding Researchers.",
     },
+    copilot: {
+      title: "What AI Copilot does",
+      description: "AI Copilot is the command center for ElementOS. It turns plain-language goals into material suggestions, scenario ideas, reports, simulations and viral-card actions.",
+      next: "Ask a goal like deep ocean pressure for 40 years, then launch the suggested simulation, report or viral card.",
+    },
     dashboard: {
       title: "What this dashboard does",
       description: "This is your command centre. Start a comparison, open the discovery feed, save your workspace, or upgrade to Pro Lab when you are ready to export premium reports.",
@@ -501,13 +506,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["landing", "Landing", Sparkles], ["beta", "Beta Launch", UserPlus], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
+  const items = [["landing", "Landing", Sparkles], ["beta", "Beta Launch", UserPlus], ["copilot", "AI Copilot", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Beta Launch", "beta", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Beta Launch", "beta", UserPlus], ["AI Copilot", "copilot", Sparkles], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -4014,10 +4019,211 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
 }
 
 
+function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, setPage }) {
+  const [query, setQuery] = useState("best materials for deep ocean pressure over 40 years");
+  const [mode, setMode] = useState("simulation");
+
+  const normalized = query.toLowerCase();
+  const active = elementMap[selected] || elementMap.Al;
+
+  const intent = useMemo(() => {
+    if (normalized.includes("ocean") || normalized.includes("salt") || normalized.includes("water")) return "Deep ocean / corrosion resilience";
+    if (normalized.includes("heat") || normalized.includes("thermal") || normalized.includes("temperature")) return "High heat / thermal endurance";
+    if (normalized.includes("seismic") || normalized.includes("wave") || normalized.includes("earthquake")) return "Seismic wave interpretation";
+    if (normalized.includes("well") || normalized.includes("drill") || normalized.includes("reservoir")) return "Subsurface drilling intelligence";
+    if (normalized.includes("share") || normalized.includes("viral") || normalized.includes("card")) return "Viral communication asset";
+    if (normalized.includes("report") || normalized.includes("pdf") || normalized.includes("export")) return "Research report generation";
+    return "Material discovery and simulation";
+  }, [normalized]);
+
+  const recommended = useMemo(() => {
+    const envBoost = (symbol) => {
+      const s = score(symbol);
+      let boost = s.stability * 16 + s.pressure * 11 + s.thermal * 8 + s.rarity * 4;
+      if (normalized.includes("ocean") || normalized.includes("salt")) boost += s.stability * 10 + s.pressure * 8;
+      if (normalized.includes("heat") || normalized.includes("thermal")) boost += s.thermal * 16;
+      if (normalized.includes("conduct") || normalized.includes("copper")) boost += s.conductivity * 18;
+      if (normalized.includes("deep") || normalized.includes("pressure")) boost += s.pressure * 18;
+      return boost;
+    };
+
+    return elements
+      .map((e) => ({ ...e, aiScore: Math.round(envBoost(e.symbol)) }))
+      .sort((a, b) => b.aiScore - a.aiScore)
+      .slice(0, 6);
+  }, [normalized]);
+
+  const pairs = useMemo(() => {
+    return generateDiscoveryEngine(18)
+      .filter((d) => recommended.some((r) => r.symbol === d.a || r.symbol === d.b))
+      .slice(0, 4);
+  }, [recommended]);
+
+  const confidence = Math.max(82, Math.min(99, Math.round(88 + recommended[0]?.aiScore % 11)));
+  const actionPlan = [
+    ["Simulate", "Open Time Machine", "timemachine", "Project how the strongest material changes over long time horizons."],
+    ["Scenario", "Open Scenario Builder", "scenario", "Turn the prompt into a risk score, lifespan estimate and substitute recommendation."],
+    ["Report", "Create Simulation Report", "simreports", "Bundle Time Machine, Scenario, Well Driller and Seismo outputs into a dossier."],
+    ["Share", "Create Viral Card", "viralcards", "Turn this insight into a cinematic social asset for growth."],
+  ];
+
+  const applySuggestion = () => {
+    const symbols = recommended.slice(0, 4).map((x) => x.symbol);
+    setSelected(symbols[0] || selected);
+    setCompare(symbols.length ? symbols : compare);
+  };
+
+  const exportBrief = () => {
+    const lines = [
+      "ElementOS AI Copilot Brief",
+      `Query: ${query}`,
+      `Intent: ${intent}`,
+      `AI confidence: ${confidence}%`,
+      "",
+      "Recommended materials:",
+      ...recommended.map((r, i) => `${i + 1}. ${r.name} (${r.symbol}) — signal ${r.aiScore}`),
+      "",
+      "Suggested actions:",
+      ...actionPlan.map((a) => `- ${a[1]}: ${a[3]}`),
+    ];
+    downloadFile("elementos-ai-copilot-brief.txt", lines.join("\n"));
+  };
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
+        <div>
+          <Pill gold><Sparkles size={12}/> command center</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            AI Copilot <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Command Center</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Ask ElementOS what to explore. The Copilot turns plain-language goals into material recommendations, simulations, reports, viral cards and next actions.
+          </p>
+          <Info title="Why this matters">
+            This gives the platform an intelligent operating-system feel. Instead of users wondering where to click, they can type a goal and ElementOS guides them to the strongest workflow.
+          </Info>
+        </div>
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Copilot signal</div>
+          <div className="mt-3 text-6xl font-black text-emerald-200">{confidence}%</div>
+          <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">AI confidence</div>
+          <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
+            <div className="text-xs uppercase tracking-[.2em] text-cyan-200">Detected intent</div>
+            <div className="mt-2 text-2xl font-black text-cyan-100">{intent}</div>
+          </div>
+          <Button onClick={applySuggestion} variant="primary" className="mt-5 w-full">Apply Suggested Compare Set</Button>
+          <Button onClick={exportBrief} className="mt-3 w-full"><Download size={16} className="inline"/> Export Copilot Brief</Button>
+        </Panel>
+      </Panel>
+
+      <GuidePanel page="copilot" />
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill><Search size={12}/> ask elementos</Pill>
+            <h2 className="mt-3 text-4xl font-black">Natural-Language Material Search</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              Type a goal, environment, report idea or viral content prompt. This is a lightweight deterministic Copilot layer that keeps the app fast and stable.
+            </p>
+          </div>
+          <select value={mode} onChange={(e) => setMode(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
+            <option value="simulation">Simulation</option>
+            <option value="report">Report</option>
+            <option value="viral">Viral Card</option>
+            <option value="research">Research</option>
+          </select>
+        </div>
+        <textarea
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="mt-5 min-h-[130px] w-full rounded-[2rem] border border-cyan-300/15 bg-slate-950/80 p-5 text-lg text-cyan-50 outline-none"
+          placeholder="Ask: best materials for deep ocean pressure over 40 years"
+        />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {[
+            "best materials for deep ocean pressure over 40 years",
+            "seismic wave comparison for deep reservoir drilling",
+            "thermal material substitute for copper under high heat",
+            "create a viral discovery card from titanium and hafnium",
+          ].map((x) => <Button key={x} onClick={() => setQuery(x)}>{x}</Button>)}
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
+        <Panel>
+          <Pill gold><Atom size={12}/> recommended materials</Pill>
+          <h2 className="mt-3 text-4xl font-black">Copilot Material Stack</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {recommended.map((r, index) => {
+              const s = score(r.symbol);
+              return (
+                <div key={r.symbol} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-emerald-400/10 p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs uppercase tracking-[.22em] text-slate-500">rank #{index + 1}</div>
+                    <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-black text-emerald-100">{r.aiScore}</div>
+                  </div>
+                  <div className="mt-4 text-5xl font-black text-cyan-100">{r.symbol}</div>
+                  <div className="mt-1 text-lg font-black text-white">{r.name}</div>
+                  <div className="mt-1 text-sm text-slate-400">{r.category}</div>
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-slate-300">
+                    <div className="rounded-2xl border border-white/10 bg-black/25 p-3">Pressure {s.pressure.toFixed(1)}</div>
+                    <div className="rounded-2xl border border-white/10 bg-black/25 p-3">Thermal {s.thermal.toFixed(1)}</div>
+                    <div className="rounded-2xl border border-white/10 bg-black/25 p-3">Stable {s.stability.toFixed(1)}</div>
+                    <div className="rounded-2xl border border-white/10 bg-black/25 p-3">Rare {s.rarity.toFixed(1)}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><ChevronRight size={12}/> quick actions</Pill>
+          <h2 className="mt-3 text-4xl font-black">What to do next</h2>
+          <div className="mt-6 space-y-3">
+            {actionPlan.map(([tag, title, target, desc]) => (
+              <button key={title} onClick={() => setPage(target)} className="w-full rounded-[2rem] border border-white/10 bg-black/25 p-5 text-left transition hover:border-cyan-300/30 hover:bg-cyan-300/10">
+                <div className="text-xs uppercase tracking-[.22em] text-cyan-200">{tag}</div>
+                <div className="mt-2 text-2xl font-black text-white">{title}</div>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{desc}</p>
+              </button>
+            ))}
+          </div>
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill><Network size={12}/> discovery routes</Pill>
+            <h2 className="mt-3 text-4xl font-black">Suggested Pairings</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">These pairings are pulled from the existing ElementOS discovery engine and aligned with the current Copilot prompt.</p>
+          </div>
+          <Button onClick={() => setPage("discover")} variant="primary">Open Discover</Button>
+        </div>
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {pairs.map((d) => (
+            <div key={d.dna} className="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-amber-100">{d.tier}</div>
+              <div className="mt-3 text-4xl font-black text-white">{d.a} + {d.b}</div>
+              <p className="mt-3 text-sm leading-6 text-amber-50/90">{d.reason}</p>
+              <div className="mt-4 rounded-2xl border border-white/10 bg-black/25 p-3 font-mono text-xs text-cyan-100">{d.dna}</div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+
 function MobileBottomNav({ page, setPage }) {
   const items = [
     ["landing", "Start", Sparkles],
     ["beta", "Beta", UserPlus],
+    ["copilot", "AI", Sparkles],
     ["dashboard", "Home", Home],
     ["discover", "Discover", Sparkles],
     ["timemachine", "Time", Clock3],
@@ -4245,6 +4451,7 @@ const startCheckout = async () => {
     () => ({
       landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
+      copilot: <AICopilotCommandCenter selected={selected} compare={compare} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
       dashboard: (
         <Dashboard
           setPage={setPage}
