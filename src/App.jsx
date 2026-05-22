@@ -294,6 +294,11 @@ function guidanceForPage(page) {
       description: "AI Copilot is the command center for ElementOS. It turns plain-language goals into material suggestions, scenario ideas, reports, simulations and viral-card actions.",
       next: "Ask a goal like deep ocean pressure for 40 years, then launch the suggested simulation, report or viral card.",
     },
+    growthstudio: {
+      title: "What Growth Studio does",
+      description: "Growth Studio turns ElementOS into a launch machine: viral content ideas, platform-specific posts, screenshot briefs, onboarding experiments and weekly launch tasks.",
+      next: "Pick a channel, copy a post, export the content calendar, then send users into Viral Cards or Beta Launch.",
+    },
     dashboard: {
       title: "What this dashboard does",
       description: "This is your command centre. Start a comparison, open the discovery feed, save your workspace, or upgrade to Pro Lab when you are ready to export premium reports.",
@@ -506,13 +511,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["landing", "Landing", Sparkles], ["beta", "Beta Launch", UserPlus], ["copilot", "AI Copilot", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
+  const items = [["landing", "Landing", Sparkles], ["beta", "Beta Launch", UserPlus], ["copilot", "AI Copilot", Sparkles], ["growthstudio", "Growth Studio", Network], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Beta Launch", "beta", UserPlus], ["AI Copilot", "copilot", Sparkles], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Beta Launch", "beta", UserPlus], ["AI Copilot", "copilot", Sparkles], ["Growth Studio", "growthstudio", Network], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -4219,11 +4224,183 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
 }
 
 
+function GrowthStudio({ setPage }) {
+  const [channel, setChannel] = useState("TikTok");
+  const [focus, setFocus] = useState("Time Machine");
+  const [audience, setAudience] = useState("curious engineers, AI explorers and materials nerds");
+
+  const channelPlans = {
+    TikTok: {
+      hook: "What happens to Titanium after 100 years under pressure?",
+      format: "9–18 second vertical clip with a fast zoom into the simulation result.",
+      cta: "Comment a material pair and I’ll simulate it next.",
+    },
+    X: {
+      hook: "I built an AI-native material simulation lab called ElementOS.",
+      format: "4-tweet thread with one screenshot, one result card and one public report link.",
+      cta: "Reply with a material scenario and I’ll run it through the engine.",
+    },
+    Reddit: {
+      hook: "I’m building an exploratory materials simulation platform and looking for brutal feedback.",
+      format: "Transparent builder post: what it does, what is experimental, what feedback is needed.",
+      cta: "What page would you test first: Time Machine, Seismo, or Well Driller?",
+    },
+    LinkedIn: {
+      hook: "ElementOS turns material comparison into a visual simulation workflow.",
+      format: "Professional product update with use cases, screenshots and beta invitation.",
+      cta: "DM me if you want beta access or want to test a materials scenario.",
+    },
+  };
+
+  const plan = channelPlans[channel] || channelPlans.TikTok;
+  const contentPack = [
+    `Channel: ${channel}`,
+    `Feature focus: ${focus}`,
+    `Audience: ${audience}`,
+    `Hook: ${plan.hook}`,
+    `Format: ${plan.format}`,
+    `CTA: ${plan.cta}`,
+    "",
+    "7-Day Launch Sprint:",
+    "Day 1: Post Time Machine screenshot + founder story.",
+    "Day 2: Post Seismo P/S wave simulator clip.",
+    "Day 3: Post Well Driller 3D depth card.",
+    "Day 4: Post Viral Discovery Card example.",
+    "Day 5: Ask users to comment scenarios to simulate.",
+    "Day 6: Publish top 3 user-requested results.",
+    "Day 7: Invite Founding Researchers into beta.",
+  ].join("\n");
+
+  const socialPost =
+    channel === "TikTok"
+      ? `${plan.hook}\n\nI’m building ElementOS — an AI-native simulation lab for material behaviour, time forecasts, seismic waves and subsurface experiments.\n\n${plan.cta}`
+      : channel === "Reddit"
+      ? `${plan.hook}\n\nElementOS currently includes Time Machine, Scenario Builder, Seismo, Experimental Well Driller, Viral Cards and universal simulation reports. It is exploratory rather than certified engineering software, and I’m trying to make the UX genuinely useful.\n\n${plan.cta}`
+      : `${plan.hook}\n\nToday’s focus: ${focus}. ElementOS turns complex simulation ideas into visual cards, reports and shareable research workflows.\n\n${plan.cta}`;
+
+  const contentIdeas = [
+    ["Time Machine clip", "Show one material degrading across 1, 10, 50 and 100 years."],
+    ["Seismo split-screen", "P-wave beats S-wave, then show the arrival gap as the hook."],
+    ["Well Driller depth reveal", "Animate down through strata and end on a reservoir target."],
+    ["Viral card challenge", "Ask followers to suggest the weirdest material pair."],
+    ["Founder build log", "Show the product evolving and ask for beta testers."],
+    ["Report export flex", "Generate a polished simulation dossier from one scenario."],
+  ];
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
+        <div>
+          <Pill gold><Network size={12}/> growth engine</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Growth Studio <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Launch Command Center</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Turn ElementOS pages into content, screenshots, beta invites and share loops. This is the place to plan TikTok/X/Reddit/LinkedIn clips that send users into Viral Cards, reports and beta signup.
+          </p>
+          <Info title="Why this matters">
+            Users do not share dashboards; they share moments. Growth Studio converts Time Machine, Seismo, Well Driller and Viral Cards into repeatable social hooks.
+          </Info>
+        </div>
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">launch score</div>
+          <div className="mt-3 text-7xl font-black text-emerald-200">92%</div>
+          <p className="mt-3 text-sm leading-7 text-slate-300">
+            Strong because your product already has screenshotable pages, exportable reports, a beta path and viral cards. Next multiplier: consistent clips and public report links.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <Button onClick={() => setPage("viralcards")} variant="primary">Create Viral Card</Button>
+            <Button onClick={() => setPage("beta")}>Open Beta Launch</Button>
+          </div>
+        </Panel>
+      </Panel>
+
+      <GuidePanel page="growthstudio" />
+
+      <Panel>
+        <div className="grid gap-5 xl:grid-cols-4">
+          <label className="space-y-2">
+            <div className="text-xs uppercase tracking-[.2em] text-slate-500">Channel</div>
+            <select value={channel} onChange={(e) => setChannel(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
+              {Object.keys(channelPlans).map((x) => <option key={x}>{x}</option>)}
+            </select>
+          </label>
+          <label className="space-y-2">
+            <div className="text-xs uppercase tracking-[.2em] text-slate-500">Feature focus</div>
+            <select value={focus} onChange={(e) => setFocus(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
+              {["Time Machine", "Seismo", "Experimental Well Driller", "Viral Cards", "Scenario Builder", "Simulation Reports"].map((x) => <option key={x}>{x}</option>)}
+            </select>
+          </label>
+          <label className="space-y-2 xl:col-span-2">
+            <div className="text-xs uppercase tracking-[.2em] text-slate-500">Audience</div>
+            <input value={audience} onChange={(e) => setAudience(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none" />
+          </label>
+        </div>
+
+        <div className="mt-6 grid gap-5 xl:grid-cols-[.95fr_1.05fr]">
+          <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
+            <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Recommended hook</div>
+            <div className="mt-3 text-3xl font-black text-cyan-100">{plan.hook}</div>
+            <p className="mt-4 text-sm leading-7 text-slate-300">{plan.format}</p>
+            <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm text-emerald-100"><b>CTA:</b> {plan.cta}</div>
+          </div>
+          <div className="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-6">
+            <div className="text-xs uppercase tracking-[.22em] text-amber-100">Copy-ready post</div>
+            <pre className="mt-3 whitespace-pre-wrap rounded-2xl border border-white/10 bg-black/30 p-4 text-sm leading-6 text-slate-100">{socialPost}</pre>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button onClick={() => navigator.clipboard.writeText(socialPost)} variant="primary">Copy Post</Button>
+              <Button onClick={() => downloadFile("elementos-growth-plan.txt", contentPack)}>Export Growth Plan</Button>
+            </div>
+          </div>
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill><Sparkles size={12}/> screenshot strategy</Pill>
+            <h2 className="mt-3 text-4xl font-black">What Users Should Screenshot</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Each item below is designed to create curiosity and send people into a shareable report, card or beta signup.</p>
+          </div>
+          <Button onClick={() => setPage("simreports")} variant="primary">Generate Report</Button>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {contentIdeas.map(([title, desc], index) => (
+            <div key={title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+              <div className="text-xs uppercase tracking-[.2em] text-slate-500">content idea #{index + 1}</div>
+              <div className="mt-3 text-2xl font-black text-cyan-100">{title}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-black/40"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${72 + index * 4}%` }} /></div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="grid gap-5 xl:grid-cols-3">
+          {[
+            ["Traffic loop", "Post clip → viewer comments scenario → you simulate → export card → viewer shares."],
+            ["Conversion loop", "Viral card → public report → beta badge → account → paid exports."],
+            ["Retention loop", "Daily discovery → saved lab → leaderboard → weekly report challenge."],
+          ].map(([title, desc]) => (
+            <div key={title} className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5">
+              <div className="text-xl font-black text-emerald-100">{title}</div>
+              <p className="mt-3 text-sm leading-6 text-emerald-50/90">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+
 function MobileBottomNav({ page, setPage }) {
   const items = [
     ["landing", "Start", Sparkles],
     ["beta", "Beta", UserPlus],
     ["copilot", "AI", Sparkles],
+    ["growthstudio", "Growth", Network],
     ["dashboard", "Home", Home],
     ["discover", "Discover", Sparkles],
     ["timemachine", "Time", Clock3],
@@ -4452,6 +4629,7 @@ const startCheckout = async () => {
       landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
       copilot: <AICopilotCommandCenter selected={selected} compare={compare} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
+      growthstudio: <GrowthStudio setPage={setPage} />,
       dashboard: (
         <Dashboard
           setPage={setPage}
