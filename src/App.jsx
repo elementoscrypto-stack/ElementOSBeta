@@ -4319,8 +4319,6 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     }
   }, [open]);
 
-  if (!open) return null;
-
   const q = query.toLowerCase().trim();
   const currentCompare = Array.isArray(compare) ? compare : [];
 
@@ -4507,6 +4505,8 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   ];
 
   const currentContext = currentCompare.length ? currentCompare.slice(0, 5).join(" + ") : selected;
+
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-[80] bg-black/75 p-4 backdrop-blur-xl" onClick={onClose} onKeyDown={onKeyDown}>
