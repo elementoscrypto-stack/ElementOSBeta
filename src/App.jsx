@@ -299,6 +299,16 @@ function guidanceForPage(page) {
       description: "Mission Control gives new users a clear guided path through ElementOS: compare, forecast, build a scenario, generate a viral card, export a simulation report and join the beta.",
       next: "Complete the first mission, then follow the guided path until the user reaches a report, card or upgrade moment.",
     },
+    publicprofile: {
+      title: "What Public Profile does",
+      description: "Public Profile turns a researcher identity into a shareable growth asset with XP, badges, top discoveries, public cards and follow-style conversion prompts.",
+      next: "Share the profile, open a top discovery, create a viral card or invite a user into the beta funnel.",
+    },
+    publicdiscovery: {
+      title: "What Public Discovery does",
+      description: "Public Discovery creates a landing-style preview for a single material pairing, making discoveries easier to share, discuss and convert into reports.",
+      next: "Copy the public discovery text, create a viral card, generate a report or open the full discovery feed.",
+    },
     dashboard: {
       title: "What this dashboard does",
       description: "This is your command centre. Start a comparison, open the discovery feed, save your workspace, or upgrade to Pro Lab when you are ready to export premium reports.",
@@ -511,13 +521,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["landing", "Landing", Sparkles], ["beta", "Beta Launch", UserPlus], ["copilot", "AI Copilot", Sparkles], ["mission", "Mission Control", CheckCircle2], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
+  const items = [["landing", "Landing", Sparkles], ["beta", "Beta Launch", UserPlus], ["copilot", "AI Copilot", Sparkles], ["mission", "Mission Control", CheckCircle2], ["publicprofile", "Public Profile", UserPlus], ["publicdiscovery", "Public Discovery", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Beta Launch", "beta", UserPlus], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Beta Launch", "beta", UserPlus], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Public Profile", "publicprofile", UserPlus], ["Public Discovery", "publicdiscovery", Sparkles], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -4333,12 +4343,213 @@ function MissionControl({ setPage, session, isPro, startCheckout }) {
 }
 
 
+
+function PublicResearchProfile({ session, setPage }) {
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(12)), []);
+  const profile = growthProfileStats(session, discoveries);
+  const topDiscovery = discoveries[0];
+  const publicHandle = (session?.user?.email || "paul@elementos.ai").split("@")[0].replace(/[^a-z0-9_]/gi, "").toLowerCase() || "researcher";
+  const publicUrl = `elementos.ai/u/${publicHandle}`;
+  const badges = ["Founding Researcher", "Material Discovery Founder", "Rare Pair Analyst", "Simulation Publisher"];
+
+  const copyProfile = () => {
+    navigator.clipboard?.writeText(`Follow my ElementOS research profile: ${publicUrl} — ${profile.simulations.toLocaleString()} simulations, ${profile.saved} saved paths, Level ${profile.level}.`);
+  };
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
+        <div>
+          <Pill gold><UserPlus size={12}/> public ecosystem</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Public <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Research Profile</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            A shareable researcher identity layer for ElementOS: XP, streaks, badges, public discoveries, saved simulations and profile-based conversion prompts.
+          </p>
+          <Info title="Why this matters">
+            Public profiles give users something to own and share. This turns ElementOS from a private simulator into a visible research network with social proof and community gravity.
+          </Info>
+        </div>
+
+        <Panel>
+          <div className="flex items-center gap-4">
+            <div className="grid h-20 w-20 place-items-center rounded-[2rem] border border-cyan-300/30 bg-cyan-300/10 text-3xl font-black text-cyan-100">
+              {publicHandle.slice(0, 1).toUpperCase()}
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">public handle</div>
+              <div className="mt-1 text-3xl font-black text-cyan-100">@{publicHandle}</div>
+              <div className="mt-1 text-sm text-slate-400">{publicUrl}</div>
+            </div>
+          </div>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {[
+              [profile.simulations.toLocaleString(), "simulations"],
+              [`LVL ${profile.level}`, "research level"],
+              [`${profile.streak} days`, "streak"],
+              [`#${profile.rank}`, "weekly rank"],
+            ].map(([value, label]) => (
+              <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="text-3xl font-black text-emerald-200">{value}</div>
+                <div className="mt-1 text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Button onClick={copyProfile} variant="primary">Copy Profile Share</Button>
+            <Button onClick={() => setPage("viralcards")}>Create Profile Card</Button>
+          </div>
+        </Panel>
+      </Panel>
+
+      <GuidePanel page="publicprofile" />
+
+      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+        <Panel>
+          <Pill gold><Sparkles size={12}/> badge wall</Pill>
+          <h2 className="mt-3 text-4xl font-black">Researcher Badges</h2>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {badges.map((badge, index) => (
+              <div key={badge} className="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-5">
+                <div className="text-xs uppercase tracking-[.22em] text-amber-100">badge #{index + 1}</div>
+                <div className="mt-2 text-2xl font-black text-white">{badge}</div>
+                <p className="mt-2 text-sm leading-6 text-amber-50/80">Unlocked through discovery, reports, sharing and mission completion.</p>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <Pill><Network size={12}/> public discoveries</Pill>
+              <h2 className="mt-3 text-4xl font-black">Top Public Discoveries</h2>
+            </div>
+            <Button onClick={() => setPage("publicdiscovery")} variant="primary">Open Public Discovery</Button>
+          </div>
+          <div className="mt-5 space-y-3">
+            {discoveries.slice(0, 5).map((d) => (
+              <button key={d.dna} onClick={() => setPage("publicdiscovery")} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-left hover:border-cyan-300/30">
+                <div>
+                  <div className="text-xl font-black text-cyan-100">{d.a} + {d.b}</div>
+                  <div className="mt-1 text-sm text-slate-400">{d.reason}</div>
+                </div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xl font-black text-emerald-100">{d.aiConfidence}%</div>
+              </button>
+            ))}
+          </div>
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><CheckCircle2 size={12}/> conversion asset</Pill>
+            <h2 className="mt-3 text-4xl font-black">Profile Landing CTA</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+              This section is designed for visitors arriving from a shared profile. It explains the platform, shows credibility, and sends them into beta, discovery or cards.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => setPage("beta")} variant="primary">Join Beta</Button>
+            <Button onClick={() => setPage("discover")}>Explore Discoveries</Button>
+          </div>
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+function PublicDiscoveryPage({ setPage }) {
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(16)), []);
+  const discovery = discoveries[0] || adaptiveDiscoveryMetrics(generateDiscoveryEngine(1)[0], 0);
+  const publicId = `${discovery.a.toLowerCase()}-${discovery.b.toLowerCase()}-${discovery.dna.split("-").pop()}`;
+  const shareText = `ElementOS Public Discovery: ${discovery.a} + ${discovery.b} reached ${discovery.aiConfidence}% AI confidence with +${discovery.velocity}% velocity. /d/${publicId}`;
+
+  const copyDiscovery = () => navigator.clipboard?.writeText(shareText);
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
+        <div>
+          <Pill gold><Sparkles size={12}/> shareable discovery</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            {discovery.a} + {discovery.b} <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Public Discovery</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            A public-facing discovery preview built for social sharing, profile traffic, report conversion and public research network growth.
+          </p>
+          <Info title="Discovery narrative">
+            {discovery.aName} and {discovery.bName} show a {discovery.type.toLowerCase()} with {discovery.aiConfidence}% AI confidence, +{discovery.velocity}% trend velocity and {discovery.shares.toLocaleString()} simulated shares. {discovery.reason}.
+          </Info>
+        </div>
+
+        <div className="relative overflow-hidden rounded-[2.4rem] border border-cyan-300/25 bg-gradient-to-br from-cyan-400/15 via-slate-950 to-fuchsia-400/20 p-6 shadow-[0_0_100px_rgba(34,211,238,.2)]">
+          <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 h-44 w-44 rounded-full bg-fuchsia-300/20 blur-3xl" />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between gap-3">
+              <Pill gold>{discovery.tier}</Pill>
+              <div className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs font-bold text-slate-300">/d/{publicId}</div>
+            </div>
+            <div className="mt-8 text-7xl font-black text-cyan-100">{discovery.a} + {discovery.b}</div>
+            <div className="mt-4 text-sm uppercase tracking-[.28em] text-slate-400">{discovery.type}</div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-4"><div className="text-3xl font-black text-cyan-100">{discovery.aiConfidence}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI confidence</div></div>
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-4"><div className="text-3xl font-black text-emerald-200">+{discovery.velocity}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">velocity</div></div>
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-4"><div className="text-3xl font-black text-amber-100">{discovery.momentum}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">momentum</div></div>
+            </div>
+            <div className="mt-6 rounded-2xl border border-white/10 bg-black/30 p-4 font-mono text-xs text-cyan-100">{discovery.dna}</div>
+          </div>
+        </div>
+      </Panel>
+
+      <GuidePanel page="publicdiscovery" />
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        {[
+          [discovery.views.toLocaleString(), "views", "Public discovery traffic indicator."],
+          [discovery.shares.toLocaleString(), "shares", "Social spread and screenshot potential."],
+          [discovery.saves.toLocaleString(), "saves", "Researcher intent and return-loop signal."],
+        ].map(([value, label, desc]) => (
+          <Panel key={label}>
+            <div className="text-5xl font-black text-cyan-100">{value}</div>
+            <div className="mt-2 text-xs uppercase tracking-[.22em] text-slate-500">{label}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+          </Panel>
+        ))}
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Network size={12}/> public conversion route</Pill>
+            <h2 className="mt-3 text-4xl font-black">What visitors can do next</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+              A public discovery should never be a dead end. It should route users into the product: compare, reports, viral cards, profile, beta and account creation.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={copyDiscovery} variant="primary">Copy Public Text</Button>
+            <Button onClick={() => setPage("viralcards")}>Create Viral Card</Button>
+            <Button onClick={() => setPage("simreports")}>Generate Report</Button>
+            <Button onClick={() => setPage("publicprofile")}>View Profile</Button>
+          </div>
+        </div>
+      </Panel>
+    </>
+  );
+}
+
 function MobileBottomNav({ page, setPage }) {
   const items = [
     ["landing", "Start", Sparkles],
     ["beta", "Beta", UserPlus],
     ["copilot", "AI", Sparkles],
     ["mission", "Mission", CheckCircle2],
+    ["publicprofile", "Profile", UserPlus],
+    ["publicdiscovery", "Public", Sparkles],
     ["dashboard", "Home", Home],
     ["discover", "Discover", Sparkles],
     ["timemachine", "Time", Clock3],
@@ -4441,6 +4652,8 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["dashboard", "Open Dashboard", "Command centre, live network, researcher identity and launch workspace.", "Navigation", "Dashboard"],
     ["copilot", "Ask AI Copilot", "Turn a plain-English research goal into simulations, reports and cards.", "AI", "Copilot"],
     ["mission", "Open Mission Control", "Guided onboarding missions for comparison, Time Machine, Scenario Builder, Viral Cards and reports.", "Onboarding", "Mission"],
+    ["publicprofile", "Open Public Profile", "Shareable researcher identity with XP, badges, discoveries and profile CTA.", "Public", "Profile"],
+    ["publicdiscovery", "Open Public Discovery", "Shareable discovery landing page for one material pairing.", "Public", "Discovery"],
     ["discover", "Open Discover", "Trending pairings, momentum scores and AI-ranked material discoveries.", "Discovery", "Discover"],
     ["timemachine", "Run Time Machine", "Forecast ageing, corrosion, degradation and future material states.", "Simulation", "Time"],
     ["scenario", "Build Scenario", "Convert a real-world material situation into risk, lifespan and substitute outputs.", "Simulation", "Scenario"],
@@ -4888,6 +5101,8 @@ const startCheckout = async () => {
       beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
       copilot: <AICopilotCommandCenter selected={selected} compare={compare} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
       mission: <MissionControl setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
+      publicprofile: <PublicResearchProfile session={session} setPage={setPage} />,
+      publicdiscovery: <PublicDiscoveryPage setPage={setPage} />,
       dashboard: (
         <Dashboard
           setPage={setPage}
