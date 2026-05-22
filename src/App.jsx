@@ -284,6 +284,11 @@ function guidanceForPage(page) {
       description: "ElementOS is an AI-native material intelligence platform for exploring elements, comparing behaviours, simulating future states, building real-world scenarios and exporting research-ready reports.",
       next: "Start with the demo, open Time Machine or create a free account when you are ready to save work.",
     },
+    beta: {
+      title: "What Beta Launch does",
+      description: "Beta Launch turns curious visitors into early users with a waitlist, Founding Researcher badges, feature requests, roadmap visibility and feedback loops.",
+      next: "Join the beta, copy the launch post, request a feature, then invite early testers to become Founding Researchers.",
+    },
     dashboard: {
       title: "What this dashboard does",
       description: "This is your command centre. Start a comparison, open the discovery feed, save your workspace, or upgrade to Pro Lab when you are ready to export premium reports.",
@@ -496,13 +501,13 @@ function RadarChart({ data }) {
   return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
 }
 function Sidebar({ page, setPage }) {
-  const items = [["landing", "Landing", Sparkles], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
+  const items = [["landing", "Landing", Sparkles], ["beta", "Beta Launch", UserPlus], ["dashboard", "Dashboard", Home], ["discover", "Discover", Sparkles], ["timemachine", "Time Machine", Clock3], ["scenario", "Scenario Builder", FileText], ["welldriller", "Experimental Well Driller", Radar], ["seismo", "Seismo", Network], ["simreports", "Simulation Reports", BookOpen], ["viralcards", "Viral Cards", Sparkles], ["calculations", "Calculation Core", Calculator], ["lab", "My Lab", Save], ["visualization", "Visual Engine", BarChart3], ["login", "Account", Lock], ["explorer", "Explorer", Search], ["periodic", "Periodic Table", Layers], ["compare", "Compare", BarChart3], ["atlas", "Behaviour Atlas", Radar], ["graph", "Behaviour Graph", Network], ["universe", "Similarity Universe", Orbit], ["isotopes", "Isotope Lab", Atom], ["reports", "Reports", BookOpen]];
   return <aside className="fixed inset-y-0 left-0 z-30 hidden w-[310px] overflow-y-auto border-r border-cyan-300/15 bg-[#030712]/90 p-5 backdrop-blur-2xl lg:block"><div className="mb-7"><div className="text-2xl font-black tracking-[.22em] text-cyan-100">ElementOS</div><div className="text-[10px] uppercase tracking-[.3em] text-slate-500">material intelligence platform</div></div><div className="space-y-2">{items.map(([id, label, Icon]) => <button key={id} onClick={() => setPage(id)} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${page === id ? "border-cyan-300/30 bg-cyan-400/10 text-white" : "border-white/5 bg-white/[.025] text-slate-300"}`}><span className="flex items-center gap-3"><Icon size={16} className="text-cyan-300"/>{label}</span><ChevronRight size={14}/></button>)}</div></aside>;
 }
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Beta Launch", "beta", UserPlus], ["Discover", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller", "welldriller", Radar], ["Seismo", "seismo", Network], ["Simulation Reports", "simreports", BookOpen], ["Viral Card Studio", "viralcards", Sparkles], ["Calculation Core", "calculations", Calculator], ["My Lab", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Run Compare", "compare", BarChart3], ["Open Live Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Generate Report", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -2924,6 +2929,239 @@ function MyLab({ session, selected, compare, setPage }) {
 }
 
 
+
+function BetaLaunch({ session, setPage, startCheckout }) {
+  const [email, setEmail] = useState(session?.user?.email || "");
+  const [role, setRole] = useState("Founder / creator");
+  const [feature, setFeature] = useState("Viral discovery cards for Seismo, Time Machine and Well Driller");
+  const [submitted, setSubmitted] = useState(false);
+
+  const seed = (email || "founder@elementos.ai").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const founderNumber = String(1 + (seed % 999)).padStart(3, "0");
+  const betaStats = [
+    ["042", "founding researcher slots"],
+    ["8", "core growth loops"],
+    ["24h", "feedback response target"],
+    ["Pro", "report/export track"],
+  ];
+
+  const roadmap = [
+    ["Now", "Viral Cards + Universal Simulation Reports", "Turn every discovery into a shareable output."],
+    ["Next", "Mobile-first simulator polish", "Make TikTok/X/Reddit traffic feel instant and premium."],
+    ["Soon", "Public discovery URLs", "Every report, Seismo readout and Time Machine forecast becomes indexable."],
+    ["Later", "Team labs + API access", "Move from creator tool into enterprise-ready simulation workspace."],
+  ];
+
+  const saveBetaApplication = () => {
+    const application = {
+      email: email || "anonymous@elementos.ai",
+      role,
+      feature,
+      founderNumber,
+      createdAt: new Date().toISOString(),
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem("elementos_beta_applications") || "[]");
+      localStorage.setItem("elementos_beta_applications", JSON.stringify([application, ...existing].slice(0, 50)));
+    } catch (error) {
+      console.warn("Beta application local save skipped", error);
+    }
+
+    setSubmitted(true);
+  };
+
+  const copyLaunchPost = () => {
+    const post = `I just joined the ElementOS beta as Founding Researcher #${founderNumber}.
+
+ElementOS is an AI-native exploratory simulation platform for material intelligence, Time Machine forecasts, Seismo wave modelling, Well Driller simulations, Scenario Builder reports and viral discovery cards.
+
+Early access: ElementOS beta is opening now.`;
+
+    navigator.clipboard?.writeText(post);
+  };
+
+  const exportBetaBrief = () => {
+    const content = [
+      "ElementOS Beta Launch Brief",
+      "==========================",
+      "",
+      `Founding Researcher ID: #${founderNumber}`,
+      `Email: ${email || "not provided"}`,
+      `Role: ${role}`,
+      `Requested feature: ${feature}`,
+      "",
+      "Beta promise:",
+      "ElementOS turns simulations, discoveries and forecasts into shareable research-ready outputs.",
+      "",
+      "Core launch loops:",
+      "- Viral discovery cards",
+      "- TikTok/X/Reddit-ready visuals",
+      "- Public reports",
+      "- Mobile app feel",
+      "- Faster performance",
+      "- Better onboarding",
+      "- Cleaner scientific language",
+      "- Community and leaderboards",
+    ].join("\\n");
+
+    downloadFile(`elementos-beta-brief-${founderNumber}.txt`, content);
+  };
+
+  return (
+    <>
+      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
+        <div>
+          <Pill gold><UserPlus size={12}/> beta launch system</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+            Founding Researcher <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Beta Launch</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Convert visitors into early members. This page gives ElementOS a waitlist, feedback loop, roadmap, founding badge identity and social launch energy.
+          </p>
+          <Info title="Why this matters">
+            The goal is no longer only adding features. The goal is getting real users to join, test, share, request improvements and feel early ownership in the platform.
+          </Info>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Button onClick={() => setPage("viralcards")} variant="primary">Create Viral Card</Button>
+            <Button onClick={() => setPage("simreports")}>Open Simulation Reports</Button>
+            <Button onClick={copyLaunchPost}>Copy Launch Post</Button>
+          </div>
+        </div>
+
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">your early access identity</div>
+          <div className="mt-4 rounded-[2rem] border border-amber-300/25 bg-gradient-to-br from-amber-300/20 via-cyan-300/10 to-fuchsia-400/10 p-6">
+            <div className="text-sm uppercase tracking-[.22em] text-amber-100">Founding Researcher</div>
+            <div className="mt-3 text-7xl font-black text-white">#{founderNumber}</div>
+            <p className="mt-4 text-sm leading-7 text-amber-50/90">
+              Early users need identity. This badge makes the beta feel exclusive, screenshot-worthy and worth sharing.
+            </p>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {betaStats.map(([value, label]) => (
+              <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="text-3xl font-black text-cyan-100">{value}</div>
+                <div className="mt-1 text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </Panel>
+
+      <GuidePanel page="beta" />
+
+      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+        <Panel>
+          <Pill gold><Sparkles size={12}/> join beta</Pill>
+          <h2 className="mt-3 text-4xl font-black">Apply for Early Access</h2>
+          <p className="mt-2 text-sm leading-7 text-slate-400">
+            Capture intent from early users, understand who they are, and learn what feature would make them subscribe.
+          </p>
+
+          <div className="mt-5 space-y-4">
+            <label className="block">
+              <div className="mb-2 text-xs uppercase tracking-[.2em] text-slate-500">email</div>
+              <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="w-full rounded-2xl border border-white/10 bg-black/30 p-4 text-white outline-none focus:border-cyan-300/40" />
+            </label>
+            <label className="block">
+              <div className="mb-2 text-xs uppercase tracking-[.2em] text-slate-500">who are you?</div>
+              <select value={role} onChange={(e) => setRole(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/30 p-4 text-white outline-none focus:border-cyan-300/40">
+                <option>Founder / creator</option>
+                <option>Engineer / builder</option>
+                <option>Student / researcher</option>
+                <option>Materials enthusiast</option>
+                <option>Investor / advisor</option>
+                <option>Curious explorer</option>
+              </select>
+            </label>
+            <label className="block">
+              <div className="mb-2 text-xs uppercase tracking-[.2em] text-slate-500">what should we build next?</div>
+              <textarea value={feature} onChange={(e) => setFeature(e.target.value)} rows={4} className="w-full rounded-2xl border border-white/10 bg-black/30 p-4 text-white outline-none focus:border-cyan-300/40" />
+            </label>
+
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={saveBetaApplication} variant="primary">Join Beta</Button>
+              <Button onClick={exportBetaBrief}>Export Beta Brief</Button>
+              <Button onClick={startCheckout}>Upgrade Pro</Button>
+            </div>
+
+            {submitted && (
+              <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100">
+                ✓ Beta application saved locally. Founding Researcher #{founderNumber} assigned.
+              </div>
+            )}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill><BookOpen size={12}/> public roadmap</Pill>
+          <h2 className="mt-3 text-4xl font-black">Build Roadmap Users Can Believe In</h2>
+          <p className="mt-2 text-sm leading-7 text-slate-400">
+            A public roadmap gives early users confidence that the platform is moving, improving and listening.
+          </p>
+          <div className="mt-6 space-y-4">
+            {roadmap.map(([stage, title, desc]) => (
+              <div key={stage} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/10 p-4">
+                <div className="text-xs uppercase tracking-[.22em] text-cyan-200">{stage}</div>
+                <div className="mt-2 text-xl font-black text-white">{title}</div>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Network size={12}/> feedback command centre</Pill>
+            <h2 className="mt-3 text-4xl font-black">What Early Users Should Test</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">
+              Send beta users to the most screenshot-worthy flows first. These are the pages that create emotion, social proof and subscription intent.
+            </p>
+          </div>
+          <Button onClick={() => setPage("landing")} variant="primary">Open Landing Page</Button>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {[
+            ["Viral Cards", "Can users create a card they would actually post?", "viralcards"],
+            ["Time Machine", "Does the future-state simulation feel understandable and premium?", "timemachine"],
+            ["Seismo", "Do P-wave and S-wave visuals feel clear, useful and cool?", "seismo"],
+            ["Well Driller", "Does the subsurface simulation feel like a serious demo?", "welldriller"],
+            ["Scenario Builder", "Can a user type a situation and understand the result?", "scenario"],
+            ["Reports", "Would someone pay for the export?", "simreports"],
+            ["Mobile UX", "Can a phone user navigate without confusion?", "landing"],
+            ["Onboarding", "Do users know what to do in under 10 seconds?", "dashboard"],
+          ].map(([title, desc, target]) => (
+            <button key={title} onClick={() => setPage(target)} className="rounded-[1.6rem] border border-white/10 bg-black/25 p-5 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+              <div className="text-lg font-black text-cyan-100">{title}</div>
+              <p className="mt-2 text-sm leading-6 text-slate-400">{desc}</p>
+            </button>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="grid gap-5 xl:grid-cols-3">
+          {[
+            ["Founder update", "ElementOS beta is opening for early researchers who want to explore AI-native material simulation, temporal forecasts and shareable discovery reports."],
+            ["Community promise", "Every beta tester can influence the roadmap. The best requested features become visible product milestones."],
+            ["Conversion hook", "Free users explore. Pro users export, save, publish and build a permanent research workspace."],
+          ].map(([title, body]) => (
+            <div key={title} className="rounded-[2rem] border border-amber-300/15 bg-amber-300/10 p-5">
+              <div className="text-xl font-black text-amber-100">{title}</div>
+              <p className="mt-3 text-sm leading-7 text-amber-50/90">{body}</p>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+
 function LandingPage({ setPage, session, isPro, startCheckout }) {
   const showcases = [
     ["Time Machine", "Simulate how materials age across 1, 10, 50 and 100-year horizons under corrosion, heat, pressure and stress.", Clock3, "timemachine"],
@@ -3779,6 +4017,7 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
 function MobileBottomNav({ page, setPage }) {
   const items = [
     ["landing", "Start", Sparkles],
+    ["beta", "Beta", UserPlus],
     ["dashboard", "Home", Home],
     ["discover", "Discover", Sparkles],
     ["timemachine", "Time", Clock3],
@@ -4005,6 +4244,7 @@ const startCheckout = async () => {
   const pages = useMemo(
     () => ({
       landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
+      beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
       dashboard: (
         <Dashboard
           setPage={setPage}
