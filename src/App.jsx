@@ -482,6 +482,64 @@ function PageHelpStrip({ page = "dashboard" }) {
   );
 }
 
+const PAGE_LABELS = {
+  landing: "Home",
+  dashboard: "Dashboard",
+  copilot: "AI Copilot",
+  mission: "Mission Control",
+  discover: "Discovery Feed",
+  explorer: "Element Explorer",
+  compare: "Compare Materials",
+  periodic: "Periodic Map",
+  atlas: "Behaviour Atlas",
+  graph: "Similarity Graph",
+  universe: "Material Universe",
+  scenario: "Scenario Builder",
+  visualization: "Visual Engine",
+  calculations: "Calculation Studio",
+  timemachine: "Time Machine",
+  seismo: "Seismo Lab",
+  welldriller: "Well Driller Lab",
+  isotopes: "Isotope Lab",
+  simreports: "Simulation Dossiers",
+  viralcards: "Share Card Studio",
+  reports: "Research Reports",
+  lab: "Workspace",
+  beta: "Founding Beta",
+  login: "Account",
+};
+
+const MOBILE_PAGE_ORDER = [
+  "landing",
+  "dashboard",
+  "copilot",
+  "mission",
+  "discover",
+  "compare",
+  "scenario",
+  "timemachine",
+  "seismo",
+  "welldriller",
+  "simreports",
+  "viralcards",
+  "lab",
+  "login",
+  "explorer",
+  "periodic",
+  "atlas",
+  "graph",
+  "universe",
+  "visualization",
+  "calculations",
+  "isotopes",
+  "reports",
+  "beta",
+];
+
+function pageLabel(page) {
+  return PAGE_LABELS[page] || String(page || "dashboard").replaceAll("-", " ");
+}
+
 
 function heatStyle(value, max = 5) {
   const t = Math.max(0, Math.min(1, value / max));
@@ -2683,14 +2741,34 @@ Status: Presentation-ready platform export.`;
 
 function PublicReportView({ report, status }) {
   if (!report) {
+    const isMissing = String(status || "").toLowerCase().includes("not found") || String(status || "").toLowerCase().includes("failed");
     return (
-      <div className="min-h-screen bg-[#020617] text-slate-100">
+      <div className="eos-shell min-h-screen bg-[#02060d] text-slate-100">
+        <ElementOSThemeSkin />
         <Background />
         <main className="relative z-10 mx-auto max-w-5xl space-y-6 p-6 lg:p-10">
           <Panel>
             <Pill gold><BookOpen size={12}/> public report</Pill>
             <h1 className="mt-4 text-5xl font-black">ElementOS Public Report</h1>
-            <p className="mt-4 text-slate-300">{status || "Loading report..."}</p>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              {status || "Loading report..."}
+            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {["Public link", "Report lookup", "Share-ready view"].map((label, index) => (
+                <div key={label} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
+                  <div className="text-2xl font-black text-cyan-100">{index === 0 ? "01" : index === 1 ? "02" : "03"}</div>
+                  <div className="mt-1 text-xs uppercase tracking-[.2em] text-slate-500">{label}</div>
+                </div>
+              ))}
+            </div>
+            {isMissing && (
+              <div className="mt-6 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">
+                This public report link could not be loaded. The report may have been deleted, the public ID may be incorrect, or the database row may not be public yet.
+              </div>
+            )}
+            <Button onClick={() => { window.location.href = window.location.pathname; }} variant="primary" className="mt-6">
+              Open ElementOS Home
+            </Button>
           </Panel>
         </main>
       </div>
@@ -4252,7 +4330,7 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
         {[
           ["Open Time Machine", "timemachine", "Validate long-horizon ageing and degradation."],
           ["Open Well Driller", "welldriller", "Inspect subsurface path, depth and reservoir targeting."],
-          ["Open Seismo", "seismo", "Compare P-wave and S-wave response."],
+          ["Open Seismo Lab", "seismo", "Compare P-wave and S-wave response."],
         ].map(([title, target, desc]) => (
           <Panel key={title}>
             <h3 className="text-2xl font-black text-cyan-100">{title}</h3>
@@ -4310,8 +4388,8 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
   const actionPlan = [
     ["Simulate", "Open Time Machine", "timemachine", "Project how the strongest material changes over long time horizons."],
     ["Scenario", "Open Scenario Builder", "scenario", "Turn the prompt into a risk score, lifespan estimate and substitute recommendation."],
-    ["Report", "Create Simulation Report", "simreports", "Bundle Time Machine, Scenario, Well Driller and Seismo outputs into a dossier."],
-    ["Share", "Create Viral Card", "viralcards", "Turn this insight into a cinematic social asset for growth."],
+    ["Report", "Create Simulation Dossier", "simreports", "Bundle Time Machine, Scenario, Well Driller and Seismo outputs into a dossier."],
+    ["Share", "Create Share Card", "viralcards", "Turn this insight into a cinematic social asset for growth."],
   ];
 
   const applySuggestion = () => {
@@ -4582,15 +4660,15 @@ function MobileBottomNav({ page, setPage }) {
     ["copilot", "AI", Sparkles],
     ["mission", "Mission", CheckCircle2],
     ["dashboard", "Home", Home],
-    ["discover", "Discover", Sparkles],
+    ["discover", "Feed", Sparkles],
     ["timemachine", "Time", Clock3],
     ["scenario", "Scenario", FileText],
-    ["lab", "Lab", Save],
+    ["lab", "Work", Save],
     ["visualization", "Visual", BarChart3],
     ["welldriller", "Well", Radar],
     ["seismo", "Seismo", Network],
-    ["simreports", "Reports+", BookOpen],
-    ["viralcards", "Cards", Sparkles],
+    ["simreports", "Dossier", BookOpen],
+    ["viralcards", "Share", Sparkles],
     ["calculations", "Calc", Calculator],
     ["explorer", "Explore", Search],
     ["compare", "Compare", BarChart3],
@@ -4683,21 +4761,21 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["dashboard", "Open Dashboard", "Command centre, live network, researcher identity and launch workspace.", "Navigation", "Dashboard"],
     ["copilot", "Ask AI Copilot", "Turn a plain-English research goal into simulations, reports and cards.", "AI", "Copilot"],
     ["mission", "Open Mission Control", "Guided onboarding missions for comparison, Time Machine, Scenario Builder, Viral Cards and reports.", "Onboarding", "Mission"],
-    ["discover", "Open Discover", "Trending pairings, momentum scores and AI-ranked material discoveries.", "Discovery", "Discover"],
+    ["discover", "Open Discovery Feed", "Trending pairings, momentum scores and AI-ranked material discoveries.", "Discovery", "Discover"],
     ["timemachine", "Run Time Machine", "Forecast ageing, corrosion, degradation and future material states.", "Simulation", "Time"],
     ["scenario", "Build Scenario", "Convert a real-world material situation into risk, lifespan and substitute outputs.", "Simulation", "Scenario"],
-    ["welldriller", "Open Experimental Well Driller", "Model a deep bore path, reservoir target and pressure profile.", "Simulation", "Well"],
-    ["seismo", "Open Seismo", "Compare P-wave and S-wave travel, arrival gaps and wave response.", "Simulation", "Seismo"],
-    ["simreports", "Create Simulation Report", "Create a universal dossier across Time Machine, Seismo, Scenario and Well Driller.", "Reports", "Report"],
-    ["viralcards", "Create Viral Card", "Generate a cinematic share card for discoveries, simulations and reports.", "Growth", "Viral"],
-    ["beta", "Open Beta Launch", "Founding Researcher badge, roadmap, feedback and waitlist conversion.", "Growth", "Beta"],
-    ["calculations", "Open Calculation Core", "Use premium calculation blocks to support report narratives.", "Tools", "Calc"],
-    ["lab", "Open My Lab", "Return to saved scenarios, reports, discoveries and research assets.", "Workspace", "Lab"],
+    ["welldriller", "Open Well Driller Lab", "Model a deep bore path, reservoir target and pressure profile.", "Simulation", "Well"],
+    ["seismo", "Open Seismo Lab", "Compare P-wave and S-wave travel, arrival gaps and wave response.", "Simulation", "Seismo"],
+    ["simreports", "Create Simulation Dossier", "Create a universal dossier across Time Machine, Seismo, Scenario and Well Driller.", "Reports", "Report"],
+    ["viralcards", "Create Share Card", "Generate a cinematic share card for discoveries, simulations and reports.", "Growth", "Share"],
+    ["beta", "Open Founding Beta", "Founding Researcher badge, roadmap, feedback and waitlist conversion.", "Growth", "Beta"],
+    ["calculations", "Open Calculation Studio", "Use premium calculation blocks to support report narratives.", "Tools", "Calc"],
+    ["lab", "Open Workspace", "Return to saved scenarios, reports, discoveries and research assets.", "Workspace", "Lab"],
     ["visualization", "Open Visual Engine", "Survival curves, telemetry cards, pulse graphs and cinematic visuals.", "Visuals", "Visual"],
-    ["compare", "Open Compare", "Compare stability, thermal, pressure, diffusion, rarity and alignment.", "Analysis", "Compare"],
+    ["compare", "Open Compare Materials", "Compare stability, thermal, pressure, diffusion, rarity and alignment.", "Analysis", "Compare"],
     ["explorer", "Search Elements", "Inspect an element profile before adding it to a comparison.", "Elements", "Search"],
-    ["periodic", "Open Periodic Table", "Browse all 118 elements with behaviour heat-map logic.", "Elements", "Periodic"],
-    ["reports", "Open Reports", "Create public reports, premium PDFs and shareable outputs.", "Reports", "PDF"],
+    ["periodic", "Open Periodic Map", "Browse all 118 elements with behaviour heat-map logic.", "Elements", "Periodic"],
+    ["reports", "Open Research Reports", "Create public reports, premium PDFs and shareable outputs.", "Reports", "PDF"],
     ["login", session ? "Open Account" : "Sign In / Create Account", "Save workspaces, restore labs and upgrade to Pro.", "Account", "Account"],
   ];
 
@@ -4721,11 +4799,11 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["smart:ocean", "Simulate deep ocean pressure for 40 years", "Sets Titanium, Hafnium, Tungsten and Aluminium then opens Scenario Builder.", "Smart Action", "Ocean"],
     ["smart:heat", "Find strongest high-heat material pair", "Loads Tungsten, Tantalum, Hafnium and Titanium into Compare.", "Smart Action", "Heat"],
     ["smart:seismic", "Compare P-wave / S-wave arrival gap", "Opens Seismo for seismic travel and arrival-gap response.", "Smart Action", "Seismic"],
-    ["smart:well", "Model a deep experimental well path", "Opens Experimental Well Driller with drilling simulation focus.", "Smart Action", "Well"],
+    ["smart:well", "Model a deep Well Driller Lab path", "Opens Well Driller Lab with drilling simulation focus.", "Smart Action", "Well"],
     ["smart:time", "Forecast material decay across 100 years", "Opens Time Machine for long-horizon material survivability.", "Smart Action", "Time"],
-    ["smart:viral", "Turn current work into a viral share card", "Opens Viral Card Studio with social-growth workflow.", "Smart Action", "Viral"],
-    ["smart:report", "Generate a universal simulation report", "Opens Simulation Reports for a polished export dossier.", "Smart Action", "Report"],
-    ["smart:mission", "Start the user onboarding mission path", "Opens Beta Launch as the current conversion and early-user pathway.", "Smart Action", "Mission"],
+    ["smart:viral", "Turn current work into a share card", "Opens Share Card Studio with social-growth workflow.", "Smart Action", "Share"],
+    ["smart:report", "Generate a simulation dossier", "Opens Simulation Dossiers for a polished export dossier.", "Smart Action", "Report"],
+    ["smart:mission", "Start the user onboarding mission path", "Opens Founding Beta as the current conversion and early-user pathway.", "Smart Action", "Mission"],
     ["smart:checkout", isPro ? "Pro Lab is active" : "Upgrade to Pro Lab", "Unlock premium export and workspace features.", "Billing", "Pro"],
   ];
 
@@ -4856,9 +4934,9 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const quickPrompts = [
     "deep ocean pressure",
     "titanium",
-    "viral card",
+    "share card",
     "seismo",
-    "universal report",
+    "simulation dossier",
     "high heat pair",
   ];
 
@@ -4972,9 +5050,9 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
     <div className="eos-topbar sticky top-4 z-20 mb-6 hidden items-center justify-between gap-4 rounded-2xl px-4 py-3 backdrop-blur-2xl lg:flex">
       <div className="flex min-w-0 items-center gap-3">
         <div className="rounded-xl border border-blue-400/25 bg-blue-500/10 px-3 py-2 text-xs font-black uppercase tracking-[.22em] text-cyan-100">
-          {String(page).replaceAll("-", " ")}
+          {pageLabel(page)}
         </div>
-        <div className="hidden text-sm text-slate-400 xl:block">Explore, compare, report, publish.</div>
+        <div className="hidden text-sm text-slate-400 xl:block">Research → simulate → publish → save.</div>
       </div>
 
       <button
@@ -4986,8 +5064,8 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
       </button>
 
       <div className="flex items-center gap-2">
-        <button className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">?</button>
-        <button className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">🌐</button>
+        <button onClick={() => setPage("mission")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">?</button>
+        <button onClick={() => setPage("discover")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">🌐</button>
         <Button onClick={session && !isPro ? startCheckout : () => setPage("login")} variant={isPro ? "ghost" : "primary"} className="py-2">
           {isPro ? "Pro Active" : session ? "Subscribe" : "Log In"}
         </Button>
@@ -5033,12 +5111,18 @@ useEffect(() => {
       .then(({ data, error }) => {
         if (error || !data) {
           console.error(error);
+          setPublicReport(null);
           setPublicReportStatus("Public report not found.");
           return;
         }
 
         setPublicReport(data);
         setPublicReportStatus("");
+      })
+      .catch((error) => {
+        console.error(error);
+        setPublicReport(null);
+        setPublicReportStatus("Public report failed to load. Please try again.");
       });
   }
 
@@ -5135,22 +5219,32 @@ const startCheckout = async () => {
     return;
   }
 
-  const response = await fetch("/api/create-checkout-session", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: session.user.email,
-    }),
-  });
+  try {
+    const response = await fetch("/api/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: session.user.email,
+      }),
+    });
 
-  const data = await response.json();
+    const data = await response.json().catch(() => ({}));
 
-  if (data.url) {
-    window.location.href = data.url;
-  } else {
-    alert(data.error || "Checkout failed.");
+    if (!response.ok) {
+      alert(data.error || "Checkout failed. Please check your Stripe API route and environment variables.");
+      return;
+    }
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert(data.error || "Checkout failed. No checkout URL was returned.");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Checkout failed. Please check your deployment/API route and try again.");
   }
 };
   
@@ -5279,9 +5373,9 @@ const startCheckout = async () => {
             onChange={(e) => setPage(e.target.value)}
             className="rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none"
           >
-            {Object.keys(pages).map((k) => (
+            {MOBILE_PAGE_ORDER.filter((k) => pages[k]).map((k) => (
               <option key={k} value={k}>
-                {k}
+                {pageLabel(k)}
               </option>
             ))}
           </select>
