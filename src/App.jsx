@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
+
+import Dashboard from "./pages/Dashboard";
 import jsPDF from "jspdf";
 import { supabase } from "./supabaseClient";
 import {
