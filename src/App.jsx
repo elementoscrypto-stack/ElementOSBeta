@@ -332,11 +332,11 @@ function guidanceForPage(page) {
     },
     graph: {
       title: "What the behaviour graph does",
-      description: "The graph shows which materials are behaviour-adjacent to your selected element. It helps users find substitute and neighbouring materials.",
+      description: "The Relationship Graph shows which materials are behaviour-adjacent to your selected element. It helps users find substitute and neighbouring materials.",
       next: "Click nearby nodes to explore substitute paths.",
     },
     universe: {
-      title: "What the similarity universe does",
+      title: "What the Discovery Universe does",
       description: "This view finds materials that behave similarly in alloy, conductive or thermal contexts. It turns discovery into a guided search path.",
       next: "Select a mode, then follow the strongest similarity matches.",
     },
@@ -1079,8 +1079,8 @@ const PAGE_LABELS = {
   compare: "Compare Materials",
   periodic: "Periodic Map",
   atlas: "Behaviour Atlas",
-  graph: "Similarity Graph",
-  universe: "Material Universe",
+  graph: "Relationship Graph",
+  universe: "Discovery Universe",
   scenario: "Scenario Builder",
   visualization: "Visual Engine",
   calculations: "Calculation Studio",
@@ -1304,8 +1304,8 @@ function Sidebar({ page, setPage }) {
         ["isotopes", "Isotope Lab", Atom],
         ["periodic", "Periodic Map", Layers],
         ["atlas", "Behaviour Atlas", Radar],
-        ["graph", "Similarity Graph", Network],
-        ["universe", "Material Universe", Orbit],
+        ["graph", "Relationship Graph", Network],
+        ["universe", "Discovery Universe", Orbit],
       ],
     },
     {
@@ -1455,7 +1455,7 @@ function Sidebar({ page, setPage }) {
 }
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Run First Simulation", "scenario", FileText], ["Matter Intelligence OS", "matterlab", Globe2], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Time Machine", "timemachine", Clock3], ["Well Driller Lab", "welldriller", Radar], ["Seismo Lab", "seismo", Network], ["Simulation Dossiers", "simreports", BookOpen], ["Share Card Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Workspace", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Founding Beta", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("beta")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Join Founding Beta</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Run First Simulation", "scenario", FileText], ["Matter Intelligence OS", "matterlab", Globe2], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Time Machine", "timemachine", Clock3], ["Well Driller Lab", "welldriller", Radar], ["Seismo Lab", "seismo", Network], ["Simulation Dossiers", "simreports", BookOpen], ["Share Card Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Workspace", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Founding Beta", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("beta")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Join Founding Beta</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -1982,6 +1982,7 @@ function Discover({ setPage, setPublicDiscovery }) {
       </Panel>
 
       <GuidePanel page="discover" />
+      <TrendingDiscoveriesPanel discoveries={discoveries} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />
       <RealTimeNetworkPanel discoveries={discoveries} setPage={setPage} />
       <DiscoveryOSFeed discoveries={discoveries} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />
 
@@ -4125,6 +4126,7 @@ function MyLab({ session, selected, compare, setPage }) {
       </Panel>
 
       <GuidePanel page="lab" />
+      <WorkspaceVaultPanel setPage={setPage} />
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
         <Panel>
@@ -4454,6 +4456,176 @@ function GuidedNextStep({ title = "Recommended next step", body = "Follow the gu
   );
 }
 
+
+function DiscoveryCommandCenter({ setPage, compare = ["Al", "Ti", "Hf"] }) {
+  const ranked = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(10)), []);
+  const today = ranked[0] || { a: "Ti", b: "Hf", score: 94, aiConfidence: 94, velocity: 52, momentum: 91, type: "Rare thermal-pressure alignment" };
+  const discoveryScore = Math.round((today.aiConfidence || today.score || 90) * 28 + (today.momentum || 80) * 18 + (compare?.length || 3) * 120);
+  const cards = [
+    ["Today's Discovery", `${today.a} + ${today.b}`, `${today.aiConfidence || today.score}% AI confidence`, "discover", Sparkles],
+    ["Today's Opportunity", "Matter Intelligence", "Run an opportunity scan", "matterlab", Globe2],
+    ["Trending Element", "Titanium", "+52% network velocity", "explorer", Atom],
+    ["Reports Today", "1,842", "simulation dossiers generated", "reports", FileText],
+  ];
+  return (
+    <Panel className="border-cyan-300/25 bg-gradient-to-br from-cyan-950/30 via-slate-950 to-blue-950/25">
+      <div className="flex flex-wrap items-start justify-between gap-5">
+        <div>
+          <Pill gold><Radar size={12} /> discovery command</Pill>
+          <h2 className="mt-3 text-4xl font-black sm:text-5xl">Your daily material intelligence briefing.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+            Start here every time: one discovery, one opportunity, one recommendation, and one clear route into reports, simulations and workspace value.
+          </p>
+        </div>
+        <div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5 text-right">
+          <div className="text-xs uppercase tracking-[.22em] text-emerald-200">Discovery Score</div>
+          <div className="mt-2 text-5xl font-black text-emerald-100">{discoveryScore.toLocaleString()}</div>
+          <div className="mt-1 text-sm text-emerald-50/80">+{today.velocity || 48}% today</div>
+        </div>
+      </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {cards.map(([label, value, body, target, Icon]) => (
+          <button key={label} onClick={() => setPage(target)} className="rounded-[1.5rem] border border-cyan-300/15 bg-black/25 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/10">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">{label}</div>
+              <Icon size={18} className="text-cyan-200" />
+            </div>
+            <div className="mt-3 text-2xl font-black text-cyan-100">{value}</div>
+            <div className="mt-2 text-sm leading-6 text-slate-400">{body}</div>
+          </button>
+        ))}
+      </div>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
+        <Button onClick={() => setPage("matterlab")}>Run Matter Intelligence</Button>
+        <Button onClick={() => setPage("simreports")}>Create Dossier</Button>
+      </div>
+    </Panel>
+  );
+}
+
+function MissionProgressPanel({ setPage }) {
+  const missions = [
+    ["01", "Compare Aluminium + Titanium", "Build your first material signal.", "compare", "Unlock Discovery Feed"],
+    ["02", "Generate a Research Report", "Turn the signal into a useful asset.", "reports", "Unlock Public Discovery"],
+    ["03", "Run Matter Intelligence", "Find a ranked opportunity target.", "matterlab", "Unlock Discovery OS"],
+    ["04", "Save to Workspace", "Make ElementOS your permanent research home.", "lab", "Unlock Profile Score"],
+  ];
+  return (
+    <Panel>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <Pill gold><CheckCircle2 size={12} /> guided mission system</Pill>
+          <h2 className="mt-3 text-4xl font-black">Know exactly what to do next.</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">A simple mission path turns new visitors into returning researchers: compare, report, scan, save.</p>
+        </div>
+        <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm font-bold text-amber-100">Mission 1 ready</div>
+      </div>
+      <div className="mt-6 grid gap-4 xl:grid-cols-4">
+        {missions.map(([num, title, body, target, reward], index) => (
+          <button key={title} onClick={() => setPage(target)} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+            <div className="flex items-center justify-between gap-3">
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{num}</div>
+              <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">{index === 0 ? "Start" : "Next"}</div>
+            </div>
+            <div className="mt-4 text-xl font-black text-white">{title}</div>
+            <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+            <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-xs font-bold text-emerald-100">Reward: {reward}</div>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function TrendingDiscoveriesPanel({ discoveries = [], setPage, setPublicDiscovery }) {
+  const ranked = (discoveries?.length ? discoveries : adaptiveDiscoveryRank(generateDiscoveryEngine(12))).slice(0, 6);
+  const tabs = ["Today", "This Week", "All Time"];
+  return (
+    <Panel>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <Pill gold><Sparkles size={12} /> trending discoveries</Pill>
+          <h2 className="mt-3 text-4xl font-black">Discoveries should feel valuable.</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Momentum, saves, views and public pages make every simulation feel like an asset people can revisit and share.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">{tabs.map((tab) => <span key={tab} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-bold text-cyan-100">{tab}</span>)}</div>
+      </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {ranked.map((d) => (
+          <div key={d.dna} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="text-2xl font-black text-cyan-100">{d.a} + {d.b}</div>
+                <div className="mt-1 text-xs uppercase tracking-[.2em] text-slate-500">{d.tier} · {d.type}</div>
+              </div>
+              <div className="rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-xl font-black text-emerald-100">{d.score}%</div>
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="rounded-xl bg-white/[.04] p-2"><b className="text-cyan-100">{d.views}</b><br/><span className="text-slate-500">views</span></div>
+              <div className="rounded-xl bg-white/[.04] p-2"><b className="text-cyan-100">{d.saves}</b><br/><span className="text-slate-500">saves</span></div>
+              <div className="rounded-xl bg-white/[.04] p-2"><b className="text-cyan-100">{d.shares}</b><br/><span className="text-slate-500">shares</span></div>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button onClick={() => { setPublicDiscovery?.(d); setPage("publicdiscovery"); }} variant="primary" className="px-3 py-2 text-xs">Open Page</Button>
+              <Button onClick={() => setPage("reports")} className="px-3 py-2 text-xs">Report</Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function WorkspaceVaultPanel({ setPage }) {
+  const vault = [
+    ["Saved Discoveries", "24", "Public pages, share cards and ranked material pairs.", "discover", Sparkles],
+    ["Saved Reports", "12", "Executive briefs, technical reports and simulation dossiers.", "reports", FileText],
+    ["Saved Simulations", "38", "Time Machine, Scenario Builder, Seismo and Well Driller runs.", "simreports", BarChart3],
+    ["MIOS Targets", "9", "Matter Intelligence opportunities ready for follow-up.", "matterlab", Globe2],
+  ];
+  return (
+    <Panel>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <Pill gold><Save size={12} /> workspace 2.0</Pill>
+          <h2 className="mt-3 text-4xl font-black">This is where your discoveries live.</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Workspace now reads like a permanent research vault: discoveries, reports, simulations, Matter Intelligence targets and shareable pages.</p>
+        </div>
+        <Button onClick={() => setPage("discover")} variant="primary">Add New Discovery</Button>
+      </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {vault.map(([title, value, body, target, Icon]) => (
+          <button key={title} onClick={() => setPage(target)} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+            <Icon size={22} className="text-cyan-200" />
+            <div className="mt-4 text-4xl font-black text-cyan-100">{value}</div>
+            <div className="mt-1 text-lg font-black text-white">{title}</div>
+            <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function CopilotEverywhereBar({ page, setPage }) {
+  if (page === "landing") return null;
+  return (
+    <div className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-r from-cyan-300/10 via-slate-950/80 to-blue-400/10 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="text-xs uppercase tracking-[.22em] text-cyan-200">AI Copilot Everywhere</div>
+          <div className="mt-1 text-sm text-slate-300">Ask why this matters, generate a report summary, explain it simply, or suggest the next experiment.</div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setPage("copilot")} variant="primary" className="px-3 py-2 text-xs">Ask Copilot</Button>
+          <Button onClick={() => setPage("simreports")} className="px-3 py-2 text-xs">One-click Report</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function LandingPage({ setPage, session, isPro, startCheckout }) {
   const daily = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(12))[0], []);
   const discoveryTitle = daily ? `${daily.a} + ${daily.b}` : "Titanium + Hafnium";
@@ -4495,6 +4667,8 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
 
   return (
     <>
+      <DiscoveryCommandCenter setPage={setPage} compare={["Al", "Ti", "Hf"]} />
+      <MissionProgressPanel setPage={setPage} />
       <Panel className="relative overflow-hidden p-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_14%,rgba(34,211,238,.20),transparent_28%),radial-gradient(circle_at_84%_10%,rgba(245,158,11,.12),transparent_30%),radial-gradient(circle_at_50%_100%,rgba(59,130,246,.16),transparent_35%)]" />
         <div className="absolute inset-0 opacity-[.22] bg-[linear-gradient(rgba(34,211,238,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.12)_1px,transparent_1px)] bg-[size:54px_54px]" />
@@ -6484,6 +6658,7 @@ const startCheckout = async () => {
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} />
         <PageHelpStrip page={page} />
+        <CopilotEverywhereBar page={page} setPage={setPage} />
         <div className="animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
       </main>
 
