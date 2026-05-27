@@ -4,7 +4,8 @@ import { supabase } from "./supabaseClient";
 import {
   Atom, BarChart3, BookOpen, Calculator, CheckCircle2, ChevronRight, Clock3, Download,
   FileText, Home, Layers, Lock, Network, Orbit, Radar, Save, Search,
-  ShieldCheck, Sparkles, UserPlus
+  ShieldCheck, Sparkles, UserPlus,
+  Activity, Bot, BriefcaseBusiness, ClipboardList, Compass, Database, Dna, Gem, Globe2, LineChart, Map, Settings, Share2, Target, Users, Waves, Zap
 } from "lucide-react";
 
 const rawElements = `H|Hydrogen|1|Nonmetal,He|Helium|2|Noble gas,Li|Lithium|3|Alkali metal,Be|Beryllium|4|Alkaline earth metal,B|Boron|5|Metalloid,C|Carbon|6|Nonmetal,N|Nitrogen|7|Nonmetal,O|Oxygen|8|Nonmetal,F|Fluorine|9|Halogen,Ne|Neon|10|Noble gas,Na|Sodium|11|Alkali metal,Mg|Magnesium|12|Alkaline earth metal,Al|Aluminium|13|Post-transition metal,Si|Silicon|14|Metalloid,P|Phosphorus|15|Nonmetal,S|Sulfur|16|Nonmetal,Cl|Chlorine|17|Halogen,Ar|Argon|18|Noble gas,K|Potassium|19|Alkali metal,Ca|Calcium|20|Alkaline earth metal,Sc|Scandium|21|Transition metal,Ti|Titanium|22|Transition metal,V|Vanadium|23|Transition metal,Cr|Chromium|24|Transition metal,Mn|Manganese|25|Transition metal,Fe|Iron|26|Transition metal,Co|Cobalt|27|Transition metal,Ni|Nickel|28|Transition metal,Cu|Copper|29|Transition metal,Zn|Zinc|30|Transition metal,Ga|Gallium|31|Post-transition metal,Ge|Germanium|32|Metalloid,As|Arsenic|33|Metalloid,Se|Selenium|34|Nonmetal,Br|Bromine|35|Halogen,Kr|Krypton|36|Noble gas,Rb|Rubidium|37|Alkali metal,Sr|Strontium|38|Alkaline earth metal,Y|Yttrium|39|Transition metal,Zr|Zirconium|40|Transition metal,Nb|Niobium|41|Transition metal,Mo|Molybdenum|42|Transition metal,Tc|Technetium|43|Transition metal,Ru|Ruthenium|44|Transition metal,Rh|Rhodium|45|Transition metal,Pd|Palladium|46|Transition metal,Ag|Silver|47|Transition metal,Cd|Cadmium|48|Transition metal,In|Indium|49|Post-transition metal,Sn|Tin|50|Post-transition metal,Sb|Antimony|51|Metalloid,Te|Tellurium|52|Metalloid,I|Iodine|53|Halogen,Xe|Xenon|54|Noble gas,Cs|Caesium|55|Alkali metal,Ba|Barium|56|Alkaline earth metal,La|Lanthanum|57|Lanthanide,Ce|Cerium|58|Lanthanide,Pr|Praseodymium|59|Lanthanide,Nd|Neodymium|60|Lanthanide,Pm|Promethium|61|Lanthanide,Sm|Samarium|62|Lanthanide,Eu|Europium|63|Lanthanide,Gd|Gadolinium|64|Lanthanide,Tb|Terbium|65|Lanthanide,Dy|Dysprosium|66|Lanthanide,Ho|Holmium|67|Lanthanide,Er|Erbium|68|Lanthanide,Tm|Thulium|69|Lanthanide,Yb|Ytterbium|70|Lanthanide,Lu|Lutetium|71|Lanthanide,Hf|Hafnium|72|Transition metal,Ta|Tantalum|73|Transition metal,W|Tungsten|74|Transition metal,Re|Rhenium|75|Transition metal,Os|Osmium|76|Transition metal,Ir|Iridium|77|Transition metal,Pt|Platinum|78|Transition metal,Au|Gold|79|Transition metal,Hg|Mercury|80|Transition metal,Tl|Thallium|81|Post-transition metal,Pb|Lead|82|Post-transition metal,Bi|Bismuth|83|Post-transition metal,Po|Polonium|84|Metalloid,At|Astatine|85|Halogen,Rn|Radon|86|Noble gas,Fr|Francium|87|Alkali metal,Ra|Radium|88|Alkaline earth metal,Ac|Actinium|89|Actinide,Th|Thorium|90|Actinide,Pa|Protactinium|91|Actinide,U|Uranium|92|Actinide,Np|Neptunium|93|Actinide,Pu|Plutonium|94|Actinide,Am|Americium|95|Actinide,Cm|Curium|96|Actinide,Bk|Berkelium|97|Actinide,Cf|Californium|98|Actinide,Es|Einsteinium|99|Actinide,Fm|Fermium|100|Actinide,Md|Mendelevium|101|Actinide,No|Nobelium|102|Actinide,Lr|Lawrencium|103|Actinide,Rf|Rutherfordium|104|Transition metal,Db|Dubnium|105|Transition metal,Sg|Seaborgium|106|Transition metal,Bh|Bohrium|107|Transition metal,Hs|Hassium|108|Transition metal,Mt|Meitnerium|109|Unknown,Ds|Darmstadtium|110|Unknown,Rg|Roentgenium|111|Unknown,Cn|Copernicium|112|Transition metal,Nh|Nihonium|113|Unknown,Fl|Flerovium|114|Unknown,Mc|Moscovium|115|Unknown,Lv|Livermorium|116|Unknown,Ts|Tennessine|117|Unknown,Og|Oganesson|118|Unknown`;
@@ -364,6 +365,11 @@ function guidanceForPage(page) {
       description: "Well Driller Lab models a deep subsurface bore path, drilling load, formation pressure, reservoir depth and seismic-readiness using clear visual simulation cards.",
       next: "Adjust depth and formation pressure, inspect the 3D-style well profile, then open Seismo to compare P-wave and S-wave behaviour.",
     },
+    matterlab: {
+      title: "What Matter Intelligence OS does",
+      description: "Matter Intelligence OS is a flagship advanced lab for ranking ground targets, signal agreement, discovery maps, AI explanations, reports, and project workspaces.",
+      next: "Run a discovery scan, review ranked targets, then generate a report or compare the signal logic with ElementOS material simulations.",
+    },
     seismo: {
       title: "What Seismo Lab does",
       description: "Seismo Lab compares P-wave and S-wave travel through a simulated subsurface field so users can understand arrival gaps, wave speed and depth response.",
@@ -386,7 +392,7 @@ function guidanceForPage(page) {
     },
     simreports: {
       title: "What Simulation Dossiers do",
-      description: "Simulation Dossiers combine Time Machine, Scenario Builder, Experimental Well Driller and Seismo outputs into one polished research-ready simulation dossier.",
+      description: "Simulation Dossiers combine Time Machine, Scenario Builder, Well Driller Lab and Seismo outputs into one polished research-ready simulation dossier.",
       next: "Choose a simulation source, review the combined intelligence cards, then export the universal report.",
     },
     reports: {
@@ -397,7 +403,7 @@ function guidanceForPage(page) {
     login: {
       title: "What accounts unlock",
       description: "Accounts let users save workspaces, restore research, access subscription features and build a persistent researcher identity.",
-      next: "Create an account, sign in, then return to the dashboard.",
+      next: "Create an account, join beta, then return to the dashboard.",
     },
   };
   return guide[page] || guide.dashboard;
@@ -482,6 +488,663 @@ function PageHelpStrip({ page = "dashboard" }) {
   );
 }
 
+const miModules = [
+  { name: "Diamonds", icon: Gem, gradient: "from-cyan-300/20 to-blue-500/10", status: "Active", signal: 92 },
+  { name: "Gold", icon: Sparkles, gradient: "from-amber-300/20 to-orange-500/10", status: "Active", signal: 84 },
+  { name: "Lithium", icon: Zap, gradient: "from-fuchsia-300/20 to-purple-500/10", status: "Active", signal: 78 },
+  { name: "Copper", icon: Activity, gradient: "from-orange-300/20 to-red-500/10", status: "Beta", signal: 71 },
+  { name: "Uranium", icon: Orbit, gradient: "from-lime-300/20 to-emerald-500/10", status: "Locked", signal: 64 },
+  { name: "Custom", icon: Database, gradient: "from-slate-300/20 to-cyan-500/10", status: "Enterprise", signal: 88 },
+];
+
+const miDiscoveryFeed = [
+  { type: "AI", title: "7 new diamond miTargets ranked", body: "Northern craton project gained new high-confidence signal matches.", time: "2m ago", priority: "High" },
+  { type: "Report", title: "Investor summary generated", body: "Diamond Module report exported with target reasoning and signal agreement.", time: "18m ago", priority: "Ready" },
+  { type: "Signal", title: "Lithium basin confidence increased", body: "Gravity and historical similarity moved into stronger agreement.", time: "41m ago", priority: "Rising" },
+  { type: "Team", title: "Project updated by Sarah", body: "Added notes to Target DK-27 and shared it with the Pro workspace.", time: "1h ago", priority: "Team" },
+];
+
+const miTargets = [
+  {
+    id: "DK-27",
+    name: "North Craton Diamond Field",
+    module: "Diamonds",
+    confidence: 94,
+    glyph: "◇∞◇",
+    agreement: "Exceptional",
+    reasons: ["Strong circular geometry", "Magnetic anomaly above baseline", "Craton stability match", "Similar to known diamond fields", "Low noise across datasets"],
+    depth: "320m–680m",
+    trend: "+8% this week",
+  },
+  {
+    id: "AU-18",
+    name: "Gold Fault Corridor",
+    module: "Gold",
+    confidence: 86,
+    glyph: "◇◇◇",
+    agreement: "Strong",
+    reasons: ["Fault network density", "Hydrothermal structure match", "Historical discovery similarity", "Remote sensing alteration"],
+    depth: "120m–420m",
+    trend: "+3% this week",
+  },
+  {
+    id: "LI-44",
+    name: "Lithium Basin Edge",
+    module: "Lithium",
+    confidence: 79,
+    glyph: "◇◇",
+    agreement: "Moderate",
+    reasons: ["Evaporite basin geometry", "Terrain depression", "Conductivity signature", "Regional discovery proximity"],
+    depth: "60m–210m",
+    trend: "+12% this week",
+  },
+];
+
+const miProjects = [
+  { name: "Northern Diamonds", miTargets: 42, miReports: 8, members: 5, status: "High momentum" },
+  { name: "Lithium Basin Study", miTargets: 31, miReports: 4, members: 3, status: "Growing" },
+  { name: "Critical Minerals Map", miTargets: 76, miReports: 13, members: 9, status: "Enterprise" },
+];
+
+const miReports = [
+  { name: "Executive Discovery Brief", type: "Investor", pages: 12, locked: false },
+  { name: "Technical Target Ranking", type: "Geology", pages: 28, locked: false },
+  { name: "Board Presentation Pack", type: "Pitch", pages: 18, locked: false },
+  { name: "Private Dataset Model Audit", type: "Enterprise", pages: 34, locked: true },
+];
+
+const miPlans = [
+  { name: "Explorer", price: "$49/mo", features: ["Discovery Map", "Material profiles", "5 saved miProjects", "Basic target miReports"], cta: "Start Explorer" },
+  { name: "Pro", price: "$199/mo", features: ["AI Assistant", "Unlimited miProjects", "Advanced ranking", "PDF report exports", "Team comments"], cta: "Start Pro", best: true },
+  { name: "Enterprise", price: "Custom", features: ["Private datasets", "API access", "Custom models", "Team onboarding", "Security review"], cta: "Talk to Sales" },
+];
+
+const miOnboardingSteps = [
+  "Choose a discovery module",
+  "Run an AI discovery scan",
+  "Review the ranked target explanation",
+  "Generate a report",
+  "Save it to a project workspace",
+];
+
+const miKpis = [
+  ["Discovery scans", "248", "+18%"],
+  ["Saved miTargets", "1,482", "+42"],
+  ["Reports generated", "73", "+9"],
+  ["Team actions", "316", "+27"],
+];
+
+const miTimeline = [
+  ["2022", "Weak anomaly recorded"],
+  ["2023", "Gravity layer improved"],
+  ["2024", "Historical similarity detected"],
+  ["2025", "AI confidence increased"],
+  ["2026", "High-priority target recommended"],
+];
+
+const miMaterialGuides = [
+  {
+    name: "Diamonds",
+    purpose: "Searches for geology commonly associated with diamond-bearing systems.",
+    clues: ["Stable cratons", "Deep mantle origin", "Kimberlite-style pipe geometry", "Circular structures", "Long-term tectonic stability"],
+  },
+  {
+    name: "Gold",
+    purpose: "Searches for structural and hydrothermal patterns linked to gold mineralization.",
+    clues: ["Fault systems", "Hydrothermal activity", "Structural intersections", "Alteration zones", "Historical mineralization"],
+  },
+  {
+    name: "Lithium",
+    purpose: "Searches for basin, brine, and pegmatite conditions linked to lithium opportunity.",
+    clues: ["Evaporite basins", "Brine signatures", "Pegmatite corridors", "Terrain depressions", "Conductivity anomalies"],
+  },
+];
+
+const miSubscriberReasons = [
+  "Find opportunities faster",
+  "Reduce research time",
+  "Explain decisions clearly",
+  "Organize exploration miProjects",
+  "Generate miReports instantly",
+  "Track changing opportunities",
+];
+
+const miThinkingFlow = [
+  ["Input", "Maps, satellite data, survey files, drill logs, historical discoveries, and private datasets."],
+  ["Signal Engine", "The platform checks where independent evidence layers agree or disagree."],
+  ["AI Ranking", "Targets are ranked by confidence, similarity, signal strength, and stability."],
+  ["Reports", "Complex analysis becomes plain-language miReports for teams and investors."],
+  ["Decisions", "Subscribers decide what to review, save, export, share, or investigate next."],
+];
+
+const miDefinitions = [
+  ["Glyph Rating", "A quick badge for signal quality. ◇ means weak, ◇◇ moderate, ◇◇◇ strong, ◇∞◇ exceptional."],
+  ["Signal Agreement", "How much gravity, magnetics, geometry, history, and structure agree around one target."],
+  ["1047 Logic", "Detect signal, compare baseline, measure divergence, confirm stability."],
+  ["Discovery Potential Layer", "A map-like probability layer showing where the platform sees stronger opportunity."],
+];
+
+const miSignalLabels = ["Gravity", "Magnetics", "Geometry", "Historical similarity", "Structure"];
+const miSignalValues = [88, 91, 96, 84, 93];
+
+function miRunSelfChecks() {
+  const checks = [
+    [miModules.length >= 6, "Expected at least 6 discovery miModules"],
+    [miTargets.length >= 3, "Expected at least 3 ranked miTargets"],
+    [miTargets.every((target) => target.id && target.reasons.length >= 2), "Every target should have an id and at least 2 reasons"],
+    [miPlans.some((plan) => plan.best), "Expected one recommended subscription plan"],
+    [miSignalLabels.length === miSignalValues.length, "Signal labels and values should match"],
+  ];
+
+  checks.forEach(([passed, message]) => {
+    if (!passed) console.error(`MIOS self-check failed: ${message}`);
+  });
+
+  return checks.every(([passed]) => passed);
+}
+
+const miSelfChecksPassed = miRunSelfChecks();
+
+function miCx(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
+function MIPill({ children, muted = false }) {
+  return (
+    <span className={miCx("rounded-full border px-3 py-1 text-xs font-bold", muted ? "border-white/10 bg-white/[0.04] text-slate-300" : "border-cyan-300/20 bg-cyan-300/10 text-cyan-100")}>
+      {children}
+    </span>
+  );
+}
+
+function MISidebar({ active, setActive }) {
+  const items = [
+    ["Home", Globe2],
+    ["Discovery Map", Map],
+    ["Targets", Target],
+    ["Projects", BriefcaseBusiness],
+    ["Reports", FileText],
+    ["Discovery Playbooks", Dna],
+    ["AI Assistant", Bot],
+    ["Marketplace", Database],
+    ["Team", Users],
+    ["Settings", Settings],
+  ];
+
+  return (
+    <aside className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-4 shadow-2xl shadow-black/30 lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)]">
+      <div className="mb-8 flex items-center gap-3">
+        <div className="rounded-2xl bg-cyan-300 p-3 text-slate-950"><Atom size={24} /></div>
+        <div>
+          <div className="text-lg font-black">M.I.OS</div>
+          <div className="text-xs text-slate-500">Opportunity Intelligence</div>
+        </div>
+      </div>
+      <nav className="space-y-2 text-sm">
+        {items.map(([item, Icon]) => (
+          <button key={item} onClick={() => setActive(item)} className={miCx("flex w-full items-center justify-between rounded-2xl px-3 py-3 text-left transition", active === item ? "bg-cyan-300/10 text-cyan-100" : "text-slate-400 hover:bg-white/[0.04]")}>
+            <span className="flex items-center gap-2"><Icon size={16} /> {item}</span><ChevronRight size={14} />
+          </button>
+        ))}
+      </nav>
+      <div className="mt-8 rounded-2xl border border-cyan-300/10 bg-cyan-300/5 p-4">
+        <div className="text-xs uppercase tracking-widest text-slate-500">What this is</div>
+        <p className="mt-2 text-sm leading-6 text-slate-300">An opportunity intelligence platform for finding, ranking, explaining, and reporting hidden ground opportunities.</p>
+      </div>
+    </aside>
+  );
+}
+
+function MIModuleCard({ mod, selected, onClick }) {
+  const Icon = mod.icon;
+  return (
+    <button onClick={onClick} className={miCx("rounded-[1.5rem] border p-4 text-left transition", selected ? "border-cyan-300/40 bg-cyan-300/10 shadow-2xl shadow-cyan-950/30" : "border-white/10 bg-white/[0.035] hover:bg-white/[0.06]")}>
+      <div className={miCx("mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br", mod.gradient)}><Icon size={25} className="text-cyan-100" /></div>
+      <div className="flex items-center justify-between">
+        <div className="text-lg font-black text-white">{mod.name}</div>
+        <MIPill muted>{mod.status}</MIPill>
+      </div>
+      <div className="mt-3 text-xs text-slate-400">Signal readiness</div>
+      <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${mod.signal}%` }} /></div>
+    </button>
+  );
+}
+
+function MIDiscoveryEarth({ scanning, selectedModule }) {
+  return (
+    <div className="relative min-h-[520px] overflow-hidden rounded-[2.5rem] border border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.18),transparent_30%),linear-gradient(135deg,#020617,#07111f_60%,#0b1120)] shadow-[0_0_120px_rgba(34,211,238,0.1)]">
+      <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
+      <div className="absolute left-1/2 top-1/2 h-[470px] w-[470px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" style={{ animation: `eosSpin ${scanning ? 14 : 44}s linear infinite` }} />
+      <div className="absolute left-1/2 top-1/2 h-[370px] w-[370px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-300/10" style={{ animation: `eosSpinReverse ${scanning ? 20 : 58}s linear infinite` }} />
+      <div className="absolute left-1/2 top-1/2 flex h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-200/30 bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,.35),transparent_12%),radial-gradient(circle_at_center,rgba(34,211,238,.38),rgba(14,165,233,.08)_50%,rgba(2,6,23,.95)_72%)] shadow-[0_0_100px_rgba(34,211,238,.22)]" style={{ animation: `eosPulse ${scanning ? 1.6 : 4}s ease-in-out infinite` }} >
+        <Globe2 size={105} className="text-cyan-100/80" />
+      </div>
+      {miTargets.map((target, index) => {
+        const positions = ["left-[18%] top-[22%]", "right-[14%] top-[34%]", "left-[28%] bottom-[18%]"];
+        return (
+          <div key={target.id} className={miCx("absolute rounded-2xl border border-cyan-300/20 bg-black/40 px-4 py-3 backdrop-blur-xl", positions[index])}>
+            <div className="flex items-center gap-2 text-sm font-black text-cyan-100"><Target size={15} /> {target.id}</div>
+            <div className="text-[10px] text-slate-400">{target.confidence}% confidence</div>
+          </div>
+        );
+      })}
+      <div className="absolute bottom-6 left-6 rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur-xl">
+        <div className="text-xs uppercase tracking-widest text-slate-500">Current module</div>
+        <div className="mt-1 text-2xl font-black text-cyan-100">{selectedModule.name}</div>
+        <div className="text-xs text-slate-400">Discovery Potential Layer active</div>
+      </div>
+    </div>
+  );
+}
+
+function MIFeedCard({ item }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+      <div className="mb-2 flex items-center justify-between"><MIPill muted>{item.type}</MIPill><span className="text-xs text-slate-500">{item.time}</span></div>
+      <div className="font-black text-white">{item.title}</div>
+      <p className="mt-2 text-sm leading-6 text-slate-400">{item.body}</p>
+      <div className="mt-3 text-xs font-bold text-cyan-200">{item.priority}</div>
+    </div>
+  );
+}
+
+function MITargetCard({ target, active, onClick }) {
+  return (
+    <button onClick={onClick} className={miCx("w-full rounded-[1.5rem] border p-4 text-left transition", active ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-white/[0.035] hover:bg-white/[0.06]")}>
+      <div className="flex items-center justify-between">
+        <div><div className="text-lg font-black text-white">{target.id}</div><div className="text-xs text-slate-400">{target.name}</div></div>
+        <div className="font-mono text-2xl text-fuchsia-100">{target.glyph}</div>
+      </div>
+      <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+        <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{target.confidence}%</b><br /><span className="text-slate-500">Score</span></div>
+        <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{target.agreement}</b><br /><span className="text-slate-500">Signal</span></div>
+        <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{target.trend}</b><br /><span className="text-slate-500">Trend</span></div>
+      </div>
+    </button>
+  );
+}
+
+function MIPlanCard({ plan }) {
+  return (
+    <div className={miCx("rounded-[1.5rem] border p-5", plan.best ? "border-cyan-300/40 bg-cyan-300/10 shadow-2xl shadow-cyan-950/30" : "border-white/10 bg-white/[0.035]")}>
+      <div className="mb-2 flex items-center justify-between"><h3 className="text-xl font-black text-white">{plan.name}</h3>{plan.best && <span className="rounded-full bg-cyan-300 px-3 py-1 text-[10px] font-black text-slate-950">BEST</span>}</div>
+      <div className="text-3xl font-black text-cyan-100">{plan.price}</div>
+      <div className="mt-4 space-y-2 text-sm text-slate-300">{plan.features.map((feature) => <div key={feature} className="flex gap-2"><span className="text-cyan-200">✓</span><span>{feature}</span></div>)}</div>
+      <button className="mt-5 w-full rounded-2xl bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:bg-cyan-300 hover:text-slate-950">{plan.cta}</button>
+    </div>
+  );
+}
+
+function MIDashboardHeader({ active, setActive }) {
+  return (
+    <div className="grid gap-4 lg:grid-cols-[1fr_0.75fr]">
+      <div className="flex flex-col gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <div className="text-sm font-black text-white">Northern Discovery Lab</div>
+          <div className="text-xs text-slate-500">Pro Trial · 12 days remaining · {active}</div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <MIPill>Pro workspace</MIPill>
+          <button onClick={() => setActive("Reports")} className="rounded-full bg-white/[0.06] px-3 py-1 text-xs font-bold text-slate-200 hover:bg-white/[0.1]">Reports</button>
+          <button onClick={() => setActive("Settings")} className="rounded-full bg-cyan-300 px-3 py-1 text-xs font-black text-slate-950">Upgrade</button>
+        </div>
+      </div>
+      <div className="rounded-[1.5rem] border border-cyan-300/10 bg-cyan-300/5 p-4">
+        <div className="mb-2 flex items-center justify-between"><span className="text-sm font-black text-cyan-100">System status</span><span className="text-xs text-slate-400">{miSelfChecksPassed ? "Healthy" : "Review"}</span></div>
+        <div className="h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: miSelfChecksPassed ? "100%" : "60%" }} /></div>
+      </div>
+    </div>
+  );
+}
+
+function MatterIntelligenceLab() {
+  const [active, setActive] = useState("Home");
+  const [moduleIndex, setModuleIndex] = useState(0);
+  const [targetIndex, setTargetIndex] = useState(0);
+  const [scanning, setScanning] = useState(false);
+  const [onboarded, setOnboarded] = useState(false);
+  const [savedTargets, setSavedTargets] = useState(["DK-27"]);
+  const [reportReady, setReportReady] = useState(false);
+
+  const selectedModule = miModules[moduleIndex];
+  const selectedTarget = miTargets[targetIndex];
+
+  const aiLine = useMemo(() => {
+    if (scanning) return "Analyzing public layers, private survey data, geometry, and historical similarity...";
+    return `${selectedTarget.id} is ranked highly because ${selectedTarget.reasons[0].toLowerCase()}, ${selectedTarget.reasons[1].toLowerCase()}, and multiple datasets agree.`;
+  }, [scanning, selectedTarget]);
+
+  const runScan = () => {
+    setScanning(true);
+    setReportReady(false);
+    setTimeout(() => {
+      setTargetIndex((value) => (value + 1) % miTargets.length);
+      setScanning(false);
+      setReportReady(true);
+      setOnboarded(true);
+    }, 1700);
+  };
+
+  const toggleSaveTarget = () => {
+    setSavedTargets((previous) => previous.includes(selectedTarget.id) ? previous.filter((id) => id !== selectedTarget.id) : [...previous, selectedTarget.id]);
+  };
+
+  const showUpgrade = active === "Marketplace" || active === "Team";
+  const showMapArea = active === "Home" || active === "Discovery Map" || active === "AI Assistant";
+  const showTargetsArea = active === "Home" || active === "Targets";
+  const showProjectsArea = active === "Home" || active === "Projects";
+  const showReportsArea = active === "Home" || active === "Reports" || active === "Discovery Playbooks";
+  const showPlansArea = active === "Home" || active === "Settings";
+
+  return (
+    <div className="min-h-screen bg-[#020617] p-4 text-slate-100 md:p-8">
+      <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[260px_1fr]">
+        <MISidebar active={active} setActive={setActive} />
+        <main className="space-y-6">
+          <MIDashboardHeader active={active} setActive={setActive} />
+
+          {!onboarded && (
+            <section className="rounded-[2rem] border border-cyan-300/10 bg-gradient-to-br from-cyan-950/25 via-slate-950 to-slate-950 p-5">
+              <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div><h2 className="text-xl font-black text-white">Your first discovery workflow</h2><p className="mt-1 text-sm text-slate-400">Run one scan to unlock the full demo flow: target explanation, report preview, and project save.</p></div>
+                <button onClick={runScan} className="rounded-2xl bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950">Start guided scan</button>
+              </div>
+              <div className="grid gap-3 md:grid-cols-5">
+                {miOnboardingSteps.map((step, index) => <div key={step} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-sm text-slate-300"><span className="mb-2 block text-xs font-black text-cyan-200">STEP {index + 1}</span>{step}</div>)}
+              </div>
+            </section>
+          )}
+
+          <section className="grid gap-4 md:grid-cols-4">
+            {miKpis.map(([label, value, change]) => <div key={label} className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4"><div className="text-xs text-slate-500">{label}</div><div className="mt-2 text-3xl font-black text-white">{value}</div><div className="mt-1 text-xs font-bold text-cyan-200">{change}</div></div>)}
+          </section>
+
+          <header className="relative overflow-hidden rounded-[2.75rem] border border-cyan-300/10 bg-gradient-to-br from-slate-950 via-[#07111f] to-cyan-950/50 p-6 shadow-[0_0_140px_rgba(34,211,238,0.12)] md:p-8">
+            <div className="pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full bg-cyan-400/10 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-28 left-1/3 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
+            <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-center">
+              <div>
+                <div className="mb-5 flex flex-wrap gap-2">
+                  <MIPill>Exploration Intelligence</MIPill>
+                  <MIPill>AI target ranking</MIPill>
+                  <MIPill>Reports + workspaces</MIPill>
+                </div>
+                <h1 className="max-w-4xl text-4xl font-black tracking-tight md:text-7xl">
+                  Find the next opportunity hidden in the ground.
+                </h1>
+                <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
+                  Matter Intelligence OS combines geological data, historical discoveries, signal agreement, and AI ranking to identify the most promising miTargets. Discover faster, explain decisions, and generate miReports.
+                </p>
+                <div className="mt-6 grid gap-3 md:grid-cols-3">
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                    <div className="mb-2 text-xs uppercase tracking-widest text-slate-500">Input</div>
+                    <div className="font-black text-white">Geology + telemetry</div>
+                    <p className="mt-2 text-sm leading-6 text-slate-400">Maps, magnetics, gravity, satellite layers, drill logs, private datasets.</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                    <div className="mb-2 text-xs uppercase tracking-widest text-slate-500">Engine</div>
+                    <div className="font-black text-white">AI signal agreement</div>
+                    <p className="mt-2 text-sm leading-6 text-slate-400">The system looks for places where independent signals point to the same opportunity.</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                    <div className="mb-2 text-xs uppercase tracking-widest text-slate-500">Output</div>
+                    <div className="font-black text-white">Ranked opportunities</div>
+                    <p className="mt-2 text-sm leading-6 text-slate-400">Clear target scores, explanations, miReports, timelines, and team actions.</p>
+                  </div>
+                </div>
+                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                  <button onClick={runScan} className="rounded-[1.5rem] bg-cyan-300 px-8 py-5 text-lg font-black text-slate-950 shadow-2xl shadow-cyan-950/40 transition hover:scale-[1.02] hover:bg-cyan-200">
+                    {scanning ? "ANALYZING..." : "RUN DISCOVERY SCAN"}
+                  </button>
+                  <button onClick={() => setActive("Targets")} className="rounded-[1.5rem] border border-white/10 bg-white/[0.06] px-8 py-5 text-lg font-black text-white transition hover:bg-white/[0.1]">
+                    View opportunities
+                  </button>
+                </div>
+              </div>
+
+              <div className="rounded-[2rem] border border-cyan-300/10 bg-black/30 p-5 shadow-2xl shadow-cyan-950/20 backdrop-blur-xl">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <div className="text-xs uppercase tracking-widest text-slate-500">What it actually does</div>
+                    <div className="mt-1 text-2xl font-black text-white">Opportunity Command Center</div>
+                  </div>
+                  <div className="rounded-2xl bg-cyan-300 p-3 text-slate-950"><Radar size={24} /></div>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    ["1", "Choose what you want to discover", "Diamonds, gold, lithium, copper, uranium, rare earths, groundwater, geothermal, or custom."],
+                    ["2", "Connect or select data layers", "Public maps, survey files, satellite feeds, drilling history, and private exploration data."],
+                    ["3", "AI ranks the strongest opportunities", "Targets rise when multiple signals agree and historical patterns look similar."],
+                    ["4", "Generate a report", "Export a plain-English target explanation for teams, investors, or field review."],
+                  ].map(([num, title, body]) => (
+                    <div key={num} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                      <div className="flex gap-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{num}</div>
+                        <div>
+                          <div className="font-black text-cyan-100">{title}</div>
+                          <p className="mt-1 text-sm leading-6 text-slate-400">{body}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {active === "Home" && (
+            <section className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
+              <div className="mb-5">
+                <h2 className="text-2xl font-black text-white">What would you like to discover?</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-400">Pick an opportunity type. MIOS changes the playbook, signal model, and target ranking language around that goal.</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
+                {miModules.map((mod, index) => <MIModuleCard key={mod.name} mod={mod} selected={moduleIndex === index} onClick={() => setModuleIndex(index)} />)}
+              </div>
+            </section>
+          )}
+
+          {showMapArea && (
+            <section className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+              <MIDiscoveryEarth scanning={scanning} selectedModule={selectedModule} />
+              <div className="space-y-6">
+                <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                  <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><Bot size={22} /> AI Assistant</h2>
+                  <p className="mb-4 text-sm leading-6 text-slate-400">Ask plain-English questions about miTargets, signals, miReports, miProjects, and material profiles. This turns complex exploration data into usable answers.</p>
+                  <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="mb-2 text-xs uppercase tracking-widest text-cyan-200/70">Plain-language answer</div><p className="text-sm leading-6 text-cyan-50">{aiLine}</p></div>
+                  <div className="mt-4 grid gap-2">
+                    {["Why is this target ranked highly?", "Generate investor report", "Show similar discoveries"].map((question) => <button key={question} className="rounded-xl bg-white/[0.04] px-3 py-2 text-left text-sm text-slate-300 hover:bg-white/[0.08]">{question}</button>)}
+                  </div>
+                </div>
+                <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                  <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><Waves size={22} /> Signal Agreement</h2>
+                  <p className="mb-4 text-sm leading-6 text-slate-400">A target becomes more useful when independent datasets point toward the same conclusion. This score shows how strongly the evidence layers agree.</p>
+                  {miSignalLabels.map((label, index) => {
+                    const value = miSignalValues[index];
+                    return <div key={label} className="mb-3"><div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div><div className="h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div></div>;
+                  })}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {showTargetsArea && (
+            <section className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><Target size={22} /> Ranked Targets</h2>
+                <p className="mb-4 text-sm leading-6 text-slate-400">Targets are possible opportunities sorted by signal strength, historical similarity, geometry, and confidence. Start here when deciding what deserves attention.</p>
+                <div className="space-y-3">{miTargets.map((target, index) => <MITargetCard key={target.id} target={target} active={targetIndex === index} onClick={() => setTargetIndex(index)} />)}</div>
+              </div>
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <h2 className="flex items-center gap-2 text-xl font-black"><ClipboardList size={22} /> Why This Target?</h2>
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Instead of showing raw data alone, MIOS explains why a target deserves attention and converts the strongest evidence into plain language.</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={toggleSaveTarget} className="rounded-xl bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200 hover:bg-white/[0.1]">{savedTargets.includes(selectedTarget.id) ? "Saved" : "Save target"}</button>
+                    <button className="rounded-xl bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200"><Share2 size={14} className="mr-1 inline" />Share</button>
+                    <button onClick={() => setReportReady(true)} className="rounded-xl bg-cyan-300 px-3 py-2 text-xs font-black text-slate-950"><Download size={14} className="mr-1 inline" />Generate report</button>
+                  </div>
+                </div>
+                <div className="grid gap-4 md:grid-cols-4">
+                  <div className="rounded-2xl bg-black/25 p-4"><div className="text-xs text-slate-500">Target</div><div className="text-2xl font-black text-cyan-100">{selectedTarget.id}</div></div>
+                  <div className="rounded-2xl bg-black/25 p-4"><div className="text-xs text-slate-500">Discovery Score</div><div className="text-3xl font-black text-cyan-100">{selectedTarget.confidence}</div><div className="mt-1 text-[10px] font-bold text-cyan-200">Top ranked opportunity</div></div>
+                  <div className="rounded-2xl bg-black/25 p-4"><div className="text-xs text-slate-500">Glyph</div><div className="font-mono text-2xl text-fuchsia-100">{selectedTarget.glyph}</div></div>
+                  <div className="rounded-2xl bg-black/25 p-4"><div className="text-xs text-slate-500">Depth</div><div className="text-lg font-black text-cyan-100">{selectedTarget.depth}</div></div>
+                </div>
+                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                  {selectedTarget.reasons.map((reason) => <div key={reason} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm text-slate-300"><ShieldCheck size={16} className="mr-2 inline text-cyan-200" />{reason}</div>)}
+                </div>
+                <div className="mt-5 rounded-2xl border border-cyan-300/10 bg-cyan-300/5 p-5">
+                  <h3 className="mb-2 font-black text-cyan-100">Discovery DNA</h3>
+                  <p className="mb-4 text-sm leading-6 text-slate-400">This breaks the opportunity into the evidence layers that make it interesting.</p>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {miSignalLabels.map((label, index) => {
+                      const value = miSignalValues[index];
+                      return <div key={label}><div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div><div className="h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div></div>;
+                    })}
+                  </div>
+                </div>
+                <div className="mt-5 rounded-2xl border border-white/10 bg-black/25 p-5">
+                  <h3 className="mb-2 font-black text-cyan-100">Discovery Timeline</h3>
+                  <p className="mb-4 text-sm leading-6 text-slate-400">Many discoveries begin as weak signals and become stronger as more information arrives. This miTimeline shows how confidence evolved.</p>
+                  <div className="grid gap-3 md:grid-cols-5">
+                    {miTimeline.map(([year, text]) => <div key={year} className="rounded-2xl bg-white/[0.035] p-3"><div className="text-sm font-black text-white">{year}</div><div className="mt-1 text-xs leading-5 text-slate-400">{text}</div></div>)}
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {showProjectsArea && (
+            <section className="grid gap-6 lg:grid-cols-3">
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5 lg:col-span-2">
+                <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><BriefcaseBusiness size={22} /> Projects</h2>
+                <p className="mb-4 text-sm leading-6 text-slate-400">Projects organize discoveries. Store miTargets, miReports, notes, comments, team activity, and decision history in one place.</p>
+                <div className="grid gap-3 md:grid-cols-3">{miProjects.map((project) => <div key={project.name} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="font-black text-white">{project.name}</div><div className="mt-2 text-sm text-slate-400">{project.miTargets} miTargets · {project.miReports} miReports · {project.members} members</div><div className="mt-3 text-xs font-bold text-cyan-200">{project.status}</div></div>)}</div>
+              </div>
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><LineChart size={22} /> Opportunity Feed</h2>
+                <p className="mb-4 text-sm leading-6 text-slate-400">Opportunity changes as new information arrives. The feed highlights confidence increases, saved miTargets, generated miReports, and new signal matches.</p>
+                <div className="space-y-3">{miDiscoveryFeed.slice(0, 3).map((item) => <MIFeedCard key={item.title} item={item} />)}</div>
+              </div>
+            </section>
+          )}
+
+          {showReportsArea && (
+            <>
+              {reportReady && (
+                <section className="rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-950/30 via-slate-950 to-slate-950 p-6 shadow-2xl shadow-cyan-950/20">
+                  <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div><h2 className="text-2xl font-black text-white">Report Preview Ready</h2><p className="mt-2 text-sm text-slate-400">A subscriber-grade report has been generated for {selectedTarget.id}. This is the moment that makes the app feel useful.</p></div>
+                    <div className="flex gap-2"><button className="rounded-2xl bg-white/[0.06] px-4 py-3 text-sm font-bold text-slate-200">Preview</button><button className="rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950">Export PDF</button></div>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-4">
+                    <div className="rounded-2xl bg-black/30 p-4"><div className="text-xs text-slate-500">Target</div><div className="text-xl font-black text-cyan-100">{selectedTarget.id}</div></div>
+                    <div className="rounded-2xl bg-black/30 p-4"><div className="text-xs text-slate-500">Discovery Score</div><div className="text-xl font-black text-cyan-100">{selectedTarget.confidence}</div></div>
+                    <div className="rounded-2xl bg-black/30 p-4"><div className="text-xs text-slate-500">Main reason</div><div className="text-sm font-bold text-cyan-100">{selectedTarget.reasons[0]}</div></div>
+                    <div className="rounded-2xl bg-black/30 p-4"><div className="text-xs text-slate-500">Recommended action</div><div className="text-sm font-bold text-cyan-100">Field review</div></div>
+                    <div className="rounded-2xl bg-black/30 p-4 md:col-span-4"><div className="text-xs text-slate-500">Why this matters</div><div className="mt-1 text-sm leading-6 text-slate-300">This target ranks as a strong opportunity because multiple independent evidence layers agree. It deserves additional review before any field or drilling decision.</div></div>
+                  </div>
+                </section>
+              )}
+
+              <section className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+                <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                  <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><FileText size={22} /> Reports</h2>
+                  <p className="mb-4 text-sm leading-6 text-slate-400">Reports transform complex analysis into a format suitable for management, investors, partners, and field teams.</p>
+                  <div className="grid gap-3 md:grid-cols-2">{miReports.map((report) => <div key={report.name} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="flex items-center justify-between"><div className="font-black text-white">{report.name}</div>{report.locked && <Lock size={16} className="text-slate-500" />}</div><div className="mt-2 text-sm text-slate-400">{report.type} · {report.pages} pages</div><button className="mt-4 rounded-xl bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200 hover:bg-cyan-300 hover:text-slate-950">Generate</button></div>)}</div>
+                </div>
+                <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                  <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><Compass size={22} /> Product Language</h2>
+                  <p className="mb-4 text-sm leading-6 text-slate-400">These are the terms that make the product memorable, translated into simple exploration language.</p>
+                  <div className="grid gap-3">{miDefinitions.map(([term, text]) => <div key={term} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="font-black text-cyan-100">{term}</div><p className="mt-1 text-sm leading-6 text-slate-400">{text}</p></div>)}</div>
+                </div>
+              </section>
+            </>
+          )}
+
+          {active === "Discovery Playbooks" && (
+            <section className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
+              <div className="mb-5">
+                <h2 className="text-2xl font-black text-white">Discovery Playbooks</h2>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each playbook explains what conditions MIOS is searching for, why those clues matter, and what makes a target worth reviewing.</p>
+              </div>
+              <div className="grid gap-4 lg:grid-cols-3">
+                {miMaterialGuides.map((guide) => (
+                  <div key={guide.name} className="rounded-2xl border border-white/10 bg-black/25 p-5">
+                    <div className="mb-2 text-xl font-black text-cyan-100">{guide.name}</div>
+                    <p className="mb-4 text-sm leading-6 text-slate-400">{guide.purpose}</p>
+                    <div className="space-y-2">
+                      {guide.clues.map((clue) => <div key={clue} className="rounded-xl bg-white/[0.04] px-3 py-2 text-sm text-slate-300"><ShieldCheck size={14} className="mr-2 inline text-cyan-200" />{clue}</div>)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {active === "Home" && (
+            <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+              <div className="rounded-[2rem] border border-cyan-300/10 bg-cyan-300/5 p-6">
+                <h2 className="text-2xl font-black text-white">Why subscribers use MIOS</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-400">Subscribers stay because the platform keeps turning complex data into clear next actions.</p>
+                <div className="mt-5 grid gap-3">
+                  {miSubscriberReasons.map((reason) => <div key={reason} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm text-slate-300"><ShieldCheck size={16} className="mr-2 inline text-cyan-200" />{reason}</div>)}
+                </div>
+              </div>
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
+                <h2 className="text-2xl font-black text-white">How MIOS thinks</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-400">The platform follows a simple chain: data comes in, signals are compared, opportunities are ranked, and decisions become clearer.</p>
+                <div className="mt-5 grid gap-3">
+                  {miThinkingFlow.map(([stage, text], index) => (
+                    <div key={stage} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                      <div className="flex gap-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{index + 1}</div>
+                        <div>
+                          <div className="font-black text-cyan-100">{stage}</div>
+                          <p className="mt-1 text-sm leading-6 text-slate-400">{text}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {showUpgrade && (
+            <section className="rounded-[2rem] border border-fuchsia-300/20 bg-gradient-to-br from-fuchsia-950/20 via-slate-950 to-cyan-950/20 p-6">
+              <div className="grid gap-6 md:grid-cols-[1fr_0.8fr] md:items-center">
+                <div>
+                  <h2 className="text-3xl font-black text-white">Unlock the full collaborative OS</h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-300">Marketplace publishing, advanced team roles, private model sharing, and enterprise dataset controls are premium features.</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
+                  <div className="text-sm text-slate-400">Recommended</div>
+                  <div className="mt-1 text-2xl font-black text-cyan-100">Enterprise Discovery Cloud</div>
+                  <button onClick={() => setActive("Settings")} className="mt-4 w-full rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950">View upgrade options</button>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {showPlansArea && (
+            <section className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
+              <div className="mb-5"><h2 className="text-2xl font-black text-white">Choose a plan</h2><p className="mt-2 text-sm leading-6 text-slate-400">Built for solo explorers, Pro teams, and enterprise discovery programs.</p></div>
+              <div className="grid gap-4 md:grid-cols-3">{miPlans.map((plan) => <MIPlanCard key={plan.name} plan={plan} />)}</div>
+            </section>
+          )}
+
+          <footer className="pb-6 text-center text-xs text-slate-500">Matter Intelligence OS V6 is a React prototype for a subscription exploration-intelligence platform. Real deployment requires verified data, model validation, domain experts, and appropriate licensing.</footer>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+
 const PAGE_LABELS = {
   landing: "Home",
   dashboard: "Dashboard",
@@ -501,6 +1164,7 @@ const PAGE_LABELS = {
   seismo: "Seismo Lab",
   welldriller: "Well Driller Lab",
   isotopes: "Isotope Lab",
+  matterlab: "Matter Intelligence OS",
   simreports: "Simulation Dossiers",
   viralcards: "Share Card Studio",
   reports: "Research Reports",
@@ -515,7 +1179,9 @@ const MOBILE_PAGE_ORDER = [
   "copilot",
   "mission",
   "discover",
+  "matterlab",
   "compare",
+  "isotopes",
   "scenario",
   "timemachine",
   "seismo",
@@ -523,7 +1189,6 @@ const MOBILE_PAGE_ORDER = [
   "simreports",
   "viralcards",
   "lab",
-  "login",
   "explorer",
   "periodic",
   "atlas",
@@ -531,7 +1196,6 @@ const MOBILE_PAGE_ORDER = [
   "universe",
   "visualization",
   "calculations",
-  "isotopes",
   "reports",
   "beta",
 ];
@@ -629,6 +1293,9 @@ function ElementOSThemeSkin() {
       .eos-data-card { background: linear-gradient(135deg, rgba(4,16,31,.96), rgba(8,24,42,.82)); border: 1px solid rgba(42,103,185,.28); }
       .eos-topbar { background: rgba(2, 8, 17, .78); border: 1px solid rgba(37, 96, 170, .25); box-shadow: 0 0 50px rgba(0,106,255,.08), inset 0 1px 0 rgba(255,255,255,.04); }
       @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes eosSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+      @keyframes eosSpinReverse { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
+      @keyframes eosPulse { 0%,100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.06); } }
     `}</style>
   );
 }
@@ -662,6 +1329,7 @@ function Sidebar({ page, setPage }) {
       items: [
         ["explorer", "Element Explorer", Search],
         ["compare", "Compare Materials", BarChart3],
+        ["isotopes", "Isotope Lab", Atom],
         ["periodic", "Periodic Map", Layers],
         ["atlas", "Behaviour Atlas", Radar],
         ["graph", "Similarity Graph", Network],
@@ -683,10 +1351,10 @@ function Sidebar({ page, setPage }) {
       label: "Advanced Labs",
       icon: Radar,
       items: [
+        ["matterlab", "★ Matter Intelligence OS", Globe2],
         ["timemachine", "Time Machine", Clock3],
         ["seismo", "Seismo Lab", Network],
         ["welldriller", "Well Driller Lab", Radar],
-        ["isotopes", "Isotope Lab", Atom],
       ],
     },
     {
@@ -707,7 +1375,6 @@ function Sidebar({ page, setPage }) {
       items: [
         ["lab", "Workspace", Save],
         ["beta", "Founding Beta", UserPlus],
-        ["login", "Account", Lock],
       ],
     },
   ];
@@ -816,7 +1483,7 @@ function Sidebar({ page, setPage }) {
 }
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Launch Workspace</h2>{[["Create Account", "login", UserPlus], ["Founding Beta", "beta", UserPlus], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Time Machine", "timemachine", Clock3], ["Scenario Builder", "scenario", FileText], ["Well Driller Lab", "welldriller", Radar], ["Seismo Lab", "seismo", Network], ["Simulation Dossiers", "simreports", BookOpen], ["Share Card Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Workspace", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Compare Materials", "compare", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Isotope Lab", "isotopes", Atom], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><Lock size={16} className="inline"/> Sign in to Upgrade</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Run First Simulation", "scenario", FileText], ["Matter Intelligence OS", "matterlab", Globe2], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Time Machine", "timemachine", Clock3], ["Well Driller Lab", "welldriller", Radar], ["Seismo Lab", "seismo", Network], ["Simulation Dossiers", "simreports", BookOpen], ["Share Card Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Workspace", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Founding Beta", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("beta")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Join Founding Beta</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -1219,7 +1886,7 @@ function Discover({ setPage }) {
 
 
 function ScenarioBuilder({ selected, setSelected, setPage }) {
-  const [scenarioText, setScenarioText] = useState("Titanium hull in saltwater for 25 years under high pressure");
+  const [scenarioText, setScenarioText] = useState("Your first guided simulation for 25 years under high pressure");
   const [material, setMaterial] = useState(selected || "Ti");
   const [environment, setEnvironment] = useState("Saltwater / coastal");
   const [duration, setDuration] = useState(25);
@@ -1763,7 +2430,7 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
           <Pill gold><ShieldCheck size={12} /> secure research workspace</Pill>
           <h1 className="mt-4 text-5xl font-black">Account & Workspace</h1>
           <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
-            Real Supabase authentication is now connected. Users can create accounts, sign in, sign out and keep sessions active.
+            Real Supabase authentication is now connected. Users can create accounts, join beta, sign out and keep sessions active.
           </p>
 
           {session && (
@@ -1775,7 +2442,7 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
 
         <Panel>
           <h2 className="text-3xl font-black">
-            {session ? "Workspace Active" : "Login / Create Account"}
+            {session ? "Workspace Active" : "Login / Join Beta"}
           </h2>
 
           {!session ? (
@@ -1802,7 +2469,7 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
                 className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
               />
 
-              <Button variant="primary" onClick={signUp}>Create Account</Button>
+              <Button variant="primary" onClick={signUp}>Join Beta</Button>
               <Button onClick={signIn}>Sign In</Button>
 
               {message && <p className="text-sm text-cyan-200">{message}</p>}
@@ -1841,7 +2508,7 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
         </Panel>
       </Panel>
 
-      <GuidePanel page="login" />
+      <GuidePanel page="beta" />
 
       <Panel>
         <h2 className="text-3xl font-black">Choose Plan</h2>
@@ -2507,7 +3174,7 @@ Status: Presentation-ready platform export.`;
 
   const saveReport = async (title, desc) => {
     if (!session) {
-      alert("Please sign in before saving reports.");
+      alert("Please join beta before saving reports.");
       return;
     }
 
@@ -2651,7 +3318,7 @@ Status: Presentation-ready platform export.`;
         </Info>
         {!session && (
           <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
-            Sign in to save reports to the cloud. PDF export is a Pro Lab feature.
+            Join beta to save reports to the cloud. PDF export is a Pro Lab feature.
           </div>
         )}
         {session && !isPro && (
@@ -3112,7 +3779,7 @@ function MyLab({ session, selected, compare, setPage }) {
 
   const savedScenarios = [
     {
-      title: "Titanium hull in saltwater",
+      title: "Your first guided simulation",
       material: "Ti",
       environment: "Coastal air",
       risk: 18,
@@ -3146,7 +3813,7 @@ function MyLab({ session, selected, compare, setPage }) {
   }));
 
   const exportLabSummary = () => {
-    const content = `ElementOS My Lab Summary\n\nResearcher: ${profile.email}\nLevel: ${profile.level}\nXP: ${profile.xp}\nSaved scenarios: ${savedScenarios.length}\nFavourite materials: ${favouriteMaterials.join(", ")}\n\nSaved Scenarios:\n${savedScenarios.map((s) => `${s.title} · ${s.material} · Risk ${s.risk}% · Survival ${s.survival} years · ${s.status}`).join("\n")}\n\nRecent Discovery Reports:\n${recentReports.map((r) => `${r.pair} · ${r.score}% · ${r.type}`).join("\n")}\n\nGenerated by ElementOS My Lab`;
+    const content = `ElementOS Workspace Summary\n\nResearcher: ${profile.email}\nLevel: ${profile.level}\nXP: ${profile.xp}\nSaved scenarios: ${savedScenarios.length}\nFavourite materials: ${favouriteMaterials.join(", ")}\n\nSaved Scenarios:\n${savedScenarios.map((s) => `${s.title} · ${s.material} · Risk ${s.risk}% · Survival ${s.survival} years · ${s.status}`).join("\n")}\n\nRecent Discovery Reports:\n${recentReports.map((r) => `${r.pair} · ${r.score}% · ${r.type}`).join("\n")}\n\nGenerated by ElementOS Workspace`;
     downloadFile("elementos-my-lab-summary.txt", content);
   };
 
@@ -3162,7 +3829,7 @@ function MyLab({ session, selected, compare, setPage }) {
             Collect saved scenarios, favourite materials, discovery reports and simulation history in one workspace. This is where ElementOS starts feeling like a real research operating system.
           </p>
           <Info title="What this page does">
-            My Lab gives users a reason to return. It turns one-off simulations into a persistent research library with saved cases, reusable materials and exportable summaries.
+            Workspace gives users a reason to return. It turns one-off simulations into a persistent research library with saved cases, reusable materials and exportable summaries.
           </Info>
         </div>
 
@@ -3276,7 +3943,7 @@ function BetaLaunch({ session, setPage, startCheckout }) {
   ];
 
   const roadmap = [
-    ["Now", "Viral Cards + Universal Simulation Reports", "Turn every discovery into a shareable output."],
+    ["Now", "Viral Cards + Universal Simulation Dossiers", "Turn every discovery into a shareable output."],
     ["Next", "Mobile-first simulator polish", "Make TikTok/X/Reddit traffic feel instant and premium."],
     ["Soon", "Public discovery URLs", "Every report, Seismo readout and Time Machine forecast becomes indexable."],
     ["Later", "Team labs + API access", "Move from creator tool into enterprise-ready simulation workspace."],
@@ -3354,7 +4021,7 @@ Early access: ElementOS beta is opening now.`;
           </Info>
           <div className="mt-5 flex flex-wrap gap-3">
             <Button onClick={() => setPage("viralcards")} variant="primary">Create Viral Card</Button>
-            <Button onClick={() => setPage("simreports")}>Open Simulation Reports</Button>
+            <Button onClick={() => setPage("simreports")}>Open Simulation Dossiers</Button>
             <Button onClick={copyLaunchPost}>Copy Launch Post</Button>
           </div>
         </div>
@@ -3492,12 +4159,31 @@ Early access: ElementOS beta is opening now.`;
 }
 
 
+
+function GuidedNextStep({ title = "Recommended next step", body = "Follow the guided path: explore, compare, simulate, report and save.", primary = "mission", secondary = "compare", setPage }) {
+  return (
+    <Panel className="border-amber-300/25 bg-amber-300/5">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <Pill gold><CheckCircle2 size={12} /> guided next step</Pill>
+          <h2 className="mt-3 text-3xl font-black">{title}</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">{body}</p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <Button onClick={() => setPage(primary)} variant="primary">Start Guided Path</Button>
+          <Button onClick={() => setPage(secondary)}>Compare Materials</Button>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function LandingPage({ setPage, session, isPro, startCheckout }) {
   const showcases = [
-    ["Time Machine", "Simulate how materials age across 1, 10, 50 and 100-year horizons under corrosion, heat, pressure and stress.", Clock3, "timemachine"],
+    ["Matter Intelligence OS", "Explore opportunity intelligence, ground signals, ranked targets, AI explanations, reports and project workspaces.", Globe2, "matterlab"],
+    ["Isotope Lab", "Inspect advanced material variants and isotope-style scenario logic without hiding it inside experimental tools.", Atom, "isotopes"],
     ["Scenario Builder", "Type real-world material situations and receive risk scores, failure modes, lifespan estimates and substitute suggestions.", FileText, "scenario"],
-    ["Visual Engine", "Turn survival curves, degradation timelines and AI confidence signals into cinematic dashboard visuals.", BarChart3, "visualization"],
-    ["AI Discovery", "Browse ranked material pairings, rare compatibility signals, velocity trends and discovery cards.", Sparkles, "discover"],
+    ["Time Machine", "Simulate how materials age across 1, 10, 50 and 100-year horizons under corrosion, heat, pressure and stress.", Clock3, "timemachine"],
   ];
 
   const stats = [
@@ -3517,33 +4203,27 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
     <>
       <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
         <div>
-          <Pill gold><Sparkles size={12} /> AI material intelligence SaaS</Pill>
+          <Pill gold><Sparkles size={12} /> material intelligence operating system</Pill>
           <h1 className="mt-5 text-5xl font-black sm:text-7xl">
-            Predict, compare and explain material behaviour with <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">ElementOS</span>
+            The operating system for <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">material intelligence</span>
           </h1>
           <p className="mt-6 max-w-4xl text-lg leading-8 text-slate-300">
-            ElementOS helps users explore elements, compare material behaviour, simulate future degradation, build real-world scenarios and export research-ready reports from one cinematic workspace.
+            Explore 118 elements, compare material behaviour, simulate future conditions, discover hidden relationships, generate research reports and build a permanent workspace for decisions that matter.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Button onClick={() => setPage("scenario")} variant="primary">Try Scenario Builder</Button>
-            <Button onClick={() => setPage("timemachine")}>Open Time Machine</Button>
-            {!session ? (
-              <Button onClick={() => setPage("login")}>Start Free</Button>
-            ) : !isPro ? (
-              <Button onClick={startCheckout}>Upgrade Pro</Button>
-            ) : (
-              <Button onClick={() => setPage("dashboard")}>Enter Workspace</Button>
-            )}
+            <Button onClick={() => setPage("mission")} variant="primary">Start Guided Tour</Button>
+            <Button onClick={() => setPage("scenario")}>Run First Simulation</Button>
+            <Button onClick={() => setPage("matterlab")}>Open Matter Intelligence OS</Button>
           </div>
-          <Info title="What is ElementOS?">
-            A material intelligence operating system for turning element data, compatibility scores, environmental exposure and long-term simulation into understandable decisions, visuals and reports.
+          <Info title="Why people keep ElementOS open">
+            ElementOS tells users what to do next: choose a material, compare it, run a simulation, create a dossier, save the result and share the discovery.
           </Info>
         </div>
 
         <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Live product demo</div>
-          <h2 className="mt-3 text-4xl font-black text-cyan-100">Titanium hull in saltwater</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">Scenario Builder detects material, environment and time horizon, then generates a risk score, survival estimate and recommended substitute path.</p>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Start here</div>
+          <h2 className="mt-3 text-4xl font-black text-cyan-100">Your first guided simulation</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">ElementOS guides the user from an idea to a report: pick a material, run a scenario, inspect the risk signal, then save or publish the result.</p>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4"><div className="text-3xl font-black text-rose-100">34%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">risk</div></div>
             <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-3xl font-black text-emerald-100">82y</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">survival</div></div>
@@ -3555,6 +4235,14 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
           <div className="mt-4 text-sm text-slate-400">Visual survival curve · corrosion timeline · exportable result card</div>
         </Panel>
       </Panel>
+
+      <GuidedNextStep
+        setPage={setPage}
+        title="Start here: build your first material decision"
+        body="ElementOS works best when users follow one clear loop: choose a material, compare it, simulate the environment, generate a dossier and save the strongest result to Workspace."
+        primary="mission"
+        secondary="matterlab"
+      />
 
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {stats.map(([value, label]) => (
@@ -3569,10 +4257,10 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <Pill gold><Sparkles size={12} /> platform showcase</Pill>
-            <h2 className="mt-3 text-4xl font-black">Built for discovery, simulation and conversion</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each core page gives visitors a clear reason to sign up: discover materials, simulate long-term behaviour, build scenarios and save results inside My Lab.</p>
+            <h2 className="mt-3 text-4xl font-black">A guided path from curiosity to permanent research value</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each core page now points users toward a next action: discover, compare, simulate, report, save and share.</p>
           </div>
-          <Button onClick={() => setPage("dashboard")} variant="primary">Launch Workspace</Button>
+          <Button onClick={() => setPage("dashboard")} variant="primary">Start Here</Button>
         </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -3591,10 +4279,10 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
         <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
           <div>
             <Pill gold><CheckCircle2 size={12} /> why users upgrade</Pill>
-            <h2 className="mt-3 text-4xl font-black">From curiosity to saved research</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-300">The conversion path is simple: visitors try public demos, create an account to save work, then upgrade when they need reports, exports and persistent research history.</p>
+            <h2 className="mt-3 text-4xl font-black">From curiosity to permanent workspace</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-300">The product path is simple: visitors run a guided simulation, understand the output, save the strongest discoveries, then return because the workspace keeps getting more valuable.</p>
             <div className="mt-5 space-y-3">
-              {["Understand materials faster", "Create scenario reports", "Save discoveries in My Lab", "Export professional PDFs", "Use Time Machine and visual telemetry"].map((item) => (
+              {["Understand materials faster", "Create scenario reports", "Save discoveries in Workspace", "Export professional PDFs", "Use Time Machine, Isotope Lab and Matter Intelligence OS"].map((item) => (
                 <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300" />{item}</div>
               ))}
             </div>
@@ -3608,8 +4296,8 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
                 <div className="mt-5 space-y-2">
                   {bullets.map((b) => <div key={b} className="text-sm text-slate-300">✓ {b}</div>)}
                 </div>
-                <Button onClick={index === 1 ? startCheckout : () => setPage("login")} variant={index === 1 ? "primary" : "ghost"} className="mt-5 w-full">
-                  {index === 1 ? "Upgrade Pro" : "Start"}
+                <Button onClick={index === 1 ? startCheckout : () => setPage("mission")} variant={index === 1 ? "primary" : "ghost"} className="mt-5 w-full">
+                  {index === 1 ? "Upgrade Pro" : "Start Guided Path"}
                 </Button>
               </div>
             ))}
@@ -3624,7 +4312,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
           {[
             ["Is this for engineers only?", "No. The interface explains each page clearly so beginners can try scenarios while advanced users explore deeper comparison logic."],
             ["What does the Time Machine do?", "It projects material behaviour across future time horizons under exposure, heat, pressure, stress and corrosion-style conditions."],
-            ["Why create an account?", "Accounts unlock saved workspaces, My Lab history, scenario collections and subscription-ready research continuity."],
+            ["Why use Workspace?", "Workspace turns one-off experiments into a permanent research library of saved simulations, reports, discoveries and next steps."],
             ["What makes Pro useful?", "Pro positioning focuses on premium exports, reusable reports, saved research assets and professional visual outputs."],
           ].map(([q, a]) => (
             <div key={q} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
@@ -3672,7 +4360,7 @@ function ExperimentalWellDriller({ setPage }) {
 
   const exportWell = () => downloadFile(
     "elementos-experimental-well-driller-report.txt",
-    `ElementOS Experimental Well Driller Report\n\nFormation: ${formation}\nDepth: ${depth} m\nInclination: ${inclination} deg\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nTorque index: ${torque}\nReservoir score: ${reservoirScore}%\nBore stability: ${boreStability}%\nKick risk: ${kickRisk}%\nRate of penetration: ${rateOfPenetration} m/hr\nCasing load: ${casingLoad}%`
+    `ElementOS Well Driller Lab Report\n\nFormation: ${formation}\nDepth: ${depth} m\nInclination: ${inclination} deg\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nTorque index: ${torque}\nReservoir score: ${reservoirScore}%\nBore stability: ${boreStability}%\nKick risk: ${kickRisk}%\nRate of penetration: ${rateOfPenetration} m/hr\nCasing load: ${casingLoad}%`
   );
 
   return (
@@ -4246,7 +4934,7 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
   const reportRows = [
     ["Time Machine", `${100 - timeRisk}%`, "Long-horizon stability signal across environmental exposure and fatigue."],
     ["Scenario Builder", `${scenarioConfidence}%`, "Plain-English scenario confidence based on material durability and inferred stress."],
-    ["Experimental Well Driller", `${100 - drillingRisk}%`, "Subsurface drilling readiness from pressure, depth and formation response."],
+    ["Well Driller Lab", `${100 - drillingRisk}%`, "Subsurface drilling readiness from pressure, depth and formation response."],
     ["Seismo", `${seismoClarity}%`, "P-wave/S-wave clarity estimate for subsurface response interpretation."],
   ];
 
@@ -4271,7 +4959,7 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
             Simulation <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Report Engine</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Combine Time Machine, Scenario Builder, Experimental Well Driller and Seismo into one polished research-ready dossier. This turns ElementOS simulations into outputs users can save, share and present.
+            Combine Time Machine, Scenario Builder, Well Driller Lab and Seismo into one polished research-ready dossier. This turns ElementOS simulations into outputs users can save, share and present.
           </p>
           <Info title="Why this matters">
             A simulator is interesting. A simulator that generates a professional report becomes a product. This page connects all major intelligence modules into a single exportable simulation narrative.
@@ -4287,7 +4975,7 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
           </select>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <Button onClick={exportUniversalReport} variant="primary"><Download size={16} className="inline"/> Export Report</Button>
-            {!isPro ? <Button onClick={session ? startCheckout : () => setPage("login")}>Unlock Pro PDF</Button> : <Button onClick={() => setPage("reports")}>Open Reports</Button>}
+            {!isPro ? <Button onClick={session ? startCheckout : () => setPage("beta")}>Unlock Pro PDF</Button> : <Button onClick={() => setPage("reports")}>Open Reports</Button>}
           </div>
         </Panel>
       </Panel>
@@ -4552,7 +5240,7 @@ function MissionControl({ setPage, session, isPro, startCheckout }) {
     ["03", "Build a real scenario", "Turn a plain-English use case into risk, lifespan and substitute suggestions.", "scenario", "4 min", "Build scenario"],
     ["04", "Create a viral discovery card", "Turn the strongest result into a cinematic social asset for sharing.", "viralcards", "1 min", "Create card"],
     ["05", "Export a simulation report", "Generate a polished research-style dossier from the active simulation ecosystem.", "simreports", "2 min", "Export report"],
-    ["06", "Join beta or upgrade", "Claim the Founding Researcher path and unlock stronger workspace value.", session ? "beta" : "login", "1 min", session ? "Open beta" : "Create account"],
+    ["06", "Join beta or upgrade", "Claim the Founding Researcher path and unlock stronger workspace value.", "beta", "1 min", "Open beta"],
   ];
 
   const proofSignals = [
@@ -4672,8 +5360,9 @@ function MobileBottomNav({ page, setPage }) {
     ["calculations", "Calc", Calculator],
     ["explorer", "Explore", Search],
     ["compare", "Compare", BarChart3],
+    ["matterlab", "MIOS", Globe2],
+    ["isotopes", "Iso", Atom],
     ["reports", "Reports", BookOpen],
-    ["login", "Account", Lock],
   ];
 
   return (
@@ -4699,7 +5388,7 @@ function MobileBottomNav({ page, setPage }) {
 }
 
 function MobileActionBar({ page, setPage, compare, session, isPro, startCheckout }) {
-  if (page === "login" || page === "landing") return null;
+  if (page === "landing") return null;
 
   const primaryLabel = page === "compare" ? "Create Report" : "Run Compare";
   const primaryTarget = page === "compare" ? "reports" : "compare";
@@ -4719,8 +5408,8 @@ function MobileActionBar({ page, setPage, compare, session, isPro, startCheckout
 
           <div className="flex shrink-0 gap-2">
             {!session ? (
-              <Button onClick={() => setPage("login")} variant="primary" className="px-3 py-2 text-xs">
-                Sign In
+              <Button onClick={() => setPage("beta")} variant="primary" className="px-3 py-2 text-xs">
+                Beta
               </Button>
             ) : !isPro ? (
               <Button onClick={startCheckout} variant="primary" className="px-3 py-2 text-xs">
@@ -4762,6 +5451,8 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["copilot", "Ask AI Copilot", "Turn a plain-English research goal into simulations, reports and cards.", "AI", "Copilot"],
     ["mission", "Open Mission Control", "Guided onboarding missions for comparison, Time Machine, Scenario Builder, Viral Cards and reports.", "Onboarding", "Mission"],
     ["discover", "Open Discovery Feed", "Trending pairings, momentum scores and AI-ranked material discoveries.", "Discovery", "Discover"],
+    ["matterlab", "Open Matter Intelligence OS", "Opportunity intelligence for ranked targets, ground signals, AI explanations and reports.", "Advanced Lab", "MIOS"],
+    ["isotopes", "Open Isotope Lab", "Advanced material variants and isotope-style scenario exploration.", "Research", "Isotope"],
     ["timemachine", "Run Time Machine", "Forecast ageing, corrosion, degradation and future material states.", "Simulation", "Time"],
     ["scenario", "Build Scenario", "Convert a real-world material situation into risk, lifespan and substitute outputs.", "Simulation", "Scenario"],
     ["welldriller", "Open Well Driller Lab", "Model a deep bore path, reservoir target and pressure profile.", "Simulation", "Well"],
@@ -4776,7 +5467,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["explorer", "Search Elements", "Inspect an element profile before adding it to a comparison.", "Elements", "Search"],
     ["periodic", "Open Periodic Map", "Browse all 118 elements with behaviour heat-map logic.", "Elements", "Periodic"],
     ["reports", "Open Research Reports", "Create public reports, premium PDFs and shareable outputs.", "Reports", "PDF"],
-    ["login", session ? "Open Account" : "Sign In / Create Account", "Save workspaces, restore labs and upgrade to Pro.", "Account", "Account"],
+    ["beta", "Join Founding Beta", "Roadmap, feedback and early-access conversion.", "Growth", "Beta"],
   ];
 
   const elementActions = elements.slice(0, 118).map((e) => [
@@ -5066,8 +5757,8 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
       <div className="flex items-center gap-2">
         <button onClick={() => setPage("mission")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">?</button>
         <button onClick={() => setPage("discover")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">🌐</button>
-        <Button onClick={session && !isPro ? startCheckout : () => setPage("login")} variant={isPro ? "ghost" : "primary"} className="py-2">
-          {isPro ? "Pro Active" : session ? "Subscribe" : "Log In"}
+        <Button onClick={session && !isPro ? startCheckout : () => setPage("beta")} variant={isPro ? "ghost" : "primary"} className="py-2">
+          {isPro ? "Pro Active" : session ? "Subscribe" : "Join Beta"}
         </Button>
       </div>
     </div>
@@ -5164,8 +5855,8 @@ useEffect(() => {
 
   const saveWorkspace = async () => {
     if (!session) {
-      alert("Please sign in before saving a workspace.");
-      setPage("login");
+      alert("Join the Founding Beta to activate saved workspaces.");
+      setPage("beta");
       return;
     }
 
@@ -5186,8 +5877,8 @@ useEffect(() => {
 
   const loadWorkspace = async () => {
     if (!session) {
-      alert("Please sign in before restoring a workspace.");
-      setPage("login");
+      alert("Join the Founding Beta to restore saved workspaces.");
+      setPage("beta");
       return;
     }
 
@@ -5214,8 +5905,8 @@ useEffect(() => {
 
 const startCheckout = async () => {
   if (!session) {
-    alert("Please sign in before upgrading.");
-    setPage("login");
+    alert("Join the Founding Beta before upgrading.");
+    setPage("beta");
     return;
   }
 
@@ -5266,6 +5957,7 @@ const startCheckout = async () => {
       ),
       discover: <Discover setPage={setPage} />,
       timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} />,
+      matterlab: <MatterIntelligenceLab />,
       scenario: <ScenarioBuilder selected={selected} setSelected={setSelected} setPage={setPage} />,
       lab: <MyLab session={session} selected={selected} compare={compare} setPage={setPage} />,
       visualization: <AdvancedVisualization selected={selected} compare={compare} setPage={setPage} />,
