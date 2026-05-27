@@ -4485,113 +4485,208 @@ function GuidedNextStep({ title = "Recommended next step", body = "Follow the gu
 }
 
 function LandingPage({ setPage, session, isPro, startCheckout }) {
-  const showcases = [
-    ["Matter Intelligence OS", "Explore opportunity intelligence, ground signals, ranked targets, AI explanations, reports and project workspaces.", Globe2, "matterlab"],
-    ["Isotope Lab", "Inspect advanced material variants and isotope-style scenario logic without hiding it inside experimental tools.", Atom, "isotopes"],
-    ["Scenario Builder", "Type real-world material situations and receive risk scores, failure modes, lifespan estimates and substitute suggestions.", FileText, "scenario"],
-    ["Time Machine", "Simulate how materials age across 1, 10, 50 and 100-year horizons under corrosion, heat, pressure and stress.", Clock3, "timemachine"],
+  const daily = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(12))[0], []);
+  const discoveryTitle = daily ? `${daily.a} + ${daily.b}` : "Titanium + Hafnium";
+
+  const heroStats = [
+    ["118", "elements to explore"],
+    ["3.48B+", "base report paths"],
+    ["100y", "future-state horizons"],
+    ["1 click", "to publish a discovery"],
   ];
 
-  const stats = [
-    ["118", "elements mapped"],
-    ["7", "behaviour metrics"],
-    ["100y", "time horizons"],
-    ["Pro", "export workflow"],
+  const workflow = [
+    ["01", "Discover", "Start with an element, a material problem, or a hidden opportunity signal."],
+    ["02", "Compare", "Rank behaviour across stability, conductivity, thermal response, diffusion and pressure."],
+    ["03", "Simulate", "Run Scenario Builder, Time Machine, Isotope Lab, Seismo, Well Driller or Matter Intelligence OS."],
+    ["04", "Publish", "Generate a dossier, create a share card, save it to Workspace and open a public discovery page."],
+  ];
+
+  const showcases = [
+    ["Discovery Feed", "A living feed of material relationships, AI confidence, momentum, public discovery pages and shareable results.", Sparkles, "discover", "Start here"],
+    ["Matter Intelligence OS", "Opportunity intelligence for ground signals, ranked targets, AI explanations, reports and project workspaces.", Globe2, "matterlab", "Featured Lab"],
+    ["Isotope Lab", "A visible research tool for isotope-style material variants, advanced states and behaviour shifts.", Atom, "isotopes", "Research Tool"],
+    ["Time Machine", "Forecast long-term material behaviour across corrosion, heat, pressure, stress and environmental exposure.", Clock3, "timemachine", "Advanced Lab"],
+  ];
+
+  const proof = [
+    "Find hidden material relationships faster",
+    "Turn simulations into professional reports",
+    "Create public discovery pages people can share",
+    "Build a permanent workspace of saved research",
+    "Use Matter Intelligence, Isotope Lab and Time Machine in one flow",
   ];
 
   const plans = [
-    ["Explorer", "$19/mo", "For solo material exploration", ["Element explorer", "Discovery feed", "Basic compare tools"]],
-    ["Pro Lab", "$49/mo", "For serious saved research", ["Premium exports", "Scenario reports", "Saved workspace", "Time Machine workflows"]],
-    ["Research Team", "$149/mo", "For teams and demos", ["Team-ready positioning", "Advanced visual reports", "Shared research workflows", "Enterprise-style dashboards"]],
+    ["Explore", "$0", "Try the discovery loop", ["Discovery Feed", "Compare Materials", "Guided first simulation"]],
+    ["Pro Lab", "$49/mo", "Build a permanent research workspace", ["Saved discoveries", "Simulation dossiers", "Share cards", "Advanced labs"]],
+    ["Research Team", "$149/mo", "For demos, teams and technical storytelling", ["Team-ready reports", "Discovery pages", "Matter Intelligence workflows", "Premium exports"]],
   ];
 
   return (
     <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
-        <div>
-          <Pill gold><Sparkles size={12} /> material intelligence operating system</Pill>
-          <h1 className="mt-5 text-5xl font-black sm:text-7xl">
-            The operating system for <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">material intelligence</span>
-          </h1>
-          <p className="mt-6 max-w-4xl text-lg leading-8 text-slate-300">
-            Explore 118 elements, compare material behaviour, simulate future conditions, discover hidden relationships, generate research reports and build a permanent workspace for decisions that matter.
-          </p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Button onClick={() => setPage("mission")} variant="primary">Start Guided Tour</Button>
-            <Button onClick={() => setPage("scenario")}>Run First Simulation</Button>
-            <Button onClick={() => setPage("matterlab")}>Open Matter Intelligence OS</Button>
-          </div>
-          <Info title="Why people keep ElementOS open">
-            ElementOS tells users what to do next: choose a material, compare it, run a simulation, create a dossier, save the result and share the discovery.
-          </Info>
-        </div>
+      <Panel className="relative overflow-hidden p-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_14%,rgba(34,211,238,.20),transparent_28%),radial-gradient(circle_at_84%_10%,rgba(245,158,11,.12),transparent_30%),radial-gradient(circle_at_50%_100%,rgba(59,130,246,.16),transparent_35%)]" />
+        <div className="absolute inset-0 opacity-[.22] bg-[linear-gradient(rgba(34,211,238,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.12)_1px,transparent_1px)] bg-[size:54px_54px]" />
 
-        <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Start here</div>
-          <h2 className="mt-3 text-4xl font-black text-cyan-100">Your first guided simulation</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">ElementOS guides the user from an idea to a report: pick a material, run a scenario, inspect the risk signal, then save or publish the result.</p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4"><div className="text-3xl font-black text-rose-100">34%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">risk</div></div>
-            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-3xl font-black text-emerald-100">82y</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">survival</div></div>
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-3xl font-black text-cyan-100">94%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">confidence</div></div>
+        <div className="relative z-10 grid gap-8 p-6 sm:p-8 xl:grid-cols-[1.05fr_.95fr] xl:p-10">
+          <div className="flex flex-col justify-center">
+            <Pill gold><Sparkles size={12} /> AI material discovery workspace</Pill>
+            <h1 className="mt-6 max-w-5xl text-5xl font-black leading-[.95] tracking-tight sm:text-7xl xl:text-8xl">
+              Discover hidden material relationships. <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Simulate the future.</span>
+            </h1>
+            <p className="mt-6 max-w-4xl text-lg leading-8 text-slate-300 sm:text-xl">
+              ElementOS turns elements, simulations, reports, public discoveries and Matter Intelligence into one guided operating system for material decisions.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button onClick={() => setPage("discover")} variant="primary"><Sparkles size={16} className="inline" /> Start Discovery Scan</Button>
+              <Button onClick={() => setPage("mission")}>Take Guided Tour</Button>
+              <Button onClick={() => setPage("matterlab")}>Open Matter Intelligence OS</Button>
+            </div>
+
+            <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {heroStats.map(([value, label]) => (
+                <div key={label} className="rounded-2xl border border-cyan-300/15 bg-black/30 p-4 backdrop-blur-xl">
+                  <div className="text-3xl font-black text-cyan-100">{value}</div>
+                  <div className="mt-1 text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-6 h-3 overflow-hidden rounded-full bg-black/30">
-            <div className="h-full w-[82%] rounded-full bg-cyan-300" />
+
+          <div className="space-y-5">
+            <div className="rounded-[2.25rem] border border-amber-300/25 bg-gradient-to-br from-amber-300/12 via-slate-950/80 to-cyan-400/10 p-6 shadow-[0_0_70px_rgba(34,211,238,.10)]">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <div className="text-xs uppercase tracking-[.24em] text-amber-100">Today's discovery</div>
+                  <h2 className="mt-3 text-5xl font-black text-white">{discoveryTitle}</h2>
+                  <p className="mt-3 text-sm leading-7 text-amber-50/90">
+                    Rare thermal-pressure alignment detected with high AI confidence. Open it, simulate it, generate a report and publish a public discovery page.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-5 py-4 text-right">
+                  <div className="text-4xl font-black text-emerald-100">{daily?.aiConfidence || 94}%</div>
+                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI confidence</div>
+                </div>
+              </div>
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4"><div className="text-3xl font-black text-cyan-100">{daily?.momentum || 91}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">momentum</div></div>
+                <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/10 p-4"><div className="text-3xl font-black text-emerald-100">+{daily?.velocity || 52}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">velocity</div></div>
+                <div className="rounded-2xl border border-fuchsia-300/15 bg-fuchsia-300/10 p-4"><div className="text-3xl font-black text-fuchsia-100">{daily?.tier || "RARE"}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">rarity</div></div>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
+                <Button onClick={() => setPage("simreports")}>Generate Dossier</Button>
+              </div>
+            </div>
+
+            <div className="rounded-[2.25rem] border border-cyan-300/15 bg-cyan-400/10 p-6">
+              <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Guided operating loop</div>
+              <div className="mt-4 space-y-3">
+                {workflow.map(([num, title, desc]) => (
+                  <div key={num} className="flex gap-4 rounded-2xl border border-white/10 bg-black/25 p-4">
+                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{num}</div>
+                    <div>
+                      <div className="font-black text-cyan-100">{title}</div>
+                      <p className="mt-1 text-sm leading-6 text-slate-400">{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="mt-4 text-sm text-slate-400">Visual survival curve · corrosion timeline · exportable result card</div>
-        </Panel>
+        </div>
       </Panel>
 
       <GuidedNextStep
         setPage={setPage}
-        title="Start here: build your first material decision"
-        body="ElementOS works best when users follow one clear loop: choose a material, compare it, simulate the environment, generate a dossier and save the strongest result to Workspace."
-        primary="mission"
+        title="Start here: turn curiosity into a saved discovery"
+        body="The fastest path is Discovery Feed → Compare Materials → Scenario Builder → Simulation Dossier → Workspace. ElementOS now gives users a clear reason to keep going."
+        primary="discover"
         secondary="matterlab"
       />
-
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {stats.map(([value, label]) => (
-          <Panel key={label}>
-            <div className="text-4xl font-black text-cyan-100">{value}</div>
-            <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{label}</div>
-          </Panel>
-        ))}
-      </div>
 
       <Panel>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <Pill gold><Sparkles size={12} /> platform showcase</Pill>
-            <h2 className="mt-3 text-4xl font-black">A guided path from curiosity to permanent research value</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each core page now points users toward a next action: discover, compare, simulate, report, save and share.</p>
+            <Pill gold><Sparkles size={12} /> featured experiences</Pill>
+            <h2 className="mt-3 text-4xl font-black">Everything points toward one outcome: publishable discovery intelligence</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              The landing page now explains the platform in plain language, then immediately sends users into a guided discovery loop.
+            </p>
           </div>
-          <Button onClick={() => setPage("dashboard")} variant="primary">Start Here</Button>
+          <Button onClick={() => setPage("dashboard")} variant="primary">Open Dashboard</Button>
         </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {showcases.map(([title, desc, Icon, target]) => (
-            <button key={title} onClick={() => setPage(target)} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5 text-left transition hover:scale-[1.02] hover:border-cyan-300/35">
-              <Icon size={24} className="text-cyan-300" />
-              <h3 className="mt-4 text-2xl font-black text-cyan-100">{title}</h3>
+          {showcases.map(([title, desc, Icon, target, tag]) => (
+            <button key={title} onClick={() => setPage(target)} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5 text-left transition hover:scale-[1.02] hover:border-cyan-300/35 hover:shadow-[0_0_45px_rgba(34,211,238,.12)]">
+              <div className="flex items-center justify-between gap-3">
+                <Icon size={28} className="text-cyan-300" />
+                <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-amber-100">{tag}</span>
+              </div>
+              <h3 className="mt-5 text-2xl font-black text-cyan-100">{title}</h3>
               <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
-              <div className="mt-5 text-xs font-black uppercase tracking-[.2em] text-amber-100">Open feature →</div>
+              <div className="mt-5 text-xs font-black uppercase tracking-[.2em] text-cyan-100">Open →</div>
             </button>
           ))}
         </div>
       </Panel>
 
-      <Panel>
-        <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
-          <div>
-            <Pill gold><CheckCircle2 size={12} /> why users upgrade</Pill>
-            <h2 className="mt-3 text-4xl font-black">From curiosity to permanent workspace</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-300">The product path is simple: visitors run a guided simulation, understand the output, save the strongest discoveries, then return because the workspace keeps getting more valuable.</p>
-            <div className="mt-5 space-y-3">
-              {["Understand materials faster", "Create scenario reports", "Save discoveries in Workspace", "Export professional PDFs", "Use Time Machine, Isotope Lab and Matter Intelligence OS"].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300" />{item}</div>
-              ))}
+      <div className="grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+        <Panel>
+          <Pill gold><CheckCircle2 size={12} /> why this becomes permanent</Pill>
+          <h2 className="mt-3 text-4xl font-black">Why users come back</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">
+            ElementOS becomes useful when every experiment becomes an asset: saved discoveries, public pages, share cards, dossiers and a growing workspace.
+          </p>
+          <div className="mt-5 space-y-3">
+            {proof.map((item) => (
+              <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300" />{item}</div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill><BookOpen size={12} /> report preview</Pill>
+          <h2 className="mt-3 text-4xl font-black">From one click to a research-ready dossier</h2>
+          <div className="mt-6 rounded-[2rem] border border-white/10 bg-black/30 p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="text-xs uppercase tracking-[.22em] text-slate-500">Simulation Dossier</div>
+                <div className="mt-2 text-3xl font-black text-cyan-100">{discoveryTitle} Material Intelligence Report</div>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
+                  Includes compatibility, AI narrative, risk signal, future-state forecast, recommended next step and public discovery link.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-5 py-4 text-right">
+                <div className="text-3xl font-black text-emerald-100">READY</div>
+                <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">export state</div>
+              </div>
             </div>
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              {["Public Discovery URL", "Share Card", "Workspace Save"].map((x) => <div key={x} className="rounded-2xl border border-white/10 bg-white/[.035] p-4 text-sm font-bold text-slate-300">✓ {x}</div>)}
+            </div>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Button onClick={() => setPage("simreports")} variant="primary">Open Simulation Dossiers</Button>
+            <Button onClick={() => setPage("viralcards")}>Create Share Card</Button>
+          </div>
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="grid gap-6 xl:grid-cols-[.85fr_1.15fr]">
+          <div>
+            <Pill gold><Sparkles size={12} /> subscription psychology</Pill>
+            <h2 className="mt-3 text-4xl font-black">Give visitors a reason to say “yes, I need this”</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-300">
+              The product no longer sells pages. It sells a permanent research loop: discover, simulate, publish, save and return tomorrow for the next insight.
+            </p>
+            <Info title="Landing page goal">
+              Make the first screen feel like an intelligent workspace, not a static website. Users should immediately understand what they can do and why it matters.
+            </Info>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {plans.map(([name, price, desc, bullets], index) => (
@@ -4612,14 +4707,14 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
       </Panel>
 
       <Panel>
-        <Pill><BookOpen size={12} /> FAQ</Pill>
-        <h2 className="mt-3 text-4xl font-black">Questions visitors will ask</h2>
+        <Pill><BookOpen size={12} /> quick answers</Pill>
+        <h2 className="mt-3 text-4xl font-black">What visitors understand in 30 seconds</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {[
-            ["Is this for engineers only?", "No. The interface explains each page clearly so beginners can try scenarios while advanced users explore deeper comparison logic."],
-            ["What does the Time Machine do?", "It projects material behaviour across future time horizons under exposure, heat, pressure, stress and corrosion-style conditions."],
-            ["Why use Workspace?", "Workspace turns one-off experiments into a permanent research library of saved simulations, reports, discoveries and next steps."],
-            ["What makes Pro useful?", "Pro positioning focuses on premium exports, reusable reports, saved research assets and professional visual outputs."],
+            ["What is ElementOS?", "An AI-native material intelligence workspace for comparing elements, running simulations, creating reports and publishing discoveries."],
+            ["What do I do first?", "Start with Discovery Feed or the Guided Tour. The product will point you toward the next best action."],
+            ["Why would I subscribe?", "To save work, export professional dossiers, build a research library and use the advanced discovery labs repeatedly."],
+            ["Where does Matter Intelligence fit?", "It is a featured discovery engine for ranked ground opportunities, signal agreement, reports and AI explanations."],
           ].map(([q, a]) => (
             <div key={q} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
               <div className="text-xl font-black text-cyan-100">{q}</div>
