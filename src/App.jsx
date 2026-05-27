@@ -5437,6 +5437,8 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
   const [cardIndex, setCardIndex] = useState(0);
   const [founderName, setFounderName] = useState("Paul Roper");
   const [headlineMode, setHeadlineMode] = useState("AI Headline");
+  const [exportLayout, setExportLayout] = useState("Portrait Poster");
+  const [seriesNumber, setSeriesNumber] = useState(36);
   const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(24)), []);
   const activeMaterial = elementMap[selected] || elementMap.Al;
   const compareSet = compare?.length ? compare : ["Al", "Ti", "Hf", "W"];
@@ -5485,6 +5487,9 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
       statC: `${cardStats.reports.toLocaleString()} reports`,
       statD: `${cardStats.shares.toLocaleString()} shares`,
       source: "Material Discovery",
+      cardNumber: `Discovery #${String(seriesNumber).padStart(3, "0")}`,
+      hook: "A rare signal surfaced inside the ElementOS discovery network.",
+      constellation: `${discovery?.a || "Ti"} → ${discovery?.b || "Hf"} → Report`,
     };
 
     if (format === "Scientific Trading Card") {
@@ -5500,12 +5505,19 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
       return { ...base, badge: "DISCOVERY REPORT", headline: "Report-Ready Discovery Asset", source: "Report Poster", subtitle: "executive brief + technical narrative", tier: "REPORTABLE" };
     }
     if (format === "League Table") {
-      return { ...base, badge: "TOP DISCOVERIES TODAY", headline: "Discovery Leaderboard", source: "League Table", subtitle: "ranked by momentum, saves and AI confidence", tier: "TRENDING" };
+      return { ...base, badge: "TOP DISCOVERIES TODAY", headline: "Discovery Leaderboard", source: "League Table", subtitle: "ranked by momentum, saves and AI confidence", tier: "TRENDING", hook: "The network is ranking today’s strongest material signals." };
+    }
+    if (format === "Discovery Poster") {
+      return { ...base, badge: "DISCOVERY POSTER", headline: "Exceptional Material Signal Detected", source: "Poster Export", subtitle: "premium launch poster for X, LinkedIn and Reddit", tier: "POSTER", hook: "Built to stop the scroll and turn a simulation into a public discovery." };
+    }
+    if (format === "Daily Discovery Series") {
+      return { ...base, badge: "DAILY DISCOVERY", headline: `Daily Discovery Series ${String(seriesNumber).padStart(3, "0")}`, source: "Daily Series", subtitle: "collectible discovery drop", tier: "SERIES", hook: "A new shareable discovery every day keeps ElementOS alive." };
     }
     return base;
   }, [format, discovery, cardStats, founderName, headlineMode]);
 
-  const formats = ["Discovery DNA", "Scientific Trading Card", "Founder Card", "Opportunity Poster", "Report Poster", "League Table"];
+  const formats = ["Discovery DNA", "Discovery Poster", "Daily Discovery Series", "Scientific Trading Card", "Founder Card", "Opportunity Poster", "Report Poster", "League Table"];
+  const exportLayouts = ["Square Card", "Portrait Poster", "Landscape Banner", "X Post", "LinkedIn", "Reddit"];
   const badges = ["First Discovery", "Top 1%", "Matter Pioneer", "Report Ready", "Public Asset"];
   const channels = [
     ["X / Twitter", "One sharp discovery card, one curiosity hook, one public discovery link."],
@@ -5566,12 +5578,29 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
 
 
   const copyCard = () => {
-    const text = `${cardData.headline}\n${cardData.title} · ${cardData.code}\n${cardData.score}% ${cardData.metric}\n${cardData.tier} · ${cardData.rank} · ${cardData.top}\nFound by ${cardData.founder}\n${cardData.narrative}\n${cardData.statA} · ${cardData.statB} · ${cardData.statC}\nGenerated in ElementOS`;
+    const text = `${cardData.headline}
+${cardData.title} · ${cardData.code}
+${cardData.score}% ${cardData.metric}
+${cardData.tier} · ${cardData.rank} · ${cardData.top}
+Found by ${cardData.founder}
+${cardData.narrative}
+${cardData.statA} · ${cardData.statB} · ${cardData.statC}
+${cardData.hook}
+${cardData.cardNumber}
+Generated in ElementOS`;
     navigator.clipboard?.writeText(text);
     alert("Viral card copy saved to clipboard.");
   };
 
   const exportSVG = () => {
+    const layoutMeta = {
+      "Square Card": { w: 1600, h: 1600, name: "square" },
+      "Portrait Poster": { w: 1600, h: 2100, name: "portrait" },
+      "Landscape Banner": { w: 2100, h: 1200, name: "landscape" },
+      "X Post": { w: 1600, h: 900, name: "x-post" },
+      "LinkedIn": { w: 1600, h: 1200, name: "linkedin" },
+      "Reddit": { w: 1600, h: 1200, name: "reddit" },
+    }[exportLayout] || { w: 1600, h: 2100, name: "portrait" };
     const [leftSymbol, rightSymbol] = splitPair(cardData.title);
     const exportHeadline = smartTitle(cardData.headline);
     const exportSubtitle = smartTitle(cardData.subtitle);
@@ -5580,7 +5609,7 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
     const headlineLines = wrapWords(exportHeadline, 34, 2);
     const subtitleLines = wrapWords(exportSubtitle, 42, 2);
     const footerLine = `Generated by ${cardData.founder} in ElementOS`;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2100" viewBox="0 0 1600 2100">
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${layoutMeta.w}" height="${layoutMeta.h}" viewBox="0 0 1600 2100">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#071b2f"/>
@@ -5652,9 +5681,9 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
 
   <text x="150" y="1928" fill="#fef3c7" class="label" font-size="25">${safeText(footerLine.toUpperCase())}</text>
   <text x="1450" y="1928" fill="#67e8f9" class="label" font-size="28" text-anchor="end">ELEMENTOS</text>
-  <text x="150" y="1972" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
+  <text x="150" y="1972" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">${safeText(cardData.cardNumber)} · ${safeText(exportLayout)} · DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
 </svg>`;
-    downloadFile(`ElementOS-${format.replace(/\s+/g, "-")}-viral-card.svg`, svg, "image/svg+xml");
+    downloadFile(`ElementOS-${format.replace(/\s+/g, "-")}-${layoutMeta.name}-viral-card.svg`, svg, "image/svg+xml");
   };
 
   return (
@@ -5690,10 +5719,25 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
             <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Founder name" />
             <button onClick={() => setHeadlineMode(headlineMode === "AI Headline" ? "Simple" : "AI Headline")} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-left text-sm font-black text-cyan-100">{headlineMode}</button>
           </div>
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-5">
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Export layout</div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-3">
+              {exportLayouts.map((layout) => (
+                <button
+                  key={layout}
+                  onClick={() => setExportLayout(layout)}
+                  className={`rounded-2xl border px-3 py-3 text-left text-xs font-black transition ${exportLayout === layout ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-black/20 text-slate-300 hover:bg-white/[.05]"}`}
+                >
+                  {layout}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-3">
+            <input value={seriesNumber} onChange={(e) => setSeriesNumber(Number(e.target.value) || 1)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Series number" />
             <Button onClick={() => setCardIndex((v) => v + 1)}>Next Discovery</Button>
             <Button onClick={copyCard}>Copy Post</Button>
-            <Button onClick={exportSVG} variant="primary">Export SVG</Button>
+            <Button onClick={exportSVG} variant="primary" className="sm:col-span-3">Export Premium SVG</Button>
           </div>
         </Panel>
       </Panel>
@@ -5732,6 +5776,7 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
 
             <div>
               <p className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-5 text-sm leading-7 text-slate-200">{cardData.narrative}</p>
+              <div className="mt-3 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50"><b>{cardData.cardNumber}</b> · {cardData.hook}<br/><span className="text-amber-100">Constellation:</span> {cardData.constellation}</div>
               <div className="mt-5 grid gap-3 sm:grid-cols-4">
                 {[cardData.statA, cardData.statB, cardData.statC, cardData.tier].map((stat) => (
                   <div key={stat} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-center text-sm font-black text-cyan-100">{stat}</div>
