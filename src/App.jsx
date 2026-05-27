@@ -1165,6 +1165,7 @@ const PAGE_LABELS = {
   welldriller: "Well Driller Lab",
   isotopes: "Isotope Lab",
   matterlab: "Matter Intelligence OS",
+  publicdiscovery: "Public Discovery Page",
   simreports: "Simulation Dossiers",
   viralcards: "Share Card Studio",
   reports: "Research Reports",
@@ -1180,6 +1181,7 @@ const MOBILE_PAGE_ORDER = [
   "mission",
   "discover",
   "matterlab",
+  "publicdiscovery",
   "compare",
   "isotopes",
   "scenario",
@@ -1657,13 +1659,25 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
 }
 
 
-function DiscoveryOSFeed({ discoveries = [], setPage }) {
-  const ranked = discoveries.length ? discoveries : adaptiveDiscoveryRank(generateDiscoveryEngine(12));
-  const spotlight = dailyDiscovery(ranked) || ranked[0];
-  const publishable = ranked.slice(0, 9).map((d, index) => ({
+function makePublishableDiscoveries(limit = 12) {
+  return adaptiveDiscoveryRank(generateDiscoveryEngine(limit)).map((d, index) => ({
     ...d,
     publicId: `${d.a}-${d.b}-${d.dna?.split("-").pop() || "OS"}-${1047 + index}`.toUpperCase(),
   }));
+}
+
+function createDiscoveryUrl(discovery) {
+  if (!discovery?.publicId) return "";
+  return `${window.location.origin}${window.location.pathname}?discovery=${discovery.publicId}`;
+}
+
+function DiscoveryOSFeed({ discoveries = [], setPage, setPublicDiscovery }) {
+  const ranked = discoveries.length ? discoveries : adaptiveDiscoveryRank(generateDiscoveryEngine(12));
+  const spotlight = dailyDiscovery(ranked) || ranked[0];
+  const publishable = (discoveries.length ? ranked.slice(0, 9).map((d, index) => ({
+    ...d,
+    publicId: `${d.a}-${d.b}-${d.dna?.split("-").pop() || "OS"}-${1047 + index}`.toUpperCase(),
+  })) : makePublishableDiscoveries(12).slice(0, 9));
 
   const copyText = (text) => {
     if (navigator?.clipboard?.writeText) {
@@ -1698,7 +1712,16 @@ function DiscoveryOSFeed({ discoveries = [], setPage }) {
     }
   };
 
-  const discoveryUrl = (discovery) => `${window.location.origin}${window.location.pathname}?discovery=${discovery.publicId}`;
+  const discoveryUrl = createDiscoveryUrl;
+
+  const openPublicDiscovery = (discovery) => {
+    setPublicDiscovery?.(discovery);
+    const url = discoveryUrl(discovery);
+    if (url) {
+      window.history.replaceState({}, document.title, `${window.location.pathname}?discovery=${discovery.publicId}`);
+    }
+    setPage("publicdiscovery");
+  };
 
   return (
     <>
@@ -1740,6 +1763,7 @@ function DiscoveryOSFeed({ discoveries = [], setPage }) {
               <Button onClick={() => setPage("compare")} variant="primary">Run Simulation</Button>
               <Button onClick={() => setPage("reports")}>Generate Report</Button>
               <Button onClick={() => copyText(`ElementOS Discovery: ${spotlight?.a} + ${spotlight?.b} — ${spotlight?.score}% score. ${spotlight?.reason}`)}>Copy Share Text</Button>
+              <Button onClick={() => openPublicDiscovery({ ...spotlight, publicId: `${spotlight?.a}-${spotlight?.b}-${spotlight?.dna?.split("-").pop() || "OS"}-1047`.toUpperCase() })}>Open Public Page</Button>
             </div>
           </div>
         </div>
@@ -1775,6 +1799,7 @@ function DiscoveryOSFeed({ discoveries = [], setPage }) {
                 <div className="rounded-xl bg-black/25 p-3"><b className="text-amber-100">{discovery.shares}</b><br/><span className="text-[10px] uppercase tracking-[.16em] text-slate-500">shares</span></div>
               </div>
               <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                <Button onClick={() => openPublicDiscovery(discovery)} variant="primary">Open Discovery</Button>
                 <Button onClick={() => { saveDiscovery(discovery); setPage("lab"); }}>Save to Workspace</Button>
                 <Button onClick={() => copyText(discoveryUrl(discovery))}>Copy Public URL</Button>
                 <Button onClick={() => setPage("reports")}>Open Report</Button>
@@ -1814,7 +1839,129 @@ function DiscoveryOSFeed({ discoveries = [], setPage }) {
   );
 }
 
-function Discover({ setPage }) {
+
+function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
+  const fallback = makePublishableDiscoveries(12)[0];
+  const current = discovery || fallback;
+  const pair = `${current?.a || "Al"} + ${current?.b || "Ti"}`;
+  const publicUrl = createDiscoveryUrl(current);
+
+  const copyText = (text) => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text);
+      return;
+    }
+    const input = document.createElement("textarea");
+    input.value = text;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand("copy");
+    input.remove();
+  };
+
+  const savePublicDiscovery = () => {
+    try {
+      const existing = JSON.parse(localStorage.getItem("elementos_saved_discoveries") || "[]");
+      const next = [
+        {
+          id: current.publicId,
+          pair,
+          score: current.score,
+          confidence: current.aiConfidence,
+          reason: current.reason,
+          createdAt: new Date().toISOString(),
+          publicUrl,
+        },
+        ...existing.filter((item) => item.id !== current.publicId),
+      ].slice(0, 50);
+      localStorage.setItem("elementos_saved_discoveries", JSON.stringify(next));
+      setPage("lab");
+    } catch (error) {
+      console.error("Unable to save public discovery", error);
+    }
+  };
+
+  return (
+    <>
+      <Panel className="border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-[#06101d]/95 to-amber-300/10">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Sparkles size={12}/> public discovery page</Pill>
+            <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+              {pair} <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-100 bg-clip-text text-transparent">Discovery</span>
+            </h1>
+            <p className="mt-4 max-w-4xl text-base leading-8 text-slate-300">
+              This is a share-ready ElementOS discovery page: a persistent result card with AI narrative, scores, report preview, workspace save and next-step actions.
+            </p>
+            <div className="mt-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-xs uppercase tracking-[.18em] text-slate-400">
+              Public ID: <span className="font-black text-cyan-100">{current.publicId}</span>
+            </div>
+          </div>
+          <div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6 text-center">
+            <div className="text-7xl font-black text-emerald-100">{current.score}%</div>
+            <div className="mt-2 text-xs uppercase tracking-[.22em] text-emerald-200">discovery score</div>
+          </div>
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
+        <Panel>
+          <Pill><Network size={12}/> AI narrative</Pill>
+          <h2 className="mt-3 text-3xl font-black">Why this discovery matters</h2>
+          <p className="mt-4 text-base leading-8 text-slate-300">
+            {pair} shows a strong publishable signal because {String(current.reason || "its material behaviour profile creates a useful compatibility pathway").toLowerCase()}. ElementOS ranks this result across compatibility, thermal-pressure behaviour, AI confidence and network momentum.
+          </p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4"><div className="text-3xl font-black text-cyan-100">{current.aiConfidence}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI confidence</div></div>
+            <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/10 p-4"><div className="text-3xl font-black text-emerald-200">+{current.velocity}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">velocity</div></div>
+            <div className="rounded-2xl border border-amber-300/15 bg-amber-300/10 p-4"><div className="text-3xl font-black text-amber-100">{current.momentum}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">momentum</div></div>
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><FileText size={12}/> report preview</Pill>
+          <h2 className="mt-3 text-3xl font-black">Research-ready output</h2>
+          <div className="mt-5 space-y-3">
+            {[
+              ["Discovery summary", `${pair} ranked as ${current.tier || "RARE"}`],
+              ["Primary signal", current.type || "Compatibility signal"],
+              ["Recommended action", "Run Time Machine, generate dossier, create share card"],
+              ["Public URL", publicUrl],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+                <div className="mt-1 text-sm font-bold text-cyan-100 break-words">{value}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><CheckCircle2 size={12}/> discovery actions</Pill>
+            <h2 className="mt-3 text-3xl font-black">What happens next?</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              A public discovery should lead somewhere: save it, report it, share it, or run the next simulation.
+            </p>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+          <Button onClick={() => copyText(publicUrl)} variant="primary">Copy URL</Button>
+          <Button onClick={() => copyText(`ElementOS Public Discovery: ${pair} — ${current.score}% score. ${current.reason}`)}>Copy Share Text</Button>
+          <Button onClick={savePublicDiscovery}>Save to Workspace</Button>
+          <Button onClick={() => setPage("timemachine")}>Run Time Machine</Button>
+          <Button onClick={() => setPage("simreports")}>Generate Dossier</Button>
+          <Button onClick={() => { setPublicDiscovery?.(null); window.history.replaceState({}, document.title, window.location.pathname); setPage("discover"); }}>Back to Feed</Button>
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+
+function Discover({ setPage, setPublicDiscovery }) {
   const generated = useMemo(() => generateDiscoveryEngine(24), []);
   const discoveries = useMemo(() => adaptiveDiscoveryRank(generated), [generated]);
   const top = discoveries[0];
@@ -1866,7 +2013,7 @@ function Discover({ setPage }) {
 
       <GuidePanel page="discover" />
       <RealTimeNetworkPanel discoveries={discoveries} setPage={setPage} />
-      <DiscoveryOSFeed discoveries={discoveries} setPage={setPage} />
+      <DiscoveryOSFeed discoveries={discoveries} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />
 
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -5934,6 +6081,7 @@ export default function App() {
   const [publicReport, setPublicReport] = useState(null);
   const [publicReportStatus, setPublicReportStatus] = useState("");
   const [commandOpen, setCommandOpen] = useState(false);
+  const [publicDiscovery, setPublicDiscovery] = useState(null);
 
 useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -5948,6 +6096,15 @@ useEffect(() => {
 
   const params = new URLSearchParams(window.location.search);
   const reportId = params.get("report");
+  const discoveryId = params.get("discovery");
+
+  if (discoveryId) {
+    const found = makePublishableDiscoveries(12).find((item) => item.publicId === discoveryId);
+    if (found) {
+      setPublicDiscovery(found);
+      setPage("publicdiscovery");
+    }
+  }
 
   if (reportId) {
     setPublicReportRequested(true);
@@ -6114,7 +6271,8 @@ const startCheckout = async () => {
           startCheckout={startCheckout}
         />
       ),
-      discover: <Discover setPage={setPage} />,
+      discover: <Discover setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
+      publicdiscovery: <PublicDiscoveryPage discovery={publicDiscovery} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
       timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} />,
       matterlab: <MatterIntelligenceLab />,
       scenario: <ScenarioBuilder selected={selected} setSelected={setSelected} setPage={setPage} />,
