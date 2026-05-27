@@ -4642,6 +4642,118 @@ function CopilotEverywhereBar({ page, setPage }) {
   );
 }
 
+
+function ScienceCommandElite({ setPage }) {
+  const scienceSignals = [
+    ["Material discovery", "94.2%", "Ti + Hf thermal-pressure signal", "discover"],
+    ["Matter intelligence", "87.4%", "Opportunity layer rising", "matterlab"],
+    ["Research output", "12", "Reports ready for publishing", "simreports"],
+    ["Workspace memory", "48", "Saved simulations and discoveries", "lab"],
+  ];
+  const dailyPath = [
+    ["01", "Discover", "Open the live feed and choose a promising material signal.", "discover"],
+    ["02", "Simulate", "Send it into Time Machine, Scenario Builder or Matter Intelligence.", "timemachine"],
+    ["03", "Publish", "Generate a dossier, public page and share card.", "simreports"],
+    ["04", "Return", "Save to Workspace and build tomorrow's discovery streak.", "lab"],
+  ];
+  return (
+    <Panel className="poster-card-gold overflow-hidden">
+      <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-400/15 blur-3xl" />
+      <div className="relative grid gap-6 xl:grid-cols-[.8fr_1.2fr] xl:items-center">
+        <div>
+          <Pill gold><Sparkles size={12}/> science command</Pill>
+          <h2 className="mt-3 text-5xl font-black leading-none text-white md:text-6xl">The daily command centre for discovery.</h2>
+          <p className="mt-4 text-sm leading-7 text-slate-300">
+            ElementOS now gives every visitor a clear path: see today's signal, run a discovery, generate a report, save it, and publish it as a shareable science asset.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button onClick={() => setPage('discover')} variant="primary">Start Today's Discovery</Button>
+            <Button onClick={() => setPage('matterlab')}>Open Matter Intelligence</Button>
+            <Button onClick={() => setPage('beta')}>Join Founding Beta</Button>
+          </div>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          {scienceSignals.map(([title, value, body, target]) => (
+            <button key={title} onClick={() => setPage(target)} className="rounded-[1.6rem] border border-white/10 bg-black/30 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-cyan-300/10">
+              <div className="text-[10px] uppercase tracking-[.25em] text-slate-500">{title}</div>
+              <div className="mt-2 text-5xl font-black text-cyan-100">{value}</div>
+              <div className="mt-2 text-sm leading-6 text-slate-300">{body}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="relative mt-7 grid gap-3 md:grid-cols-4">
+        {dailyPath.map(([num, title, body, target]) => (
+          <button key={title} onClick={() => setPage(target)} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-4 text-left transition hover:bg-cyan-300/10">
+            <div className="text-xs font-black text-amber-100">{num}</div>
+            <div className="mt-2 text-xl font-black text-white">{title}</div>
+            <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function LiveScienceHeartbeat({ setPage }) {
+  const rows = [
+    ["Trending now", "Gallium + Indium", "Liquid-metal pathway moving across Discovery Feed", "discover"],
+    ["Today's opportunity", "North Craton Field", "Matter Intelligence target confidence rising", "matterlab"],
+    ["Report engine", "Executive Brief", "One-click publishable summary ready", "simreports"],
+    ["Public asset", "TI-HF-1047", "Shareable discovery page prepared", "publicdiscovery"],
+  ];
+  return (
+    <Panel>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Pill><Activity size={12}/> live science heartbeat</Pill>
+          <h2 className="mt-3 text-4xl font-black">Make the site feel alive before users click anything.</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">A visitor should instantly understand: discoveries are happening, reports are being created, and ElementOS is a place worth returning to tomorrow.</p>
+        </div>
+        <Button onClick={() => setPage('dashboard')} variant="primary">Open Discovery Command</Button>
+      </div>
+      <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {rows.map(([label, title, body, target]) => (
+          <button key={title} onClick={() => setPage(target)} className="poster-card rounded-[1.6rem] p-5 text-left transition hover:-translate-y-1">
+            <div className="text-[10px] uppercase tracking-[.25em] text-slate-500">{label}</div>
+            <div className="mt-3 text-2xl font-black text-white">{title}</div>
+            <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function ConversionProofDeck({ setPage }) {
+  const proof = [
+    ["Why I need this", "It turns confusing scientific options into a guided discovery path."],
+    ["What I do first", "Start Discovery Scan, then open the strongest signal."],
+    ["Why I come back", "Daily discoveries, saved workspace, public pages and reports."],
+    ["Why I pay", "Exports, dossiers, saved research and advanced intelligence workflows."],
+  ];
+  return (
+    <Panel className="poster-card-gold">
+      <div className="grid gap-6 xl:grid-cols-[.75fr_1.25fr] xl:items-center">
+        <div>
+          <Pill gold><ShieldCheck size={12}/> conversion clarity</Pill>
+          <h2 className="mt-3 text-4xl font-black">The first 30 seconds should sell the whole idea.</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">ElementOS is no longer just a dashboard. It is a discovery operating system with a clear user journey, daily return loop and report output.</p>
+          <Button onClick={() => setPage('mission')} variant="primary" className="mt-5">Begin Guided Mission</Button>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          {proof.map(([title, body]) => (
+            <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-5">
+              <div className="text-lg font-black text-amber-100">{title}</div>
+              <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function LandingPage({ setPage, session, isPro, startCheckout }) {
   const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(18)), []);
   const daily = discoveries[0] || { a: "Ti", b: "Hf", aiConfidence: 94, momentum: 91, tier: "RARE", score: 94, type: "Rare thermal-pressure alignment" };
@@ -4736,7 +4848,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
                 ELEMENT<span className="poster-cyan">OS</span>
               </h1>
               <p className="mx-auto mt-5 max-w-3xl text-sm font-semibold uppercase tracking-[.35em] text-slate-200 sm:text-lg">
-                The discovery operating system for <span className="poster-cyan">matter intelligence</span>
+                The most cinematic discovery workspace for <span className="poster-cyan">matter intelligence</span>
               </p>
 
               <div className="poster-orbit relative mx-auto mt-8 grid h-60 w-60 place-items-center rounded-[2rem] border border-cyan-300/50 bg-cyan-300/10 shadow-[0_0_110px_rgba(34,211,238,.32)] sm:h-80 sm:w-80">
@@ -4800,6 +4912,8 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
       </Panel>
 
       <DiscoveryCommandCenter setPage={setPage} compare={heroCompare} />
+      <ScienceCommandElite setPage={setPage} />
+      <LiveScienceHeartbeat setPage={setPage} />
       <MissionProgressPanel setPage={setPage} />
 
       <div className="grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
@@ -4858,7 +4972,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
           <div>
             <Pill gold><ShieldCheck size={12} /> why users subscribe</Pill>
             <h2 className="mt-3 text-4xl font-black">ElementOS should feel useful in the first 30 seconds.</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-300">The landing page now shows exactly what the product does, why it exists, and where a new user should click first.</p>
+            <p className="mt-3 text-sm leading-7 text-slate-300">The landing page now shows the signal, the workflow, the outcome and the reason to come back tomorrow.</p>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             {whySubscribe.map(([title, body]) => (
@@ -4870,6 +4984,8 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
           </div>
         </div>
       </Panel>
+
+      <ConversionProofDeck setPage={setPage} />
 
       <GuidedNextStep
         setPage={setPage}
