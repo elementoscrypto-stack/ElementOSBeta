@@ -809,9 +809,22 @@ function MatterIntelligenceLab() {
   const selectedModule = miModules[moduleIndex];
   const selectedTarget = miTargets[targetIndex];
 
+  const dailyOpportunity = useMemo(() => {
+    const seed = Math.floor(Date.now() / 86400000);
+    return miTargets[seed % miTargets.length];
+  }, []);
+
+  const opportunityScore = useMemo(() => {
+    const base = selectedTarget.confidence;
+    const moduleLift = Math.round(selectedModule.signal * 0.08);
+    return Math.min(99, Math.round(base * 0.86 + moduleLift));
+  }, [selectedModule, selectedTarget]);
+
   const aiLine = useMemo(() => {
-    if (scanning) return "Analyzing public layers, private survey data, geometry, and historical similarity...";
-    return `${selectedTarget.id} is ranked highly because ${selectedTarget.reasons[0].toLowerCase()}, ${selectedTarget.reasons[1].toLowerCase()}, and multiple datasets agree.`;
+    if (scanning) {
+      return "Matter Intelligence is comparing geological signal, material behaviour, historical similarity, target geometry and telemetry agreement.";
+    }
+    return `${selectedTarget.id} is ranked highly because ${selectedTarget.reasons[0].toLowerCase()}, ${selectedTarget.reasons[1].toLowerCase()}, and multiple evidence layers are pointing in the same direction.`;
   }, [scanning, selectedTarget]);
 
   const runScan = () => {
@@ -822,6 +835,7 @@ function MatterIntelligenceLab() {
       setScanning(false);
       setReportReady(true);
       setOnboarded(true);
+      setActive("Targets");
     }, 1700);
   };
 
@@ -836,9 +850,202 @@ function MatterIntelligenceLab() {
   const showReportsArea = active === "Home" || active === "Reports" || active === "Discovery Playbooks";
   const showPlansArea = active === "Home" || active === "Settings";
 
+  const pipeline = [
+    ["01", "Opportunity Scan", "Choose a resource, signal type or target field."],
+    ["02", "Discovery", "Rank targets by evidence agreement and historical similarity."],
+    ["03", "Report", "Turn complex signals into a board-ready narrative."],
+    ["04", "Workspace", "Save targets, compare changes and prepare field review."],
+    ["05", "Public Discovery", "Package the strongest result for sharing or investor review."],
+  ];
+
+  const recentIntelligence = [
+    ["Diamond confidence increased", "Northern craton signal moved +8% after geometry agreement improved.", "+8%"],
+    ["Historical similarity match", "Current target pattern resembles known discovery structures above 92%.", "92%"],
+    ["Signal agreement improved", "Gravity, magnetics and geometry are converging around the same structure.", "Rising"],
+    ["Report generated", "Executive Discovery Brief is ready for target review.", "Ready"],
+  ];
+
+  const scannerOptions = ["Diamonds", "Gold", "Lithium", "Copper", "Water", "Geothermal", "Uranium", "Custom"];
+
   return (
-    <div className="min-h-screen bg-[#020617] p-4 text-slate-100 md:p-8">
-      <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[260px_1fr]">
+    <div className="space-y-6">
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-blue-950/30 p-0">
+        <div className="relative p-6 md:p-8">
+          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
+          <div className="relative grid gap-8 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
+            <div>
+              <div className="flex flex-wrap gap-2">
+                <Pill gold><Sparkles size={12}/> flagship advanced lab</Pill>
+                <Pill><Globe2 size={12}/> discovery operating system</Pill>
+                <Pill><Radar size={12}/> signal agreement</Pill>
+              </div>
+              <h1 className="mt-5 max-w-5xl text-5xl font-black leading-[.92] tracking-tight md:text-7xl">
+                Matter Intelligence <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery OS</span>
+              </h1>
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
+                Discover opportunities hidden inside materials, geology, telemetry, historical patterns and signal agreement. Matter Intelligence turns scattered evidence into ranked discoveries, reports and next actions.
+              </p>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <Button onClick={runScan} variant="primary" className="px-8 py-5 text-base">
+                  <Radar size={17} className="mr-2 inline" /> {scanning ? "Scanning Opportunity Field..." : "Run Opportunity Scan"}
+                </Button>
+                <Button onClick={() => setActive("Reports")} className="px-8 py-5 text-base">
+                  <FileText size={17} className="mr-2 inline" /> Generate Intelligence Report
+                </Button>
+                <Button onClick={() => setActive("Discovery Map")} className="px-8 py-5 text-base">
+                  <Map size={17} className="mr-2 inline" /> Open Discovery Map
+                </Button>
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 shadow-[0_0_80px_rgba(34,211,238,.12)]">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-xs uppercase tracking-[.25em] text-cyan-200">Today's Opportunity</div>
+                  <div className="mt-3 text-4xl font-black text-white">{dailyOpportunity.name}</div>
+                  <div className="mt-1 text-sm text-slate-400">{dailyOpportunity.module} target · {dailyOpportunity.depth}</div>
+                </div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-right">
+                  <div className="text-4xl font-black text-emerald-100">{dailyOpportunity.confidence}%</div>
+                  <div className="text-[10px] uppercase tracking-[.2em] text-emerald-200">score</div>
+                </div>
+              </div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                {[["Signal", dailyOpportunity.agreement], ["Glyph", dailyOpportunity.glyph], ["Trend", dailyOpportunity.trend]].map(([label, value]) => (
+                  <div key={label} className="rounded-2xl border border-white/10 bg-white/[.04] p-4">
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+                    <div className="mt-2 text-lg font-black text-cyan-100">{value}</div>
+                  </div>
+                ))}
+              </div>
+              <Button onClick={() => { setTargetIndex(miTargets.findIndex((t) => t.id === dailyOpportunity.id)); setActive("Targets"); }} variant="primary" className="mt-5 w-full">
+                Generate Discovery From Today's Opportunity
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Target size={12}/> guided pipeline</Pill>
+            <h2 className="mt-3 text-4xl font-black">The Matter Intelligence Workflow</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              This lab is designed as a complete discovery pipeline, not just a dashboard. Scan, discover, report, save and publish from one guided system.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">
+            {onboarded ? "Workflow unlocked" : "Start with Run Opportunity Scan"}
+          </div>
+        </div>
+        <div className="mt-6 grid gap-3 md:grid-cols-5">
+          {pipeline.map(([step, title, body], index) => (
+            <div key={title} className="relative rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-4">
+              <div className="text-xs font-black text-cyan-200">{step}</div>
+              <div className="mt-2 text-lg font-black text-white">{title}</div>
+              <p className="mt-2 text-xs leading-5 text-slate-400">{body}</p>
+              {index < pipeline.length - 1 && <div className="pointer-events-none absolute -right-3 top-1/2 hidden h-px w-6 bg-cyan-300/30 md:block" />}
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <section className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
+        <Panel>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <Pill><Waves size={12}/> discovery potential layer</Pill>
+              <h2 className="mt-3 text-3xl font-black">Current Opportunity Score</h2>
+            </div>
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-sm font-bold text-emerald-100">▲ Rising</div>
+          </div>
+          <div className="mt-6 grid gap-6 md:grid-cols-[220px_1fr] md:items-center">
+            <div className="relative mx-auto grid h-52 w-52 place-items-center rounded-full border border-cyan-300/20 bg-[radial-gradient(circle,rgba(34,211,238,.22),transparent_62%)] shadow-[0_0_80px_rgba(34,211,238,.12)]">
+              <div className="absolute inset-4 rounded-full border border-cyan-300/20" />
+              <div className="absolute inset-8 rounded-full border border-dashed border-cyan-300/20" />
+              <div className="text-center">
+                <div className="text-6xl font-black text-cyan-100">{opportunityScore}</div>
+                <div className="text-xs uppercase tracking-[.25em] text-slate-500">score</div>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {[["Signal agreement", signalValues[0]], ["Historical similarity", signalValues[3]], ["Geometry confidence", signalValues[2]], ["Structure stability", signalValues[4]]].map(([label, value]) => (
+                <div key={label}>
+                  <div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div>
+                  <div className="h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-emerald-300" style={{ width: `${value}%` }} /></div>
+                </div>
+              ))}
+              <Info title="Why this matters">{aiLine}</Info>
+            </div>
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><Radar size={12}/> opportunity scanner</Pill>
+          <h2 className="mt-3 text-3xl font-black">What are you looking for?</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Pick a discovery target. Matter Intelligence changes the signal model, report language and ranking logic around the opportunity.</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {scannerOptions.map((name) => {
+              const found = miModules.find((m) => m.name === name);
+              const activeOption = selectedModule.name === name;
+              return (
+                <button key={name} onClick={() => { const index = miModules.findIndex((m) => m.name === name); if (index >= 0) setModuleIndex(index); }} className={`rounded-2xl border p-4 text-left transition ${activeOption ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-50" : "border-white/10 bg-black/25 text-slate-300 hover:border-cyan-300/30 hover:bg-cyan-300/10"}`}>
+                  <div className="text-lg font-black">{name}</div>
+                  <div className="mt-2 text-xs text-slate-500">{found ? `${found.signal}% readiness` : "Custom model"}</div>
+                </button>
+              );
+            })}
+          </div>
+          <Button onClick={runScan} variant="primary" className="mt-5 w-full py-5 text-base">
+            {scanning ? "Running Scan..." : "Run Discovery Scan"}
+          </Button>
+        </Panel>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
+        <Panel>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <Pill><LineChart size={12}/> recent intelligence</Pill>
+              <h2 className="mt-3 text-3xl font-black">Live Opportunity Feed</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-400">Signals, report events and opportunity movement are surfaced as plain-language intelligence.</p>
+            </div>
+            <Button onClick={() => setActive("Discovery Map")}>Open Map</Button>
+          </div>
+          <div className="mt-5 space-y-3">
+            {recentIntelligence.map(([title, body, tag]) => (
+              <div key={title} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div>
+                  <div className="font-black text-cyan-100">{title}</div>
+                  <p className="mt-1 text-sm leading-6 text-slate-400">{body}</p>
+                </div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-sm font-black text-emerald-100">{tag}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><FileText size={12}/> report generator</Pill>
+          <h2 className="mt-3 text-3xl font-black">Turn a signal into a product.</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Generate investor, technical or field-ready intelligence from the selected target.</p>
+          <div className="mt-5 grid gap-3">
+            {["Executive Brief", "Technical Report", "Investor Pack", "Field Survey Pack"].map((name) => (
+              <div key={name} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[.04] p-4">
+                <div>
+                  <div className="font-black text-white">{name}</div>
+                  <div className="text-xs text-slate-500">Generated from {selectedTarget.id} · {selectedModule.name}</div>
+                </div>
+                <Button onClick={() => { setReportReady(true); setActive("Reports"); }} variant={name === "Investor Pack" ? "primary" : "ghost"}>Generate</Button>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </section>
+
+      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
         <MISidebar active={active} setActive={setActive} />
         <main className="space-y-6">
           <MIDashboardHeader active={active} setActive={setActive} />
@@ -846,8 +1053,8 @@ function MatterIntelligenceLab() {
           {!onboarded && (
             <section className="rounded-[2rem] border border-cyan-300/10 bg-gradient-to-br from-cyan-950/25 via-slate-950 to-slate-950 p-5">
               <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div><h2 className="text-xl font-black text-white">Your first discovery workflow</h2><p className="mt-1 text-sm text-slate-400">Run one scan to unlock the full demo flow: target explanation, report preview, and project save.</p></div>
-                <button onClick={runScan} className="rounded-2xl bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950">Start guided scan</button>
+                <div><h2 className="text-xl font-black text-white">Recommended first move</h2><p className="mt-1 text-sm text-slate-400">Run one scan to unlock target explanation, report preview and project save.</p></div>
+                <Button onClick={runScan} variant="primary">Start guided scan</Button>
               </div>
               <div className="grid gap-3 md:grid-cols-5">
                 {miOnboardingSteps.map((step, index) => <div key={step} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-sm text-slate-300"><span className="mb-2 block text-xs font-black text-cyan-200">STEP {index + 1}</span>{step}</div>)}
@@ -859,84 +1066,11 @@ function MatterIntelligenceLab() {
             {miKpis.map(([label, value, change]) => <div key={label} className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4"><div className="text-xs text-slate-500">{label}</div><div className="mt-2 text-3xl font-black text-white">{value}</div><div className="mt-1 text-xs font-bold text-cyan-200">{change}</div></div>)}
           </section>
 
-          <header className="relative overflow-hidden rounded-[2.75rem] border border-cyan-300/10 bg-gradient-to-br from-slate-950 via-[#07111f] to-cyan-950/50 p-6 shadow-[0_0_140px_rgba(34,211,238,0.12)] md:p-8">
-            <div className="pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full bg-cyan-400/10 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-28 left-1/3 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
-            <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-center">
-              <div>
-                <div className="mb-5 flex flex-wrap gap-2">
-                  <MIPill>Exploration Intelligence</MIPill>
-                  <MIPill>AI target ranking</MIPill>
-                  <MIPill>Reports + workspaces</MIPill>
-                </div>
-                <h1 className="max-w-4xl text-4xl font-black tracking-tight md:text-7xl">
-                  Find the next opportunity hidden in the ground.
-                </h1>
-                <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
-                  Matter Intelligence OS combines geological data, historical discoveries, signal agreement, and AI ranking to identify the most promising miTargets. Discover faster, explain decisions, and generate miReports.
-                </p>
-                <div className="mt-6 grid gap-3 md:grid-cols-3">
-                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                    <div className="mb-2 text-xs uppercase tracking-widest text-slate-500">Input</div>
-                    <div className="font-black text-white">Geology + telemetry</div>
-                    <p className="mt-2 text-sm leading-6 text-slate-400">Maps, magnetics, gravity, satellite layers, drill logs, private datasets.</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                    <div className="mb-2 text-xs uppercase tracking-widest text-slate-500">Engine</div>
-                    <div className="font-black text-white">AI signal agreement</div>
-                    <p className="mt-2 text-sm leading-6 text-slate-400">The system looks for places where independent signals point to the same opportunity.</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                    <div className="mb-2 text-xs uppercase tracking-widest text-slate-500">Output</div>
-                    <div className="font-black text-white">Ranked opportunities</div>
-                    <p className="mt-2 text-sm leading-6 text-slate-400">Clear target scores, explanations, miReports, timelines, and team actions.</p>
-                  </div>
-                </div>
-                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                  <button onClick={runScan} className="rounded-[1.5rem] bg-cyan-300 px-8 py-5 text-lg font-black text-slate-950 shadow-2xl shadow-cyan-950/40 transition hover:scale-[1.02] hover:bg-cyan-200">
-                    {scanning ? "ANALYZING..." : "RUN DISCOVERY SCAN"}
-                  </button>
-                  <button onClick={() => setActive("Targets")} className="rounded-[1.5rem] border border-white/10 bg-white/[0.06] px-8 py-5 text-lg font-black text-white transition hover:bg-white/[0.1]">
-                    View opportunities
-                  </button>
-                </div>
-              </div>
-
-              <div className="rounded-[2rem] border border-cyan-300/10 bg-black/30 p-5 shadow-2xl shadow-cyan-950/20 backdrop-blur-xl">
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs uppercase tracking-widest text-slate-500">What it actually does</div>
-                    <div className="mt-1 text-2xl font-black text-white">Opportunity Command Center</div>
-                  </div>
-                  <div className="rounded-2xl bg-cyan-300 p-3 text-slate-950"><Radar size={24} /></div>
-                </div>
-                <div className="space-y-3">
-                  {[
-                    ["1", "Choose what you want to discover", "Diamonds, gold, lithium, copper, uranium, rare earths, groundwater, geothermal, or custom."],
-                    ["2", "Connect or select data layers", "Public maps, survey files, satellite feeds, drilling history, and private exploration data."],
-                    ["3", "AI ranks the strongest opportunities", "Targets rise when multiple signals agree and historical patterns look similar."],
-                    ["4", "Generate a report", "Export a plain-English target explanation for teams, investors, or field review."],
-                  ].map(([num, title, body]) => (
-                    <div key={num} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                      <div className="flex gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{num}</div>
-                        <div>
-                          <div className="font-black text-cyan-100">{title}</div>
-                          <p className="mt-1 text-sm leading-6 text-slate-400">{body}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </header>
-
           {active === "Home" && (
             <section className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
               <div className="mb-5">
-                <h2 className="text-2xl font-black text-white">What would you like to discover?</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-400">Pick an opportunity type. MIOS changes the playbook, signal model, and target ranking language around that goal.</p>
+                <h2 className="text-2xl font-black text-white">Choose a discovery module</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-400">Matter Intelligence changes the playbook, signal model and target ranking language around the goal.</p>
               </div>
               <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
                 {miModules.map((mod, index) => <MIModuleCard key={mod.name} mod={mod} selected={moduleIndex === index} onClick={() => setModuleIndex(index)} />)}
@@ -949,18 +1083,18 @@ function MatterIntelligenceLab() {
               <MIDiscoveryEarth scanning={scanning} selectedModule={selectedModule} />
               <div className="space-y-6">
                 <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
-                  <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><Bot size={22} /> AI Assistant</h2>
-                  <p className="mb-4 text-sm leading-6 text-slate-400">Ask plain-English questions about miTargets, signals, miReports, miProjects, and material profiles. This turns complex exploration data into usable answers.</p>
-                  <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="mb-2 text-xs uppercase tracking-widest text-cyan-200/70">Plain-language answer</div><p className="text-sm leading-6 text-cyan-50">{aiLine}</p></div>
+                  <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><Bot size={22} /> Why This Matters</h2>
+                  <p className="mb-4 text-sm leading-6 text-slate-400">Plain-language reasoning turns complex signals into a decision a user can understand.</p>
+                  <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="mb-2 text-xs uppercase tracking-widest text-cyan-200/70">Intelligence narrative</div><p className="text-sm leading-6 text-cyan-50">{aiLine}</p></div>
                   <div className="mt-4 grid gap-2">
                     {["Why is this target ranked highly?", "Generate investor report", "Show similar discoveries"].map((question) => <button key={question} className="rounded-xl bg-white/[0.04] px-3 py-2 text-left text-sm text-slate-300 hover:bg-white/[0.08]">{question}</button>)}
                   </div>
                 </div>
                 <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
                   <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><Waves size={22} /> Signal Agreement</h2>
-                  <p className="mb-4 text-sm leading-6 text-slate-400">A target becomes more useful when independent datasets point toward the same conclusion. This score shows how strongly the evidence layers agree.</p>
-                  {miSignalLabels.map((label, index) => {
-                    const value = miSignalValues[index];
+                  <p className="mb-4 text-sm leading-6 text-slate-400">Targets become more useful when independent datasets point to the same conclusion.</p>
+                  {signalLabels.map((label, index) => {
+                    const value = signalValues[index];
                     return <div key={label} className="mb-3"><div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div><div className="h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div></div>;
                   })}
                 </div>
@@ -972,14 +1106,14 @@ function MatterIntelligenceLab() {
             <section className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
               <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
                 <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><Target size={22} /> Ranked Targets</h2>
-                <p className="mb-4 text-sm leading-6 text-slate-400">Targets are possible opportunities sorted by signal strength, historical similarity, geometry, and confidence. Start here when deciding what deserves attention.</p>
+                <p className="mb-4 text-sm leading-6 text-slate-400">Targets are opportunities sorted by signal strength, historical similarity, geometry and confidence.</p>
                 <div className="space-y-3">{miTargets.map((target, index) => <MITargetCard key={target.id} target={target} active={targetIndex === index} onClick={() => setTargetIndex(index)} />)}</div>
               </div>
               <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
                 <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div>
                     <h2 className="flex items-center gap-2 text-xl font-black"><ClipboardList size={22} /> Why This Target?</h2>
-                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Instead of showing raw data alone, MIOS explains why a target deserves attention and converts the strongest evidence into plain language.</p>
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Matter Intelligence explains why a target deserves attention and converts evidence into plain language.</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button onClick={toggleSaveTarget} className="rounded-xl bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200 hover:bg-white/[0.1]">{savedTargets.includes(selectedTarget.id) ? "Saved" : "Save target"}</button>
@@ -1000,17 +1134,10 @@ function MatterIntelligenceLab() {
                   <h3 className="mb-2 font-black text-cyan-100">Discovery DNA</h3>
                   <p className="mb-4 text-sm leading-6 text-slate-400">This breaks the opportunity into the evidence layers that make it interesting.</p>
                   <div className="grid gap-3 md:grid-cols-2">
-                    {miSignalLabels.map((label, index) => {
-                      const value = miSignalValues[index];
+                    {signalLabels.map((label, index) => {
+                      const value = signalValues[index];
                       return <div key={label}><div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div><div className="h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div></div>;
                     })}
-                  </div>
-                </div>
-                <div className="mt-5 rounded-2xl border border-white/10 bg-black/25 p-5">
-                  <h3 className="mb-2 font-black text-cyan-100">Discovery Timeline</h3>
-                  <p className="mb-4 text-sm leading-6 text-slate-400">Many discoveries begin as weak signals and become stronger as more information arrives. This miTimeline shows how confidence evolved.</p>
-                  <div className="grid gap-3 md:grid-cols-5">
-                    {miTimeline.map(([year, text]) => <div key={year} className="rounded-2xl bg-white/[0.035] p-3"><div className="text-sm font-black text-white">{year}</div><div className="mt-1 text-xs leading-5 text-slate-400">{text}</div></div>)}
                   </div>
                 </div>
               </div>
@@ -1021,12 +1148,12 @@ function MatterIntelligenceLab() {
             <section className="grid gap-6 lg:grid-cols-3">
               <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5 lg:col-span-2">
                 <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><BriefcaseBusiness size={22} /> Projects</h2>
-                <p className="mb-4 text-sm leading-6 text-slate-400">Projects organize discoveries. Store miTargets, miReports, notes, comments, team activity, and decision history in one place.</p>
-                <div className="grid gap-3 md:grid-cols-3">{miProjects.map((project) => <div key={project.name} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="font-black text-white">{project.name}</div><div className="mt-2 text-sm text-slate-400">{project.miTargets} miTargets · {project.miReports} miReports · {project.members} members</div><div className="mt-3 text-xs font-bold text-cyan-200">{project.status}</div></div>)}</div>
+                <p className="mb-4 text-sm leading-6 text-slate-400">Projects organize discoveries, targets, reports, notes and team activity.</p>
+                <div className="grid gap-3 md:grid-cols-3">{miProjects.map((project) => <div key={project.name} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="font-black text-white">{project.name}</div><div className="mt-2 text-sm text-slate-400">{project.targets} targets · {project.reports} reports · {project.members} members</div><div className="mt-3 text-xs font-bold text-cyan-200">{project.status}</div></div>)}</div>
               </div>
               <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
                 <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><LineChart size={22} /> Opportunity Feed</h2>
-                <p className="mb-4 text-sm leading-6 text-slate-400">Opportunity changes as new information arrives. The feed highlights confidence increases, saved miTargets, generated miReports, and new signal matches.</p>
+                <p className="mb-4 text-sm leading-6 text-slate-400">The feed highlights confidence increases, saved targets, generated reports and new signal matches.</p>
                 <div className="space-y-3">{miDiscoveryFeed.slice(0, 3).map((item) => <MIFeedCard key={item.title} item={item} />)}</div>
               </div>
             </section>
@@ -1037,7 +1164,7 @@ function MatterIntelligenceLab() {
               {reportReady && (
                 <section className="rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-950/30 via-slate-950 to-slate-950 p-6 shadow-2xl shadow-cyan-950/20">
                   <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div><h2 className="text-2xl font-black text-white">Report Preview Ready</h2><p className="mt-2 text-sm text-slate-400">A subscriber-grade report has been generated for {selectedTarget.id}. This is the moment that makes the app feel useful.</p></div>
+                    <div><h2 className="text-2xl font-black text-white">Report Preview Ready</h2><p className="mt-2 text-sm text-slate-400">A subscriber-grade report has been generated for {selectedTarget.id}.</p></div>
                     <div className="flex gap-2"><button className="rounded-2xl bg-white/[0.06] px-4 py-3 text-sm font-bold text-slate-200">Preview</button><button className="rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950">Export PDF</button></div>
                   </div>
                   <div className="grid gap-4 md:grid-cols-4">
@@ -1053,12 +1180,12 @@ function MatterIntelligenceLab() {
               <section className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
                 <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
                   <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><FileText size={22} /> Reports</h2>
-                  <p className="mb-4 text-sm leading-6 text-slate-400">Reports transform complex analysis into a format suitable for management, investors, partners, and field teams.</p>
-                  <div className="grid gap-3 md:grid-cols-2">{miReports.map((report) => <div key={report.name} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="flex items-center justify-between"><div className="font-black text-white">{report.name}</div>{report.locked && <Lock size={16} className="text-slate-500" />}</div><div className="mt-2 text-sm text-slate-400">{report.type} · {report.pages} pages</div><button className="mt-4 rounded-xl bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200 hover:bg-cyan-300 hover:text-slate-950">Generate</button></div>)}</div>
+                  <p className="mb-4 text-sm leading-6 text-slate-400">Reports transform complex analysis into a format suitable for management, investors, partners and field teams.</p>
+                  <div className="grid gap-3 md:grid-cols-2">{miReports.map((report) => <div key={report.name} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="flex items-center justify-between"><div className="font-black text-white">{report.name}</div>{report.locked && <Lock size={16} className="text-slate-500" />}</div><div className="mt-2 text-sm text-slate-400">{report.type} · {report.pages} pages</div><button onClick={() => setReportReady(true)} className="mt-4 rounded-xl bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200 hover:bg-cyan-300 hover:text-slate-950">Generate</button></div>)}</div>
                 </div>
                 <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
                   <h2 className="mb-2 flex items-center gap-2 text-xl font-black"><Compass size={22} /> Product Language</h2>
-                  <p className="mb-4 text-sm leading-6 text-slate-400">These are the terms that make the product memorable, translated into simple exploration language.</p>
+                  <p className="mb-4 text-sm leading-6 text-slate-400">These terms make the product memorable, translated into simple exploration language.</p>
                   <div className="grid gap-3">{miDefinitions.map(([term, text]) => <div key={term} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="font-black text-cyan-100">{term}</div><p className="mt-1 text-sm leading-6 text-slate-400">{text}</p></div>)}</div>
                 </div>
               </section>
@@ -1069,7 +1196,7 @@ function MatterIntelligenceLab() {
             <section className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
               <div className="mb-5">
                 <h2 className="text-2xl font-black text-white">Discovery Playbooks</h2>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each playbook explains what conditions MIOS is searching for, why those clues matter, and what makes a target worth reviewing.</p>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each playbook explains what conditions Matter Intelligence is searching for and what makes a target worth reviewing.</p>
               </div>
               <div className="grid gap-4 lg:grid-cols-3">
                 {miMaterialGuides.map((guide) => (
@@ -1085,41 +1212,12 @@ function MatterIntelligenceLab() {
             </section>
           )}
 
-          {active === "Home" && (
-            <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-              <div className="rounded-[2rem] border border-cyan-300/10 bg-cyan-300/5 p-6">
-                <h2 className="text-2xl font-black text-white">Why subscribers use MIOS</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-400">Subscribers stay because the platform keeps turning complex data into clear next actions.</p>
-                <div className="mt-5 grid gap-3">
-                  {miSubscriberReasons.map((reason) => <div key={reason} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm text-slate-300"><ShieldCheck size={16} className="mr-2 inline text-cyan-200" />{reason}</div>)}
-                </div>
-              </div>
-              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-                <h2 className="text-2xl font-black text-white">How MIOS thinks</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-400">The platform follows a simple chain: data comes in, signals are compared, opportunities are ranked, and decisions become clearer.</p>
-                <div className="mt-5 grid gap-3">
-                  {miThinkingFlow.map(([stage, text], index) => (
-                    <div key={stage} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                      <div className="flex gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{index + 1}</div>
-                        <div>
-                          <div className="font-black text-cyan-100">{stage}</div>
-                          <p className="mt-1 text-sm leading-6 text-slate-400">{text}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
-
           {showUpgrade && (
             <section className="rounded-[2rem] border border-fuchsia-300/20 bg-gradient-to-br from-fuchsia-950/20 via-slate-950 to-cyan-950/20 p-6">
               <div className="grid gap-6 md:grid-cols-[1fr_0.8fr] md:items-center">
                 <div>
                   <h2 className="text-3xl font-black text-white">Unlock the full collaborative OS</h2>
-                  <p className="mt-3 text-sm leading-6 text-slate-300">Marketplace publishing, advanced team roles, private model sharing, and enterprise dataset controls are premium features.</p>
+                  <p className="mt-3 text-sm leading-6 text-slate-300">Marketplace publishing, advanced team roles, private model sharing and enterprise dataset controls are premium features.</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
                   <div className="text-sm text-slate-400">Recommended</div>
@@ -1132,14 +1230,29 @@ function MatterIntelligenceLab() {
 
           {showPlansArea && (
             <section className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-              <div className="mb-5"><h2 className="text-2xl font-black text-white">Choose a plan</h2><p className="mt-2 text-sm leading-6 text-slate-400">Built for solo explorers, Pro teams, and enterprise discovery programs.</p></div>
+              <div className="mb-5"><h2 className="text-2xl font-black text-white">Choose a plan</h2><p className="mt-2 text-sm leading-6 text-slate-400">Built for solo explorers, Pro teams and enterprise discovery programs.</p></div>
               <div className="grid gap-4 md:grid-cols-3">{miPlans.map((plan) => <MIPlanCard key={plan.name} plan={plan} />)}</div>
             </section>
           )}
-
-          <footer className="pb-6 text-center text-xs text-slate-500">Matter Intelligence OS V6 is a React prototype for a subscription exploration-intelligence platform. Real deployment requires verified data, model validation, domain experts, and appropriate licensing.</footer>
         </main>
       </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><Sparkles size={12}/> recommended next step</Pill>
+            <h2 className="mt-3 text-3xl font-black">You have a strong signal. Turn it into an asset.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              {selectedTarget.id} is ready for report generation, workspace save and public discovery packaging.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={() => setReportReady(true)} variant="primary">Generate Report</Button>
+            <Button onClick={toggleSaveTarget}>{savedTargets.includes(selectedTarget.id) ? "Saved to Workspace" : "Save to Workspace"}</Button>
+            <Button onClick={() => setActive("Reports")}>Prepare Discovery Page</Button>
+          </div>
+        </div>
+      </Panel>
     </div>
   );
 }
