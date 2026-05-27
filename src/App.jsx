@@ -4643,23 +4643,40 @@ function CopilotEverywhereBar({ page, setPage }) {
 }
 
 function LandingPage({ setPage, session, isPro, startCheckout }) {
-  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(12)), []);
-  const daily = discoveries[0];
-  const discoveryTitle = daily ? `${daily.a} + ${daily.b}` : "Titanium + Hafnium";
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(18)), []);
+  const daily = discoveries[0] || { a: "Ti", b: "Hf", aiConfidence: 94, momentum: 91, tier: "RARE", score: 94, type: "Rare thermal-pressure alignment" };
+  const discoveryTitle = `${daily.a} + ${daily.b}`;
+  const heroCompare = [daily.a || "Ti", daily.b || "Hf", "Al"];
 
   const posterStats = [
-    ["118", "elements"],
-    ["50+", "properties"],
-    ["3.48B+", "report paths"],
-    ["∞", "discoveries"],
+    ["118", "elements", "periodic"],
+    ["50+", "properties per element", "compare"],
+    ["10,000+", "possible combinations", "discover"],
+    ["∞", "discoveries", "matterlab"],
   ];
 
   const posterFeatures = [
-    ["Compare", "Compare any elements across stability, thermal, pressure, diffusion and rarity.", Atom, "compare"],
-    ["AI Discovery", "Find hidden pairings, trending discoveries and research-grade next steps.", Sparkles, "discover"],
+    ["Compare", "Compare any elements across stability, thermal response, pressure, diffusion and rarity.", Atom, "compare"],
+    ["AI Discovery", "Find hidden pairings, trending discoveries and report-ready next steps.", Sparkles, "discover"],
     ["Simulate", "Run Time Machine, Scenario Builder, Seismo, Well Driller and Isotope Lab.", Orbit, "timemachine"],
-    ["Reports", "Create dossiers, share cards, public pages and export-ready summaries.", FileText, "simreports"],
-    ["Matter Intelligence", "Turn ground signals and opportunity scans into ranked targets and reports.", Globe2, "matterlab"],
+    ["Reports", "Create dossiers, public pages, share cards and export-ready summaries.", FileText, "simreports"],
+    ["Matter Intelligence", "Turn geology, telemetry and opportunity signals into ranked targets and reports.", Globe2, "matterlab"],
+  ];
+
+  const operatingCards = [
+    ["Discovery Feed", "A live stream of material pairings, momentum, AI confidence, saves and public discovery pages.", Sparkles, "discover", "poster-card"],
+    ["Matter Intelligence OS", "Opportunity scanning for diamonds, lithium, gold, geothermal and ground intelligence workflows.", Globe2, "matterlab", "poster-card-gold"],
+    ["Simulation Studio", "Forecast ageing, corrosion, environment exposure and future-state behaviour.", Clock3, "timemachine", "poster-card"],
+    ["Research Reports", "Turn simulations into executive briefs, dossiers, public URLs and downloadable outputs.", BookOpen, "simreports", "poster-card"],
+    ["Workspace", "Save discoveries, reports, simulations and targets so ElementOS becomes a daily research home.", Save, "lab", "poster-card-gold"],
+    ["AI Copilot", "Ask what to do next, generate summaries and move between tools without confusion.", Bot, "copilot", "poster-card"],
+  ];
+
+  const whySubscribe = [
+    ["Discover hidden relationships", "AI-ranked material pairings and opportunity signals."],
+    ["Publish research-grade outputs", "Reports, dossiers, public discovery pages and share cards."],
+    ["Forecast the future", "Time Machine and scenario simulations make behaviour easier to explain."],
+    ["Build a permanent workspace", "Saved discoveries, reports and simulations become your research archive."],
   ];
 
   const elementTilesLeft = ["H", "Li", "Na", "Mg", "Al", "Ti", "V", "Fe", "Cu", "Zr", "Hf", "Ta"];
@@ -4669,10 +4686,28 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
     <>
       <Panel className="poster-hero relative overflow-hidden p-0">
         <div className="poster-grid absolute inset-0 opacity-45" />
-        <div className="pointer-events-none absolute -left-36 -top-28 h-[34rem] w-[34rem] rounded-full border border-cyan-300/10 bg-cyan-400/10 blur-sm" />
-        <div className="pointer-events-none absolute -right-24 top-0 h-[30rem] w-[30rem] rounded-full bg-amber-300/10 blur-3xl" />
+        <div className="pointer-events-none absolute -left-40 -top-32 h-[40rem] w-[40rem] rounded-full border border-cyan-300/10 bg-cyan-400/10 blur-sm" />
+        <div className="pointer-events-none absolute -right-28 top-0 h-[34rem] w-[34rem] rounded-full bg-amber-300/10 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
+
         <div className="relative z-10 p-6 sm:p-8 xl:p-10">
-          <div className="grid gap-8 xl:grid-cols-[.82fr_1.16fr_.82fr] xl:items-center">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-[1.6rem] border border-cyan-300/15 bg-black/25 p-4 backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <div className="grid h-12 w-12 place-items-center rounded-xl border border-cyan-300/40 bg-cyan-300/10 text-2xl font-black text-white shadow-[0_0_35px_rgba(34,211,238,.24)]">E</div>
+              <div>
+                <div className="text-2xl font-black tracking-[.12em] text-white">Element<span className="poster-cyan">OS</span></div>
+                <div className="text-[10px] uppercase tracking-[.28em] text-slate-500">Discovery Operating System</div>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => setPage('mission')} className="px-4 py-2 text-xs">Guided Tour</Button>
+              {!session && <Button onClick={() => setPage('beta')} variant="primary" className="px-4 py-2 text-xs">Join Beta</Button>}
+              {session && !isPro && <Button onClick={startCheckout} variant="primary" className="px-4 py-2 text-xs">Upgrade Pro</Button>}
+              {session && isPro && <span className="rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xs font-black text-emerald-100">Pro Active</span>}
+            </div>
+          </div>
+
+          <div className="grid gap-8 xl:grid-cols-[.78fr_1.22fr_.78fr] xl:items-center">
             <div className="hidden space-y-3 xl:block">
               {elementTilesLeft.map((sym, index) => {
                 const e = elementMap[sym] || { name: sym, atomicNumber: index + 1 };
@@ -4692,20 +4727,25 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
                 <Pill><Orbit size={12} /> Simulate</Pill>
                 <Pill><BookOpen size={12} /> Understand</Pill>
               </div>
-              <div className="text-xs font-black uppercase tracking-[.65em] text-slate-300">The discovery operating system</div>
-              <h1 className="mt-5 text-6xl font-black leading-[.88] tracking-tight sm:text-8xl xl:text-9xl">
+
+              <div className="text-4xl font-black uppercase leading-[.9] tracking-tight text-white sm:text-6xl xl:text-7xl">
+                DISCOVER.<br />SIMULATE.<br /><span className="poster-cyan">UNDERSTAND.</span>
+              </div>
+
+              <h1 className="mt-6 text-5xl font-black leading-[.88] tracking-tight sm:text-8xl xl:text-9xl">
                 ELEMENT<span className="poster-cyan">OS</span>
               </h1>
-              <p className="mx-auto mt-5 max-w-3xl text-lg font-semibold uppercase tracking-[.35em] text-slate-200">
-                for <span className="poster-cyan">matter intelligence</span>
+              <p className="mx-auto mt-5 max-w-3xl text-sm font-semibold uppercase tracking-[.35em] text-slate-200 sm:text-lg">
+                The discovery operating system for <span className="poster-cyan">matter intelligence</span>
               </p>
 
-              <div className="poster-orbit relative mx-auto mt-8 grid h-56 w-56 place-items-center rounded-[2rem] border border-cyan-300/50 bg-cyan-300/10 shadow-[0_0_90px_rgba(34,211,238,.28)] sm:h-72 sm:w-72">
+              <div className="poster-orbit relative mx-auto mt-8 grid h-60 w-60 place-items-center rounded-[2rem] border border-cyan-300/50 bg-cyan-300/10 shadow-[0_0_110px_rgba(34,211,238,.32)] sm:h-80 sm:w-80">
                 <div className="absolute inset-[-34px] rounded-full border border-cyan-300/20" />
-                <div className="absolute inset-[-58px] rounded-full border border-amber-300/15" />
-                <div className="text-center">
+                <div className="absolute inset-[-62px] rounded-full border border-amber-300/15" />
+                <div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(34,211,238,.24),transparent_62%)]" />
+                <div className="relative text-center">
                   <div className="text-left text-sm text-cyan-100">118</div>
-                  <div className="text-7xl font-black text-white sm:text-8xl">Eo</div>
+                  <div className="text-7xl font-black text-white sm:text-9xl">Eo</div>
                   <div className="text-lg font-bold text-cyan-100">ElementOS</div>
                 </div>
               </div>
@@ -4720,7 +4760,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Button onClick={() => setPage('discover')} variant="primary" className="px-7 py-4"><Sparkles size={16} className="mr-2 inline" /> Start Discovery Scan</Button>
                 <Button onClick={() => setPage('matterlab')} className="px-7 py-4"><Globe2 size={16} className="mr-2 inline" /> Matter Intelligence</Button>
-                <Button onClick={() => setPage('mission')} className="px-7 py-4">Guided Tour</Button>
+                <Button onClick={() => setPage('simreports')} className="px-7 py-4"><FileText size={16} className="mr-2 inline" /> Generate First Report</Button>
               </div>
             </div>
 
@@ -4749,8 +4789,8 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
           </div>
 
           <div className="mt-7 grid gap-4 rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 backdrop-blur-xl md:grid-cols-4">
-            {posterStats.map(([value, label], index) => (
-              <button key={label} onClick={() => setPage(index === 0 ? 'periodic' : index === 1 ? 'compare' : index === 2 ? 'simreports' : 'discover')} className="rounded-2xl border border-white/10 bg-white/[.035] p-4 text-left transition hover:bg-white/[.07]">
+            {posterStats.map(([value, label, target], index) => (
+              <button key={label} onClick={() => setPage(target)} className="rounded-2xl border border-white/10 bg-white/[.035] p-4 text-left transition hover:bg-white/[.07]">
                 <div className={index === 3 ? 'poster-gold text-4xl font-black' : 'poster-cyan text-4xl font-black'}>{value}</div>
                 <div className="mt-1 text-xs uppercase tracking-[.25em] text-slate-400">{label}</div>
               </button>
@@ -4759,24 +4799,25 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
         </div>
       </Panel>
 
-      <DiscoveryCommandCenter setPage={setPage} compare={["Ti", "Hf", "Al"]} />
+      <DiscoveryCommandCenter setPage={setPage} compare={heroCompare} />
       <MissionProgressPanel setPage={setPage} />
 
-      <div className="grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+      <div className="grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
         <Panel className="poster-card-gold">
           <Pill gold><Sparkles size={12} /> today's discovery</Pill>
           <h2 className="mt-4 text-4xl font-black text-white">{discoveryTitle}</h2>
           <p className="mt-3 text-sm leading-7 text-slate-300">
-            Rare thermal-pressure alignment detected with high AI confidence. Open it, simulate it, generate a report and publish a public discovery page.
+            {daily.type || "Rare thermal-pressure alignment"} detected with high AI confidence. Open it, simulate it, generate a report and publish a public discovery page.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-3xl font-black text-emerald-100">{daily?.aiConfidence || 94}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI confidence</div></div>
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-3xl font-black text-emerald-100">{daily?.aiConfidence || daily?.score || 94}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI confidence</div></div>
             <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-3xl font-black text-cyan-100">{daily?.momentum || 91}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">momentum</div></div>
             <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4"><div className="text-3xl font-black text-amber-100">{daily?.tier || 'RARE'}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">rarity</div></div>
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <Button onClick={() => setPage('discover')} variant="primary">Open Discovery Feed</Button>
             <Button onClick={() => setPage('publicdiscovery')}>View Public Page</Button>
+            <Button onClick={() => setPage('simreports')}>Generate Report</Button>
           </div>
         </Panel>
 
@@ -4784,13 +4825,51 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
           <Pill><BookOpen size={12} /> professional output</Pill>
           <h2 className="mt-4 text-4xl font-black">From simulation to shareable intelligence</h2>
           <p className="mt-3 text-sm leading-7 text-slate-300">
-            ElementOS should feel like the posters: cinematic, premium and clear. Every tool now points toward a discovery, a report, a saved workspace or a shareable public page.
+            ElementOS now behaves like the posters: cinematic, premium and clear. Every tool points toward a discovery, a report, a saved workspace or a shareable public page.
           </p>
           <div className="mt-5 grid gap-3 md:grid-cols-3">
             {['Simulation Dossier', 'Share Card', 'Workspace Save'].map((item) => <button key={item} onClick={() => setPage(item === 'Simulation Dossier' ? 'simreports' : item === 'Share Card' ? 'viralcards' : 'lab')} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-left text-sm font-bold text-cyan-50 transition hover:bg-cyan-300/15">✓ {item}</button>)}
           </div>
         </Panel>
       </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Network size={12} /> discovery operating system</Pill>
+            <h2 className="mt-3 text-4xl font-black">One platform. Six daily reasons to come back.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">These are the core product loops: discover, scan, simulate, report, save and share. They make ElementOS feel like a daily scientific workspace.</p>
+          </div>
+          <Button onClick={() => setPage('dashboard')} variant="primary">Open Dashboard</Button>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {operatingCards.map(([title, body, Icon, target, style]) => (
+            <button key={title} onClick={() => setPage(target)} className={`${style} rounded-[1.7rem] p-5 text-left transition hover:-translate-y-1`}>
+              <Icon size={30} className={style === 'poster-card-gold' ? 'text-amber-200' : 'text-cyan-200'} />
+              <div className="mt-4 text-xl font-black text-white">{title}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{body}</p>
+            </button>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel className="poster-card-gold">
+        <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr] xl:items-center">
+          <div>
+            <Pill gold><ShieldCheck size={12} /> why users subscribe</Pill>
+            <h2 className="mt-3 text-4xl font-black">ElementOS should feel useful in the first 30 seconds.</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-300">The landing page now shows exactly what the product does, why it exists, and where a new user should click first.</p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {whySubscribe.map(([title, body]) => (
+              <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="font-black text-amber-100">{title}</div>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Panel>
 
       <GuidedNextStep
         setPage={setPage}
