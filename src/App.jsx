@@ -770,7 +770,7 @@ function MIPlanCard({ plan }) {
       <div className="mb-2 flex items-center justify-between"><h3 className="text-xl font-black text-white">{plan.name}</h3>{plan.best && <span className="rounded-full bg-cyan-300 px-3 py-1 text-[10px] font-black text-slate-950">BEST</span>}</div>
       <div className="text-3xl font-black text-cyan-100">{plan.price}</div>
       <div className="mt-4 space-y-2 text-sm text-slate-300">{plan.features.map((feature) => <div key={feature} className="flex gap-2"><span className="text-cyan-200">✓</span><span>{feature}</span></div>)}</div>
-      <button className="mt-5 w-full rounded-2xl bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:bg-cyan-300 hover:text-slate-950">{plan.cta}</button>
+      <button type="button" onClick={() => handlePlanCTA(plan)} className="mt-5 w-full rounded-2xl bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:bg-cyan-300 hover:text-slate-950">{plan.cta}</button>
     </div>
   );
 }
@@ -1142,6 +1142,43 @@ function downloadFile(name, content, type = "text/plain") {
   const a = document.createElement("a");
   a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
+
+function notifyUser(message) {
+  try {
+    window.dispatchEvent(new CustomEvent("elementos:toast", { detail: message }));
+  } catch (error) {
+    console.log(message);
+  }
+}
+
+async function safeCopyText(text, message = "Copied to clipboard.") {
+  try {
+    if (navigator?.clipboard?.writeText && window.isSecureContext) {
+      await safeCopyText(String(text || ""));
+    } else {
+      const input = document.createElement("textarea");
+      input.value = String(text || "");
+      input.setAttribute("readonly", "");
+      input.style.position = "fixed";
+      input.style.left = "-9999px";
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      input.remove();
+    }
+    notifyUser(message);
+    return true;
+  } catch (error) {
+    console.error("Copy failed", error);
+    notifyUser("Copy failed. Please try again.");
+    return false;
+  }
+}
+
+function handlePlanCTA(plan) {
+  const summary = `${plan?.name || "ElementOS"} plan selected. ${plan?.price || ""} · ${(plan?.features || []).join(", ")}`;
+  safeCopyText(summary, `${plan?.name || "Plan"} details copied.`);
+}
 function Panel({ children, className = "" }) {
   return (
     <div className={`eos-panel relative overflow-hidden rounded-[1.15rem] border border-[#123257] bg-[#06101d]/88 p-5 shadow-[0_0_0_1px_rgba(35,120,255,.06),0_18px_80px_rgba(0,0,0,.42),inset_0_1px_0_rgba(255,255,255,.05)] backdrop-blur-2xl ${className}`}>
@@ -1160,9 +1197,18 @@ function Button({ children, onClick, variant = "ghost", className = "" }) {
       ? "border border-rose-300/25 bg-rose-400/10 text-rose-100 shadow-[0_0_24px_rgba(244,63,94,.12)]"
       : "border border-[#17365f] bg-[#071425]/80 text-slate-100 hover:border-[#0ea5ff]/60 hover:bg-[#0b1d35]";
 
+  const handleClick = (event) => {
+    if (typeof onClick === "function") {
+      onClick(event);
+      return;
+    }
+    notifyUser("Action registered.");
+  };
+
   return (
     <button
-      onClick={onClick}
+      type="button"
+      onClick={handleClick}
       className={`eos-button rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 ${styles} ${className}`}
     >
       {children}
@@ -1605,7 +1651,7 @@ function DiscoveryOSFeed({ discoveries = [], setPage, setPublicDiscovery }) {
 
   const copyText = (text) => {
     if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(text);
+      safeCopyText(text);
       return;
     }
     const input = document.createElement("textarea");
@@ -1772,7 +1818,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 
   const copyText = (text) => {
     if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(text);
+      safeCopyText(text);
       return;
     }
     const input = document.createElement("textarea");
@@ -1979,7 +2025,7 @@ function Discover({ setPage, setPublicDiscovery }) {
               <div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xl font-black text-amber-100">{today?.momentum}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">momentum</div></div>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
-              <Button onClick={() => navigator.clipboard.writeText(`I discovered ${today?.a} + ${today?.b} on ElementOS before 98% of researchers.`)}>Copy Share Card</Button>
+              <Button onClick={() => safeCopyText(`I discovered ${today?.a} + ${today?.b} on ElementOS before 98% of researchers.`)}>Copy Share Card</Button>
               <Button variant="primary" onClick={() => setPage("reports")}>Generate Report</Button>
             </div>
           </div>
@@ -2045,7 +2091,7 @@ function Discover({ setPage, setPublicDiscovery }) {
                 </div>
 
                 <div className="mt-5 flex gap-2">
-                  <Button onClick={() => navigator.clipboard.writeText(`${generateDiscoveryHeadline(d)} — AI confidence ${d.aiConfidence}% — velocity +${d.velocity}%`)}>Copy</Button>
+                  <Button onClick={() => safeCopyText(`${generateDiscoveryHeadline(d)} — AI confidence ${d.aiConfidence}% — velocity +${d.velocity}%`)}>Copy</Button>
                   <Button variant="primary" onClick={() => setPage("compare")}>Compare</Button>
                 </div>
               </div>
@@ -2263,7 +2309,7 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
             <div className="mt-4 flex flex-wrap gap-3">
               <Button onClick={runDetected} variant="primary"><Sparkles size={16} className="inline"/> Run Scenario</Button>
               <Button onClick={() => setPage("timemachine")}><Clock3 size={16} className="inline"/> Open Time Machine</Button>
-              <Button onClick={() => navigator.clipboard.writeText(`ElementOS Scenario: ${scenarioText} · Risk ${riskScore}% · Survival ${survivalYears} years`)}>Copy Summary</Button>
+              <Button onClick={() => safeCopyText(`ElementOS Scenario: ${scenarioText} · Risk ${riskScore}% · Survival ${survivalYears} years`)}>Copy Summary</Button>
             </div>
           </div>
 
@@ -2952,7 +2998,7 @@ function Compare({ compare, setCompare, setPage }) {
                     <Button
                       variant="primary"
                       onClick={() =>
-                        navigator.clipboard.writeText(
+                        safeCopyText(
                           `${sym} + ${next} compatibility score: ${value}%`
                         )
                       }
@@ -3030,7 +3076,7 @@ function Compare({ compare, setCompare, setPage }) {
                       <Button
                         className="mt-4 w-full"
                         onClick={() =>
-                          navigator.clipboard.writeText(
+                          safeCopyText(
                             `${group.source} → ${m.symbol} (${Math.round(m.similarity)}% match): ${m.reason}`
                           )
                         }
@@ -3607,7 +3653,7 @@ Status: Presentation-ready platform export.`;
                       <Button
                         onClick={() => {
                           const url = `${window.location.origin}/?report=${r.public_id}`;
-                          navigator.clipboard.writeText(url);
+                          safeCopyText(url);
                           setStatus("Public share link copied.");
                         }}
                       >
@@ -3721,7 +3767,7 @@ function PublicReportView({ report, status }) {
               <div className="mt-7 flex flex-wrap gap-3">
                 <Button
                   variant="primary"
-                  onClick={() => navigator.clipboard.writeText(window.location.href)}
+                  onClick={() => safeCopyText(window.location.href)}
                 >
                   Share This Report
                 </Button>
@@ -3844,7 +3890,7 @@ function PublicReportView({ report, status }) {
               </Button>
               <Button
                 className="w-full"
-                onClick={() => navigator.clipboard.writeText(window.location.href)}
+                onClick={() => safeCopyText(window.location.href)}
               >
                 Copy Public Link
               </Button>
@@ -4103,7 +4149,7 @@ function MyLab({ session, selected, compare, setPage }) {
                 <p className="mt-4 text-sm leading-6 text-slate-300">{scenario.status}</p>
                 <div className="mt-5 flex gap-2">
                   <Button onClick={() => setPage("scenario")}>Open</Button>
-                  <Button onClick={() => navigator.clipboard.writeText(`${scenario.title} · Risk ${scenario.risk}% · Survival ${scenario.survival} years`)} variant="primary">Share</Button>
+                  <Button onClick={() => safeCopyText(`${scenario.title} · Risk ${scenario.risk}% · Survival ${scenario.survival} years`)} variant="primary">Share</Button>
                 </div>
               </div>
             ))}
@@ -4146,7 +4192,7 @@ function MyLab({ session, selected, compare, setPage }) {
               <div className="mt-3 text-3xl font-black text-cyan-100">{report.pair}</div>
               <div className="mt-2 text-2xl font-black text-emerald-200">{report.score}%</div>
               <p className="mt-3 text-sm leading-6 text-slate-400">{report.type}</p>
-              <Button className="mt-4 w-full" onClick={() => navigator.clipboard.writeText(`${report.pair} · ${report.score}% · ${report.type}`)}>Copy Card</Button>
+              <Button className="mt-4 w-full" onClick={() => safeCopyText(`${report.pair} · ${report.score}% · ${report.type}`)}>Copy Card</Button>
             </div>
           ))}
         </div>
@@ -6061,6 +6107,32 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
 }
 
 
+
+function ToastCenter() {
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const handler = (event) => {
+      setMessage(String(event.detail || "Done."));
+      window.clearTimeout(handler.timer);
+      handler.timer = window.setTimeout(() => setMessage(""), 2200);
+    };
+    window.addEventListener("elementos:toast", handler);
+    return () => {
+      window.removeEventListener("elementos:toast", handler);
+      window.clearTimeout(handler.timer);
+    };
+  }, []);
+
+  if (!message) return null;
+
+  return (
+    <div className="fixed right-4 top-4 z-[90] rounded-2xl border border-cyan-300/25 bg-slate-950/95 px-4 py-3 text-sm font-bold text-cyan-100 shadow-[0_0_40px_rgba(34,211,238,.25)] backdrop-blur-2xl">
+      {message}
+    </div>
+  );
+}
+
 function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startCheckout }) {
   return (
     <div className="eos-topbar sticky top-4 z-20 mb-6 hidden items-center justify-between gap-4 rounded-2xl px-4 py-3 backdrop-blur-2xl lg:flex">
@@ -6363,6 +6435,7 @@ const startCheckout = async () => {
     <div className="eos-shell min-h-screen bg-[#02060d] text-slate-100">
       <ElementOSThemeSkin />
       <Background />
+      <ToastCenter />
       <Sidebar page={page} setPage={setPage} />
       <CommandPalette
         open={commandOpen}
