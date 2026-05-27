@@ -4474,49 +4474,142 @@ function GuidedNextStep({ title = "Recommended next step", body = "Follow the gu
 
 
 function DiscoveryCommandCenter({ setPage, compare = ["Al", "Ti", "Hf"] }) {
-  const ranked = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(10)), []);
-  const today = ranked[0] || { a: "Ti", b: "Hf", score: 94, aiConfidence: 94, velocity: 52, momentum: 91, type: "Rare thermal-pressure alignment" };
+  const ranked = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(16)), []);
+  const today = ranked[0] || { a: "Ti", b: "Hf", score: 94, aiConfidence: 94, velocity: 52, momentum: 91, type: "Rare thermal-pressure alignment", tier: "RARE", views: 2481, saves: 187, shares: 92 };
+  const second = ranked[1] || { a: "Ga", b: "In", score: 91, aiConfidence: 91, velocity: 47, momentum: 88, type: "Conductivity corridor", tier: "ULTRA RARE", views: 1720, saves: 121, shares: 66 };
+  const third = ranked[2] || { a: "Al", b: "Cu", score: 88, aiConfidence: 88, velocity: 41, momentum: 82, type: "Neighbourhood substitute", tier: "RARE", views: 1364, saves: 98, shares: 43 };
   const discoveryScore = Math.round((today.aiConfidence || today.score || 90) * 28 + (today.momentum || 80) * 18 + (compare?.length || 3) * 120);
-  const cards = [
-    ["Today's Discovery", `${today.a} + ${today.b}`, `${today.aiConfidence || today.score}% AI confidence`, "discover", Sparkles],
-    ["Today's Opportunity", "Matter Intelligence", "Run an opportunity scan", "matterlab", Globe2],
-    ["Trending Element", "Titanium", "+52% network velocity", "explorer", Atom],
-    ["Reports Today", "1,842", "simulation dossiers generated", "reports", FileText],
+
+  const commandCards = [
+    ["Today's Discovery", `${today.a} + ${today.b}`, `${today.aiConfidence || today.score}% AI confidence`, "Open the strongest material signal", "discover", Sparkles],
+    ["Today's Opportunity", "Matter Intelligence", "Run an opportunity scan", "Find hidden ground and material signals", "matterlab", Globe2],
+    ["Recommended Next Step", "Generate Report", "Turn signal into an asset", "Create a dossier users can save and share", "simreports", FileText],
+    ["Discovery Streak", "7 days", "+420 XP this week", "Return tomorrow to unlock a new signal", "lab", CheckCircle2],
   ];
+
+  const pulse = [
+    ["Reports Today", "+42", "Simulation dossiers generated", "simreports"],
+    ["Discoveries Saved", "+186", "Workspace assets created", "lab"],
+    ["Public Pages", "+17", "Shareable discoveries published", "publicdiscovery"],
+    ["Trending Signals", "+6", "Material pairs gaining velocity", "discover"],
+  ];
+
+  const badges = [
+    ["First Discovery", "unlocked"],
+    ["100 Simulations", "72%"],
+    ["Matter Intelligence Pioneer", "active"],
+    ["Discovery Architect", "next"],
+  ];
+
+  const discoveryCards = [today, second, third];
+
   return (
-    <Panel className="border-cyan-300/25 bg-gradient-to-br from-cyan-950/30 via-slate-950 to-blue-950/25">
-      <div className="flex flex-wrap items-start justify-between gap-5">
-        <div>
-          <Pill gold><Radar size={12} /> discovery command</Pill>
-          <h2 className="mt-3 text-4xl font-black sm:text-5xl">Your daily material intelligence briefing.</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-            Start here every time: one discovery, one opportunity, one recommendation, and one clear route into reports, simulations and workspace value.
-          </p>
+    <div className="space-y-6">
+      <Panel className="poster-card-gold overflow-hidden border-cyan-300/30 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-blue-950/25">
+        <div className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full bg-cyan-300/15 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
+        <div className="relative z-10 flex flex-wrap items-start justify-between gap-6">
+          <div>
+            <Pill gold><Radar size={12} /> discovery command</Pill>
+            <h2 className="mt-3 text-5xl font-black leading-[.95] sm:text-6xl">Your living scientific intelligence network.</h2>
+            <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">
+              Start here every day: one discovery, one opportunity, one action and one reason to return tomorrow. ElementOS now behaves like a discovery operating system, not a static dashboard.
+            </p>
+          </div>
+          <div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5 text-right shadow-[0_0_60px_rgba(16,185,129,.12)]">
+            <div className="text-xs uppercase tracking-[.22em] text-emerald-200">Discovery Score</div>
+            <div className="mt-2 text-6xl font-black text-emerald-100">{discoveryScore.toLocaleString()}</div>
+            <div className="mt-1 text-sm text-emerald-50/80">Level 12 Researcher · +{today.velocity || 48}% today</div>
+          </div>
         </div>
-        <div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5 text-right">
-          <div className="text-xs uppercase tracking-[.22em] text-emerald-200">Discovery Score</div>
-          <div className="mt-2 text-5xl font-black text-emerald-100">{discoveryScore.toLocaleString()}</div>
-          <div className="mt-1 text-sm text-emerald-50/80">+{today.velocity || 48}% today</div>
+
+        <div className="relative z-10 mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {commandCards.map(([label, value, body, detail, target, Icon]) => (
+            <button key={label} onClick={() => setPage(target)} className="rounded-[1.65rem] border border-cyan-300/15 bg-black/30 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-300/10">
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-xs uppercase tracking-[.22em] text-slate-500">{label}</div>
+                <Icon size={20} className="text-cyan-200" />
+              </div>
+              <div className="mt-3 text-2xl font-black text-cyan-100">{value}</div>
+              <div className="mt-2 text-sm font-bold text-white">{body}</div>
+              <div className="mt-1 text-xs leading-5 text-slate-400">{detail}</div>
+            </button>
+          ))}
         </div>
-      </div>
-      <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {cards.map(([label, value, body, target, Icon]) => (
-          <button key={label} onClick={() => setPage(target)} className="rounded-[1.5rem] border border-cyan-300/15 bg-black/25 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/10">
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-xs uppercase tracking-[.22em] text-slate-500">{label}</div>
-              <Icon size={18} className="text-cyan-200" />
+
+        <div className="relative z-10 mt-7 grid gap-4 xl:grid-cols-[1.1fr_.9fr]">
+          <div className="rounded-[2rem] border border-cyan-300/15 bg-black/25 p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-xs uppercase tracking-[.25em] text-cyan-200">live discovery pulse</div>
+                <div className="mt-2 text-2xl font-black text-white">The network feels active because every action creates momentum.</div>
+              </div>
+              <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-black text-cyan-100">● live</div>
             </div>
-            <div className="mt-3 text-2xl font-black text-cyan-100">{value}</div>
-            <div className="mt-2 text-sm leading-6 text-slate-400">{body}</div>
-          </button>
-        ))}
-      </div>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
-        <Button onClick={() => setPage("matterlab")}>Run Matter Intelligence</Button>
-        <Button onClick={() => setPage("simreports")}>Create Dossier</Button>
-      </div>
-    </Panel>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {pulse.map(([label, value, body, target]) => (
+                <button key={label} onClick={() => setPage(target)} className="rounded-2xl border border-white/10 bg-white/[.035] p-4 text-left transition hover:bg-white/[.07]">
+                  <div className="text-3xl font-black text-cyan-100">{value}</div>
+                  <div className="mt-1 text-xs uppercase tracking-[.2em] text-slate-500">{label}</div>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{body}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-amber-300/15 bg-amber-300/10 p-5">
+            <div className="text-xs uppercase tracking-[.25em] text-amber-200">scientific reputation</div>
+            <div className="mt-2 text-2xl font-black text-white">Badges turn research activity into identity.</div>
+            <div className="mt-4 grid gap-2">
+              {badges.map(([badge, state]) => (
+                <div key={badge} className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
+                  <span className="text-sm font-bold text-amber-50">{badge}</span>
+                  <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] text-amber-100">{state}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 mt-7 flex flex-wrap gap-3">
+          <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
+          <Button onClick={() => setPage("matterlab")}>Run Matter Intelligence</Button>
+          <Button onClick={() => setPage("simreports")}>Create Dossier</Button>
+          <Button onClick={() => setPage("lab")}>Open Workspace</Button>
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Sparkles size={12} /> discovery cards</Pill>
+            <h2 className="mt-3 text-4xl font-black">Every simulation should become an asset.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Discovery Cards make results collectible, reportable, saveable and shareable. This is the product loop that turns visits into returning usage.</p>
+          </div>
+          <Button onClick={() => setPage("viralcards")} variant="primary">Create Share Card</Button>
+        </div>
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          {discoveryCards.map((d, index) => (
+            <button key={`${d.a}-${d.b}-${index}`} onClick={() => setPage(index === 0 ? "publicdiscovery" : "discover")} className={`${index === 0 ? "poster-card-gold" : "poster-card"} rounded-[1.8rem] p-5 text-left transition hover:-translate-y-1`}>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-xs uppercase tracking-[.22em] text-slate-500">Discovery Card</div>
+                  <div className="mt-3 text-3xl font-black text-white">{d.a} + {d.b}</div>
+                  <div className="mt-1 text-xs uppercase tracking-[.18em] text-cyan-200">{d.tier || "RARE"} · {d.type}</div>
+                </div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-2xl font-black text-emerald-100">{d.score}%</div>
+              </div>
+              <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{d.views || 1200}</b><br/><span className="text-slate-500">views</span></div>
+                <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{d.saves || 80}</b><br/><span className="text-slate-500">saves</span></div>
+                <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{d.shares || 32}</b><br/><span className="text-slate-500">shares</span></div>
+              </div>
+              <div className="mt-5 text-sm font-black text-cyan-100">Open · Report · Save · Share →</div>
+            </button>
+          ))}
+        </div>
+      </Panel>
+    </div>
   );
 }
 
@@ -5340,162 +5433,166 @@ function SeismoSimulator({ setPage }) {
 
 
 function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
-  const [mode, setMode] = useState("Discovery");
+  const [format, setFormat] = useState("Discovery DNA");
   const [cardIndex, setCardIndex] = useState(0);
-  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(16)), []);
+  const [founderName, setFounderName] = useState("Paul Roper");
+  const [headlineMode, setHeadlineMode] = useState("AI Headline");
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(24)), []);
   const activeMaterial = elementMap[selected] || elementMap.Al;
   const compareSet = compare?.length ? compare : ["Al", "Ti", "Hf", "W"];
   const discovery = discoveries[cardIndex % discoveries.length] || discoveries[0];
-  const compatibility = compareSet.length >= 2 ? compatibilityScore(compareSet[0], compareSet[1]) : 92;
+  const globalAverage = 68;
+
+  const cardStats = useMemo(() => {
+    const seed = String(discovery?.dna || "TI-HF-1047").split("").reduce((sum, c) => sum + c.charCodeAt(0), 0);
+    return {
+      views: 2400 + (seed % 4200),
+      saves: 84 + (seed % 360),
+      reports: 17 + (seed % 92),
+      shares: 22 + (seed % 280),
+      rank: 1 + (seed % 99),
+      percentile: Math.max(0.2, Math.min(9.9, ((100 - (discovery?.score || 92)) / 2.4).toFixed(1))),
+    };
+  }, [discovery]);
+
+  const storyLines = useMemo(() => {
+    const pair = `${discovery?.a || "Ti"} + ${discovery?.b || "Hf"}`;
+    return [
+      `Rare alignment detected across ${pair}.`,
+      `${discovery?.type || "Hidden compatibility signal"} moved into the public discovery queue.`,
+      `AI confidence sits ${Math.max(1, (discovery?.aiConfidence || 94) - globalAverage)} points above the network average.`,
+      "This is designed to become a discovery, report, share card and public research asset.",
+    ];
+  }, [discovery]);
 
   const cardData = useMemo(() => {
     const base = {
-      label: "ElementOS Viral Card",
-      badge: "AI-NATIVE SIMULATION",
+      format,
+      badge: format.toUpperCase(),
       title: `${discovery?.a || "Ti"} + ${discovery?.b || "Hf"}`,
+      code: discovery?.dna || "TI-HF-1047",
+      headline: headlineMode === "AI Headline" ? "Rare Thermal Stability Alignment Detected" : "ElementOS Discovery Card",
       subtitle: discovery?.type || "Rare material pathway",
       score: discovery?.aiConfidence || 94,
-      metric: "AI confidence",
-      statA: `+${discovery?.velocity || 42}% velocity`,
-      statB: `${discovery?.shares?.toLocaleString?.() || "1,284"} shares`,
-      statC: discovery?.tier || "ULTRA RARE",
+      metric: "Discovery Score",
+      tier: discovery?.tier || "ULTRA RARE",
+      rank: `#${cardStats.rank} Global`,
+      top: `Top ${cardStats.percentile}%`,
+      founder: founderName || "ElementOS Researcher",
       narrative: discovery?.reason || "High-signal material pairing with strong discovery potential.",
+      statA: `${cardStats.views.toLocaleString()} views`,
+      statB: `${cardStats.saves.toLocaleString()} saves`,
+      statC: `${cardStats.reports.toLocaleString()} reports`,
+      statD: `${cardStats.shares.toLocaleString()} shares`,
+      source: "Material Discovery",
     };
 
-    if (mode === "Time Machine") {
-      return {
-        ...base,
-        badge: "TIME MACHINE FORECAST",
-        title: `${activeMaterial.name} (${activeMaterial.symbol})` ,
-        subtitle: "100-year survivability simulation",
-        score: Math.max(55, Math.min(98, Math.round(score(activeMaterial.symbol).stability * 18 + score(activeMaterial.symbol).pressure * 5))),
-        metric: "future stability",
-        statA: "100 year horizon",
-        statB: "thermal fatigue mapped",
-        statC: "FORECAST",
-        narrative: "Projected material behaviour across corrosion, fatigue, heat and pressure exposure.",
-      };
+    if (format === "Scientific Trading Card") {
+      return { ...base, badge: "SCIENTIFIC TRADING CARD", headline: "Collectible Material Intelligence", source: "Trading Card", subtitle: "front/back research collectible", tier: "COLLECTIBLE" };
     }
-
-    if (mode === "Seismo") {
-      return {
-        ...base,
-        badge: "SEISMO WAVE CARD",
-        title: "P-Wave / S-Wave Field",
-        subtitle: "arrival gap and subsurface clarity",
-        score: 91,
-        metric: "signal clarity",
-        statA: "P-wave fast path",
-        statB: "S-wave lag detected",
-        statC: "SEISMIC",
-        narrative: "A cinematic seismic readout designed for sharing wave speed, arrival gap and depth response.",
-      };
+    if (format === "Founder Card") {
+      return { ...base, badge: "FOUNDER DISCOVERY", headline: `Found by ${founderName || "Paul Roper"}`, source: "Founder Card", subtitle: "researcher identity + discovery proof", tier: "FOUNDER" };
     }
-
-    if (mode === "Well Driller") {
-      return {
-        ...base,
-        badge: "EXPERIMENTAL WELL DRILLER",
-        title: "Deep Well Pathway",
-        subtitle: "bore path, strata and pressure load",
-        score: 88,
-        metric: "drill confidence",
-        statA: "target reservoir",
-        statB: "pressure profile",
-        statC: "SUBSURFACE",
-        narrative: "A shareable subsurface simulation card showing wellbore direction, formation layers and drilling signal.",
-      };
+    if (format === "Opportunity Poster") {
+      return { ...base, badge: "OPPORTUNITY SIGNAL", title: "Diamond Cluster", code: "MIOS-DK-27", headline: "Ground Opportunity Signal Rising", subtitle: "Matter Intelligence target card", score: 92, metric: "Opportunity Score", tier: "RISING", source: "Matter Intelligence" };
     }
-
-    if (mode === "Scenario") {
-      return {
-        ...base,
-        badge: "SCENARIO BUILDER CARD",
-        title: `${compareSet.slice(0, 2).join(" + ")}`,
-        subtitle: "real-world material scenario",
-        score: Math.max(50, Math.min(99, compatibility)),
-        metric: "scenario fit",
-        statA: "risk mapped",
-        statB: "lifespan estimated",
-        statC: "REPORTABLE",
-        narrative: "Plain-English material situation transformed into a premium shareable simulation output.",
-      };
+    if (format === "Report Poster") {
+      return { ...base, badge: "DISCOVERY REPORT", headline: "Report-Ready Discovery Asset", source: "Report Poster", subtitle: "executive brief + technical narrative", tier: "REPORTABLE" };
     }
-
+    if (format === "League Table") {
+      return { ...base, badge: "TOP DISCOVERIES TODAY", headline: "Discovery Leaderboard", source: "League Table", subtitle: "ranked by momentum, saves and AI confidence", tier: "TRENDING" };
+    }
     return base;
-  }, [mode, discovery, activeMaterial, compareSet, compatibility]);
+  }, [format, discovery, cardStats, founderName, headlineMode]);
+
+  const formats = ["Discovery DNA", "Scientific Trading Card", "Founder Card", "Opportunity Poster", "Report Poster", "League Table"];
+  const badges = ["First Discovery", "Top 1%", "Matter Pioneer", "Report Ready", "Public Asset"];
+  const channels = [
+    ["X / Twitter", "One sharp discovery card, one curiosity hook, one public discovery link."],
+    ["LinkedIn", "Frame it as a professional material-intelligence insight with a report preview."],
+    ["Reddit", "Lead with explanation, not hype. Show the card after the useful context."],
+    ["Product Hunt", "Use the founder card plus a clear before/after workflow demo."],
+  ];
 
   const safeText = (value) => String(value ?? "").replace(/[&<>\"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  const exportSVG = () => {
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1600" viewBox="0 0 1200 1600">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#061827"/><stop offset="0.45" stop-color="#020617"/><stop offset="1" stop-color="#2b123f"/></linearGradient>
-    <radialGradient id="pulse" cx="50%" cy="35%" r="60%"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.55"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
-  </defs>
-  <rect width="1200" height="1600" fill="url(#bg)"/>
-  <circle cx="820" cy="360" r="420" fill="url(#pulse)"/>
-  <circle cx="240" cy="1240" r="360" fill="#f59e0b" opacity="0.12"/>
-  <rect x="86" y="86" width="1028" height="1428" rx="70" fill="rgba(255,255,255,0.055)" stroke="#22d3ee" stroke-opacity="0.35" stroke-width="3"/>
-  <text x="120" y="170" fill="#fef3c7" font-family="Arial" font-size="32" font-weight="800" letter-spacing="8">${safeText(cardData.badge)}</text>
-  <text x="120" y="330" fill="#e0f2fe" font-family="Arial" font-size="92" font-weight="900">${safeText(cardData.title)}</text>
-  <text x="120" y="405" fill="#94a3b8" font-family="Arial" font-size="38" font-weight="700">${safeText(cardData.subtitle)}</text>
-  <circle cx="600" cy="735" r="250" fill="none" stroke="#22d3ee" stroke-opacity="0.25" stroke-width="24"/>
-  <circle cx="600" cy="735" r="186" fill="none" stroke="#f59e0b" stroke-opacity="0.30" stroke-width="18"/>
-  <text x="600" y="725" fill="#67e8f9" font-family="Arial" font-size="150" font-weight="900" text-anchor="middle">${safeText(cardData.score)}%</text>
-  <text x="600" y="790" fill="#cbd5e1" font-family="Arial" font-size="34" font-weight="800" text-anchor="middle">${safeText(cardData.metric)}</text>
-  <rect x="130" y="1040" width="285" height="150" rx="34" fill="#020617" stroke="#22d3ee" stroke-opacity="0.35"/>
-  <rect x="457" y="1040" width="285" height="150" rx="34" fill="#020617" stroke="#22d3ee" stroke-opacity="0.35"/>
-  <rect x="784" y="1040" width="285" height="150" rx="34" fill="#020617" stroke="#f59e0b" stroke-opacity="0.45"/>
-  <text x="272" y="1125" fill="#e0f2fe" font-family="Arial" font-size="34" font-weight="900" text-anchor="middle">${safeText(cardData.statA)}</text>
-  <text x="600" y="1125" fill="#e0f2fe" font-family="Arial" font-size="34" font-weight="900" text-anchor="middle">${safeText(cardData.statB)}</text>
-  <text x="927" y="1125" fill="#fef3c7" font-family="Arial" font-size="34" font-weight="900" text-anchor="middle">${safeText(cardData.statC)}</text>
-  <text x="120" y="1325" fill="#cbd5e1" font-family="Arial" font-size="34" font-weight="700">${safeText(cardData.narrative).slice(0, 82)}</text>
-  <text x="120" y="1450" fill="#22d3ee" font-family="Arial" font-size="34" font-weight="900" letter-spacing="5">ELEMENTOS.AI</text>
-</svg>`;
-    downloadFile(`ElementOS-${mode.replace(/\s+/g, "-")}-viral-card.svg`, svg, "image/svg+xml");
-  };
-
   const copyCard = () => {
-    const text = `${cardData.title}\n${cardData.badge}\n${cardData.score}% ${cardData.metric}\n${cardData.statA} · ${cardData.statB} · ${cardData.statC}\n${cardData.narrative}\nGenerated in ElementOS`;
+    const text = `${cardData.headline}\n${cardData.title} · ${cardData.code}\n${cardData.score}% ${cardData.metric}\n${cardData.tier} · ${cardData.rank} · ${cardData.top}\nFound by ${cardData.founder}\n${cardData.narrative}\n${cardData.statA} · ${cardData.statB} · ${cardData.statC}\nGenerated in ElementOS`;
     navigator.clipboard?.writeText(text);
     alert("Viral card copy saved to clipboard.");
   };
 
-  const modes = ["Discovery", "Time Machine", "Scenario", "Seismo", "Well Driller"];
+  const exportSVG = () => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1800" viewBox="0 0 1400 1800">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#061827"/><stop offset="0.45" stop-color="#020617"/><stop offset="1" stop-color="#2b123f"/></linearGradient>
+    <radialGradient id="pulse" cx="70%" cy="18%" r="65%"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.58"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gold" cx="20%" cy="82%" r="55%"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.28"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1400" height="1800" fill="url(#bg)"/>
+  <rect width="1400" height="1800" fill="url(#pulse)"/>
+  <rect width="1400" height="1800" fill="url(#gold)"/>
+  <rect x="84" y="84" width="1232" height="1632" rx="78" fill="rgba(255,255,255,0.055)" stroke="#22d3ee" stroke-opacity="0.38" stroke-width="3"/>
+  <text x="130" y="165" fill="#fef3c7" font-family="Arial" font-size="34" font-weight="900" letter-spacing="9">${safeText(cardData.badge)}</text>
+  <text x="130" y="285" fill="#67e8f9" font-family="Arial" font-size="42" font-weight="900">${safeText(cardData.headline)}</text>
+  <text x="130" y="430" fill="#e0f2fe" font-family="Arial" font-size="110" font-weight="900">${safeText(cardData.title)}</text>
+  <text x="130" y="505" fill="#94a3b8" font-family="Arial" font-size="38" font-weight="700">${safeText(cardData.subtitle)}</text>
+  <circle cx="700" cy="850" r="285" fill="none" stroke="#22d3ee" stroke-opacity="0.25" stroke-width="26"/>
+  <circle cx="700" cy="850" r="210" fill="none" stroke="#f59e0b" stroke-opacity="0.32" stroke-width="18"/>
+  <text x="700" y="835" fill="#67e8f9" font-family="Arial" font-size="170" font-weight="900" text-anchor="middle">${safeText(cardData.score)}%</text>
+  <text x="700" y="905" fill="#cbd5e1" font-family="Arial" font-size="36" font-weight="800" text-anchor="middle">${safeText(cardData.metric)}</text>
+  <text x="700" y="1010" fill="#fef3c7" font-family="Arial" font-size="42" font-weight="900" text-anchor="middle">${safeText(cardData.rank)} · ${safeText(cardData.top)}</text>
+  <rect x="125" y="1160" width="275" height="135" rx="34" fill="#020617" stroke="#22d3ee" stroke-opacity="0.35"/>
+  <rect x="425" y="1160" width="275" height="135" rx="34" fill="#020617" stroke="#22d3ee" stroke-opacity="0.35"/>
+  <rect x="725" y="1160" width="275" height="135" rx="34" fill="#020617" stroke="#22d3ee" stroke-opacity="0.35"/>
+  <rect x="1025" y="1160" width="250" height="135" rx="34" fill="#020617" stroke="#f59e0b" stroke-opacity="0.45"/>
+  <text x="262" y="1238" fill="#e0f2fe" font-family="Arial" font-size="30" font-weight="900" text-anchor="middle">${safeText(cardData.statA)}</text>
+  <text x="562" y="1238" fill="#e0f2fe" font-family="Arial" font-size="30" font-weight="900" text-anchor="middle">${safeText(cardData.statB)}</text>
+  <text x="862" y="1238" fill="#e0f2fe" font-family="Arial" font-size="30" font-weight="900" text-anchor="middle">${safeText(cardData.statC)}</text>
+  <text x="1150" y="1238" fill="#fef3c7" font-family="Arial" font-size="30" font-weight="900" text-anchor="middle">${safeText(cardData.tier)}</text>
+  <text x="130" y="1420" fill="#cbd5e1" font-family="Arial" font-size="34" font-weight="700">${safeText(cardData.narrative).slice(0, 92)}</text>
+  <text x="130" y="1510" fill="#fef3c7" font-family="Arial" font-size="30" font-weight="900">FOUND BY ${safeText(cardData.founder).toUpperCase()}</text>
+  <text x="130" y="1640" fill="#22d3ee" font-family="Arial" font-size="34" font-weight="900" letter-spacing="6">ELEMENTOS · DISCOVER · SIMULATE · UNDERSTAND</text>
+</svg>`;
+    downloadFile(`ElementOS-${format.replace(/\s+/g, "-")}-viral-card.svg`, svg, "image/svg+xml");
+  };
 
   return (
     <>
       <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
         <div>
           <Pill gold><Sparkles size={12}/> viral growth engine</Pill>
-          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
-            Viral <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Card Studio</span>
+          <h1 className="mt-4 text-5xl font-black leading-none sm:text-7xl">
+            Viral <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery Studio</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Turn discoveries, Time Machine forecasts, Seismo readouts, Well Driller paths and Scenario Builder outputs into cinematic share cards for X, Reddit, LinkedIn, TikTok screenshots and public reports.
+            Turn every discovery into a collectible scientific asset: Discovery DNA cards, founder cards, opportunity posters, rankings, badges, story hooks and exportable SVGs for X, LinkedIn, Reddit and launch campaigns.
           </p>
-          <Info title="Growth doctrine">
-            People share visuals, not dashboards. This studio turns every strong simulation into a social asset with rarity, AI confidence, telemetry and exportable SVG cards.
+          <Info title="Viral doctrine">
+            People do not share dashboards. They share identity, status, surprise, proof and story. This studio packages ElementOS outputs into content people can understand in three seconds.
           </Info>
         </div>
 
         <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Card source</div>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Card format</div>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {modes.map((m) => (
+            {formats.map((m) => (
               <button
                 key={m}
-                onClick={() => setMode(m)}
-                className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition ${mode === m ? "border-cyan-300/40 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-black/20 text-slate-300"}`}
+                onClick={() => setFormat(m)}
+                className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition ${format === m ? "border-cyan-300/40 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-black/20 text-slate-300 hover:bg-white/[.05]"}`}
               >
                 {m}
               </button>
             ))}
           </div>
-          <div className="mt-5 flex gap-2">
-            <Button onClick={() => setCardIndex((v) => v + 1)}>Next Card</Button>
-            <Button onClick={copyCard}>Copy Text</Button>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+            <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Founder name" />
+            <button onClick={() => setHeadlineMode(headlineMode === "AI Headline" ? "Simple" : "AI Headline")} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-left text-sm font-black text-cyan-100">{headlineMode}</button>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Button onClick={() => setCardIndex((v) => v + 1)}>Next Discovery</Button>
+            <Button onClick={copyCard}>Copy Post</Button>
             <Button onClick={exportSVG} variant="primary">Export SVG</Button>
           </div>
         </Panel>
@@ -5504,7 +5601,7 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
       <GuidePanel page="viralcards" />
 
       <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
-        <div className="relative min-h-[720px] overflow-hidden rounded-[2.5rem] border border-cyan-300/25 bg-gradient-to-br from-cyan-400/15 via-slate-950 to-fuchsia-500/20 p-6 shadow-[0_0_120px_rgba(34,211,238,.20)]">
+        <div className="relative min-h-[780px] overflow-hidden rounded-[2.5rem] border border-cyan-300/25 bg-gradient-to-br from-cyan-400/15 via-slate-950 to-fuchsia-500/20 p-6 shadow-[0_0_120px_rgba(34,211,238,.20)]">
           <div className="absolute -right-28 top-10 h-80 w-80 rounded-full bg-cyan-300/20 blur-3xl" />
           <div className="absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-amber-300/10 blur-3xl" />
           <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:42px_42px]" />
@@ -5513,82 +5610,116 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
             <div>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <Pill gold>{cardData.badge}</Pill>
-                <div className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.2em] text-cyan-100">Share-ready</div>
+                <div className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.2em] text-cyan-100">{cardData.source}</div>
               </div>
-              <h2 className="mt-8 text-6xl font-black leading-none text-cyan-100 sm:text-7xl">{cardData.title}</h2>
+              <div className="mt-6 text-sm font-black uppercase tracking-[.25em] text-amber-100">{cardData.headline}</div>
+              <h2 className="mt-4 text-6xl font-black leading-none text-cyan-100 sm:text-7xl">{cardData.title}</h2>
               <p className="mt-4 text-xl font-bold text-slate-300">{cardData.subtitle}</p>
+              <div className="mt-4 font-mono text-sm text-slate-500">{cardData.code}</div>
             </div>
 
             <div className="my-10 grid place-items-center">
-              <div className="relative grid h-72 w-72 place-items-center rounded-full border-[18px] border-cyan-300/20 bg-cyan-300/5 shadow-[0_0_90px_rgba(34,211,238,.28)]">
-                <div className="absolute h-52 w-52 rounded-full border-[14px] border-amber-300/25" />
-                <div className="absolute h-36 w-36 rounded-full border border-white/15" />
+              <div className="relative grid h-76 w-76 place-items-center rounded-full border-[18px] border-cyan-300/20 bg-cyan-300/5 shadow-[0_0_90px_rgba(34,211,238,.28)]">
+                <div className="absolute h-56 w-56 rounded-full border-[14px] border-amber-300/25" />
+                <div className="absolute h-40 w-40 rounded-full border border-white/15" />
                 <div className="text-center">
                   <div className="text-7xl font-black text-cyan-100">{cardData.score}%</div>
                   <div className="mt-2 text-xs uppercase tracking-[.24em] text-slate-400">{cardData.metric}</div>
+                  <div className="mt-4 text-sm font-black text-amber-100">{cardData.rank} · {cardData.top}</div>
                 </div>
               </div>
             </div>
 
             <div>
               <p className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-5 text-sm leading-7 text-slate-200">{cardData.narrative}</p>
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                {[cardData.statA, cardData.statB, cardData.statC].map((stat) => (
+              <div className="mt-5 grid gap-3 sm:grid-cols-4">
+                {[cardData.statA, cardData.statB, cardData.statC, cardData.tier].map((stat) => (
                   <div key={stat} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-center text-sm font-black text-cyan-100">{stat}</div>
                 ))}
               </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {badges.map((badge) => <span key={badge} className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-amber-100">{badge}</span>)}
+              </div>
               <div className="mt-6 flex items-center justify-between gap-4 text-xs uppercase tracking-[.24em] text-slate-500">
-                <span>ELEMENTOS.AI</span>
-                <span>{mode}</span>
+                <span>FOUND BY {cardData.founder}</span>
+                <span>ELEMENTOS</span>
               </div>
             </div>
           </div>
         </div>
 
-        <Panel>
-          <Pill><Network size={12}/> viral ranking</Pill>
-          <h2 className="mt-3 text-4xl font-black">Trending Card Queue</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-400">
-            Use these cards as your content engine: export one SVG, post it, and send users back into the matching simulation page.
-          </p>
-          <div className="mt-6 space-y-3">
-            {discoveries.slice(0, 7).map((d, index) => (
-              <div key={`${d.dna}-viral`} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div>
-                  <div className="text-lg font-black text-cyan-100">#{index + 1} · {d.a} + {d.b}</div>
-                  <div className="mt-1 text-sm text-slate-400">{d.type} · {d.tier}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-black text-emerald-200">{d.aiConfidence}%</div>
-                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <Button onClick={() => setPage("discover")} className="w-full">Open Discover</Button>
-            <Button onClick={() => setPage("simreports")} variant="primary" className="w-full">Open Reports</Button>
-          </div>
-        </Panel>
+        <div className="space-y-6">
+          <Panel>
+            <Pill><Network size={12}/> viral ranking</Pill>
+            <h2 className="mt-3 text-4xl font-black">Trending Discovery Queue</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-400">Use these as your daily content calendar. Each row can become a card, poster, report or public discovery page.</p>
+            <div className="mt-6 space-y-3">
+              {discoveries.slice(0, 7).map((d, index) => (
+                <button key={`${d.dna}-viral`} onClick={() => setCardIndex(index)} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/30 hover:bg-cyan-300/10">
+                  <div>
+                    <div className="text-lg font-black text-cyan-100">#{index + 1} · {d.a} + {d.b}</div>
+                    <div className="mt-1 text-sm text-slate-400">{d.type} · {d.tier} · {d.dna}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-black text-emerald-200">{d.aiConfidence}%</div>
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel>
+            <Pill gold><Sparkles size={12}/> story engine</Pill>
+            <h2 className="mt-3 text-3xl font-black">Post Hook Generator</h2>
+            <div className="mt-5 space-y-3">
+              {storyLines.map((line) => <div key={line} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm leading-6 text-slate-300">{line}</div>)}
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <Button onClick={copyCard} className="w-full">Copy Hook</Button>
+              <Button onClick={() => setPage("publicdiscovery")} variant="primary" className="w-full">Open Public Discovery</Button>
+            </div>
+          </Panel>
+        </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-4">
-        {[
-          ["X / Twitter", "Post one compact card with a sharp hook and link to the public report."],
-          ["Reddit", "Use the card as proof-of-concept visual, then explain the simulation plainly."],
-          ["LinkedIn", "Frame cards as exploratory material intelligence reports."],
-          ["TikTok", "Screen-record the card generation and export moment."],
-        ].map(([title, desc]) => (
-          <Panel key={title}>
-            <div className="text-xl font-black text-cyan-100">{title}</div>
-            <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
-          </Panel>
-        ))}
-      </div>
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Share2 size={12}/> channel playbook</Pill>
+            <h2 className="mt-3 text-4xl font-black">Make every discovery travel further.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">The same asset should be framed differently on each channel. Curiosity for X, credibility for LinkedIn, explanation for Reddit, launch proof for Product Hunt.</p>
+          </div>
+          <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
+        </div>
+        <div className="mt-6 grid gap-4 xl:grid-cols-4">
+          {channels.map(([title, desc]) => (
+            <div key={title} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5">
+              <div className="text-xl font-black text-cyan-100">{title}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+              <button onClick={copyCard} className="mt-4 rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-sm font-black text-white transition hover:bg-cyan-300/10">Copy tailored post</button>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <Pill gold><Target size={12}/> next growth step</Pill>
+            <h2 className="mt-3 text-4xl font-black">Turn this card into the viral loop.</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Export the card, post it, link to the public discovery page, then invite viewers to generate their own discovery. That is the loop: discover → card → share → click → create.</p>
+          </div>
+          <div className="grid gap-3">
+            <Button onClick={exportSVG} variant="primary">Export Poster SVG</Button>
+            <Button onClick={() => setPage("reports")}>Generate Report</Button>
+            <Button onClick={() => setPage("lab")}>Save to Workspace</Button>
+          </div>
+        </div>
+      </Panel>
     </>
   );
 }
-
 
 
 function UniversalSimulationReports({ selected = "Al", compare = [], session, isPro, startCheckout, setPage }) {
