@@ -307,8 +307,8 @@ function guidanceForPage(page) {
     },
     discover: {
       title: "What the discovery feed does",
-      description: "This page ranks material pairings by compatibility, AI confidence, momentum, views, shares and saves. It is designed to feel like a living research network.",
-      next: "Pick a discovery, copy the share card, compare it, or generate a report.",
+      description: "This page turns material pairings into publishable discovery assets with compatibility, AI confidence, public IDs, share links, report paths and workspace saves.",
+      next: "Pick a discovery, save it to Workspace, copy the public URL, generate a report, or send it into the next simulation.",
     },
     compare: {
       title: "What the compare engine does",
@@ -1656,6 +1656,164 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
 <div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
 }
 
+
+function DiscoveryOSFeed({ discoveries = [], setPage }) {
+  const ranked = discoveries.length ? discoveries : adaptiveDiscoveryRank(generateDiscoveryEngine(12));
+  const spotlight = dailyDiscovery(ranked) || ranked[0];
+  const publishable = ranked.slice(0, 9).map((d, index) => ({
+    ...d,
+    publicId: `${d.a}-${d.b}-${d.dna?.split("-").pop() || "OS"}-${1047 + index}`.toUpperCase(),
+  }));
+
+  const copyText = (text) => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text);
+      return;
+    }
+    const input = document.createElement("textarea");
+    input.value = text;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand("copy");
+    input.remove();
+  };
+
+  const saveDiscovery = (discovery) => {
+    try {
+      const existing = JSON.parse(localStorage.getItem("elementos_saved_discoveries") || "[]");
+      const next = [
+        {
+          id: discovery.publicId,
+          pair: `${discovery.a} + ${discovery.b}`,
+          score: discovery.score,
+          confidence: discovery.aiConfidence,
+          reason: discovery.reason,
+          createdAt: new Date().toISOString(),
+        },
+        ...existing.filter((item) => item.id !== discovery.publicId),
+      ].slice(0, 50);
+      localStorage.setItem("elementos_saved_discoveries", JSON.stringify(next));
+    } catch (error) {
+      console.error("Unable to save discovery", error);
+    }
+  };
+
+  const discoveryUrl = (discovery) => `${window.location.origin}${window.location.pathname}?discovery=${discovery.publicId}`;
+
+  return (
+    <>
+      <Panel className="border-amber-300/20 bg-gradient-to-br from-amber-300/10 via-[#06101d]/95 to-cyan-400/10">
+        <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
+          <div>
+            <Pill gold><Sparkles size={12}/> discovery OS</Pill>
+            <h2 className="mt-3 text-5xl font-black sm:text-6xl">
+              Turn every simulation into a <span className="bg-gradient-to-r from-amber-100 via-white to-cyan-200 bg-clip-text text-transparent">publishable discovery.</span>
+            </h2>
+            <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">
+              The new Discovery Feed connects ElementOS together: compare materials, generate a discovery, save it to the workspace, create a report and share a public research link.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-4">
+              {[
+                ["1", "Run"],
+                ["2", "Discover"],
+                ["3", "Report"],
+                ["4", "Share"],
+              ].map(([num, label]) => (
+                <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                  <div className="text-2xl font-black text-cyan-100">{num}</div>
+                  <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-400">{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-cyan-300/20 bg-black/35 p-6">
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Today's discovery</div>
+            <div className="mt-3 text-5xl font-black text-cyan-100">{spotlight?.a} + {spotlight?.b}</div>
+            <p className="mt-3 text-sm leading-7 text-slate-300">{spotlight?.reason}</p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-cyan-300/10 p-3"><div className="text-2xl font-black text-cyan-100">{spotlight?.score}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">score</div></div>
+              <div className="rounded-2xl border border-white/10 bg-emerald-300/10 p-3"><div className="text-2xl font-black text-emerald-200">{spotlight?.aiConfidence}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI</div></div>
+              <div className="rounded-2xl border border-white/10 bg-amber-300/10 p-3"><div className="text-2xl font-black text-amber-100">{spotlight?.momentum}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">momentum</div></div>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Button onClick={() => setPage("compare")} variant="primary">Run Simulation</Button>
+              <Button onClick={() => setPage("reports")}>Generate Report</Button>
+              <Button onClick={() => copyText(`ElementOS Discovery: ${spotlight?.a} + ${spotlight?.b} — ${spotlight?.score}% score. ${spotlight?.reason}`)}>Copy Share Text</Button>
+            </div>
+          </div>
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill><Network size={12}/> public discovery feed</Pill>
+            <h2 className="mt-3 text-4xl font-black">Latest Publishable Results</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              Each card now behaves like a research asset: it has an ID, a share link, a report path, a workspace save action and a clear next step.
+            </p>
+          </div>
+          <Button onClick={() => setPage("viralcards")} variant="primary">Create Share Card</Button>
+        </div>
+
+        <div className="mt-6 grid gap-4 xl:grid-cols-3">
+          {publishable.map((discovery, index) => (
+            <div key={discovery.publicId} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-black/30 to-slate-950 p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-[10px] uppercase tracking-[.22em] text-slate-500">{discovery.publicId}</div>
+                  <div className="mt-2 text-3xl font-black text-white">{discovery.a} + {discovery.b}</div>
+                  <div className="mt-1 text-sm text-cyan-100">{discovery.type}</div>
+                </div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-xl font-black text-emerald-100">{discovery.score}%</div>
+              </div>
+              <p className="mt-4 text-sm leading-6 text-slate-300">{discovery.reason}</p>
+              <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                <div className="rounded-xl bg-black/25 p-3"><b className="text-cyan-100">{discovery.aiConfidence}%</b><br/><span className="text-[10px] uppercase tracking-[.16em] text-slate-500">AI</span></div>
+                <div className="rounded-xl bg-black/25 p-3"><b className="text-emerald-200">+{discovery.velocity}%</b><br/><span className="text-[10px] uppercase tracking-[.16em] text-slate-500">velocity</span></div>
+                <div className="rounded-xl bg-black/25 p-3"><b className="text-amber-100">{discovery.shares}</b><br/><span className="text-[10px] uppercase tracking-[.16em] text-slate-500">shares</span></div>
+              </div>
+              <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                <Button onClick={() => { saveDiscovery(discovery); setPage("lab"); }}>Save to Workspace</Button>
+                <Button onClick={() => copyText(discoveryUrl(discovery))}>Copy Public URL</Button>
+                <Button onClick={() => setPage("reports")}>Open Report</Button>
+                <Button onClick={() => setPage(index % 2 ? "timemachine" : "scenario")} variant="primary">Next Step</Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><CheckCircle2 size={12}/> guided next step</Pill>
+            <h2 className="mt-3 text-3xl font-black">What should the user do next?</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              ElementOS now gives a simple path instead of leaving users stranded: simulate, forecast, report, share, save.
+            </p>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-5">
+          {[
+            ["Compare Materials", "Find a strong pair", "compare"],
+            ["Time Machine", "Forecast long-term behavior", "timemachine"],
+            ["Simulation Dossier", "Package the result", "simreports"],
+            ["Share Card Studio", "Make it viral", "viralcards"],
+            ["Workspace", "Save the asset", "lab"],
+          ].map(([title, desc, target]) => (
+            <button key={title} onClick={() => setPage(target)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/30 hover:bg-cyan-300/10">
+              <div className="text-sm font-black text-cyan-100">{title}</div>
+              <div className="mt-2 text-xs leading-5 text-slate-400">{desc}</div>
+            </button>
+          ))}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
 function Discover({ setPage }) {
   const generated = useMemo(() => generateDiscoveryEngine(24), []);
   const discoveries = useMemo(() => adaptiveDiscoveryRank(generated), [generated]);
@@ -1708,6 +1866,7 @@ function Discover({ setPage }) {
 
       <GuidePanel page="discover" />
       <RealTimeNetworkPanel discoveries={discoveries} setPage={setPage} />
+      <DiscoveryOSFeed discoveries={discoveries} setPage={setPage} />
 
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-4">
