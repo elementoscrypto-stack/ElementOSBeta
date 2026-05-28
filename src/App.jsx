@@ -907,6 +907,8 @@ function MatterIntelligenceLab() {
         </div>
       </Panel>
 
+      <GeometryTelemetryLab selectedTarget={selectedTarget} selectedModule={selectedModule} opportunityScore={opportunityScore} runScan={runScan} />
+
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -1609,6 +1611,11 @@ function ElementOSThemeSkin() {
       .eos-data-card { background: linear-gradient(135deg, rgba(4,16,31,.96), rgba(8,24,42,.82)); border: 1px solid rgba(42,103,185,.28); }
       .eos-topbar { background: rgba(2, 8, 17, .78); border: 1px solid rgba(37, 96, 170, .25); box-shadow: 0 0 50px rgba(0,106,255,.08), inset 0 1px 0 rgba(255,255,255,.04); }
       @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes eosSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes eosSpinReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+      @keyframes eosPulse { 0%,100% { opacity: .72; filter: brightness(1); } 50% { opacity: 1; filter: brightness(1.45); } }
+      @keyframes eosDrift { 0% { transform: translateX(-18%); } 100% { transform: translateX(118%); } }
+
       .poster-hero {
         background:
           radial-gradient(circle at 74% 9%, rgba(14,165,233,.30), transparent 30%),
@@ -2950,6 +2957,226 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
 }
 
 
+
+const timeMachineEnvironmentProfiles = {
+  "Lab Storage": { category: "Controlled", corrosion: 0.38, heat: 0.42, pressure: 0.32, radiation: 0.12, humidity: 0.2, label: "controlled indoor storage with low environmental volatility" },
+  "Clean Room": { category: "Controlled", corrosion: 0.28, heat: 0.35, pressure: 0.28, radiation: 0.1, humidity: 0.12, label: "filtered clean-room exposure with extremely low contamination" },
+  "Vacuum Chamber": { category: "Controlled", corrosion: 0.18, heat: 0.68, pressure: 0.24, radiation: 0.35, humidity: 0.02, label: "vacuum cycling with thermal swing and low oxidation" },
+  "Thermal Cycling Rig": { category: "Controlled", corrosion: 0.55, heat: 1.35, pressure: 0.62, radiation: 0.18, humidity: 0.24, label: "accelerated thermal expansion and contraction testing" },
+  "Arctic Freeze": { category: "Climate", corrosion: 0.42, heat: 0.28, pressure: 0.72, radiation: 0.2, humidity: 0.5, label: "cold contraction, ice loading and freeze-thaw exposure" },
+  "Sub-Arctic Permafrost": { category: "Climate", corrosion: 0.52, heat: 0.36, pressure: 0.9, radiation: 0.18, humidity: 0.62, label: "frozen ground, seasonal thaw and hidden moisture pockets" },
+  "Temperate Rain": { category: "Climate", corrosion: 0.95, heat: 0.55, pressure: 0.45, radiation: 0.18, humidity: 0.84, label: "moderate climate with persistent moisture cycling" },
+  "Mediterranean Coast": { category: "Climate", corrosion: 1.08, heat: 0.82, pressure: 0.48, radiation: 0.26, humidity: 0.72, label: "warm salt-air climate with seasonal drying" },
+  "Hot Desert": { category: "Climate", corrosion: 0.58, heat: 1.45, pressure: 0.55, radiation: 0.48, humidity: 0.12, label: "high heat, UV exposure and abrasive dust loading" },
+  "Tropical Monsoon": { category: "Climate", corrosion: 1.48, heat: 1.05, pressure: 0.56, radiation: 0.28, humidity: 0.96, label: "high humidity, heat and aggressive wet-dry cycling" },
+  "Rainforest Canopy": { category: "Climate", corrosion: 1.42, heat: 0.82, pressure: 0.4, radiation: 0.16, humidity: 0.98, label: "constant biofilm, moisture and organic acidity" },
+  "Urban Pollution": { category: "Climate", corrosion: 1.18, heat: 0.7, pressure: 0.48, radiation: 0.2, humidity: 0.65, label: "pollutants, acidic deposits and mixed humidity" },
+  "Coastal Air": { category: "Marine", corrosion: 1.35, heat: 0.75, pressure: 0.6, radiation: 0.22, humidity: 0.86, label: "salt, humidity and surface oxidation exposure" },
+  "Harbour Splash Zone": { category: "Marine", corrosion: 1.72, heat: 0.72, pressure: 0.78, radiation: 0.2, humidity: 0.95, label: "splash-zone chloride attack and intermittent oxygen exposure" },
+  "Open Ocean": { category: "Marine", corrosion: 1.55, heat: 0.64, pressure: 0.92, radiation: 0.16, humidity: 1.0, label: "continuous saltwater atmosphere and mechanical wetting" },
+  "Deep Ocean": { category: "Marine", corrosion: 1.2, heat: 0.38, pressure: 1.88, radiation: 0.12, humidity: 1.0, label: "extreme hydrostatic pressure, cold water and low light" },
+  "Offshore Platform": { category: "Marine", corrosion: 1.62, heat: 0.9, pressure: 1.08, radiation: 0.2, humidity: 0.92, label: "salt spray, vibration, fatigue and platform loading" },
+  "Subsea Pipeline": { category: "Marine", corrosion: 1.25, heat: 0.58, pressure: 1.58, radiation: 0.12, humidity: 1.0, label: "subsea pressure, coating dependency and long-duration fatigue" },
+  "Steel Plant": { category: "Industrial", corrosion: 0.92, heat: 1.8, pressure: 0.98, radiation: 0.22, humidity: 0.38, label: "radiant heat, scale, particulates and thermal fatigue" },
+  "Chemical Plant": { category: "Industrial", corrosion: 1.82, heat: 1.12, pressure: 1.08, radiation: 0.26, humidity: 0.64, label: "chemical vapor, thermal load and corrosion acceleration" },
+  "Oil Refinery": { category: "Industrial", corrosion: 1.38, heat: 1.45, pressure: 1.22, radiation: 0.24, humidity: 0.5, label: "hydrocarbon heat, pressure cycling and corrosive process fluids" },
+  "Mining Site": { category: "Industrial", corrosion: 1.05, heat: 0.9, pressure: 1.32, radiation: 0.25, humidity: 0.42, label: "abrasion, dust, loading and shock cycles" },
+  "Power Station": { category: "Industrial", corrosion: 0.82, heat: 1.55, pressure: 1.12, radiation: 0.38, humidity: 0.38, label: "hot operation, vibration and equipment fatigue" },
+  "Battery Plant": { category: "Industrial", corrosion: 1.25, heat: 1.0, pressure: 0.62, radiation: 0.18, humidity: 0.46, label: "chemical exposure and thermal management demands" },
+  "Data Centre": { category: "Industrial", corrosion: 0.48, heat: 0.88, pressure: 0.38, radiation: 0.14, humidity: 0.34, label: "controlled cooling with long uptime and electrical sensitivity" },
+  "Low Earth Orbit": { category: "Aerospace", corrosion: 0.18, heat: 1.6, pressure: 0.22, radiation: 1.65, humidity: 0.0, label: "thermal swing, vacuum and radiation exposure" },
+  "High Orbit": { category: "Aerospace", corrosion: 0.16, heat: 1.4, pressure: 0.18, radiation: 1.95, humidity: 0.0, label: "long-duration radiation and thermal cycling" },
+  "Lunar Surface": { category: "Aerospace", corrosion: 0.12, heat: 1.55, pressure: 0.26, radiation: 1.7, humidity: 0.0, label: "vacuum, abrasive dust and high radiation" },
+  "Mars Surface": { category: "Aerospace", corrosion: 0.38, heat: 0.92, pressure: 0.44, radiation: 1.28, humidity: 0.08, label: "low atmosphere, dust storms and radiation" },
+  "Re-entry Heating": { category: "Aerospace", corrosion: 0.25, heat: 2.05, pressure: 1.45, radiation: 0.7, humidity: 0.0, label: "extreme transient heating and aerodynamic pressure" },
+  "Jet Engine Bay": { category: "Aerospace", corrosion: 0.62, heat: 1.9, pressure: 1.28, radiation: 0.24, humidity: 0.16, label: "heat, vibration and high-cycle fatigue" },
+  "Sandstone Basin": { category: "Geological", corrosion: 0.72, heat: 0.78, pressure: 1.2, radiation: 0.18, humidity: 0.58, label: "porous basin fluids, pressure gradient and reservoir contact" },
+  "Shale Basin": { category: "Geological", corrosion: 0.92, heat: 0.82, pressure: 1.42, radiation: 0.2, humidity: 0.64, label: "layered shale, compaction and variable chemistry" },
+  "Granite Formation": { category: "Geological", corrosion: 0.45, heat: 0.9, pressure: 1.62, radiation: 0.3, humidity: 0.25, label: "hard crystalline rock and high structural loading" },
+  "Volcanic Zone": { category: "Geological", corrosion: 1.15, heat: 1.92, pressure: 1.15, radiation: 0.42, humidity: 0.48, label: "thermal flux, reactive minerals and unstable gradients" },
+  "Fault Zone": { category: "Geological", corrosion: 0.85, heat: 0.9, pressure: 1.78, radiation: 0.24, humidity: 0.54, label: "fracture networks, stress concentration and fluid pathways" },
+  "Salt Dome": { category: "Geological", corrosion: 1.68, heat: 0.8, pressure: 1.4, radiation: 0.18, humidity: 0.78, label: "chloride-rich exposure and creeping salt pressure" },
+  "Carbonate Reservoir": { category: "Geological", corrosion: 0.92, heat: 0.86, pressure: 1.32, radiation: 0.18, humidity: 0.62, label: "carbonate porosity, acid sensitivity and reservoir pressure" },
+  "Geothermal Field": { category: "Extreme", corrosion: 1.35, heat: 1.88, pressure: 1.52, radiation: 0.32, humidity: 0.8, label: "hot brines, pressure and geothermal chemistry" },
+  "High Radiation Zone": { category: "Extreme", corrosion: 0.58, heat: 1.08, pressure: 0.78, radiation: 2.0, humidity: 0.24, label: "radiation-driven degradation and shielding demand" },
+  "Cryogenic Facility": { category: "Extreme", corrosion: 0.45, heat: 0.35, pressure: 0.9, radiation: 0.18, humidity: 0.08, label: "cold contraction and brittleness challenge" },
+  "High Pressure Cell": { category: "Extreme", corrosion: 0.7, heat: 0.85, pressure: 1.95, radiation: 0.2, humidity: 0.18, label: "compression, cyclic loading and stress concentration" },
+  "Acidic Corrosive Bath": { category: "Extreme", corrosion: 2.0, heat: 0.95, pressure: 0.55, radiation: 0.18, humidity: 0.9, label: "aggressive acidic corrosion and surface attack" },
+  "Alkaline Processing": { category: "Extreme", corrosion: 1.62, heat: 0.9, pressure: 0.66, radiation: 0.16, humidity: 0.72, label: "caustic chemical exposure and coating dependency" },
+  "High Vibration Rail": { category: "Mechanical", corrosion: 0.72, heat: 0.72, pressure: 1.3, radiation: 0.16, humidity: 0.35, label: "vibration fatigue and repeated mechanical shock" },
+  "Bridge Deck Winter": { category: "Mechanical", corrosion: 1.48, heat: 0.48, pressure: 1.05, radiation: 0.16, humidity: 0.72, label: "freeze-thaw, traffic load and de-icing salt" },
+  "Aerospace Frame": { category: "Mechanical", corrosion: 0.55, heat: 0.88, pressure: 1.18, radiation: 0.35, humidity: 0.22, label: "fatigue-critical lightweight structural duty" },
+  "Deep Mine Shaft": { category: "Mechanical", corrosion: 1.08, heat: 1.1, pressure: 1.55, radiation: 0.34, humidity: 0.82, label: "heat, humidity, pressure and abrasive contact" },
+  "Hydrogen Service": { category: "Extreme", corrosion: 0.78, heat: 0.7, pressure: 1.7, radiation: 0.15, humidity: 0.18, label: "hydrogen embrittlement risk and pressure cycling" },
+  "Nuclear Containment": { category: "Extreme", corrosion: 0.82, heat: 1.45, pressure: 1.45, radiation: 1.72, humidity: 0.38, label: "radiation, heat, shielding and containment load" },
+  "Fire Exposure": { category: "Extreme", corrosion: 0.35, heat: 2.2, pressure: 1.0, radiation: 0.38, humidity: 0.12, label: "short-duration extreme heat and strength loss" },
+  "Underground Utility": { category: "Geological", corrosion: 1.18, heat: 0.62, pressure: 1.0, radiation: 0.12, humidity: 0.88, label: "soil chemistry, moisture and buried-service stress" },
+};
+
+function EnvCategoryStrip({ profiles, active, setActive }) {
+  const categories = Array.from(new Set(Object.values(profiles).map((p) => p.category)));
+  return (
+    <div className="mt-4 flex flex-wrap gap-2">
+      {["All", ...categories].map((cat) => (
+        <button key={cat} onClick={() => setActive(cat)} className={`rounded-full border px-3 py-2 text-xs font-black uppercase tracking-[.16em] transition ${active === cat ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:bg-white/[0.07]"}`}>{cat}</button>
+      ))}
+    </div>
+  );
+}
+
+function TemporalFieldGraph({ timeline, profile, stress, temperature, pressure, humidity, radiation }) {
+  const width = 100;
+  const height = 100;
+  const path = (key, scale = 0.78, offset = 92) => timeline.map((t, i) => {
+    const x = 6 + (i / Math.max(1, timeline.length - 1)) * 88;
+    const y = Math.max(8, Math.min(94, offset - (t[key] || 0) * scale));
+    return `${x},${y}`;
+  }).join(" ");
+  const envelopeTop = timeline.map((t, i) => `${6 + (i / Math.max(1, timeline.length - 1)) * 88},${Math.max(6, 92 - t.stability * .78 - 8 - profile.heat * 2)}`).join(" ");
+  const envelopeBottom = timeline.slice().reverse().map((t, ri) => {
+    const i = timeline.length - 1 - ri;
+    return `${6 + (i / Math.max(1, timeline.length - 1)) * 88},${Math.min(96, 92 - t.stability * .78 + 10 + profile.corrosion * 3)}`;
+  }).join(" ");
+  const anomalyIndex = Math.max(1, Math.round((stress + temperature + pressure + humidity + radiation) / 100));
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} className="h-[430px] w-full rounded-[2rem] border border-cyan-300/20 bg-[radial-gradient(circle_at_40%_10%,rgba(34,211,238,.18),transparent_28%),linear-gradient(135deg,rgba(2,6,23,.96),rgba(5,17,36,.92))] p-4 shadow-[inset_0_0_70px_rgba(0,180,255,.10)]">
+      <defs>
+        <linearGradient id="temporalLine" x1="0" x2="1"><stop offset="0%" stopColor="#67e8f9"/><stop offset="55%" stopColor="#ffffff"/><stop offset="100%" stopColor="#fbbf24"/></linearGradient>
+        <linearGradient id="temporalEnvelope" x1="0" x2="1"><stop offset="0%" stopColor="rgba(34,211,238,.30)"/><stop offset="100%" stopColor="rgba(251,191,36,.20)"/></linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="1.8" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      {[15,30,45,60,75,90].map((y) => <line key={y} x1="5" x2="95" y1={y} y2={y} stroke="rgba(255,255,255,.08)" strokeDasharray="1.5 2" />)}
+      {[10,25,40,55,70,85].map((x) => <line key={x} x1={x} x2={x} y1="6" y2="94" stroke="rgba(34,211,238,.045)" />)}
+      <polygon points={`${envelopeTop} ${envelopeBottom}`} fill="url(#temporalEnvelope)" opacity=".8" />
+      <polyline points={path("stability")} fill="none" stroke="url(#temporalLine)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" filter="url(#glow)" />
+      <polyline points={path("corrosion", .62, 92)} fill="none" stroke="rgba(251,191,36,.86)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <polyline points={path("fatigue", .58, 88)} fill="none" stroke="rgba(244,114,182,.76)" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+      <polyline points={path("pressureDrift", .56, 90)} fill="none" stroke="rgba(129,140,248,.76)" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+      {timeline.map((t, i) => {
+        const x = 6 + (i / Math.max(1, timeline.length - 1)) * 88;
+        const y = Math.max(8, Math.min(94, 92 - t.stability * .78));
+        return <g key={t.year}><circle cx={x} cy={y} r={i === anomalyIndex ? 2.2 : 1.55} fill={i === anomalyIndex ? "#fbbf24" : "#67e8f9"} filter="url(#glow)"/><text x={x} y="98" textAnchor="middle" className="fill-slate-400 text-[3px]">{t.year}y</text></g>;
+      })}
+      <text x="7" y="10" className="fill-cyan-100 text-[4px] font-bold uppercase">Future-state simulation</text>
+      <text x="7" y="16" className="fill-slate-400 text-[3px]">Confidence envelope · stability · corrosion · fatigue · pressure drift</text>
+    </svg>
+  );
+}
+
+function TemporalSpiralNavigator({ timeline, selectedYear, setSelectedYear }) {
+  return (
+    <div className="relative h-[360px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_36%),linear-gradient(135deg,#020617,#07111f)] [perspective:1000px]">
+      <div className="absolute inset-0 opacity-30 bg-[linear-gradient(rgba(255,255,255,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.06)_1px,transparent_1px)] bg-[size:38px_38px]" />
+      <div className="absolute left-1/2 top-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/20" style={{ animation: "eosSpin 18s linear infinite" }} />
+      <div className="absolute left-1/2 top-1/2 h-[210px] w-[210px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-300/20" style={{ animation: "eosSpinReverse 24s linear infinite" }} />
+      {timeline.map((t, i) => {
+        const angle = -Math.PI / 2 + i * 0.82;
+        const radius = 44 + i * 18;
+        const x = 50 + Math.cos(angle) * radius / 2.4;
+        const y = 50 + Math.sin(angle) * radius / 2.4;
+        const active = t.year === selectedYear;
+        return (
+          <button key={t.year} onClick={() => setSelectedYear(t.year)} className="absolute grid place-items-center rounded-2xl border text-center transition hover:scale-110" style={{ left: `${x}%`, top: `${y}%`, width: active ? 82 : 64, height: active ? 82 : 64, transform: "translate(-50%,-50%)", borderColor: active ? "rgba(251,191,36,.65)" : "rgba(34,211,238,.28)", background: active ? "rgba(251,191,36,.16)" : "rgba(34,211,238,.09)", boxShadow: active ? "0 0 42px rgba(251,191,36,.28)" : "0 0 24px rgba(34,211,238,.12)" }}>
+            <span className="text-[10px] font-black uppercase tracking-[.16em] text-slate-400">Year</span>
+            <span className="text-xl font-black text-cyan-100">{t.year}</span>
+          </button>
+        );
+      })}
+      <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur-xl">
+        <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Temporal spiral navigator</div>
+        <div className="mt-1 text-sm text-slate-300">Click a node to inspect a future horizon. The spiral shows material ageing as a cinematic timeline instead of a flat control.</div>
+      </div>
+    </div>
+  );
+}
+
+function TelemetryStreamDeck({ values }) {
+  const streams = [
+    ["Environmental Pressure", values.pressure, "cyan"],
+    ["Temperature Flux", values.temperature, "amber"],
+    ["Corrosion Feed", values.humidity, "emerald"],
+    ["Mechanical Stress", values.stress, "rose"],
+    ["Radiation Drift", values.radiation, "fuchsia"],
+  ];
+  return (
+    <div className="grid gap-3 md:grid-cols-5">
+      {streams.map(([label, value, tone], index) => (
+        <div key={label} className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+          <div className={`absolute inset-x-0 bottom-0 h-1 bg-${tone}-300/70`} style={{ width: `${value}%` }} />
+          <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">{label}</div>
+          <div className="mt-2 text-3xl font-black text-white">{value}%</div>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-950">
+            <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-white to-amber-300" style={{ width: `${value}%`, animation: `eosPulse ${2.2 + index * .25}s ease-in-out infinite` }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function GeometryTelemetryLab({ selectedTarget, selectedModule, opportunityScore, runScan }) {
+  const nodes = [
+    ["Signal", 24, 42, "#67e8f9"],
+    ["Geometry", 48, 24, "#fbbf24"],
+    ["Telemetry", 70, 45, "#a78bfa"],
+    ["History", 42, 68, "#34d399"],
+    ["Target", 63, 72, "#fb7185"],
+  ];
+  const genome = [
+    ["Thermal", 92],
+    ["Pressure", 88],
+    ["Stability", 94],
+    ["Density", 81],
+    ["Trend", opportunityScore || 87],
+  ];
+  return (
+    <Panel className="border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-blue-950/20">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Pill gold><Radar size={12}/> geometry & telemetry lab</Pill>
+          <h2 className="mt-3 text-5xl font-black leading-tight">Discovery Intelligence Network</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">A live geometry layer for opportunity radar, discovery constellation, telemetry streams and genome scoring. This makes Matter Intelligence feel like a scientific mission-control system.</p>
+        </div>
+        <Button onClick={runScan} variant="primary">Scan Signal Field</Button>
+      </div>
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
+        <div className="relative min-h-[430px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_32%),linear-gradient(135deg,#020617,#06172c)] p-4">
+          <div className="absolute inset-0 opacity-30 bg-[linear-gradient(rgba(255,255,255,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.06)_1px,transparent_1px)] bg-[size:36px_36px]" />
+          <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
+            <defs><filter id="miGlow"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+            {[20, 35, 50].map((r) => <circle key={r} cx="50" cy="50" r={r} fill="none" stroke="rgba(34,211,238,.13)" strokeDasharray="2 2" />)}
+            {nodes.slice(1).map((n, i) => <line key={n[0]} x1={nodes[0][1]} y1={nodes[0][2]} x2={n[1]} y2={n[2]} stroke="rgba(103,232,249,.42)" strokeWidth=".8" />)}
+            {nodes.map(([label, x, y, color], index) => <g key={label} filter="url(#miGlow)"><circle cx={x} cy={y} r={index === 4 ? 4.6 : 3.4} fill={color} opacity=".95"/><text x={x} y={y + 8} textAnchor="middle" className="fill-slate-200 text-[3.3px] font-bold uppercase">{label}</text></g>)}
+          </svg>
+          <div className="absolute left-6 top-6 rounded-2xl border border-cyan-300/20 bg-black/40 p-4 backdrop-blur-xl">
+            <div className="text-xs uppercase tracking-[.22em] text-cyan-200">opportunity radar</div>
+            <div className="mt-2 text-4xl font-black text-white">{selectedModule?.name || "Signal"}</div>
+          </div>
+          <div className="absolute bottom-6 right-6 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-right backdrop-blur-xl">
+            <div className="text-5xl font-black text-emerald-100">{opportunityScore || 87}%</div>
+            <div className="text-xs uppercase tracking-[.18em] text-emerald-200">confidence</div>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">discovery genome</div>
+            <div className="mt-2 text-3xl font-black text-cyan-100">{selectedTarget?.id || "MI-1047"}</div>
+            <div className="mt-5 space-y-3">
+              {genome.map(([label, value]) => <div key={label}><div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div><div className="h-2 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-white to-amber-300" style={{ width: `${value}%` }} /></div></div>)}
+            </div>
+          </div>
+          <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">telemetry streams</div>
+            {[["Pressure density", 88], ["Signal strength", 94], ["Historical match", 92], ["Trend velocity", 76]].map(([label, value], i) => (
+              <div key={label} className="mt-4"><div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div><div className="h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%`, animation: `eosPulse ${1.8 + i * .25}s ease-in-out infinite` }} /></div></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function TimeMachine({ selected, setSelected, setPage }) {
   const [material, setMaterial] = useState(selected || "Al");
   const [environment, setEnvironment] = useState("Coastal air");
@@ -2962,17 +3189,13 @@ function TimeMachine({ selected, setSelected, setPage }) {
   const base = elementMap[material] || elementMap.Al;
   const baseScore = score(material);
 
-  const environmentProfiles = {
-    "Lab storage": { corrosion: 0.45, heat: 0.45, pressure: 0.35, radiation: 0.15, label: "controlled low-risk environment" },
-    "Coastal air": { corrosion: 1.35, heat: 0.75, pressure: 0.6, radiation: 0.22, label: "salt, humidity and surface oxidation exposure" },
-    "Industrial heat": { corrosion: 0.9, heat: 1.65, pressure: 0.95, radiation: 0.28, label: "thermal cycling, hot surfaces and fatigue" },
-    "High pressure": { corrosion: 0.7, heat: 0.85, pressure: 1.75, radiation: 0.2, label: "compression, cyclic loading and stress concentration" },
-    "Cryogenic": { corrosion: 0.45, heat: 0.35, pressure: 0.9, radiation: 0.18, label: "cold contraction and brittleness challenge" },
-    "Space exposure": { corrosion: 0.25, heat: 1.25, pressure: 0.35, radiation: 1.45, label: "radiation, thermal swing and vacuum-like exposure" },
-  };
+  const environmentProfiles = timeMachineEnvironmentProfiles;
+  const [envCategory, setEnvCategory] = useState("All");
+  const [selectedYear, setSelectedYear] = useState(100);
+  const [temporalSpeed, setTemporalSpeed] = useState(60);
 
   const profile = environmentProfiles[environment] || environmentProfiles["Coastal air"];
-  const horizons = [0, 1, 5, 10, 25, 50, 100];
+  const horizons = Array.from(new Set([0, 1, 5, 10, 25, 50, 100, 250, 500, 1000, selectedYear])).sort((a, b) => a - b);
 
   const resilience = Math.round(
     Math.min(
@@ -3082,9 +3305,42 @@ function TimeMachine({ selected, setSelected, setPage }) {
 
       <GuidePanel page="timemachine" />
 
+      <Panel className="border-cyan-300/25 bg-gradient-to-br from-slate-950 via-blue-950/20 to-cyan-950/20">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Radar size={12}/> future-state simulation 2.0</Pill>
+            <h2 className="mt-3 text-5xl font-black">Temporal Field Graph</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">A multi-layer future-state graph with confidence envelope, baseline drift, anomaly markers and environmental influence streams.</p>
+          </div>
+          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">LIVE · {environment}</div>
+        </div>
+        <div className="mt-6 grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
+          <TemporalFieldGraph timeline={timeline} profile={profile} stress={stress} temperature={temperature} pressure={pressure} humidity={humidity} radiation={radiation} />
+          <div className="space-y-4">
+            <TemporalSpiralNavigator timeline={timeline} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+            <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">selected horizon</div>
+              <div className="mt-2 text-5xl font-black text-cyan-100">{selectedYear} years</div>
+              <p className="mt-3 text-sm leading-6 text-slate-300">The model now expands from short-term exposure into century and millennium-scale futures using your environment, stress and telemetry inputs.</p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-5"><TelemetryStreamDeck values={{ stress, temperature, pressure, humidity, radiation }} /></div>
+      </Panel>
+
       <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
         <Panel>
-          <h2 className="text-3xl font-black">Temporal Controls</h2>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <Pill gold><Clock3 size={12}/> temporal controls 2.0</Pill>
+              <h2 className="mt-3 text-4xl font-black">Temporal Control Deck</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-400">Choose a material, filter 50 environment profiles, tune telemetry exposure and jump across future horizons.</p>
+            </div>
+            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-right">
+              <div className="text-3xl font-black text-cyan-100">{selectedYear}y</div>
+              <div className="text-[10px] uppercase tracking-[.18em] text-cyan-200">active horizon</div>
+            </div>
+          </div>
           <div className="mt-5 grid gap-4">
             <label className="grid gap-2">
               <span className="text-xs uppercase tracking-[.2em] text-slate-500">Material</span>
@@ -3092,18 +3348,26 @@ function TimeMachine({ selected, setSelected, setPage }) {
                 {elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
               </select>
             </label>
-            <label className="grid gap-2">
-              <span className="text-xs uppercase tracking-[.2em] text-slate-500">Environment</span>
-              <select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
-                {Object.keys(environmentProfiles).map((k) => <option key={k}>{k}</option>)}
+            <div>
+              <span className="text-xs uppercase tracking-[.2em] text-slate-500">Environment Library</span>
+              <EnvCategoryStrip profiles={environmentProfiles} active={envCategory} setActive={setEnvCategory} />
+              <select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
+                {Object.keys(environmentProfiles).filter((k) => envCategory === "All" || environmentProfiles[k].category === envCategory).map((k) => <option key={k}>{k}</option>)}
               </select>
-            </label>
+              <div className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-sm leading-6 text-cyan-50"><b>{environmentProfiles[environment]?.category}</b> · {profile.label}</div>
+            </div>
+            <div className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4">
+              <div className="flex items-center justify-between text-sm"><span className="font-bold text-slate-200">Temporal Horizon</span><span className="font-black text-amber-100">{selectedYear} years</span></div>
+              <input type="range" min="1" max="1000" step="1" value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))} />
+              <div className="flex flex-wrap gap-2">{[1,5,10,25,50,100,250,500,1000].map((y) => <button key={y} onClick={() => setSelectedYear(y)} className={`rounded-full border px-3 py-1 text-xs font-bold ${selectedYear === y ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{y}y</button>)}</div>
+            </div>
             {[
               ["Stress Load", stress, setStress, "%"],
               ["Temperature", temperature, setTemperature, "°C"],
               ["Pressure Load", pressure, setPressure, "%"],
               ["Humidity / Corrosion Feed", humidity, setHumidity, "%"],
               ["Radiation / Field Exposure", radiation, setRadiation, "%"],
+              ["Temporal Speed", temporalSpeed, setTemporalSpeed, "%"],
             ].map(([label, value, setter, unit]) => (
               <label key={label} className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4">
                 <div className="flex items-center justify-between text-sm">
