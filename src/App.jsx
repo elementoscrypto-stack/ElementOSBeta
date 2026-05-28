@@ -5847,6 +5847,52 @@ Generated in ElementOS.`,
     alert(`${channel} caption copied.`);
   };
 
+
+  const createSocialPack = () => {
+    const pair = cardData.title;
+    const socialPack = {
+      product: "ElementOS",
+      asset: "Discovery Social Pack",
+      discovery: {
+        title: pair,
+        code: cardData.code,
+        headline: cardData.headline,
+        score: `${cardData.score}%`,
+        tier: cardData.tier,
+        rank: cardData.rank,
+        founder: cardData.founder,
+      },
+      exportsIncluded: ["PDF report", "JSON data", "SVG poster"],
+      captions: {
+        x: `${cardData.headline}\n\n${pair} · ${cardData.score}% ${cardData.metric}\n${cardData.tier} · ${cardData.top}\n\nBuilt in ElementOS.`,
+        linkedin: `I generated a new ElementOS discovery asset: ${pair}. It scored ${cardData.score}% ${cardData.metric} and is classified as ${cardData.tier}. ElementOS turns simulations into reports, posters and shareable scientific discovery pages.`,
+        reddit: `I am testing ElementOS, a material-discovery prototype. This export shows ${pair} with ${cardData.score}% ${cardData.metric}. I would love feedback on whether the card explains the discovery clearly.`,
+      },
+      ctaVariants,
+      platformRecommendations,
+      generatedAt: new Date().toISOString(),
+    };
+
+    exportAllFormats({
+      baseName: `elementos-social-pack-${slugifyExportName(cardData.code)}`,
+      title: `${cardData.title} Social Pack`,
+      summary: `${cardData.headline}. ${cardData.score}% ${cardData.metric}. ${cardData.tier}.`,
+      payload: socialPack,
+      sections: [
+        { heading: "Discovery", text: `${cardData.title} · ${cardData.code} · ${cardData.score}% ${cardData.metric}` },
+        { heading: "X Post", text: socialPack.captions.x },
+        { heading: "LinkedIn Post", text: socialPack.captions.linkedin },
+        { heading: "Reddit Post", text: socialPack.captions.reddit },
+        { heading: "Call To Action Variants", text: ctaVariants.join(" · ") },
+      ],
+    });
+
+    setExportHistory((history) => [
+      { type: "Social Pack", layout: "PDF + JSON + SVG", time: new Date().toLocaleTimeString() },
+      ...history,
+    ].slice(0, 8));
+  };
+
   const exportSVG = () => {
     const layoutMeta = {
       "Square Card": { w: 1600, h: 1600, name: "square" },
@@ -6002,12 +6048,28 @@ Generated in ElementOS.`,
             <input value={seriesNumber} onChange={(e) => setSeriesNumber(Number(e.target.value) || 1)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Series number" />
             <Button onClick={() => setCardIndex((v) => v + 1)}>Next Discovery</Button>
             <Button onClick={copyCard}>Copy Post</Button>
+            <Button onClick={createSocialPack}>Create Social Pack</Button>
             <Button onClick={exportSVG} variant="primary" className="sm:col-span-3">Export PDF/JSON/SVG</Button>
           </div>
         </Panel>
       </Panel>
 
       <GuidePanel page="viralcards" />
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><ShieldCheck size={12}/> button value audit</Pill>
+            <h2 className="mt-3 text-3xl font-black">Every major card action now creates value.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Use this studio to export PDF/JSON/SVG, copy platform captions, create a full social pack, save the asset path and move users toward reports, workspace and public discovery pages.</p>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {["Export", "Save", "Share"].map((label) => (
+              <div key={label} className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-center text-sm font-black text-cyan-100">{label}</div>
+            ))}
+          </div>
+        </div>
+      </Panel>
 
       <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
         <div className="relative min-h-[780px] overflow-hidden rounded-[2.5rem] border border-cyan-300/25 bg-gradient-to-br from-cyan-400/15 via-slate-950 to-fuchsia-500/20 p-6 shadow-[0_0_120px_rgba(34,211,238,.20)]">
