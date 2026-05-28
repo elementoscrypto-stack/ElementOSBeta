@@ -1181,7 +1181,7 @@ function handlePlanCTA(plan) {
 }
 function Panel({ children, className = "" }) {
   return (
-    <div className={`eos-panel relative overflow-hidden rounded-[1.15rem] border border-[#123257] bg-[#06101d]/88 p-5 shadow-[0_0_0_1px_rgba(35,120,255,.06),0_18px_80px_rgba(0,0,0,.42),inset_0_1px_0_rgba(255,255,255,.05)] backdrop-blur-2xl ${className}`}>
+    <div className={`eos-panel eos-magnetic-sheen relative overflow-hidden rounded-[1.15rem] border border-[#123257] bg-[#06101d]/88 p-5 shadow-[0_0_0_1px_rgba(35,120,255,.06),0_18px_80px_rgba(0,0,0,.42),inset_0_1px_0_rgba(255,255,255,.05)] backdrop-blur-2xl ${className}`}>
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,145,255,.13),transparent_33%),radial-gradient(circle_at_bottom_right,rgba(112,0,255,.10),transparent_36%),linear-gradient(180deg,rgba(255,255,255,.035),transparent_38%)]" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/45 to-transparent" />
       <div className="relative z-10">{children}</div>
@@ -1280,6 +1280,72 @@ function ElementOSThemeSkin() {
       .poster-element-tile-gold { background: radial-gradient(circle at top, rgba(245,158,11,.24), rgba(24,14,4,.84)); border:1px solid rgba(250,204,21,.34); box-shadow: 0 0 26px rgba(245,158,11,.14); }
       .poster-orbit { animation: posterFloat 6s ease-in-out infinite; }
       @keyframes posterFloat { 0%,100% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-10px) scale(1.015); } }
+
+
+      /* V38: global poster-grade magnetic skin */
+      .eos-magnetic-sheen { position: relative; overflow: hidden; }
+      .eos-magnetic-sheen:after {
+        content: '';
+        position: absolute;
+        inset: -40%;
+        background: conic-gradient(from 180deg at 50% 50%, transparent, rgba(103,232,249,.10), transparent, rgba(250,204,21,.07), transparent);
+        opacity: .46;
+        animation: eosMagneticTurn 16s linear infinite;
+        pointer-events: none;
+      }
+      @keyframes eosMagneticTurn { to { transform: rotate(360deg); } }
+      .eos-panel, .poster-card, .poster-card-gold, .eos-data-card, .eos-topbar, aside {
+        border-color: rgba(103,232,249,.20) !important;
+        background-image:
+          radial-gradient(circle at 18% 0%, rgba(103,232,249,.105), transparent 30%),
+          radial-gradient(circle at 92% 18%, rgba(250,204,21,.055), transparent 25%),
+          linear-gradient(135deg, rgba(3,12,24,.96), rgba(7,25,45,.82) 55%, rgba(2,6,13,.96)) !important;
+      }
+      .eos-panel:before, .poster-card:before, .poster-card-gold:before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(120deg, transparent 0%, rgba(255,255,255,.055) 18%, transparent 34%),
+          linear-gradient(90deg, rgba(103,232,249,.09), transparent 22%, transparent 78%, rgba(250,204,21,.055));
+        opacity: .62;
+        pointer-events: none;
+      }
+      h1, h2, h3 { letter-spacing: -0.035em; }
+      .eos-panel h1, .eos-panel h2, .poster-card h1, .poster-card h2 {
+        text-shadow: 0 0 34px rgba(34,211,238,.16);
+      }
+      .eos-nav-item:hover, .eos-button:hover, button:hover {
+        filter: saturate(1.16) brightness(1.06);
+      }
+      .eos-nav-item-active {
+        background: linear-gradient(90deg, rgba(11,99,255,.34), rgba(8,180,255,.14), rgba(250,204,21,.06)) !important;
+        box-shadow: inset 0 0 22px rgba(0,116,255,.16), 0 0 28px rgba(0,116,255,.20) !important;
+      }
+      .eos-command-scroll {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(103,232,249,.86) rgba(2,6,13,.92);
+      }
+      .eos-command-scroll::-webkit-scrollbar { width: 12px; }
+      .eos-command-scroll::-webkit-scrollbar-track {
+        background: rgba(2,6,13,.92);
+        border-left: 1px solid rgba(103,232,249,.10);
+        border-radius: 999px;
+      }
+      .eos-command-scroll::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg,#67e8f9,#0b63ff,#facc15);
+        border-radius: 999px;
+        border: 3px solid rgba(2,6,13,.92);
+        box-shadow: 0 0 18px rgba(34,211,238,.40);
+      }
+      .eos-command-shell {
+        background:
+          radial-gradient(circle at 12% 0%, rgba(103,232,249,.18), transparent 30%),
+          radial-gradient(circle at 88% 8%, rgba(250,204,21,.10), transparent 24%),
+          linear-gradient(135deg, rgba(2,6,13,.98), rgba(7,20,38,.96) 56%, rgba(2,6,13,.98));
+      }
 
       @keyframes eosSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
       @keyframes eosSpinReverse { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
@@ -6808,7 +6874,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
 
   return (
     <div className="fixed inset-0 z-[80] bg-black/75 p-4 backdrop-blur-xl" onClick={onClose} onKeyDown={onKeyDown}>
-      <div className="mx-auto mt-6 max-w-5xl overflow-hidden rounded-[2rem] border border-cyan-300/25 bg-slate-950/95 shadow-[0_0_140px_rgba(34,211,238,.28)]" onClick={(e) => e.stopPropagation()}>
+      <div className="eos-command-shell mx-auto mt-6 flex max-h-[92vh] max-w-5xl flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/95 shadow-[0_0_170px_rgba(34,211,238,.34)]" onClick={(e) => e.stopPropagation()}>
         <div className="border-b border-white/10 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -6846,8 +6912,8 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
           </div>
         </div>
 
-        <div className="grid max-h-[66vh] overflow-hidden lg:grid-cols-[1fr_310px]">
-          <div className="overflow-y-auto p-4">
+        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_310px]">
+          <div className="eos-command-scroll max-h-[56vh] p-4 lg:max-h-[58vh]">
             <div className="grid gap-3">
               {filtered.map(([id, title, desc, tag], index) => (
                 <button
@@ -6879,7 +6945,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
             </div>
           </div>
 
-          <div className="border-t border-white/10 bg-black/20 p-5 lg:border-l lg:border-t-0">
+          <div className="eos-command-scroll max-h-[56vh] border-t border-white/10 bg-black/20 p-5 lg:max-h-[58vh] lg:border-l lg:border-t-0">
             <div className="text-xs uppercase tracking-[.22em] text-slate-500">Current context</div>
             <div className="mt-2 text-2xl font-black text-cyan-100">{currentContext}</div>
             <div className="mt-1 text-sm text-slate-400">Active page: {page}</div>
