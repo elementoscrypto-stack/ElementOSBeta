@@ -7363,6 +7363,151 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
   );
 }
 
+
+function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare = [], session, isPro, startCheckout }) {
+  const discoveries = useMemo(() => makePublishableDiscoveries(8), []);
+  const primaryDiscovery = discoveries[0] || {
+    a: "Ti",
+    b: "Hf",
+    score: 94,
+    tier: "LEGENDARY",
+    type: "Rare thermal stability signal",
+    reason: "high-confidence material relationship with strong report potential",
+    publicId: "TI-HF-1047",
+    views: 2481,
+    saves: 187,
+    shares: 64,
+  };
+
+  const currentCompare = Array.isArray(compare) && compare.length ? compare : [selected, "Ti", "Hf"];
+  const discoveryScore = Math.min(9999, 4200 + currentCompare.length * 117 + Math.round(primaryDiscovery.score * 7));
+  const loopSteps = ["Discover", "Explain", "Report", "Save", "Share", "Return"];
+
+  const exportExecutivePack = () => {
+    exportAllFormats({
+      baseName: `elementos-${slugifyExportName(pageLabel(page))}-executive-pack`,
+      title: `ElementOS ${pageLabel(page)} Executive Pack`,
+      summary: `Premium export for ${pageLabel(page)}. Current discovery focus: ${primaryDiscovery.a} + ${primaryDiscovery.b}.`,
+      payload: {
+        page,
+        pageLabel: pageLabel(page),
+        selected,
+        compare: currentCompare,
+        primaryDiscovery,
+        discoveryScore,
+        generatedAt: new Date().toISOString(),
+      },
+      sections: [
+        ["Current Page", pageLabel(page)],
+        ["Discovery Focus", `${primaryDiscovery.a} + ${primaryDiscovery.b}`],
+        ["Discovery Score", `${primaryDiscovery.score}%`],
+        ["Rarity", primaryDiscovery.tier],
+        ["Recommended Action", "Generate report, export SVG, publish discovery, save to Workspace."],
+      ],
+    });
+  };
+
+  const copyLaunchPitch = async () => {
+    const pitch = `ElementOS turns material data into discoveries, reports and shareable scientific media. Today's discovery: ${primaryDiscovery.a} + ${primaryDiscovery.b} at ${primaryDiscovery.score}% confidence. Discover. Simulate. Understand.`;
+    try {
+      await navigator.clipboard.writeText(pitch);
+      alert("Launch pitch copied.");
+    } catch (error) {
+      downloadFile("elementos-launch-pitch.txt", pitch);
+    }
+  };
+
+  const launchSocialPack = () => {
+    exportAllFormats({
+      baseName: `elementos-social-pack-${primaryDiscovery.publicId || materialDNA(primaryDiscovery.a, primaryDiscovery.b)}`,
+      title: "ElementOS Social Launch Pack",
+      summary: `A share-ready growth pack for ${primaryDiscovery.a} + ${primaryDiscovery.b}.`,
+      payload: {
+        xPost: `Today's ElementOS discovery: ${primaryDiscovery.a} + ${primaryDiscovery.b} scored ${primaryDiscovery.score}%. ${primaryDiscovery.type}.`,
+        linkedInPost: `ElementOS generated a new material discovery: ${primaryDiscovery.a} + ${primaryDiscovery.b}. Discovery score: ${primaryDiscovery.score}%. Rarity: ${primaryDiscovery.tier}.`,
+        redditPost: `I built a material discovery card for ${primaryDiscovery.a} + ${primaryDiscovery.b}. Score: ${primaryDiscovery.score}%. Would love feedback from science/engineering builders.`,
+        discovery: primaryDiscovery,
+      },
+      sections: [
+        ["X Hook", `Today's ElementOS discovery: ${primaryDiscovery.a} + ${primaryDiscovery.b} scored ${primaryDiscovery.score}%.`],
+        ["LinkedIn Hook", "Material discovery is becoming a shareable research workflow."],
+        ["Reddit Hook", "Seeking feedback on an AI-native material discovery prototype."],
+      ],
+    });
+  };
+
+  return (
+    <Panel className="border-amber-300/25 bg-gradient-to-br from-slate-950 via-[#071a2d]/95 to-cyan-950/25 p-0">
+      <div className="relative overflow-hidden rounded-[1.15rem] p-5 md:p-6">
+        <div className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full bg-cyan-300/20 blur-3xl" />
+        <div className="pointer-events-none absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
+        <div className="relative grid gap-5 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
+          <div>
+            <div className="flex flex-wrap gap-2">
+              <Pill gold><Sparkles size={12} /> ultimate science os</Pill>
+              <Pill><Radar size={12} /> live discovery command</Pill>
+              <Pill><Download size={12} /> pdf json svg ready</Pill>
+            </div>
+            <h2 className="mt-4 text-4xl font-black leading-[.95] tracking-tight md:text-6xl">
+              Every click should create <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">an asset.</span>
+            </h2>
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300 md:text-base">
+              ElementOS now runs as a discovery loop: find signal, explain it, export it, save it, share it and bring users back tomorrow.
+            </p>
+            <div className="mt-5 grid gap-2 sm:grid-cols-3">
+              {[
+                ["Discovery Score", discoveryScore.toLocaleString(), "Research momentum"],
+                ["Today", `${primaryDiscovery.a} + ${primaryDiscovery.b}`, `${primaryDiscovery.score}% ${primaryDiscovery.tier}`],
+                ["Conversion Loop", "6 stages", "Discover → Share"],
+              ].map(([label, value, detail]) => (
+                <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.045] p-4">
+                  <div className="text-[10px] uppercase tracking-[.22em] text-slate-500">{label}</div>
+                  <div className="mt-2 text-2xl font-black text-white">{value}</div>
+                  <div className="mt-1 text-xs text-cyan-100">{detail}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 shadow-[0_0_70px_rgba(34,211,238,.12)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="text-xs uppercase tracking-[.24em] text-cyan-200">Recommended next move</div>
+                <div className="mt-2 text-3xl font-black text-white">Publish a discovery pack</div>
+                <p className="mt-2 text-sm leading-6 text-slate-400">
+                  Export a beautiful SVG, PDF report and JSON payload for {primaryDiscovery.a} + {primaryDiscovery.b}, then post it to X, LinkedIn and Reddit.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-right">
+                <div className="text-3xl font-black text-emerald-100">{primaryDiscovery.score}%</div>
+                <div className="text-[10px] uppercase tracking-[.2em] text-emerald-200">ready</div>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-3 gap-2">
+              {loopSteps.map((step, index) => (
+                <div key={step} className="rounded-2xl border border-white/10 bg-slate-950/60 p-3 text-center">
+                  <div className="text-[10px] font-black text-amber-100">0{index + 1}</div>
+                  <div className="mt-1 text-xs font-bold text-slate-200">{step}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Button onClick={() => setPage("discover")} variant="primary" className="px-4 py-3 text-xs">Open Discovery Feed</Button>
+              <Button onClick={() => setPage("matterlab")} className="px-4 py-3 text-xs">Matter Intelligence</Button>
+              <Button onClick={() => setPage("viralcards")} className="px-4 py-3 text-xs">Viral Studio</Button>
+              <Button onClick={exportExecutivePack} className="px-4 py-3 text-xs">Export Pack</Button>
+              <Button onClick={launchSocialPack} className="px-4 py-3 text-xs">Create Social Pack</Button>
+              <Button onClick={copyLaunchPitch} className="px-4 py-3 text-xs">Copy Launch Pitch</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState("landing");
   const [selected, setSelected] = useState("Al");
@@ -7684,6 +7829,15 @@ const startCheckout = async () => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} />
+        <UltimateScienceCommandLayer
+          page={page}
+          setPage={setPage}
+          selected={selected}
+          compare={compare}
+          session={session}
+          isPro={isPro}
+          startCheckout={startCheckout}
+        />
         <PageHelpStrip page={page} />
         <CopilotEverywhereBar page={page} setPage={setPage} />
         <div className="animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
