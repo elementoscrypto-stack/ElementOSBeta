@@ -6001,7 +6001,7 @@ function SubscriberRecommendedNextStep({ setPage, context = "Titanium + Hafnium"
 }
 
 
-function FirstSubscriberOnboarding({ page, setPage, session, isPro, startCheckout }) {
+function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, session, isPro, startCheckout }) {
   const [open, setOpen] = useState(() => localStorage.getItem("elementos_first_session_complete") !== "true");
   const [completed, setCompleted] = useState(() => {
     try {
@@ -6012,7 +6012,7 @@ function FirstSubscriberOnboarding({ page, setPage, session, isPro, startCheckou
   });
 
   const steps = [
-    ["discover", "Run first discovery", "Open Discovery Feed and inspect a trending material signal.", "discover", Sparkles],
+    ["discover", "Run first discovery", "Create a safe Hydrogen + Titanium comparison as the first discovery signal.", "compare", Sparkles],
     ["compare", "Compare materials", "Build a compare set and understand why the pairing matters.", "compare", BarChart3],
     ["matter", "Open Matter Intelligence", "Run an opportunity scan and review the signal logic.", "matterlab", Globe2],
     ["report", "Generate report", "Create a dossier-ready export from a discovery or simulation.", "simreports", FileText],
@@ -6065,7 +6065,18 @@ function FirstSubscriberOnboarding({ page, setPage, session, isPro, startCheckou
             {steps.map(([id, title, body, target, Icon], index) => {
               const done = completed[id];
               return (
-                <button key={id} onClick={() => { setPage(target); setOpen(false); notifyUser(`${title} opened.`); }} className={`rounded-[1.5rem] border p-4 text-left transition ${done ? "border-emerald-300/25 bg-emerald-300/10" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}>
+                <button key={id} onClick={() => {
+                  if (id === "discover") {
+                    setSelected?.("H");
+                    setCompare?.(["H", "Ti"]);
+                    setPage("compare");
+                    notifyUser("First discovery started: Hydrogen + Titanium loaded in Compare.");
+                  } else {
+                    setPage(target);
+                    notifyUser(`${title} opened.`);
+                  }
+                  setOpen(false);
+                }} className={`rounded-[1.5rem] border p-4 text-left transition ${done ? "border-emerald-300/25 bg-emerald-300/10" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}>
                   <div className="mb-4 flex items-center justify-between">
                     <div className="grid h-11 w-11 place-items-center rounded-xl border border-cyan-300/25 bg-cyan-300/10 text-cyan-100"><Icon size={18} /></div>
                     <span className="text-xs font-black text-slate-500">0{index + 1}</span>
@@ -9440,6 +9451,8 @@ const startCheckout = async () => {
         <FirstSubscriberOnboarding
           page={page}
           setPage={setPage}
+          setSelected={setSelected}
+          setCompare={setCompare}
           session={session}
           isPro={isPro}
           startCheckout={startCheckout}
