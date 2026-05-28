@@ -1202,10 +1202,10 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 const PAGE_LABELS = {
   landing: "Home",
   dashboard: "Dashboard",
-  copilot: "AI Copilot",
+  copilot: "Discovery AI",
   mission: "Mission Control",
   discover: "Discovery Feed",
-  explorer: "Element Explorer",
+  explorer: "Material Intelligence",
   compare: "Compare Materials",
   periodic: "Periodic Map",
   atlas: "Behaviour Atlas",
@@ -1223,7 +1223,7 @@ const PAGE_LABELS = {
   simreports: "Simulation Dossiers",
   viralcards: "Discovery Media Engine",
   reports: "Research Reports",
-  lab: "Workspace",
+  lab: "Discovery Vault",
   beta: "Founding Beta",
   login: "Account",
 };
@@ -8671,6 +8671,319 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
   );
 }
 
+
+function metricLabelV57(key) {
+  const labels = {
+    stability: "Stability",
+    conductivity: "Conductivity",
+    thermal: "Thermal",
+    diffusion: "Diffusion",
+    pressure: "Pressure",
+    rarity: "Rarity",
+    alignment: "Alignment",
+  };
+  return labels[key] || String(key || "Signal").replace(/^./, c => c.toUpperCase());
+}
+
+function smartElementStackV57(selected = "Al") {
+  const base = elementMap[selected] || elementMap.Al;
+  return elements
+    .filter((e) => e.symbol !== base.symbol)
+    .map((e) => ({
+      ...e,
+      compatibility: compatibilityScore(base.symbol, e.symbol),
+      profile: score(e.symbol),
+    }))
+    .sort((a, b) => b.compatibility - a.compatibility)
+    .slice(0, 8);
+}
+
+function DiscoveryVaultV57({ session, selected, compare, setPage }) {
+  const user = session?.user?.email?.split("@")[0] || "Paul Roper";
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(12)).slice(0, 8), []);
+  const profile = growthProfileStats(session, discoveries);
+  const vaultStats = [
+    ["Discoveries", "184", "+12 this week"],
+    ["Reports", "42", "+6 exported"],
+    ["Posters", "18", "+9 shared"],
+    ["Collections", "6", "3 active"],
+    ["Watchlists", "4", "2 rising"],
+  ];
+  const collections = [
+    ["Advanced Thermal Materials", "12 discoveries", "Ti + Hf, W + Re, Zr + Nb"],
+    ["Battery Material Candidates", "9 discoveries", "Li + Mn, Ni + Co, Graphite signals"],
+    ["Rare Earth Intelligence", "7 discoveries", "Nd + Pr, La + Ce, Dy stability"],
+    ["Geothermal Systems", "5 discoveries", "Basalt, granite, pressure layers"],
+  ];
+  const timeline = [
+    ["Today", "Generated discovery poster", `${selected} + ${(compare || ["Ti"])[1] || "Ti"}`],
+    ["Today", "Saved to Discovery Vault", "Material genome and report path stored"],
+    ["Yesterday", "Created executive report", "Simulation dossier exported as PDF/SVG/JSON"],
+    ["2 days ago", "Opened Matter Intelligence", "Opportunity scan converted to watchlist"],
+  ];
+  const exportVault = () => exportAllFormats({
+    baseName: "elementos-discovery-vault",
+    title: "ElementOS Discovery Vault",
+    summary: `Discovery Vault for ${user}. ${vaultStats.map(([a,b]) => `${a}: ${b}`).join(". ")}`,
+    payload: { user, profile, vaultStats, collections, timeline, selected, compare },
+    sections: [
+      { title: "Vault Metrics", lines: vaultStats.map(([a,b,c]) => `${a}: ${b} — ${c}`) },
+      { title: "Collections", lines: collections.map(([a,b,c]) => `${a}: ${b} — ${c}`) },
+      { title: "Timeline", lines: timeline.map(([a,b,c]) => `${a}: ${b} — ${c}`) },
+    ],
+  });
+
+  return (
+    <>
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-amber-950/20">
+        <div className="grid gap-8 xl:grid-cols-[1.1fr_.9fr] xl:items-center">
+          <div>
+            <Pill gold><Save size={12}/> subscriber home base</Pill>
+            <h1 className="mt-4 text-5xl font-black sm:text-7xl">
+              Discovery <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Vault</span>
+            </h1>
+            <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+              Your personal science operating room: discoveries, reports, posters, watchlists, collections and public assets stored in one glowing workspace.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
+              <Button onClick={() => setPage("viralcards")}>Create Media</Button>
+              <Button onClick={exportVault}>Export Vault</Button>
+            </div>
+          </div>
+          <Panel className="bg-black/30">
+            <div className="text-xs uppercase tracking-[.25em] text-slate-500">Discovery Passport</div>
+            <div className="mt-3 text-4xl font-black text-white">{user}</div>
+            <div className="mt-2 text-lg font-black text-cyan-100">Discovery Architect</div>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4"><div className="text-3xl font-black text-cyan-100">{profile.xp}</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">Discovery score</div></div>
+              <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/10 p-4"><div className="text-3xl font-black text-emerald-100">#{profile.rank}</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">Research rank</div></div>
+            </div>
+          </Panel>
+        </div>
+      </Panel>
+
+      <div className="grid gap-4 md:grid-cols-5">
+        {vaultStats.map(([label, value, sub]) => (
+          <Panel key={label} className="p-4">
+            <div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div>
+            <div className="mt-2 text-4xl font-black text-cyan-100">{value}</div>
+            <div className="mt-1 text-xs font-bold text-emerald-200">{sub}</div>
+          </Panel>
+        ))}
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1fr_.85fr]">
+        <Panel>
+          <Pill gold><BriefcaseBusiness size={12}/> collections</Pill>
+          <h2 className="mt-3 text-4xl font-black">Research Collections</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {collections.map(([title, count, body]) => (
+              <button key={title} onClick={() => setPage("discover")} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-300/10 via-black/30 to-fuchsia-300/10 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/40">
+                <div className="text-xs uppercase tracking-[.22em] text-cyan-200">{count}</div>
+                <div className="mt-3 text-2xl font-black text-white">{title}</div>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+              </button>
+            ))}
+          </div>
+        </Panel>
+        <Panel>
+          <Pill gold><Clock3 size={12}/> activity timeline</Pill>
+          <h2 className="mt-3 text-4xl font-black">Vault Timeline</h2>
+          <div className="mt-6 space-y-3">
+            {timeline.map(([time, title, body]) => (
+              <div key={`${time}-${title}`} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="text-xs uppercase tracking-[.2em] text-amber-100">{time}</div>
+                <div className="mt-1 text-lg font-black text-white">{title}</div>
+                <div className="mt-1 text-sm text-slate-400">{body}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill><Sparkles size={12}/> saved discovery assets</Pill>
+            <h2 className="mt-3 text-4xl font-black">Latest Saved Discoveries</h2>
+          </div>
+          <Button onClick={() => setPage("viralcards")} variant="primary">Create Social Pack</Button>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {discoveries.slice(0, 4).map((d) => (
+            <div key={d.dna} className="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-amber-100">{d.tier}</div>
+              <div className="mt-3 text-4xl font-black text-white">{d.a} + {d.b}</div>
+              <div className="mt-3 text-5xl font-black text-cyan-100">{d.score}%</div>
+              <p className="mt-3 text-sm leading-6 text-slate-300">{d.reason}</p>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+function MaterialExplorerV57({ selected, setSelected, setCompare, setPage }) {
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState("All");
+  const [lens, setLens] = useState("stability");
+  const active = elementMap[selected] || elementMap.H;
+  const s = score(active.symbol);
+  const filtered = elements.filter((e) => (cat === "All" || e.category === cat) && `${e.symbol} ${e.name} ${e.category}`.toLowerCase().includes(q.toLowerCase())).slice(0, 90);
+  const pairings = smartElementStackV57(active.symbol).slice(0, 6);
+  const genome = metrics.filter(m => m !== "alignment").map((m) => [metricLabelV57(m), score(active.symbol)[m]]);
+  const exportExplorer = () => exportAllFormats({
+    baseName: `material-intelligence-${active.symbol}`,
+    title: `Material Intelligence: ${active.name}`,
+    summary: `${active.name} (${active.symbol}) material profile. Atomic ${active.atomicNumber}. Top pairing: ${pairings[0]?.symbol}.`,
+    payload: { active, score: s, pairings, lens },
+    sections: [
+      { title: "Material Genome", lines: genome.map(([a,b]) => `${a}: ${Number(b).toFixed(2)}`) },
+      { title: "Recommended Pairings", lines: pairings.map((p) => `${p.symbol} — ${p.name}: ${p.compatibility}%`) },
+    ],
+  });
+
+  return (
+    <>
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-blue-950/30 via-slate-950 to-cyan-950/30">
+        <div className="grid gap-8 xl:grid-cols-[.9fr_1.1fr] xl:items-center">
+          <div>
+            <Pill gold><Search size={12}/> material intelligence explorer</Pill>
+            <h1 className="mt-4 text-5xl font-black sm:text-7xl">Material <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Intelligence</span></h1>
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">Search every element, inspect its genome, discover relationship constellations and send strong candidates directly into Compare, Reports or Media Engine.</p>
+          </div>
+          <Panel className="bg-black/30">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <div className="text-[10px] uppercase tracking-[.25em] text-slate-500">active material</div>
+                <div className="mt-2 text-8xl font-black text-cyan-100">{active.symbol}</div>
+                <div className="text-3xl font-black text-white">{active.name}</div>
+                <div className="text-sm text-slate-400">Atomic {active.atomicNumber} · {active.category}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-4xl font-black text-emerald-100">{Number(s[lens]).toFixed(lens === "alignment" ? 0 : 1)}</div>
+                <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{metricLabelV57(lens)}</div>
+              </div>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Button onClick={() => setCompare((x) => x.includes(active.symbol) ? x : [...x, active.symbol].slice(0, 8))} variant="primary">Add to Compare</Button>
+              <Button onClick={() => setPage("graph")}>Open Relationship Graph</Button>
+              <Button onClick={exportExplorer}>Export Profile</Button>
+            </div>
+          </Panel>
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[390px_1fr]">
+        <Panel>
+          <div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements, metals, gases..." className="w-full bg-transparent outline-none"/></div>
+          <select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{categories.map(c => <option key={c}>{c}</option>)}</select>
+          <div className="mt-4 max-h-[660px] overflow-auto pr-2">
+            {filtered.map((e) => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left ${active.symbol === e.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}
+          </div>
+        </Panel>
+        <div className="space-y-6">
+          <Panel>
+            <div className="flex flex-wrap items-center justify-between gap-4"><div><Pill gold><Dna size={12}/> material genome</Pill><h2 className="mt-3 text-4xl font-black">{active.name} Genome</h2></div><div className="flex flex-wrap gap-2">{metrics.map((m) => <Button key={m} onClick={() => setLens(m)} variant={lens === m ? "primary" : "ghost"}>{metricLabelV57(m)}</Button>)}</div></div>
+            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {genome.map(([label, value]) => <div key={label} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-4"><div className="flex justify-between text-xs uppercase tracking-[.2em] text-slate-500"><span>{label}</span><span>{Number(value).toFixed(1)}</span></div><div className="mt-3 h-3 overflow-hidden rounded-full bg-black/40"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-amber-200" style={{ width: `${Math.min(100, (value/5)*100)}%` }} /></div></div>)}
+            </div>
+          </Panel>
+          <Panel>
+            <Pill><Network size={12}/> pairing constellation</Pill><h2 className="mt-3 text-4xl font-black">Recommended Pairings</h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{pairings.map((p) => <button key={p.symbol} onClick={() => { setCompare([active.symbol, p.symbol]); setPage("compare"); }} className="rounded-[2rem] border border-white/10 bg-black/25 p-5 text-left hover:border-cyan-300/40"><div className="text-xs uppercase tracking-[.2em] text-cyan-200">{p.compatibility}% compatible</div><div className="mt-3 text-4xl font-black text-white">{active.symbol} + {p.symbol}</div><div className="mt-1 text-sm text-slate-400">{p.name} · {p.category}</div></button>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function MissionControlV57({ setPage, session, isPro, startCheckout }) {
+  const [activeMission, setActiveMission] = useState(0);
+  const missions = [
+    ["Run First Discovery", "Compare Hydrogen with a stronger material and create a discovery signal.", "compare", "Discovery unlocked"],
+    ["Generate Report", "Turn a result into a PDF, SVG and JSON research asset.", "reports", "Report engine proven"],
+    ["Create Media", "Package the result into a poster, card or social pack.", "viralcards", "Marketing asset created"],
+    ["Open Matter Intelligence", "Scan a real opportunity field and save a target.", "matterlab", "Opportunity engine activated"],
+    ["Save to Vault", "Move the strongest work into your Discovery Vault.", "lab", "Subscriber value captured"],
+  ];
+  const health = [["Matter Intelligence", 98], ["Exports", 100], ["Media Engine", 96], ["Telemetry", 93], ["Workspace", 95]];
+  const progress = Math.round(((activeMission + 1) / missions.length) * 100);
+  const exportMission = () => exportAllFormats({ baseName: "elementos-mission-control", title: "ElementOS Mission Control", summary: `Mission progress ${progress}%. Active mission: ${missions[activeMission][0]}.`, payload: { missions, activeMission, health, progress } });
+
+  return (
+    <>
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-blue-950/30 to-cyan-950/25">
+        <div className="grid gap-8 xl:grid-cols-[1.15fr_.85fr] xl:items-center">
+          <div><Pill gold><CheckCircle2 size={12}/> discovery command center</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">Mission <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Control</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A subscriber-ready command center that tells users what is happening, what matters and exactly what to do next.</p><div className="mt-6 flex flex-wrap gap-3"><Button onClick={() => setPage(missions[activeMission][2])} variant="primary">Start Current Mission</Button><Button onClick={exportMission}>Export Mission Plan</Button>{!isPro && <Button onClick={startCheckout}>Unlock Pro Lab</Button>}</div></div>
+          <Panel className="bg-black/30"><div className="text-xs uppercase tracking-[.25em] text-slate-500">mission progress</div><div className="mt-2 text-7xl font-black text-cyan-100">{progress}%</div><div className="mt-4 h-3 overflow-hidden rounded-full bg-black/40"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-amber-200" style={{ width: `${progress}%` }} /></div><p className="mt-4 text-sm leading-6 text-slate-300">Current: <b>{missions[activeMission][0]}</b></p></Panel>
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[1fr_.85fr]">
+        <Panel>
+          <Pill gold><Activity size={12}/> guided launch path</Pill><h2 className="mt-3 text-4xl font-black">Subscriber Missions</h2>
+          <div className="mt-6 space-y-3">{missions.map(([title, body, target, outcome], i) => <button key={title} onClick={() => setActiveMission(i)} className={`w-full rounded-[2rem] border p-5 text-left transition ${activeMission === i ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25 hover:bg-white/[.05]"}`}><div className="flex items-center justify-between"><div><div className="text-xs uppercase tracking-[.2em] text-cyan-200">Mission {i+1}</div><div className="mt-1 text-2xl font-black text-white">{title}</div></div><Button onClick={(e) => { e.stopPropagation(); setPage(target); }} variant={activeMission === i ? "primary" : "ghost"}>Launch</Button></div><p className="mt-2 text-sm leading-6 text-slate-400">{body}</p><div className="mt-3 text-xs font-bold text-emerald-200">Outcome: {outcome}</div></button>)}</div>
+        </Panel>
+        <Panel>
+          <Pill gold><Radar size={12}/> system health</Pill><h2 className="mt-3 text-4xl font-black">Live Status Wall</h2>
+          <div className="mt-6 space-y-4">{health.map(([name, value]) => <div key={name}><div className="mb-2 flex justify-between text-xs uppercase tracking-[.18em] text-slate-500"><span>{name}</span><span>{value}%</span></div><div className="h-3 overflow-hidden rounded-full bg-black/40"><div className="h-full rounded-full bg-gradient-to-r from-emerald-300 to-cyan-300" style={{ width: `${value}%` }} /></div></div>)}</div>
+          <Info title="Recommended next step">Launch the current mission, export one result, then create a social pack. That path proves value fastest.</Info>
+        </Panel>
+      </div>
+    </>
+  );
+}
+
+function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage }) {
+  const [mode, setMode] = useState("Research Grade");
+  const [prompt, setPrompt] = useState("Find a high-confidence material discovery and tell me what to do next.");
+  const active = elementMap[selected] || elementMap.H;
+  const pair = (compare || [active.symbol, "Ti"]).slice(0,2);
+  const pairScore = compatibilityScore(pair[0] || active.symbol, pair[1] || "Ti");
+  const modes = ["Explain Like I'm 12", "Research Grade", "Investor Mode", "Social Post", "Report Brief"];
+  const response = {
+    "Explain Like I'm 12": `${pair[0]} + ${pair[1]} looks interesting because the two materials behave similarly in important ways. ElementOS thinks this could be worth testing further.`,
+    "Research Grade": `The ${pair[0]}-${pair[1]} pairing shows a ${pairScore}% compatibility signal across stability, pressure and thermal behaviour. Recommended next step: generate a report and compare against the Discovery Feed baseline.`,
+    "Investor Mode": `ElementOS has identified ${pair[0]} + ${pair[1]} as a reportable discovery asset. The commercial story is stronger if it can be packaged as a public discovery page, technical dossier and social proof card.`,
+    "Social Post": `Today's ElementOS discovery: ${pair[0]} + ${pair[1]} scored ${pairScore}% compatibility. Rare material relationship detected.`,
+    "Report Brief": `Executive summary: ${pair[0]} + ${pair[1]} achieved ${pairScore}% compatibility. Evidence suggests a strong candidate for future-state simulation, report generation and media export.`,
+  }[mode];
+  const recommended = smartElementStackV57(active.symbol).slice(0, 5);
+  const exportAI = () => exportAllFormats({ baseName: "elementos-discovery-ai", title: "ElementOS Discovery AI", summary: response, payload: { mode, prompt, selected, compare, response, recommended } });
+
+  return (
+    <>
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-fuchsia-950/25 via-slate-950 to-cyan-950/30">
+        <div className="grid gap-8 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
+          <div><Pill gold><Bot size={12}/> scientific discovery assistant</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">Discovery <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">AI</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Ask ElementOS what a discovery means, how to explain it, what to export and what action should happen next.</p></div>
+          <Panel className="bg-black/30"><div className="text-xs uppercase tracking-[.25em] text-slate-500">active context</div><div className="mt-3 text-5xl font-black text-cyan-100">{pair[0]} + {pair[1]}</div><div className="mt-2 text-3xl font-black text-emerald-100">{pairScore}%</div><div className="text-xs uppercase tracking-[.18em] text-slate-500">compatibility signal</div></Panel>
+        </div>
+      </Panel>
+      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+        <Panel>
+          <Pill gold><Sparkles size={12}/> prompt engine</Pill><h2 className="mt-3 text-4xl font-black">Ask Copilot</h2>
+          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="mt-5 min-h-[150px] w-full rounded-[2rem] border border-white/10 bg-black/30 p-5 outline-none" />
+          <div className="mt-4 flex flex-wrap gap-2">{modes.map((m) => <Button key={m} onClick={() => setMode(m)} variant={mode === m ? "primary" : "ghost"}>{m}</Button>)}</div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2"><Button onClick={() => setPage("reports")} variant="primary">Generate Report</Button><Button onClick={() => setPage("viralcards")}>Create Poster Text</Button><Button onClick={() => setPage("compare")}>Open Compare</Button><Button onClick={exportAI}>Export AI Brief</Button></div>
+        </Panel>
+        <Panel>
+          <Pill gold><FileText size={12}/> copilot answer</Pill><h2 className="mt-3 text-4xl font-black">{mode}</h2>
+          <div className="mt-5 rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6 text-lg leading-8 text-cyan-50">{response}</div>
+          <Info title="Recommended next step">Open Reports, generate a premium export, then create a Discovery Media card from the same result.</Info>
+        </Panel>
+      </div>
+      <Panel>
+        <Pill><Atom size={12}/> suggested material routes</Pill><h2 className="mt-3 text-4xl font-black">Copilot Recommendations</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">{recommended.map((r) => <button key={r.symbol} onClick={() => { setCompare([active.symbol, r.symbol]); setPage("compare"); }} className="rounded-[2rem] border border-white/10 bg-black/25 p-5 text-left hover:border-cyan-300/40"><div className="text-4xl font-black text-cyan-100">{r.symbol}</div><div className="mt-1 font-black text-white">{r.name}</div><div className="mt-2 text-sm text-slate-400">{r.compatibility}% compatibility</div></button>)}</div>
+      </Panel>
+    </>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState("landing");
   const [selected, setSelected] = useState("Al");
@@ -8859,8 +9172,8 @@ const startCheckout = async () => {
     () => ({
       landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
-      copilot: <AICopilotCommandCenter selected={selected} compare={compare} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
-      mission: <MissionControl setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
+      copilot: <DiscoveryAIV57 selected={selected} compare={compare} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
+      mission: <MissionControlV57 setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       dashboard: (
         <Dashboard
           setPage={setPage}
@@ -8876,7 +9189,7 @@ const startCheckout = async () => {
       timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} />,
       matterlab: <MatterIntelligenceLab />,
       scenario: <ScenarioBuilder selected={selected} setSelected={setSelected} setPage={setPage} />,
-      lab: <MyLab session={session} selected={selected} compare={compare} setPage={setPage} />,
+      lab: <DiscoveryVaultV57 session={session} selected={selected} compare={compare} setPage={setPage} />,
       visualization: <AdvancedVisualization selected={selected} compare={compare} setPage={setPage} />,
       welldriller: <ExperimentalWellDriller setPage={setPage} />,
       seismo: <SeismoSimulator setPage={setPage} />,
@@ -8892,10 +9205,11 @@ const startCheckout = async () => {
         />
       ),
       explorer: (
-        <Explorer
+        <MaterialExplorerV57
           selected={selected}
           setSelected={setSelected}
           setCompare={setCompare}
+          setPage={setPage}
         />
       ),
       periodic: (
