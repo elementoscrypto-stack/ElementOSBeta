@@ -6000,6 +6000,161 @@ function SubscriberRecommendedNextStep({ setPage, context = "Titanium + Hafnium"
   );
 }
 
+
+function FirstSubscriberOnboarding({ page, setPage, session, isPro, startCheckout }) {
+  const [open, setOpen] = useState(() => localStorage.getItem("elementos_first_session_complete") !== "true");
+  const [completed, setCompleted] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("elementos_first_session_steps") || "{}");
+    } catch {
+      return {};
+    }
+  });
+
+  const steps = [
+    ["discover", "Run first discovery", "Open Discovery Feed and inspect a trending material signal.", "discover", Sparkles],
+    ["compare", "Compare materials", "Build a compare set and understand why the pairing matters.", "compare", BarChart3],
+    ["matter", "Open Matter Intelligence", "Run an opportunity scan and review the signal logic.", "matterlab", Globe2],
+    ["report", "Generate report", "Create a dossier-ready export from a discovery or simulation.", "simreports", FileText],
+    ["vault", "Save to Vault", "Store the strongest result so the user has a reason to return.", "lab", Save],
+  ];
+
+  useEffect(() => {
+    const map = { discover: "discover", compare: "compare", matterlab: "matter", simreports: "report", lab: "vault" };
+    const key = map[page];
+    if (!key) return;
+    setCompleted((current) => {
+      const next = { ...current, [key]: true };
+      localStorage.setItem("elementos_first_session_steps", JSON.stringify(next));
+      return next;
+    });
+  }, [page]);
+
+  const completeCount = steps.filter(([id]) => completed[id]).length;
+  const progress = Math.round((completeCount / steps.length) * 100);
+
+  const closeForNow = () => {
+    localStorage.setItem("elementos_first_session_complete", "true");
+    setOpen(false);
+    notifyUser("First-session guide hidden. Open Mission Control anytime to continue.");
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[95] grid place-items-center bg-black/70 p-4 backdrop-blur-xl">
+      <div className="relative w-full max-w-5xl overflow-hidden rounded-[2.5rem] border border-cyan-300/25 bg-[#020817]/95 p-6 shadow-[0_0_120px_rgba(34,211,238,.22)]">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-300/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 left-1/3 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
+        <div className="relative z-10">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <Pill gold><Sparkles size={12} /> start here</Pill>
+              <h2 className="mt-3 text-5xl font-black tracking-tight text-white">Your first 5 minutes in ElementOS.</h2>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">Follow this guided path to experience the complete subscriber loop: discover, compare, scan, report and save. This is the fastest way to understand why ElementOS matters.</p>
+            </div>
+            <button onClick={closeForNow} className="rounded-2xl border border-white/10 bg-white/[.05] px-4 py-3 text-xs font-black uppercase tracking-[.2em] text-slate-300 hover:bg-white/[.09]">Skip</button>
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
+            <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[.2em] text-cyan-200"><span>First-session progress</span><span>{progress}%</span></div>
+            <div className="h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-amber-300" style={{ width: `${progress}%` }} /></div>
+          </div>
+
+          <div className="mt-6 grid gap-3 md:grid-cols-5">
+            {steps.map(([id, title, body, target, Icon], index) => {
+              const done = completed[id];
+              return (
+                <button key={id} onClick={() => { setPage(target); setOpen(false); notifyUser(`${title} opened.`); }} className={`rounded-[1.5rem] border p-4 text-left transition ${done ? "border-emerald-300/25 bg-emerald-300/10" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}>
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="grid h-11 w-11 place-items-center rounded-xl border border-cyan-300/25 bg-cyan-300/10 text-cyan-100"><Icon size={18} /></div>
+                    <span className="text-xs font-black text-slate-500">0{index + 1}</span>
+                  </div>
+                  <div className="text-base font-black text-white">{title}</div>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{body}</p>
+                  <div className={`mt-3 text-[10px] font-black uppercase tracking-[.2em] ${done ? "text-emerald-200" : "text-cyan-200"}`}>{done ? "Complete" : "Start"}</div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[1.6rem] border border-amber-300/15 bg-amber-300/10 p-4">
+            <div>
+              <div className="text-sm font-black text-amber-100">Founding Beta conversion path</div>
+              <div className="mt-1 text-xs text-amber-50/80">Free users explore. Pro users export, save, publish and build a permanent Discovery Vault.</div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => { setPage("beta"); setOpen(false); }} className="px-3 py-2 text-xs">Join Founding Beta</Button>
+              {!isPro && <Button onClick={startCheckout} variant="primary" className="px-3 py-2 text-xs">Upgrade Pro</Button>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FirstSubscriberReadinessStrip({ page, setPage, session, isPro, startCheckout }) {
+  const pageTips = {
+    landing: ["Start Here", "Run a discovery, open Matter Intelligence, then create a report.", "mission"],
+    discover: ["Discovery Feed", "Open one discovery, export a poster, then save it to the Vault.", "viralcards"],
+    compare: ["Compare Materials", "Build a pair, generate an explanation, then create a report.", "simreports"],
+    matterlab: ["Matter Intelligence", "Run an opportunity scan, generate a brief, then publish media.", "simreports"],
+    timemachine: ["Time Machine", "Choose environment, adjust horizon, export the future-state report.", "simreports"],
+    lab: ["Discovery Vault", "This is where a subscriber's saved discoveries, reports and media should live.", "viralcards"],
+    copilot: ["Discovery AI", "Ask for an explanation, investor summary or next experiment.", "simreports"],
+    mission: ["Mission Control", "Complete the first-session loop and guide new users to value.", "discover"],
+  };
+  const [title, body, target] = pageTips[page] || ["Recommended Next Step", "Create one valuable output: report, poster, save or share.", "simreports"];
+  return (
+    <div className="rounded-[1.65rem] border border-cyan-300/20 bg-gradient-to-r from-cyan-300/10 via-blue-500/5 to-amber-300/10 p-4 shadow-[0_0_50px_rgba(34,211,238,.08)]">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div className="text-[10px] font-black uppercase tracking-[.26em] text-cyan-200">subscriber-ready guidance</div>
+          <div className="mt-1 text-lg font-black text-white">{title}</div>
+          <div className="mt-1 text-sm leading-6 text-slate-300">{body}</div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setPage(target)} variant="primary" className="px-3 py-2 text-xs">Do Next Step</Button>
+          {!session && <Button onClick={() => setPage("beta")} className="px-3 py-2 text-xs">Join Beta</Button>}
+          {session && !isPro && <Button onClick={startCheckout} className="px-3 py-2 text-xs">Upgrade Pro</Button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SubscriberLaunchChecklist({ setPage }) {
+  const items = [
+    ["First discovery generated", "discover"],
+    ["Report export tested", "simreports"],
+    ["SVG poster created", "viralcards"],
+    ["Discovery saved to Vault", "lab"],
+    ["Founding Beta CTA visible", "beta"],
+  ];
+  return (
+    <Panel className="border-emerald-300/20 bg-emerald-300/5">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Pill gold><CheckCircle2 size={12} /> launch checklist</Pill>
+          <h2 className="mt-3 text-3xl font-black">First Subscriber Readiness</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">Before sending traffic from X, LinkedIn or Reddit, every visitor should be able to understand the product, create one asset, and know what to do next.</p>
+        </div>
+        <Button onClick={() => setPage("beta")} variant="primary">Open Founding Beta</Button>
+      </div>
+      <div className="mt-6 grid gap-3 md:grid-cols-5">
+        {items.map(([label, target], index) => (
+          <button key={label} onClick={() => setPage(target)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-emerald-300/35 hover:bg-emerald-300/10">
+            <div className="text-xs font-black text-emerald-200">0{index + 1}</div>
+            <div className="mt-2 text-sm font-black text-white">{label}</div>
+            <div className="mt-2 text-[10px] uppercase tracking-[.2em] text-slate-500">test flow</div>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
 function LandingPage({ setPage, session, isPro, startCheckout }) {
   const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(18)), []);
   const daily = discoveries[0] || { a: "Ti", b: "Hf", aiConfidence: 94, momentum: 91, tier: "RARE", score: 94, type: "Rare thermal-pressure alignment" };
@@ -8508,6 +8663,13 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
       </div>
 
       <button
+        onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(true); }}
+        className="fixed bottom-40 right-4 z-50 rounded-2xl border border-amber-300/25 bg-amber-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(251,191,36,.25)] lg:bottom-24"
+      >
+        Start Here
+      </button>
+
+      <button
         onClick={() => setCommandOpen(true)}
         className="flex min-w-[420px] items-center justify-between rounded-xl border border-[#17365f] bg-[#040c17]/90 px-4 py-2 text-left text-sm text-slate-400 transition hover:border-cyan-300/40"
       >
@@ -8995,6 +9157,7 @@ export default function App() {
   const [publicReportStatus, setPublicReportStatus] = useState("");
   const [commandOpen, setCommandOpen] = useState(false);
   const [publicDiscovery, setPublicDiscovery] = useState(null);
+  const [showFirstSubscriberGuide, setShowFirstSubscriberGuide] = useState(() => localStorage.getItem("elementos_first_session_complete") !== "true");
 
 useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -9082,9 +9245,23 @@ useEffect(() => {
     return () => window.removeEventListener("keydown", handleCommandShortcut);
   }, []);
 
+
+  useEffect(() => {
+    const handler = (event) => {
+      const target = event.target?.closest?.("button, a");
+      if (!target) return;
+      const label = (target.innerText || target.getAttribute("aria-label") || "unlabelled action").replace(/\s+/g, " ").trim().slice(0, 90);
+      const current = JSON.parse(localStorage.getItem("elementos_click_audit") || "[]");
+      current.unshift({ label, page, ts: new Date().toISOString() });
+      localStorage.setItem("elementos_click_audit", JSON.stringify(current.slice(0, 100)));
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, [page]);
+
   const saveWorkspace = async () => {
     if (!session) {
-      alert("Join the Founding Beta to activate saved workspaces.");
+      notifyUser("Join the Founding Beta to activate saved workspaces.");
       setPage("beta");
       return;
     }
@@ -9097,16 +9274,16 @@ useEffect(() => {
 
     if (error) {
       console.error(error);
-      alert("Workspace save failed.");
+      notifyUser("Workspace save failed.");
       return;
     }
 
-    alert("Workspace saved successfully.");
+    notifyUser("Saved to Discovery Vault.");
   };
 
   const loadWorkspace = async () => {
     if (!session) {
-      alert("Join the Founding Beta to restore saved workspaces.");
+      notifyUser("Join the Founding Beta to restore saved workspaces.");
       setPage("beta");
       return;
     }
@@ -9120,7 +9297,7 @@ useEffect(() => {
 
     if (error || !data?.length) {
       console.error(error);
-      alert("No saved workspace found.");
+      notifyUser("No saved workspace found yet.");
       return;
     }
 
@@ -9129,7 +9306,7 @@ useEffect(() => {
     setSelected(workspace.selected_element || "Al");
     setCompare(workspace.compare_set || ["H"]);
 
-    alert("Workspace restored.");
+    notifyUser("Discovery Vault restored.");
   };
 
 const startCheckout = async () => {
@@ -9259,6 +9436,15 @@ const startCheckout = async () => {
       <ElementOSThemeSkin />
       <Background />
       <ToastCenter />
+      {showFirstSubscriberGuide && (
+        <FirstSubscriberOnboarding
+          page={page}
+          setPage={setPage}
+          session={session}
+          isPro={isPro}
+          startCheckout={startCheckout}
+        />
+      )}
       <Sidebar page={page} setPage={setPage} />
       <CommandPalette
         open={commandOpen}
@@ -9273,6 +9459,13 @@ const startCheckout = async () => {
         isPro={isPro}
         startCheckout={startCheckout}
       />
+
+      <button
+        onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(true); }}
+        className="fixed bottom-40 right-4 z-50 rounded-2xl border border-amber-300/25 bg-amber-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(251,191,36,.25)] lg:bottom-24"
+      >
+        Start Here
+      </button>
 
       <button
         onClick={() => setCommandOpen(true)}
@@ -9317,6 +9510,8 @@ const startCheckout = async () => {
         />
         <PageHelpStrip page={page} />
         <CopilotEverywhereBar page={page} setPage={setPage} />
+        <FirstSubscriberReadinessStrip page={page} setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />
+        {(page === "landing" || page === "dashboard" || page === "mission") && <SubscriberLaunchChecklist setPage={setPage} />}
         <div className="animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
       </main>
 
