@@ -1198,75 +1198,92 @@ function smartExportHeadline(value = "") {
 
 function makeExportSvg({ title = "ElementOS Export", summary = "", payload = {}, sections = [], variant = "Luxury Scientific" }) {
   const normalizedTitle = smartExportHeadline(title || payload?.title || "ElementOS Export");
-  const story = [summary, ...sections.map((section) => `${section.label}: ${section.value}`)].filter(Boolean).join(" • ");
-  const narrativeLines = wrapExportLines(story || JSON.stringify(payload, null, 2), 48, 6);
+  const story = [summary, ...sections.map((section) => `${section.label || section.heading}: ${section.value || section.text}`)].filter(Boolean).join(" • ");
+  const narrativeLines = wrapExportLines(story || JSON.stringify(payload, null, 2), 42, 5);
   const metricEntries = Object.entries(payload || {})
     .filter(([, value]) => ["string", "number", "boolean"].includes(typeof value))
     .filter(([key]) => !["summary", "source", "generatedAt", "title"].includes(key))
     .slice(0, 6);
-  const safeMetrics = metricEntries.length ? metricEntries : [["Discovery", "ElementOS"], ["Format", "PDF/JSON/SVG"], ["Status", "Exported"]];
+  const safeMetrics = metricEntries.length ? metricEntries : [["Discovery", "ElementOS"], ["Format", "PDF/JSON/SVG"], ["Status", "Exported"], ["Style", "Premium"]];
+  const palettes = {
+    "Luxury Scientific": { a: "#67e8f9", b: "#fbbf24", c: "#a78bfa", d: "#10b981" },
+    "Matter Intelligence": { a: "#22d3ee", b: "#34d399", c: "#f59e0b", d: "#818cf8" },
+    "Neon": { a: "#38bdf8", b: "#e879f9", c: "#facc15", d: "#22c55e" },
+  };
+  const palette = palettes[variant] || palettes["Luxury Scientific"];
   const metricTiles = safeMetrics.map(([key, value], index) => {
-    const x = 94 + (index % 3) * 300;
-    const y = 825 + Math.floor(index / 3) * 138;
-    return `<rect x="${x}" y="${y}" width="258" height="112" rx="28" fill="rgba(255,255,255,.055)" stroke="rgba(34,211,238,.30)"/>\n<text x="${x + 24}" y="${y + 42}" fill="#7dd3fc" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="950" letter-spacing="2.4">${escapeXml(String(key).replace(/([A-Z])/g, " $1").toUpperCase().slice(0, 20))}</text>\n<text x="${x + 24}" y="${y + 83}" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="950">${escapeXml(String(value).slice(0, 22))}</text>`;
+    const x = 92 + (index % 3) * 300;
+    const y = 830 + Math.floor(index / 3) * 142;
+    const accent = [palette.a, palette.b, palette.c, palette.d, "#fb7185", "#60a5fa"][index % 6];
+    return `<g transform="translate(${x} ${y})"><rect width="260" height="118" rx="28" fill="rgba(255,255,255,.065)" stroke="${accent}" stroke-opacity=".48"/><circle cx="218" cy="31" r="28" fill="${accent}" opacity=".18"/><text x="24" y="43" fill="${accent}" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="950" letter-spacing="2.4">${escapeXml(String(key).replace(/([A-Z])/g, " $1").toUpperCase().slice(0, 20))}</text><text x="24" y="87" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="950">${escapeXml(String(value).slice(0, 22))}</text></g>`;
   }).join("\n");
   const titleLines = wrapExportLines(normalizedTitle, 18, 3);
   const discoveryId = String(payload?.publicId || payload?.dna || payload?.code || payload?.id || "EOS-1047").slice(0, 24);
   const score = payload?.score || payload?.aiConfidence || payload?.compatibility || payload?.opportunityScore || "94";
   const pair = payload?.pair || payload?.compareSet || payload?.selected || payload?.target || "ElementOS Discovery";
   const generated = escapeXml(new Date().toLocaleString());
-  const series = Array.from({ length: 19 }).map((_, i) => `<line x1="${80 + i * 50}" y1="0" x2="${80 + i * 50}" y2="1350" stroke="#38bdf8" stroke-opacity=".10"/>`).join("");
-  const rows = Array.from({ length: 24 }).map((_, i) => `<line x1="0" y1="${70 + i * 52}" x2="1080" y2="${70 + i * 52}" stroke="#38bdf8" stroke-opacity=".07"/>`).join("");
+  const starfield = Array.from({ length: 90 }).map((_, i) => {
+    const x = (i * 137) % 1080;
+    const y = (i * 71) % 1350;
+    const r = 1 + (i % 3) * 0.8;
+    const color = [palette.a, palette.b, palette.c, "#ffffff"][i % 4];
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}" opacity="${0.16 + (i % 5) * 0.055}"/>`;
+  }).join("");
+  const grid = Array.from({ length: 18 }).map((_, i) => `<line x1="${80 + i * 55}" y1="0" x2="${80 + i * 55}" y2="1350" stroke="${palette.a}" stroke-opacity=".055"/>`).join("") + Array.from({ length: 22 }).map((_, i) => `<line x1="0" y1="${92 + i * 56}" x2="1080" y2="${92 + i * 56}" stroke="${palette.a}" stroke-opacity=".045"/>`).join("");
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#020617"/><stop offset=".43" stop-color="#071426"/><stop offset="1" stop-color="#092f46"/></linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
-    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#67e8f9"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient>
-    <radialGradient id="orb" cx="48%" cy="16%" r="74%"><stop offset="0" stop-color="#22d3ee" stop-opacity=".30"/><stop offset=".45" stop-color="#0b63ff" stop-opacity=".10"/><stop offset="1" stop-color="#020617" stop-opacity="0"/></radialGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="8" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="soft"><feGaussianBlur stdDeviation="22"/></filter>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#030711"/><stop offset=".38" stop-color="#061a31"/><stop offset=".72" stop-color="#0d1028"/><stop offset="1" stop-color="#260b39"/></linearGradient>
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${palette.a}"/><stop offset=".55" stop-color="${palette.c}"/><stop offset="1" stop-color="${palette.b}"/></linearGradient>
+    <radialGradient id="pulseA" cx="72%" cy="12%" r="72%"><stop offset="0" stop-color="${palette.a}" stop-opacity=".42"/><stop offset="1" stop-color="${palette.a}" stop-opacity="0"/></radialGradient>
+    <radialGradient id="pulseB" cx="12%" cy="88%" r="60%"><stop offset="0" stop-color="${palette.b}" stop-opacity=".32"/><stop offset="1" stop-color="${palette.b}" stop-opacity="0"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="10" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="bigGlow"><feGaussianBlur stdDeviation="28"/></filter>
   </defs>
   <rect width="1080" height="1350" fill="url(#bg)"/>
-  <rect width="1080" height="1350" fill="url(#orb)"/>
-  <g opacity=".8">${series}${rows}</g>
-  <circle cx="900" cy="170" r="210" fill="#22d3ee" opacity=".14" filter="url(#soft)"/>
-  <circle cx="185" cy="1145" r="250" fill="#f59e0b" opacity=".12" filter="url(#soft)"/>
-  <rect x="54" y="54" width="972" height="1242" rx="58" fill="rgba(2,6,23,.58)" stroke="rgba(125,211,252,.42)" stroke-width="2"/>
-  <rect x="76" y="76" width="928" height="1198" rx="44" fill="rgba(255,255,255,.025)" stroke="rgba(255,255,255,.08)"/>
+  <rect width="1080" height="1350" fill="url(#pulseA)"/>
+  <rect width="1080" height="1350" fill="url(#pulseB)"/>
+  <g opacity=".85">${grid}${starfield}</g>
+  <circle cx="870" cy="225" r="205" fill="${palette.a}" opacity=".16" filter="url(#bigGlow)"/>
+  <circle cx="185" cy="1135" r="245" fill="${palette.b}" opacity=".13" filter="url(#bigGlow)"/>
+  <rect x="48" y="48" width="984" height="1254" rx="64" fill="rgba(2,6,23,.58)" stroke="url(#frame)" stroke-width="3"/>
+  <rect x="78" y="78" width="924" height="1194" rx="48" fill="rgba(255,255,255,.032)" stroke="rgba(255,255,255,.12)"/>
 
-  <text x="92" y="132" fill="#fbbf24" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="950" letter-spacing="5">ELEMENTOS · ${escapeXml(String(variant).toUpperCase())}</text>
-  <text x="92" y="170" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800" letter-spacing="2.2">PDF · JSON · SVG EXPORT BUNDLE</text>
+  <text x="92" y="126" fill="${palette.b}" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="950" letter-spacing="5">ELEMENTOS · PREMIUM EXPORT</text>
+  <text x="92" y="164" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="850" letter-spacing="2.2">PDF · JSON · SVG · SOCIAL READY</text>
 
-  <g transform="translate(780 100)">
-    <rect x="0" y="0" width="184" height="184" rx="34" fill="rgba(34,211,238,.10)" stroke="rgba(103,232,249,.38)"/>
-    <text x="28" y="47" fill="#7dd3fc" font-family="Inter, Arial" font-size="19" font-weight="900">118</text>
+  <g transform="translate(782 98)">
+    <rect x="0" y="0" width="184" height="184" rx="34" fill="rgba(34,211,238,.11)" stroke="${palette.a}" stroke-opacity=".55"/>
+    <circle cx="145" cy="39" r="23" fill="${palette.b}" opacity=".35"/>
+    <text x="28" y="47" fill="${palette.a}" font-family="Inter, Arial" font-size="19" font-weight="950">118</text>
     <text x="30" y="116" fill="#ffffff" font-family="Inter, Arial" font-size="68" font-weight="950">Eo</text>
-    <text x="29" y="149" fill="#67e8f9" font-family="Inter, Arial" font-size="18" font-weight="900">ElementOS</text>
+    <text x="29" y="149" fill="${palette.a}" font-family="Inter, Arial" font-size="18" font-weight="900">ElementOS</text>
   </g>
 
-  <text x="92" y="258" fill="#67e8f9" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="950" letter-spacing="2.5">${escapeXml(discoveryId)}</text>
-  ${titleLines.map((line, index) => `<text x="92" y="${340 + index * 82}" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="950">${escapeXml(line)}</text>`).join("\n")}
-  <text x="92" y="${585 + Math.max(0, titleLines.length - 1) * 26}" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">${escapeXml(String(pair).slice(0, 54))}</text>
+  <text x="92" y="248" fill="${palette.a}" font-family="JetBrains Mono, Consolas, monospace" font-size="31" font-weight="950" letter-spacing="2.5">${escapeXml(discoveryId)}</text>
+  ${titleLines.map((line, index) => `<text x="92" y="${335 + index * 82}" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="950">${escapeXml(line)}</text>`).join("\n")}
+  <text x="92" y="${580 + Math.max(0, titleLines.length - 1) * 26}" fill="#cbd5e1" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="800">${escapeXml(String(pair).slice(0, 54))}</text>
 
-  <g transform="translate(92 630)">
-    <rect x="0" y="0" width="896" height="150" rx="36" fill="rgba(34,211,238,.09)" stroke="rgba(34,211,238,.30)"/>
-    <text x="36" y="55" fill="#94a3b8" font-family="Inter, Arial" font-size="18" font-weight="900" letter-spacing="3">DISCOVERY SCORE</text>
-    <text x="36" y="119" fill="#ffffff" font-family="Inter, Arial" font-size="70" font-weight="950">${escapeXml(String(score).replace("%", ""))}%</text>
-    <text x="290" y="73" fill="#fbbf24" font-family="Inter, Arial" font-size="24" font-weight="950">Luxury Scientific Export</text>
-    <text x="290" y="114" fill="#cbd5e1" font-family="Inter, Arial" font-size="22" font-weight="750">Designed for X, LinkedIn, Reddit, reports and investor previews.</text>
+  <g transform="translate(92 628)">
+    <rect x="0" y="0" width="896" height="154" rx="38" fill="rgba(34,211,238,.09)" stroke="${palette.a}" stroke-opacity=".42"/>
+    <circle cx="812" cy="76" r="55" fill="${palette.b}" opacity=".18"/>
+    <text x="36" y="55" fill="#94a3b8" font-family="Inter, Arial" font-size="18" font-weight="950" letter-spacing="3">DISCOVERY SCORE</text>
+    <text x="36" y="123" fill="#ffffff" font-family="Inter, Arial" font-size="74" font-weight="950">${escapeXml(String(score).replace("%", ""))}%</text>
+    <text x="300" y="72" fill="${palette.b}" font-family="Inter, Arial" font-size="25" font-weight="950">Poster-grade export</text>
+    <text x="300" y="116" fill="#dbeafe" font-family="Inter, Arial" font-size="22" font-weight="760">Designed to look like a polished scientific media asset.</text>
   </g>
 
   ${metricTiles}
 
-  <g transform="translate(94 1095)">
-    <rect x="0" y="0" width="892" height="116" rx="34" fill="rgba(15,23,42,.76)" stroke="rgba(251,191,36,.25)"/>
-    ${narrativeLines.slice(0, 2).map((line, index) => `<text x="32" y="${46 + index * 36}" fill="#e2e8f0" font-family="Inter, Arial" font-size="25" font-weight="760">${escapeXml(line)}</text>`).join("\n")}
+  <g transform="translate(94 1098)">
+    <rect x="0" y="0" width="892" height="122" rx="36" fill="rgba(15,23,42,.78)" stroke="${palette.b}" stroke-opacity=".34"/>
+    <text x="32" y="34" fill="${palette.b}" font-family="Inter, Arial" font-size="15" font-weight="950" letter-spacing="4">DISCOVERY NARRATIVE</text>
+    ${narrativeLines.slice(0, 2).map((line, index) => `<text x="32" y="${72 + index * 34}" fill="#e2e8f0" font-family="Inter, Arial" font-size="24" font-weight="780">${escapeXml(line)}</text>`).join("\n")}
   </g>
 
-  <g transform="translate(92 1248)">
-    <text x="0" y="0" fill="#67e8f9" font-family="Inter, Arial" font-size="19" font-weight="950" letter-spacing="3">DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
-    <text x="0" y="36" fill="#64748b" font-family="Inter, Arial" font-size="17" font-weight="800">Generated ${generated} · ElementOS Discovery Operating System</text>
+  <g transform="translate(92 1250)">
+    <text x="0" y="0" fill="${palette.a}" font-family="Inter, Arial" font-size="19" font-weight="950" letter-spacing="3">DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
+    <text x="0" y="36" fill="#94a3b8" font-family="Inter, Arial" font-size="17" font-weight="800">Generated ${generated} · ElementOS Discovery Operating System</text>
   </g>
 </svg>`;
 }
@@ -6151,80 +6168,85 @@ Generated in ElementOS.`,
     const headlineLines = wrapWords(exportHeadline, 34, 2);
     const subtitleLines = wrapWords(exportSubtitle, 42, 2);
     const footerLine = `Generated by ${cardData.founder} in ElementOS`;
+    const ringColor = platform === "LinkedIn" ? "#38bdf8" : platform === "Reddit" ? "#f97316" : platform === "X" ? "#67e8f9" : "#fbbf24";
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${layoutMeta.w}" height="${layoutMeta.h}" viewBox="0 0 1600 2100">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#071b2f"/>
-      <stop offset="0.38" stop-color="#020617"/>
-      <stop offset="0.72" stop-color="#0b1026"/>
-      <stop offset="1" stop-color="#2b123f"/>
+      <stop offset="0" stop-color="#061a31"/>
+      <stop offset="0.34" stop-color="#020617"/>
+      <stop offset="0.67" stop-color="#101336"/>
+      <stop offset="1" stop-color="#34124a"/>
     </linearGradient>
-    <linearGradient id="cyanStroke" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#67e8f9"/>
-      <stop offset="0.52" stop-color="#22d3ee"/>
+      <stop offset="0.42" stop-color="#818cf8"/>
+      <stop offset="0.72" stop-color="#f472b6"/>
       <stop offset="1" stop-color="#fbbf24"/>
     </linearGradient>
-    <radialGradient id="pulse" cx="70%" cy="18%" r="70%"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.62"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
-    <radialGradient id="gold" cx="18%" cy="84%" r="58%"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.32"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>
-    <filter id="softGlow"><feGaussianBlur stdDeviation="12" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <style>
-      .tiny { font-family: Inter, Arial, sans-serif; letter-spacing: 8px; font-weight: 900; }
-      .label { font-family: Inter, Arial, sans-serif; letter-spacing: 5px; font-weight: 900; }
-    </style>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="#061a31"/></linearGradient>
+    <radialGradient id="pulse" cx="74%" cy="16%" r="70%"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.72"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gold" cx="18%" cy="84%" r="58%"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.38"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>
+    <radialGradient id="pink" cx="82%" cy="78%" r="52%"><stop offset="0" stop-color="#e879f9" stop-opacity="0.26"/><stop offset="1" stop-color="#e879f9" stop-opacity="0"/></radialGradient>
+    <filter id="softGlow"><feGaussianBlur stdDeviation="13" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="blur"><feGaussianBlur stdDeviation="34"/></filter>
+    <style>.tiny{font-family:Inter,Arial,sans-serif;letter-spacing:8px;font-weight:950}.label{font-family:Inter,Arial,sans-serif;letter-spacing:5px;font-weight:950}.mono{font-family:JetBrains Mono,Consolas,monospace}</style>
   </defs>
 
   <rect width="1600" height="2100" fill="url(#bg)"/>
   <rect width="1600" height="2100" fill="url(#pulse)"/>
   <rect width="1600" height="2100" fill="url(#gold)"/>
-  <path d="M0 280 H1600 M0 620 H1600 M0 960 H1600 M0 1300 H1600 M0 1640 H1600 M220 0 V2100 M560 0 V2100 M900 0 V2100 M1240 0 V2100" stroke="#38bdf8" stroke-opacity="0.055" stroke-width="2"/>
+  <rect width="1600" height="2100" fill="url(#pink)"/>
+  ${Array.from({ length: 84 }).map((_, i) => `<circle cx="${(i * 137) % 1600}" cy="${(i * 89) % 2100}" r="${1 + (i % 4)}" fill="${["#67e8f9", "#fbbf24", "#f472b6", "#ffffff"][i % 4]}" opacity="${0.14 + (i % 6) * 0.045}"/>`).join("")}
+  <path d="M0 260 H1600 M0 600 H1600 M0 940 H1600 M0 1280 H1600 M0 1620 H1600 M220 0 V2100 M560 0 V2100 M900 0 V2100 M1240 0 V2100" stroke="#38bdf8" stroke-opacity="0.058" stroke-width="2"/>
+  <circle cx="1270" cy="260" r="270" fill="#22d3ee" opacity=".16" filter="url(#blur)"/>
+  <circle cx="260" cy="1760" r="320" fill="#fbbf24" opacity=".12" filter="url(#blur)"/>
+  <circle cx="1380" cy="1620" r="250" fill="#e879f9" opacity=".12" filter="url(#blur)"/>
 
-  <rect x="88" y="88" width="1424" height="1924" rx="92" fill="rgba(255,255,255,0.052)" stroke="url(#cyanStroke)" stroke-opacity="0.72" stroke-width="4"/>
-  <rect x="122" y="122" width="1356" height="1856" rx="72" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
+  <rect x="78" y="78" width="1444" height="1944" rx="100" fill="rgba(2,6,23,0.58)" stroke="url(#frame)" stroke-opacity="0.86" stroke-width="5"/>
+  <rect x="118" y="118" width="1364" height="1864" rx="76" fill="rgba(255,255,255,0.036)" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
+  <rect x="150" y="150" width="1300" height="212" rx="48" fill="rgba(2,6,23,.58)" stroke="#67e8f9" stroke-opacity=".20"/>
 
-  <text x="160" y="190" fill="#fef3c7" class="tiny" font-size="34">${safeText(cardData.badge)}</text>
-  <text x="1440" y="190" fill="#67e8f9" class="tiny" font-size="28" text-anchor="end">${safeText(cardData.source)}</text>
+  <text x="170" y="222" fill="#fef3c7" class="tiny" font-size="34">${safeText(cardData.badge)}</text>
+  <text x="1428" y="222" fill="#67e8f9" class="tiny" font-size="28" text-anchor="end">${safeText(platform)} · ${safeText(format)}</text>
+  <text x="170" y="290" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="850">${safeText(cardData.cardNumber)} · ${safeText(cardData.source)} · SVG / PDF / JSON READY</text>
 
-  ${svgTextLines(headlineLines, { x: 160, y: 305, lineHeight: 54, fill: "#67e8f9", size: 44, weight: 900 })}
-  ${svgTextLines(titleLines, { x: 160, y: 515, lineHeight: 116, fill: "#f8fafc", size: titleLines.length > 1 ? 92 : 126, weight: 950 })}
-  ${svgTextLines(subtitleLines, { x: 160, y: titleLines.length > 1 ? 730 : 665, lineHeight: 42, fill: "#94a3b8", size: 34, weight: 800 })}
-  <text x="160" y="805" fill="#64748b" font-family="JetBrains Mono, Consolas, monospace" font-size="28" font-weight="800" letter-spacing="3">${safeText(cardData.code)}</text>
+  ${svgTextLines(headlineLines, { x: 160, y: 450, lineHeight: 58, fill: "#67e8f9", size: 48, weight: 950 })}
+  ${svgTextLines(titleLines, { x: 160, y: 662, lineHeight: 122, fill: "#f8fafc", size: titleLines.length > 1 ? 94 : 132, weight: 950 })}
+  ${svgTextLines(subtitleLines, { x: 160, y: titleLines.length > 1 ? 886 : 810, lineHeight: 44, fill: "#cbd5e1", size: 35, weight: 820 })}
+  <text x="160" y="970" fill="#64748b" class="mono" font-size="30" font-weight="850" letter-spacing="3">${safeText(cardData.code)}</text>
 
-  <g transform="translate(800 1030)" filter="url(#softGlow)">
-    <circle r="332" fill="rgba(34,211,238,0.055)" stroke="#22d3ee" stroke-opacity="0.30" stroke-width="26"/>
-    <circle r="252" fill="rgba(251,191,36,0.035)" stroke="#fbbf24" stroke-opacity="0.36" stroke-width="16"/>
-    <circle r="162" fill="rgba(2,6,23,0.75)" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
-    <line x1="-390" y1="0" x2="390" y2="0" stroke="#67e8f9" stroke-opacity="0.18" stroke-width="4"/>
-    <line x1="0" y1="-390" x2="0" y2="390" stroke="#fbbf24" stroke-opacity="0.16" stroke-width="4"/>
-    <text y="-38" fill="#67e8f9" font-family="Inter, Arial, sans-serif" font-size="184" font-weight="950" text-anchor="middle">${safeText(cardData.score)}%</text>
-    <text y="42" fill="#cbd5e1" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="900" text-anchor="middle" letter-spacing="4">${safeText(cardData.metric).toUpperCase()}</text>
-    <text y="118" fill="#fef3c7" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="900" text-anchor="middle">${safeText(cardData.rank)} · ${safeText(cardData.top)}</text>
-    <g transform="translate(-118 -250)">
-      <rect x="0" y="0" width="104" height="104" rx="24" fill="rgba(34,211,238,.12)" stroke="#67e8f9" stroke-opacity=".35"/>
-      <text x="52" y="64" text-anchor="middle" fill="#e0f2fe" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="950">${safeText(leftSymbol)}</text>
-    </g>
-    <g transform="translate(22 146)">
-      <rect x="0" y="0" width="104" height="104" rx="24" fill="rgba(251,191,36,.12)" stroke="#fbbf24" stroke-opacity=".40"/>
-      <text x="52" y="64" text-anchor="middle" fill="#fef3c7" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="950">${safeText(rightSymbol)}</text>
-    </g>
+  <g transform="translate(800 1190)" filter="url(#softGlow)">
+    <circle r="360" fill="rgba(34,211,238,0.045)" stroke="#22d3ee" stroke-opacity="0.30" stroke-width="30"/>
+    <circle r="276" fill="rgba(251,191,36,0.035)" stroke="#fbbf24" stroke-opacity="0.42" stroke-width="18"/>
+    <circle r="184" fill="rgba(2,6,23,0.78)" stroke="#ffffff" stroke-opacity="0.13" stroke-width="2"/>
+    <circle r="430" fill="none" stroke="${ringColor}" stroke-opacity=".18" stroke-width="3" stroke-dasharray="18 20"/>
+    <line x1="-420" y1="0" x2="420" y2="0" stroke="#67e8f9" stroke-opacity="0.20" stroke-width="4"/>
+    <line x1="0" y1="-420" x2="0" y2="420" stroke="#fbbf24" stroke-opacity="0.18" stroke-width="4"/>
+    <text y="-48" fill="#67e8f9" font-family="Inter, Arial, sans-serif" font-size="196" font-weight="950" text-anchor="middle">${safeText(cardData.score)}%</text>
+    <text y="42" fill="#dbeafe" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="900" text-anchor="middle" letter-spacing="4">${safeText(cardData.metric).toUpperCase()}</text>
+    <text y="124" fill="#fef3c7" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="950" text-anchor="middle">${safeText(cardData.rank)} · ${safeText(cardData.top)}</text>
+    <g transform="translate(-132 -282)"><rect width="112" height="112" rx="26" fill="url(#tile)" stroke="#67e8f9" stroke-opacity=".55"/><text x="56" y="70" text-anchor="middle" fill="#e0f2fe" font-family="Inter,Arial" font-size="46" font-weight="950">${safeText(leftSymbol)}</text></g>
+    <g transform="translate(26 170)"><rect width="112" height="112" rx="26" fill="url(#tile)" stroke="#fbbf24" stroke-opacity=".62"/><text x="56" y="70" text-anchor="middle" fill="#fef3c7" font-family="Inter,Arial" font-size="46" font-weight="950">${safeText(rightSymbol)}</text></g>
   </g>
 
-  <rect x="150" y="1410" width="1300" height="235" rx="44" fill="rgba(2,6,23,0.68)" stroke="#ffffff" stroke-opacity="0.10"/>
-  <text x="190" y="1482" fill="#fef3c7" class="label" font-size="26">DISCOVERY SUMMARY</text>
-  ${svgTextLines(narrativeLines, { x: 190, y: 1545, lineHeight: 40, fill: "#e2e8f0", size: 31, weight: 750 })}
+  <rect x="150" y="1548" width="1300" height="250" rx="48" fill="rgba(2,6,23,0.70)" stroke="#ffffff" stroke-opacity="0.12"/>
+  <text x="190" y="1622" fill="#fef3c7" class="label" font-size="26">DISCOVERY SUMMARY</text>
+  ${svgTextLines(narrativeLines, { x: 190, y: 1687, lineHeight: 41, fill: "#e2e8f0", size: 31, weight: 760 })}
 
-  <g transform="translate(150 1700)">
+  <g transform="translate(150 1848)">
     ${[
-      [0, cardData.statA, "VIEWS"],
-      [332, cardData.statB, "SAVES"],
-      [664, cardData.statC, "REPORTS"],
-      [996, cardData.tier, "CLASS"],
-    ].map(([x, value, label]) => `<g transform="translate(${x} 0)"><rect width="294" height="142" rx="34" fill="rgba(2,6,23,0.72)" stroke="${label === "CLASS" ? "#fbbf24" : "#22d3ee"}" stroke-opacity="0.34"/><text x="147" y="61" fill="${label === "CLASS" ? "#fef3c7" : "#e0f2fe"}" font-family="Inter, Arial, sans-serif" font-size="29" font-weight="950" text-anchor="middle">${safeText(value)}</text><text x="147" y="100" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="900" text-anchor="middle" letter-spacing="4">${label}</text></g>`).join("\n")}
+      [0, cardData.statA, "VIEWS", "#67e8f9"],
+      [332, cardData.statB, "SAVES", "#34d399"],
+      [664, cardData.statC, "REPORTS", "#f472b6"],
+      [996, cardData.tier, "CLASS", "#fbbf24"],
+    ].map(([x, value, label, color]) => `<g transform="translate(${x} 0)"><rect width="294" height="142" rx="34" fill="rgba(2,6,23,0.72)" stroke="${color}" stroke-opacity="0.45"/><circle cx="250" cy="33" r="25" fill="${color}" opacity=".16"/><text x="147" y="61" fill="${color}" font-family="Inter,Arial" font-size="29" font-weight="950" text-anchor="middle">${safeText(value)}</text><text x="147" y="101" fill="#94a3b8" font-family="Inter,Arial" font-size="18" font-weight="900" text-anchor="middle" letter-spacing="4">${label}</text></g>`).join("\n")}
   </g>
 
-  <text x="150" y="1928" fill="#fef3c7" class="label" font-size="25">${safeText(footerLine.toUpperCase())}</text>
-  <text x="1450" y="1928" fill="#67e8f9" class="label" font-size="28" text-anchor="end">ELEMENTOS</text>
-  <text x="150" y="1972" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">${safeText(cardData.cardNumber)} · ${safeText(exportLayout)} · DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
+  <text x="150" y="2040" fill="#fef3c7" class="label" font-size="24">${safeText(footerLine.toUpperCase())}</text>
+  <text x="1450" y="2040" fill="#67e8f9" class="label" font-size="30" text-anchor="end">ELEMENTOS</text>
+  <text x="150" y="2078" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="850">${safeText(exportLayout)} · DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
 </svg>`;
+;
     setExportHistory((history) => [
       { format, layout: exportLayout, title: cardData.title, score: cardData.score, time: new Date().toLocaleTimeString() },
       ...history,
