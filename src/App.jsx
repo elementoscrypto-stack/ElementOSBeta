@@ -1239,17 +1239,21 @@ function makeExportSvg({ title = "ElementOS Export", summary = "", payload = {},
     <radialGradient id="pulseB" cx="12%" cy="88%" r="60%"><stop offset="0" stop-color="${palette.b}" stop-opacity=".32"/><stop offset="1" stop-color="${palette.b}" stop-opacity="0"/></radialGradient>
     <filter id="glow"><feGaussianBlur stdDeviation="10" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <filter id="bigGlow"><feGaussianBlur stdDeviation="28"/></filter>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity=".44"/></filter>
+    <filter id="microNoise"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .055"/></feComponentTransfer></filter>
   </defs>
   <rect width="1080" height="1350" fill="url(#bg)"/>
   <rect width="1080" height="1350" fill="url(#pulseA)"/>
   <rect width="1080" height="1350" fill="url(#pulseB)"/>
+  <rect width="1080" height="1350" filter="url(#microNoise)" opacity=".55"/>
   <g opacity=".85">${grid}${starfield}</g>
   <circle cx="870" cy="225" r="205" fill="${palette.a}" opacity=".16" filter="url(#bigGlow)"/>
   <circle cx="185" cy="1135" r="245" fill="${palette.b}" opacity=".13" filter="url(#bigGlow)"/>
-  <rect x="48" y="48" width="984" height="1254" rx="64" fill="rgba(2,6,23,.58)" stroke="url(#frame)" stroke-width="3"/>
+  <rect x="48" y="48" width="984" height="1254" rx="64" fill="rgba(2,6,23,.58)" stroke="url(#frame)" stroke-width="3" filter="url(#softShadow)"/>
+  <path d="M72 112 C240 40 520 38 1000 82 L1000 230 C620 160 300 165 72 252 Z" fill="#ffffff" opacity=".045"/>
   <rect x="78" y="78" width="924" height="1194" rx="48" fill="rgba(255,255,255,.032)" stroke="rgba(255,255,255,.12)"/>
 
-  <text x="92" y="126" fill="${palette.b}" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="950" letter-spacing="5">ELEMENTOS · PREMIUM EXPORT</text>
+  <text x="92" y="126" fill="${palette.b}" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="950" letter-spacing="5">ELEMENTOS · LUXURY SCIENCE EXPORT</text>
   <text x="92" y="164" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="850" letter-spacing="2.2">PDF · JSON · SVG · SOCIAL READY</text>
 
   <g transform="translate(782 98)">
@@ -1555,13 +1559,16 @@ function Button({ children, onClick, variant = "ghost", className = "" }) {
 function Info({ title, children }) { return <div className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm text-cyan-50"><div className="mb-1 text-xs font-black uppercase tracking-[.22em] text-cyan-200">{title}</div><div className="leading-6 text-slate-200">{children}</div></div>; }
 function Background() {
   return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden bg-[#02060d]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_3%,rgba(0,116,255,.22),transparent_28%),radial-gradient(circle_at_80%_9%,rgba(98,0,255,.15),transparent_31%),radial-gradient(circle_at_52%_90%,rgba(0,212,255,.10),transparent_34%)]" />
-      <div className="absolute inset-0 opacity-[.34] bg-[linear-gradient(rgba(0,170,255,.07)_1px,transparent_1px),linear-gradient(90deg,rgba(0,170,255,.07)_1px,transparent_1px)] bg-[size:42px_42px]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,13,.18)_45%,rgba(2,6,13,.92)_100%)]" />
-      <div className="absolute left-[18%] top-[-18rem] h-[42rem] w-[42rem] rounded-full bg-cyan-500/12 blur-3xl" />
-      <div className="absolute right-[-8rem] top-[14%] h-[32rem] w-[32rem] rounded-full bg-blue-700/16 blur-3xl" />
+    <div className="pointer-events-none fixed inset-0 overflow-hidden bg-[#01040a]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_2%,rgba(34,211,238,.28),transparent_26%),radial-gradient(circle_at_82%_8%,rgba(250,204,21,.15),transparent_24%),radial-gradient(circle_at_66%_70%,rgba(79,70,229,.16),transparent_31%),radial-gradient(circle_at_18%_92%,rgba(8,145,178,.16),transparent_30%)]" />
+      <div className="absolute inset-0 opacity-[.40] bg-[linear-gradient(rgba(103,232,249,.075)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,.075)_1px,transparent_1px)] bg-[size:42px_42px]" />
+      <div className="absolute inset-0 opacity-[.16] bg-[linear-gradient(120deg,transparent_0%,rgba(255,255,255,.14)_12%,transparent_24%,transparent_72%,rgba(250,204,21,.12)_84%,transparent_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,13,.16)_42%,rgba(1,4,10,.96)_100%)]" />
+      <div className="absolute left-[12%] top-[-18rem] h-[46rem] w-[46rem] rounded-full bg-cyan-500/16 blur-3xl" />
+      <div className="absolute right-[-10rem] top-[10%] h-[34rem] w-[34rem] rounded-full bg-blue-700/20 blur-3xl" />
+      <div className="absolute bottom-[-18rem] left-[32%] h-[36rem] w-[36rem] rounded-full bg-amber-400/10 blur-3xl" />
       <div className="eos-scanline absolute inset-0" />
+      <div className="eos-lux-noise absolute inset-0" />
     </div>
   );
 }
@@ -1684,7 +1691,111 @@ function ElementOSThemeSkin() {
           linear-gradient(135deg, rgba(2,6,13,.98), rgba(7,20,38,.96) 56%, rgba(2,6,13,.98));
       }
 
-      @keyframes eosSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+
+      /* V46: billion-dollar gloss system */
+      body {
+        background:
+          radial-gradient(circle at 20% 0%, rgba(34,211,238,.12), transparent 30%),
+          radial-gradient(circle at 80% 8%, rgba(250,204,21,.07), transparent 26%),
+          #01040a;
+      }
+      .eos-lux-noise {
+        opacity: .18;
+        background-image:
+          radial-gradient(circle at 20% 20%, rgba(255,255,255,.12) 0 1px, transparent 1px),
+          radial-gradient(circle at 80% 70%, rgba(103,232,249,.12) 0 1px, transparent 1px);
+        background-size: 33px 33px, 47px 47px;
+        mix-blend-mode: screen;
+      }
+      .eos-panel, .poster-card, .poster-card-gold, .eos-data-card {
+        position: relative;
+        backdrop-filter: blur(22px) saturate(1.25);
+        box-shadow:
+          0 0 0 1px rgba(103,232,249,.075),
+          0 24px 110px rgba(0,0,0,.58),
+          0 0 54px rgba(8,145,178,.075),
+          inset 0 1px 0 rgba(255,255,255,.08),
+          inset 0 -1px 0 rgba(103,232,249,.05) !important;
+      }
+      .eos-panel:after, .poster-card:after, .poster-card-gold:after, .eos-data-card:after {
+        content: '';
+        position: absolute;
+        inset: 1px;
+        border-radius: inherit;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 14% 0%, rgba(255,255,255,.14), transparent 25%),
+          linear-gradient(125deg, transparent 0%, rgba(255,255,255,.075) 18%, transparent 36%, transparent 70%, rgba(250,204,21,.06) 88%, transparent 100%);
+        opacity: .72;
+      }
+      .eos-panel:hover, .poster-card:hover, .poster-card-gold:hover, .eos-data-card:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          0 0 0 1px rgba(103,232,249,.12),
+          0 28px 120px rgba(0,0,0,.62),
+          0 0 74px rgba(34,211,238,.13),
+          inset 0 1px 0 rgba(255,255,255,.10) !important;
+      }
+      .eos-button, button {
+        text-shadow: 0 1px 10px rgba(0,0,0,.25);
+      }
+      .eos-button {
+        box-shadow:
+          0 12px 30px rgba(0,0,0,.26),
+          inset 0 1px 0 rgba(255,255,255,.12),
+          inset 0 -1px 0 rgba(0,0,0,.28);
+      }
+      .eos-button:after {
+        content: '';
+        position: absolute;
+        inset: 1px;
+        border-radius: inherit;
+        background: linear-gradient(180deg, rgba(255,255,255,.16), transparent 42%);
+        opacity: .65;
+        pointer-events: none;
+      }
+      .eos-button:hover {
+        box-shadow:
+          0 18px 44px rgba(0,0,0,.34),
+          0 0 34px rgba(34,211,238,.20),
+          inset 0 1px 0 rgba(255,255,255,.18),
+          inset 0 -1px 0 rgba(0,0,0,.32) !important;
+      }
+      .eos-nav-item {
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 8px 24px rgba(0,0,0,.18);
+      }
+      .eos-nav-item:hover {
+        border-color: rgba(103,232,249,.46) !important;
+        background: linear-gradient(90deg, rgba(7,20,38,.96), rgba(8,47,73,.72)) !important;
+      }
+      .eos-input, input, select, textarea {
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 0 0 1px rgba(103,232,249,.03) !important;
+      }
+      .eos-input:focus, input:focus, select:focus, textarea:focus {
+        outline: none !important;
+        border-color: rgba(103,232,249,.70) !important;
+        box-shadow: 0 0 0 3px rgba(34,211,238,.12), 0 0 35px rgba(34,211,238,.12), inset 0 1px 0 rgba(255,255,255,.08) !important;
+      }
+      .poster-hero, header, .eos-topbar {
+        box-shadow:
+          0 0 0 1px rgba(103,232,249,.075),
+          0 36px 140px rgba(0,0,0,.56),
+          0 0 120px rgba(34,211,238,.10) !important;
+      }
+      .poster-gold, .text-amber-100, .text-amber-200 {
+        text-shadow: 0 0 22px rgba(250,204,21,.20);
+      }
+      .poster-cyan, .text-cyan-100, .text-cyan-200 {
+        text-shadow: 0 0 24px rgba(34,211,238,.18);
+      }
+      svg { filter: drop-shadow(0 10px 30px rgba(0,0,0,.20)); }
+      .eos-premium-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(103,232,249,.58), rgba(250,204,21,.32), transparent);
+      }
+
+            @keyframes eosSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
       @keyframes eosSpinReverse { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
       @keyframes eosPulse { 0%,100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.06); } }
     `}</style>
