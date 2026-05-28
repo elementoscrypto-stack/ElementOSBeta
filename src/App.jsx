@@ -798,30 +798,55 @@ function MIDashboardHeader({ active, setActive }) {
 }
 
 function MatterIntelligenceLab() {
-  const [moduleIndex, setModuleIndex] = useState(0);
+  const opportunityUniverse = [
+    { category: "Precious metals", items: ["Gold", "Silver", "Platinum", "Palladium", "Rhodium", "Iridium", "Osmium"] },
+    { category: "Industrial metals", items: ["Copper", "Iron", "Aluminium", "Nickel", "Titanium", "Zinc", "Lead", "Tin", "Molybdenum", "Tungsten"] },
+    { category: "Battery materials", items: ["Lithium", "Graphite", "Cobalt", "Manganese", "Nickel", "Vanadium", "Silicon", "Sodium", "Phosphorus"] },
+    { category: "Rare earths", items: ["Neodymium", "Praseodymium", "Dysprosium", "Terbium", "Lanthanum", "Cerium", "Yttrium", "Scandium"] },
+    { category: "Energy", items: ["Uranium", "Hydrogen", "Natural Gas", "Oil", "Geothermal", "Helium", "Thorium"] },
+    { category: "Water + ground", items: ["Groundwater", "Aquifer System", "Freshwater", "Brine", "Reservoir", "Deep Basin"] },
+    { category: "Construction", items: ["Sandstone", "Limestone", "Dolomite", "Granite", "Basalt", "Quartzite", "Marble"] },
+    { category: "Custom", items: ["Custom Material", "Custom Ore", "Custom Formation", "Custom Signal", "Custom Target"] },
+  ];
+
+  const flatResources = opportunityUniverse.flatMap((group) => group.items.map((name, index) => ({
+    name,
+    category: group.category,
+    seed: name.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) + index * 17,
+  })));
+
+  const [category, setCategory] = useState("Precious metals");
+  const [selectedResource, setSelectedResource] = useState("Gold");
   const [targetIndex, setTargetIndex] = useState(0);
   const [scanning, setScanning] = useState(false);
   const [reportReady, setReportReady] = useState(false);
   const [savedTargets, setSavedTargets] = useState(["DK-27"]);
 
-  const selectedModule = miModules[moduleIndex] || miModules[0];
+  const resources = flatResources.filter((item) => category === "All" || item.category === category);
+  const resource = flatResources.find((item) => item.name === selectedResource) || flatResources[0];
+  const seed = resource.seed;
+
+  const opportunityScore = Math.max(51, Math.min(99, 62 + (seed % 31) + (scanning ? 4 : 0)));
+  const signalAgreement = Math.max(50, Math.min(99, 58 + ((seed * 7) % 35)));
+  const historicalMatch = Math.max(48, Math.min(99, 54 + ((seed * 11) % 38)));
+  const telemetryStrength = Math.max(45, Math.min(99, 52 + ((seed * 13) % 40)));
+  const geometryIndex = Math.max(45, Math.min(99, 55 + ((seed * 5) % 37)));
+  const trend = opportunityScore > 86 ? "Exceptional" : opportunityScore > 76 ? "Rising" : "Emerging";
+  const targetCode = `${selectedResource.replace(/[^A-Z0-9]/gi, "").slice(0, 3).toUpperCase()}-${String(seed % 97).padStart(2, "0")}`;
+
   const selectedTarget = miTargets[targetIndex] || miTargets[0];
-
-  const dailyOpportunity = useMemo(() => {
-    const seed = Math.floor(Date.now() / 86400000);
-    return miTargets[seed % miTargets.length] || miTargets[0];
-  }, []);
-
-  const opportunityScore = Math.min(
-    99,
-    Math.round(selectedTarget.confidence * 0.84 + selectedModule.signal * 0.12)
-  );
+  const dynamicTargets = [
+    { id: targetCode, name: `${selectedResource} Opportunity Field`, confidence: opportunityScore, agreement: trend, glyph: opportunityScore > 88 ? "◇∞◇" : "◇◇◇", depth: `${80 + (seed % 380)}m–${520 + (seed % 1600)}m`, trend: `+${3 + (seed % 14)}% this week`, reasons: ["Geometry and telemetry are converging", "Historical similarity is above baseline", "Signal persistence is increasing"] },
+    { id: `${targetCode}-B`, name: `${selectedResource} Secondary Corridor`, confidence: Math.max(40, opportunityScore - 8), agreement: "Strong", glyph: "◇◇◇", depth: `${120 + (seed % 260)}m–${720 + (seed % 1300)}m`, trend: `+${2 + (seed % 9)}% this week`, reasons: ["Neighbouring signal cluster", "Resource trend continuation", "Formation stability improving"] },
+    { id: `${targetCode}-C`, name: `${selectedResource} Deep Signal Node`, confidence: Math.max(35, opportunityScore - 15), agreement: "Moderate", glyph: "◇◇", depth: `${300 + (seed % 500)}m–${1100 + (seed % 1900)}m`, trend: `+${1 + (seed % 7)}% this week`, reasons: ["Deep structure response", "Weak but persistent anomaly", "Needs follow-up simulation"] },
+  ];
+  const activeTarget = dynamicTargets[targetIndex % dynamicTargets.length];
 
   const runScan = () => {
     setScanning(true);
     setReportReady(false);
     window.setTimeout(() => {
-      setTargetIndex((value) => (value + 1) % miTargets.length);
+      setTargetIndex((value) => (value + 1) % dynamicTargets.length);
       setScanning(false);
       setReportReady(true);
     }, 900);
@@ -829,25 +854,38 @@ function MatterIntelligenceLab() {
 
   const toggleSaveTarget = () => {
     setSavedTargets((previous) =>
-      previous.includes(selectedTarget.id)
-        ? previous.filter((id) => id !== selectedTarget.id)
-        : [...previous, selectedTarget.id]
+      previous.includes(activeTarget.id)
+        ? previous.filter((id) => id !== activeTarget.id)
+        : [...previous, activeTarget.id]
     );
   };
 
-  const intelligenceFeed = [
-    ["Diamond confidence increased", "Northern craton signal moved +8% after geometry agreement improved.", "+8%"],
-    ["Historical similarity match", "Current target pattern resembles known discovery structures above 92%.", "92%"],
-    ["Signal agreement improved", "Gravity, magnetics and geometry are converging around one structure.", "Rising"],
-    ["Report generated", "Executive Discovery Brief is ready for target review.", "Ready"],
-  ];
+  const exportMatter = () => {
+    exportAllFormats({
+      baseName: `${targetCode}-matter-intelligence`,
+      title: `Matter Intelligence Report: ${selectedResource}`,
+      summary: `${selectedResource} opportunity scan. Score ${opportunityScore}%. Signal agreement ${signalAgreement}%. Historical match ${historicalMatch}%. Telemetry strength ${telemetryStrength}%. Geometry index ${geometryIndex}%.`,
+      payload: { selectedResource, category, opportunityScore, signalAgreement, historicalMatch, telemetryStrength, geometryIndex, activeTarget },
+    });
+  };
+
+  const galaxyNodes = resources.slice(0, 18).map((item, index) => {
+    const angle = (index / Math.max(1, Math.min(18, resources.length))) * Math.PI * 2;
+    const ring = 92 + (index % 3) * 42;
+    return {
+      ...item,
+      x: 50 + Math.cos(angle) * (ring / 3.2),
+      y: 50 + Math.sin(angle) * (ring / 4.4),
+      score: Math.max(50, Math.min(99, 58 + ((item.seed * 7) % 38))),
+    };
+  });
 
   const pipeline = [
-    ["01", "Scan", "Choose a resource, signal type or opportunity field."],
-    ["02", "Rank", "Compare evidence layers, history and target geometry."],
-    ["03", "Explain", "Turn noisy signals into a plain-English discovery narrative."],
-    ["04", "Report", "Generate an investor, technical or field-review dossier."],
-    ["05", "Publish", "Package the strongest result as a shareable discovery asset."],
+    ["01", "Select", "Choose a resource, metal, formation, energy source or custom target."],
+    ["02", "Scan", "Compare geometry, telemetry, historical pattern and signal persistence."],
+    ["03", "Rank", "Promote strongest opportunity nodes into a target queue."],
+    ["04", "Explain", "Convert the signal into a plain-English intelligence narrative."],
+    ["05", "Publish", "Export a report, card, poster or workspace asset."],
   ];
 
   return (
@@ -855,47 +893,48 @@ function MatterIntelligenceLab() {
       <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-blue-950/30 p-0">
         <div className="relative p-6 md:p-8">
           <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-amber-500/10 blur-3xl" />
           <div className="relative grid gap-8 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
             <div>
               <div className="flex flex-wrap gap-2">
-                <Pill gold><Sparkles size={12} /> flagship advanced lab</Pill>
-                <Pill><Globe2 size={12} /> discovery operating system</Pill>
-                <Pill><Radar size={12} /> signal agreement</Pill>
+                <Pill gold><Sparkles size={12} /> material opportunity universe</Pill>
+                <Pill><Globe2 size={12} /> selectable resources</Pill>
+                <Pill><Radar size={12} /> live geometry + telemetry</Pill>
               </div>
               <h1 className="mt-5 max-w-5xl text-5xl font-black leading-[.92] tracking-tight md:text-7xl">
-                Matter Intelligence <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery OS</span>
+                Matter Intelligence <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Opportunity Galaxy</span>
               </h1>
               <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-                Discover opportunities hidden inside materials, geology, telemetry, historical patterns and signal agreement. Matter Intelligence turns scattered evidence into ranked targets, reports and next actions.
+                Select any resource, element, formation or opportunity type. Matter Intelligence now rebuilds the radar, target queue, telemetry streams and report narrative around what you are actually hunting.
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Button onClick={runScan} variant="primary" className="px-8 py-5 text-base">
-                  <Radar size={17} className="mr-2 inline" /> {scanning ? "Scanning Opportunity Field..." : "Run Opportunity Scan"}
+                  <Radar size={17} className="mr-2 inline" /> {scanning ? "Scanning Opportunity Galaxy..." : "Run Opportunity Scan"}
                 </Button>
-                <Button onClick={() => setReportReady(true)} className="px-8 py-5 text-base">
-                  <FileText size={17} className="mr-2 inline" /> Generate Intelligence Report
+                <Button onClick={exportMatter} className="px-8 py-5 text-base">
+                  <FileText size={17} className="mr-2 inline" /> Export Intelligence
                 </Button>
                 <Button onClick={toggleSaveTarget} className="px-8 py-5 text-base">
-                  <Save size={17} className="mr-2 inline" /> {savedTargets.includes(selectedTarget.id) ? "Saved" : "Save Target"}
+                  <Save size={17} className="mr-2 inline" /> {savedTargets.includes(activeTarget.id) ? "Saved" : "Save Target"}
                 </Button>
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 shadow-[0_0_80px_rgba(34,211,238,.12)]">
-              <div className="flex items-start justify-between gap-4">
+            <div className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 shadow-[0_0_80px_rgba(34,211,238,.12)]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_35%)]" />
+              <div className="relative z-10 flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-xs uppercase tracking-[.25em] text-cyan-200">Today's Opportunity</div>
-                  <div className="mt-3 text-4xl font-black text-white">{dailyOpportunity.name}</div>
-                  <div className="mt-1 text-sm text-slate-400">{dailyOpportunity.module} target · {dailyOpportunity.depth}</div>
+                  <div className="text-xs uppercase tracking-[.25em] text-cyan-200">Active opportunity</div>
+                  <div className="mt-3 text-4xl font-black text-white">{selectedResource}</div>
+                  <div className="mt-1 text-sm text-slate-400">{category} · {activeTarget.depth}</div>
                 </div>
                 <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-right">
-                  <div className="text-4xl font-black text-emerald-100">{dailyOpportunity.confidence}%</div>
+                  <div className="text-4xl font-black text-emerald-100">{opportunityScore}%</div>
                   <div className="text-[10px] uppercase tracking-[.2em] text-emerald-200">score</div>
                 </div>
               </div>
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                {[["Signal", dailyOpportunity.agreement], ["Glyph", dailyOpportunity.glyph], ["Trend", dailyOpportunity.trend]].map(([label, value]) => (
+              <div className="relative z-10 mt-5 grid gap-3 sm:grid-cols-3">
+                {[["Signal", signalAgreement + "%"], ["Geometry", geometryIndex + "%"], ["Trend", trend]].map(([label, value]) => (
                   <div key={label} className="rounded-2xl border border-white/10 bg-white/[.04] p-4">
                     <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
                     <div className="mt-2 text-lg font-black text-cyan-100">{value}</div>
@@ -907,20 +946,66 @@ function MatterIntelligenceLab() {
         </div>
       </Panel>
 
-      <GeometryTelemetryLab selectedTarget={selectedTarget} selectedModule={selectedModule} opportunityScore={opportunityScore} runScan={runScan} />
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Target size={12} /> material opportunity universe</Pill>
+            <h2 className="mt-3 text-4xl font-black">Choose what Matter Intelligence should hunt.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">This replaces the old hard-coded diamond view. The whole OS now updates around precious metals, battery materials, rare earths, energy, water, formations and custom signals.</p>
+          </div>
+          <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">{flatResources.length}+ resources available</div>
+        </div>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {["All", ...opportunityUniverse.map((group) => group.category)].map((cat) => (
+            <button key={cat} onClick={() => { setCategory(cat); const first = cat === "All" ? flatResources[0] : flatResources.find((item) => item.category === cat); if (first) setSelectedResource(first.name); }} className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[.15em] ${category === cat ? "border-amber-300/60 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>{cat}</button>
+          ))}
+        </div>
+        <div className="mt-6 grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
+          <div className="relative min-h-[520px] overflow-hidden rounded-[2.5rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_28%),linear-gradient(135deg,#020617,#081a2f_55%,#100b22)] p-6">
+            <div className="absolute inset-0 opacity-30 bg-[linear-gradient(rgba(34,211,238,.09)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.08)_1px,transparent_1px)] bg-[size:36px_36px]" />
+            <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/20 shadow-[0_0_90px_rgba(34,211,238,.16)]" />
+            <div className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-300/20" />
+            <div className="absolute left-1/2 top-1/2 grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-cyan-300/30 bg-cyan-300/10 text-center shadow-[0_0_80px_rgba(34,211,238,.25)]">
+              <div>
+                <div className="text-2xl font-black text-cyan-100">MI</div>
+                <div className="text-[9px] uppercase tracking-[.18em] text-slate-400">core</div>
+              </div>
+            </div>
+            {galaxyNodes.map((node) => (
+              <button
+                key={node.name}
+                onClick={() => setSelectedResource(node.name)}
+                className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-2xl border px-3 py-2 text-left shadow-[0_0_30px_rgba(34,211,238,.12)] transition hover:scale-110 ${selectedResource === node.name ? "border-amber-300/60 bg-amber-300/20 text-amber-50" : "border-cyan-300/20 bg-black/45 text-cyan-50"}`}
+                style={{ left: `${node.x}%`, top: `${node.y}%` }}
+              >
+                <div className="text-xs font-black">{node.name}</div>
+                <div className="text-[10px] text-slate-400">{node.score}%</div>
+              </button>
+            ))}
+          </div>
+          <div className="space-y-4">
+            <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">active scan</div>
+              <div className="mt-2 text-4xl font-black text-white">{activeTarget.name}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-300">{activeTarget.reasons.join(". ")}.</p>
+            </div>
+            {[["Signal agreement", signalAgreement], ["Historical match", historicalMatch], ["Telemetry strength", telemetryStrength], ["Geometry index", geometryIndex]].map(([label, value]) => (
+              <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                <div className="flex justify-between text-xs uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span>{value}%</span></div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-amber-300" style={{ width: `${value}%` }} /></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Panel>
 
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <Pill gold><Target size={12} /> discovery pipeline</Pill>
             <h2 className="mt-3 text-4xl font-black">A complete opportunity engine, not another tab.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-              Scan for an opportunity, rank the strongest signal, explain why it matters, generate a report, save it to Workspace and publish the discovery.
-            </p>
           </div>
-          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">
-            System healthy · {miSelfChecksPassed ? "checks passed" : "review checks"}
-          </div>
+          <Button onClick={runScan} variant="primary">Run New Scan</Button>
         </div>
         <div className="mt-6 grid gap-3 md:grid-cols-5">
           {pipeline.map(([step, title, body]) => (
@@ -933,76 +1018,20 @@ function MatterIntelligenceLab() {
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
-        <Panel>
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <Pill gold><Database size={12} /> opportunity scanner</Pill>
-              <h2 className="mt-3 text-4xl font-black">What are you looking for?</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-400">Pick a discovery target. Matter Intelligence changes the language, signal model and ranking logic around your goal.</p>
-            </div>
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-right">
-              <div className="text-3xl font-black text-cyan-100">{opportunityScore}%</div>
-              <div className="text-[10px] uppercase tracking-[.2em] text-cyan-200">opportunity score</div>
-            </div>
-          </div>
-
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {miModules.map((mod, index) => {
-              const Icon = mod.icon;
-              const selected = moduleIndex === index;
-              return (
-                <button
-                  key={mod.name}
-                  onClick={() => setModuleIndex(index)}
-                  className={`rounded-[1.5rem] border p-4 text-left transition ${selected ? "border-cyan-300/40 bg-cyan-300/10 shadow-[0_0_40px_rgba(34,211,238,.12)]" : "border-white/10 bg-white/[0.035] hover:bg-white/[0.06]"}`}
-                >
-                  <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${mod.gradient}`}><Icon size={25} className="text-cyan-100" /></div>
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-lg font-black text-white">{mod.name}</div>
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-bold text-slate-300">{mod.status}</span>
-                  </div>
-                  <div className="mt-3 text-xs text-slate-400">Signal readiness</div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${mod.signal}%` }} /></div>
-                </button>
-              );
-            })}
-          </div>
-
-          <Button onClick={runScan} variant="primary" className="mt-6 w-full py-5 text-base">
-            {scanning ? "Analyzing evidence layers..." : `Run ${selectedModule.name} Scan`}
-          </Button>
-        </Panel>
-
-        <Panel>
-          <Pill gold><Waves size={12} /> discovery potential layer</Pill>
-          <h2 className="mt-3 text-4xl font-black">Current Signal</h2>
-          <div className="mt-6 rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-300/10 to-black/30 p-6 text-center">
-            <div className="text-[10px] uppercase tracking-[.25em] text-slate-500">Discovery Potential</div>
-            <div className="mt-3 text-7xl font-black text-cyan-100">{opportunityScore}%</div>
-            <div className="mt-2 text-sm font-bold text-emerald-200">▲ Rising · signal agreement improving</div>
-            <div className="mt-5 h-3 overflow-hidden rounded-full bg-slate-950">
-              <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${opportunityScore}%` }} />
-            </div>
-          </div>
-          <Info title="Why this matters">
-            {selectedTarget.id} is ranked highly because {selectedTarget.reasons[0].toLowerCase()}, {selectedTarget.reasons[1].toLowerCase()}, and multiple evidence layers are pointing in the same direction.
-          </Info>
-        </Panel>
-      </div>
-
       <div className="grid gap-6 xl:grid-cols-[.85fr_1.15fr]">
         <Panel>
-          <Pill gold><LineChart size={12} /> recent intelligence</Pill>
+          <Pill gold><LineChart size={12} /> telemetry stream</Pill>
           <h2 className="mt-3 text-3xl font-black">Live Intelligence Feed</h2>
           <div className="mt-5 space-y-3">
-            {intelligenceFeed.map(([title, body, value]) => (
+            {[
+              ["Opportunity score updated", `${selectedResource} moved to ${opportunityScore}% after telemetry and geometry fusion.`, `${opportunityScore}%`],
+              ["Historical pattern match", `${selectedResource} matches known discovery patterns above baseline.`, `${historicalMatch}%`],
+              ["Geometry lock detected", `Signal geometry strengthened for ${activeTarget.id}.`, `${geometryIndex}%`],
+              ["Report pathway ready", `Executive intelligence report can be exported now.`, "Ready"],
+            ].map(([title, body, value]) => (
               <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="font-black text-cyan-100">{title}</div>
-                    <p className="mt-1 text-sm leading-6 text-slate-400">{body}</p>
-                  </div>
+                  <div><div className="font-black text-cyan-100">{title}</div><p className="mt-1 text-sm leading-6 text-slate-400">{body}</p></div>
                   <div className="rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-sm font-black text-emerald-100">{value}</div>
                 </div>
               </div>
@@ -1014,39 +1043,19 @@ function MatterIntelligenceLab() {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <Pill gold><Target size={12} /> ranked targets</Pill>
-              <h2 className="mt-3 text-3xl font-black">Top Opportunity Targets</h2>
+              <h2 className="mt-3 text-3xl font-black">Top {selectedResource} Targets</h2>
             </div>
-            <Button onClick={() => setReportReady(true)} variant="primary">Generate Report</Button>
+            <Button onClick={exportMatter} variant="primary">Export Report</Button>
           </div>
           <div className="mt-5 grid gap-3 lg:grid-cols-3">
-            {miTargets.map((target, index) => (
-              <button
-                key={target.id}
-                onClick={() => setTargetIndex(index)}
-                className={`rounded-[1.5rem] border p-4 text-left transition ${targetIndex === index ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25 hover:bg-white/[0.06]"}`}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-lg font-black text-white">{target.id}</div>
-                    <div className="text-xs text-slate-400">{target.name}</div>
-                  </div>
-                  <div className="font-mono text-2xl text-fuchsia-100">{target.glyph}</div>
-                </div>
-                <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
-                  <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{target.confidence}%</b><br /><span className="text-slate-500">Score</span></div>
-                  <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{target.agreement}</b><br /><span className="text-slate-500">Signal</span></div>
-                  <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{target.trend}</b><br /><span className="text-slate-500">Trend</span></div>
-                </div>
+            {dynamicTargets.map((target, index) => (
+              <button key={target.id} onClick={() => setTargetIndex(index)} className={`rounded-[1.5rem] border p-4 text-left transition ${targetIndex === index ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25 hover:bg-white/[0.06]"}`}>
+                <div className="flex items-center justify-between gap-3"><div><div className="text-lg font-black text-white">{target.id}</div><div className="text-xs text-slate-400">{target.name}</div></div><div className="font-mono text-2xl text-fuchsia-100">{target.glyph}</div></div>
+                <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs"><div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{target.confidence}%</b><br /><span className="text-slate-500">Score</span></div><div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{target.agreement}</b><br /><span className="text-slate-500">Signal</span></div><div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{target.trend}</b><br /><span className="text-slate-500">Trend</span></div></div>
               </button>
             ))}
           </div>
-          {reportReady && (
-            <div className="mt-5 rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5">
-              <div className="text-xs uppercase tracking-[.22em] text-emerald-200">Report Preview Ready</div>
-              <div className="mt-2 text-2xl font-black text-white">{selectedTarget.id} Intelligence Report</div>
-              <p className="mt-2 text-sm leading-6 text-emerald-50/90">Executive brief, technical target ranking and field-review notes are ready for export.</p>
-            </div>
-          )}
+          {reportReady && <div className="mt-5 rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5"><div className="text-xs uppercase tracking-[.22em] text-emerald-200">Report Preview Ready</div><div className="mt-2 text-2xl font-black text-white">{activeTarget.id} Intelligence Report</div><p className="mt-2 text-sm leading-6 text-emerald-50/90">Executive brief, technical ranking and field-review notes are ready for export.</p></div>}
         </Panel>
       </div>
 
@@ -1054,1309 +1063,17 @@ function MatterIntelligenceLab() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <Pill gold><Sparkles size={12} /> recommended next step</Pill>
-            <h2 className="mt-3 text-3xl font-black">You have a strong signal. Turn it into an asset.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-              {selectedTarget.id} is ready for report generation, workspace save and public discovery packaging.
-            </p>
+            <h2 className="mt-3 text-3xl font-black">You have a strong {selectedResource} signal. Turn it into an asset.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{activeTarget.id} is ready for report generation, workspace save and public discovery packaging.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button onClick={() => setReportReady(true)} variant="primary">Generate Report</Button>
-            <Button onClick={toggleSaveTarget}>{savedTargets.includes(selectedTarget.id) ? "Saved to Workspace" : "Save to Workspace"}</Button>
+            <Button onClick={exportMatter} variant="primary">Generate Report</Button>
+            <Button onClick={toggleSaveTarget}>{savedTargets.includes(activeTarget.id) ? "Saved to Workspace" : "Save to Workspace"}</Button>
             <Button onClick={runScan}>Run Similar Scan</Button>
           </div>
         </div>
       </Panel>
     </div>
-  );
-}
-
-
-const PAGE_LABELS = {
-  landing: "Home",
-  dashboard: "Dashboard",
-  copilot: "AI Copilot",
-  mission: "Mission Control",
-  discover: "Discovery Feed",
-  explorer: "Element Explorer",
-  compare: "Compare Materials",
-  periodic: "Periodic Map",
-  atlas: "Behaviour Atlas",
-  graph: "Relationship Graph",
-  universe: "Discovery Universe",
-  scenario: "Scenario Builder",
-  visualization: "Visual Engine",
-  calculations: "Calculation Studio",
-  timemachine: "Time Machine",
-  seismo: "Seismo Lab",
-  welldriller: "Well Driller Lab",
-  isotopes: "Isotope Lab",
-  matterlab: "Matter Intelligence OS",
-  publicdiscovery: "Public Discovery Page",
-  simreports: "Simulation Dossiers",
-  viralcards: "Discovery Media Engine",
-  reports: "Research Reports",
-  lab: "Workspace",
-  beta: "Founding Beta",
-  login: "Account",
-};
-
-const MOBILE_PAGE_ORDER = [
-  "landing",
-  "dashboard",
-  "copilot",
-  "mission",
-  "discover",
-  "matterlab",
-  "publicdiscovery",
-  "compare",
-  "isotopes",
-  "scenario",
-  "timemachine",
-  "seismo",
-  "welldriller",
-  "simreports",
-  "viralcards",
-  "lab",
-  "explorer",
-  "periodic",
-  "atlas",
-  "graph",
-  "universe",
-  "visualization",
-  "calculations",
-  "reports",
-  "beta",
-];
-
-function pageLabel(page) {
-  return PAGE_LABELS[page] || String(page || "dashboard").replaceAll("-", " ");
-}
-
-
-function heatStyle(value, max = 5) {
-  const t = Math.max(0, Math.min(1, value / max));
-  const hue = 220 - t * 170;
-  return { background: `linear-gradient(135deg,hsl(${hue} 92% ${34 + t * 20}%),hsl(${hue - 20} 88% ${24 + t * 10}%))`, color: t > 0.55 ? "#05111f" : "#e0f2fe" };
-}
-function downloadFile(name, content, type = "text/plain") {
-  const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-}
-
-
-function slugifyExportName(value = "elementos-export") {
-  return String(value)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80) || "elementos-export";
-}
-
-function escapeXml(value = "") {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&apos;");
-}
-
-function wrapExportLines(value = "", maxChars = 62, maxLines = 14) {
-  const words = String(value).replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
-  const lines = [];
-  let line = "";
-  words.forEach((word) => {
-    const next = line ? `${line} ${word}` : word;
-    if (next.length > maxChars && line) {
-      lines.push(line);
-      line = word;
-    } else {
-      line = next;
-    }
-  });
-  if (line) lines.push(line);
-  if (lines.length > maxLines) {
-    return [...lines.slice(0, maxLines - 1), `${lines[maxLines - 1].slice(0, Math.max(0, maxChars - 3))}...`];
-  }
-  return lines.length ? lines : ["Generated by ElementOS."];
-}
-
-
-function smartExportHeadline(value = "") {
-  const text = String(value || "").replace(/\s+/g, " ").trim();
-  const replacements = [
-    [/rare thermal and pressure alignment suitable for advanced structural comparison/i, "Rare Thermal-Pressure Alignment"],
-    [/hidden compatibility signal/i, "Hidden Compatibility Signal"],
-    [/elementos export/i, "ElementOS Intelligence Export"],
-    [/simulation dossier/i, "Simulation Intelligence Dossier"],
-    [/viral/i, "Discovery Media Asset"],
-  ];
-  const replaced = replacements.reduce((acc, [pattern, next]) => acc.replace(pattern, next), text);
-  if (replaced.length <= 68) return replaced;
-  return `${replaced.slice(0, 66).replace(/\s+\S*$/, "")}...`;
-}
-
-function makeExportSvg({ title = "ElementOS Export", summary = "", payload = {}, sections = [], variant = "Luxury Scientific" }) {
-  const normalizedTitle = smartExportHeadline(title || payload?.title || "ElementOS Export");
-  const story = [summary, ...sections.map((section) => `${section.label || section.heading}: ${section.value || section.text}`)].filter(Boolean).join(" • ");
-  const narrativeLines = wrapExportLines(story || JSON.stringify(payload, null, 2), 42, 5);
-  const metricEntries = Object.entries(payload || {})
-    .filter(([, value]) => ["string", "number", "boolean"].includes(typeof value))
-    .filter(([key]) => !["summary", "source", "generatedAt", "title"].includes(key))
-    .slice(0, 6);
-  const safeMetrics = metricEntries.length ? metricEntries : [["Discovery", "ElementOS"], ["Format", "PDF/JSON/SVG"], ["Status", "Exported"], ["Style", "Premium"]];
-  const palettes = {
-    "Luxury Scientific": { a: "#67e8f9", b: "#fbbf24", c: "#a78bfa", d: "#10b981" },
-    "Matter Intelligence": { a: "#22d3ee", b: "#34d399", c: "#f59e0b", d: "#818cf8" },
-    "Neon": { a: "#38bdf8", b: "#e879f9", c: "#facc15", d: "#22c55e" },
-  };
-  const palette = palettes[variant] || palettes["Luxury Scientific"];
-  const metricTiles = safeMetrics.map(([key, value], index) => {
-    const x = 92 + (index % 3) * 300;
-    const y = 830 + Math.floor(index / 3) * 142;
-    const accent = [palette.a, palette.b, palette.c, palette.d, "#fb7185", "#60a5fa"][index % 6];
-    return `<g transform="translate(${x} ${y})"><rect width="260" height="118" rx="28" fill="rgba(255,255,255,.065)" stroke="${accent}" stroke-opacity=".48"/><circle cx="218" cy="31" r="28" fill="${accent}" opacity=".18"/><text x="24" y="43" fill="${accent}" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="950" letter-spacing="2.4">${escapeXml(String(key).replace(/([A-Z])/g, " $1").toUpperCase().slice(0, 20))}</text><text x="24" y="87" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="950">${escapeXml(String(value).slice(0, 22))}</text></g>`;
-  }).join("\n");
-  const titleLines = wrapExportLines(normalizedTitle, 18, 3);
-  const discoveryId = String(payload?.publicId || payload?.dna || payload?.code || payload?.id || "EOS-1047").slice(0, 24);
-  const score = payload?.score || payload?.aiConfidence || payload?.compatibility || payload?.opportunityScore || "94";
-  const pair = payload?.pair || payload?.compareSet || payload?.selected || payload?.target || "ElementOS Discovery";
-  const generated = escapeXml(new Date().toLocaleString());
-  const starfield = Array.from({ length: 90 }).map((_, i) => {
-    const x = (i * 137) % 1080;
-    const y = (i * 71) % 1350;
-    const r = 1 + (i % 3) * 0.8;
-    const color = [palette.a, palette.b, palette.c, "#ffffff"][i % 4];
-    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}" opacity="${0.16 + (i % 5) * 0.055}"/>`;
-  }).join("");
-  const grid = Array.from({ length: 18 }).map((_, i) => `<line x1="${80 + i * 55}" y1="0" x2="${80 + i * 55}" y2="1350" stroke="${palette.a}" stroke-opacity=".055"/>`).join("") + Array.from({ length: 22 }).map((_, i) => `<line x1="0" y1="${92 + i * 56}" x2="1080" y2="${92 + i * 56}" stroke="${palette.a}" stroke-opacity=".045"/>`).join("");
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#030711"/><stop offset=".38" stop-color="#061a31"/><stop offset=".72" stop-color="#0d1028"/><stop offset="1" stop-color="#260b39"/></linearGradient>
-    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${palette.a}"/><stop offset=".55" stop-color="${palette.c}"/><stop offset="1" stop-color="${palette.b}"/></linearGradient>
-    <radialGradient id="pulseA" cx="72%" cy="12%" r="72%"><stop offset="0" stop-color="${palette.a}" stop-opacity=".42"/><stop offset="1" stop-color="${palette.a}" stop-opacity="0"/></radialGradient>
-    <radialGradient id="pulseB" cx="12%" cy="88%" r="60%"><stop offset="0" stop-color="${palette.b}" stop-opacity=".32"/><stop offset="1" stop-color="${palette.b}" stop-opacity="0"/></radialGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="10" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="bigGlow"><feGaussianBlur stdDeviation="28"/></filter>
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity=".44"/></filter>
-    <filter id="microNoise"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .055"/></feComponentTransfer></filter>
-  </defs>
-  <rect width="1080" height="1350" fill="url(#bg)"/>
-  <rect width="1080" height="1350" fill="url(#pulseA)"/>
-  <rect width="1080" height="1350" fill="url(#pulseB)"/>
-  <rect width="1080" height="1350" filter="url(#microNoise)" opacity=".55"/>
-  <g opacity=".85">${grid}${starfield}</g>
-  <circle cx="870" cy="225" r="205" fill="${palette.a}" opacity=".16" filter="url(#bigGlow)"/>
-  <circle cx="185" cy="1135" r="245" fill="${palette.b}" opacity=".13" filter="url(#bigGlow)"/>
-  <rect x="48" y="48" width="984" height="1254" rx="64" fill="rgba(2,6,23,.58)" stroke="url(#frame)" stroke-width="3" filter="url(#softShadow)"/>
-  <path d="M72 112 C240 40 520 38 1000 82 L1000 230 C620 160 300 165 72 252 Z" fill="#ffffff" opacity=".045"/>
-  <rect x="78" y="78" width="924" height="1194" rx="48" fill="rgba(255,255,255,.032)" stroke="rgba(255,255,255,.12)"/>
-
-  <text x="92" y="126" fill="${palette.b}" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="950" letter-spacing="5">ELEMENTOS · LUXURY SCIENCE EXPORT</text>
-  <text x="92" y="164" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="850" letter-spacing="2.2">PDF · JSON · SVG · SOCIAL READY</text>
-
-  <g transform="translate(782 98)">
-    <rect x="0" y="0" width="184" height="184" rx="34" fill="rgba(34,211,238,.11)" stroke="${palette.a}" stroke-opacity=".55"/>
-    <circle cx="145" cy="39" r="23" fill="${palette.b}" opacity=".35"/>
-    <text x="28" y="47" fill="${palette.a}" font-family="Inter, Arial" font-size="19" font-weight="950">118</text>
-    <text x="30" y="116" fill="#ffffff" font-family="Inter, Arial" font-size="68" font-weight="950">Eo</text>
-    <text x="29" y="149" fill="${palette.a}" font-family="Inter, Arial" font-size="18" font-weight="900">ElementOS</text>
-  </g>
-
-  <text x="92" y="248" fill="${palette.a}" font-family="JetBrains Mono, Consolas, monospace" font-size="31" font-weight="950" letter-spacing="2.5">${escapeXml(discoveryId)}</text>
-  ${titleLines.map((line, index) => `<text x="92" y="${335 + index * 82}" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="950">${escapeXml(line)}</text>`).join("\n")}
-  <text x="92" y="${580 + Math.max(0, titleLines.length - 1) * 26}" fill="#cbd5e1" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="800">${escapeXml(String(pair).slice(0, 54))}</text>
-
-  <g transform="translate(92 628)">
-    <rect x="0" y="0" width="896" height="154" rx="38" fill="rgba(34,211,238,.09)" stroke="${palette.a}" stroke-opacity=".42"/>
-    <circle cx="812" cy="76" r="55" fill="${palette.b}" opacity=".18"/>
-    <text x="36" y="55" fill="#94a3b8" font-family="Inter, Arial" font-size="18" font-weight="950" letter-spacing="3">DISCOVERY SCORE</text>
-    <text x="36" y="123" fill="#ffffff" font-family="Inter, Arial" font-size="74" font-weight="950">${escapeXml(String(score).replace("%", ""))}%</text>
-    <text x="300" y="72" fill="${palette.b}" font-family="Inter, Arial" font-size="25" font-weight="950">Poster-grade export</text>
-    <text x="300" y="116" fill="#dbeafe" font-family="Inter, Arial" font-size="22" font-weight="760">Designed to look like a polished scientific media asset.</text>
-  </g>
-
-  ${metricTiles}
-
-  <g transform="translate(94 1098)">
-    <rect x="0" y="0" width="892" height="122" rx="36" fill="rgba(15,23,42,.78)" stroke="${palette.b}" stroke-opacity=".34"/>
-    <text x="32" y="34" fill="${palette.b}" font-family="Inter, Arial" font-size="15" font-weight="950" letter-spacing="4">DISCOVERY NARRATIVE</text>
-    ${narrativeLines.slice(0, 2).map((line, index) => `<text x="32" y="${72 + index * 34}" fill="#e2e8f0" font-family="Inter, Arial" font-size="24" font-weight="780">${escapeXml(line)}</text>`).join("\n")}
-  </g>
-
-  <g transform="translate(92 1250)">
-    <text x="0" y="0" fill="${palette.a}" font-family="Inter, Arial" font-size="19" font-weight="950" letter-spacing="3">DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
-    <text x="0" y="36" fill="#94a3b8" font-family="Inter, Arial" font-size="17" font-weight="800">Generated ${generated} · ElementOS Discovery Operating System</text>
-  </g>
-</svg>`;
-}
-
-function exportAllFormats({ baseName = "elementos-export", title = "ElementOS Export", summary = "", payload = {}, sections = [], customSvg = null }) {
-  const slug = slugifyExportName(baseName);
-  const now = new Date().toLocaleString();
-  const normalizedPayload = {
-    title,
-    summary,
-    generatedAt: now,
-    source: "ElementOS",
-    ...payload,
-  };
-
-  const metricEntries = Object.entries(normalizedPayload || {})
-    .filter(([, value]) => ["string", "number", "boolean"].includes(typeof value))
-    .filter(([key]) => !["summary", "source", "generatedAt", "title", "narrative"].includes(key))
-    .slice(0, 8);
-
-  const narrative = [
-    summary,
-    ...sections.map((section) => section.text || section.value || ""),
-  ].filter(Boolean).join("\n\n") || "ElementOS generated this export as a research-ready intelligence asset.";
-
-  const pdf = new jsPDF("p", "mm", "a4");
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const margin = 14;
-  const contentWidth = pageWidth - margin * 2;
-  let y = 0;
-
-  const dark = [2, 6, 23];
-  const panel = [7, 18, 34];
-  const panel2 = [10, 28, 48];
-  const cyan = [103, 232, 249];
-  const gold = [251, 191, 36];
-  const white = [241, 245, 249];
-  const muted = [148, 163, 184];
-
-  const addPageShell = (pageNo = 1) => {
-    pdf.setFillColor(...dark);
-    pdf.rect(0, 0, pageWidth, pageHeight, "F");
-    pdf.setFillColor(4, 16, 31);
-    pdf.roundedRect(7, 7, pageWidth - 14, pageHeight - 14, 5, 5, "F");
-    pdf.setDrawColor(...cyan);
-    pdf.setLineWidth(0.35);
-    pdf.roundedRect(9, 9, pageWidth - 18, pageHeight - 18, 4, 4, "S");
-    pdf.setDrawColor(251, 191, 36);
-    pdf.setLineWidth(0.18);
-    pdf.line(margin, 24, pageWidth - margin, 24);
-    pdf.setTextColor(...cyan);
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(10);
-    pdf.text("ELEMENTOS", margin, 17);
-    pdf.setTextColor(...gold);
-    pdf.text("DISCOVERY OPERATING SYSTEM", pageWidth - margin, 17, { align: "right" });
-    pdf.setTextColor(100, 116, 139);
-    pdf.setFontSize(7);
-    pdf.text(`PDF · JSON · SVG export bundle · Page ${pageNo}`, margin, pageHeight - 9);
-  };
-
-  const ensureSpace = (needed = 30) => {
-    if (y + needed > pageHeight - 20) {
-      pdf.addPage();
-      addPageShell(pdf.getNumberOfPages());
-      y = 34;
-    }
-  };
-
-  const textBlock = (text, x, yStart, maxWidth, size = 10, color = white, bold = false, lineHeight = 5.5) => {
-    pdf.setFont("helvetica", bold ? "bold" : "normal");
-    pdf.setFontSize(size);
-    pdf.setTextColor(...color);
-    const lines = pdf.splitTextToSize(String(text || ""), maxWidth);
-    lines.forEach((line, index) => pdf.text(line, x, yStart + index * lineHeight));
-    return yStart + Math.max(1, lines.length) * lineHeight;
-  };
-
-  addPageShell(1);
-  y = 36;
-
-  pdf.setFillColor(4, 12, 24);
-  pdf.roundedRect(margin, y, contentWidth, 56, 5, 5, "F");
-  pdf.setDrawColor(...cyan);
-  pdf.setLineWidth(0.22);
-  pdf.roundedRect(margin, y, contentWidth, 56, 5, 5, "S");
-  pdf.setTextColor(...gold);
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(7.5);
-  pdf.text("PREMIUM SCIENTIFIC EXPORT", margin + 6, y + 9);
-  pdf.setTextColor(...white);
-  pdf.setFontSize(19);
-  const titleLines = pdf.splitTextToSize(String(title || "ElementOS Export"), contentWidth - 72).slice(0, 3);
-  titleLines.forEach((line, index) => pdf.text(line, margin + 6, y + 22 + index * 8));
-
-  const scoreValue = normalizedPayload.score || normalizedPayload.aiConfidence || normalizedPayload.compatibility || normalizedPayload.opportunityScore || normalizedPayload.discoveryScore;
-  pdf.setFillColor(8, 48, 68);
-  pdf.roundedRect(pageWidth - margin - 52, y + 10, 44, 34, 4, 4, "F");
-  pdf.setTextColor(...cyan);
-  pdf.setFontSize(22);
-  pdf.text(`${scoreValue || "EOS"}${scoreValue ? "%" : ""}`, pageWidth - margin - 30, y + 26, { align: "center" });
-  pdf.setFontSize(6.5);
-  pdf.setTextColor(...muted);
-  pdf.text(scoreValue ? "DISCOVERY SCORE" : "EXPORT", pageWidth - margin - 30, y + 36, { align: "center" });
-
-  y += 68;
-
-  const introLines = pdf.splitTextToSize(narrative, contentWidth - 12).slice(0, 8);
-  const introHeight = Math.max(34, 16 + introLines.length * 5.2);
-  pdf.setFillColor(...panel);
-  pdf.roundedRect(margin, y, contentWidth, introHeight, 5, 5, "F");
-  pdf.setDrawColor(37, 99, 235);
-  pdf.roundedRect(margin, y, contentWidth, introHeight, 5, 5, "S");
-  pdf.setTextColor(...gold);
-  pdf.setFontSize(7.5);
-  pdf.setFont("helvetica", "bold");
-  pdf.text("DISCOVERY NARRATIVE", margin + 6, y + 9);
-  pdf.setTextColor(226, 232, 240);
-  pdf.setFontSize(10);
-  pdf.setFont("helvetica", "normal");
-  introLines.forEach((line, index) => pdf.text(line, margin + 6, y + 19 + index * 5.2));
-  y += introHeight + 10;
-
-  if (metricEntries.length) {
-    ensureSpace(64);
-    pdf.setTextColor(...cyan);
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(11);
-    pdf.text("Key Metrics", margin, y);
-    y += 6;
-    const tileW = (contentWidth - 6) / 2;
-    metricEntries.slice(0, 8).forEach(([key, value], index) => {
-      const col = index % 2;
-      const row = Math.floor(index / 2);
-      const x = margin + col * (tileW + 6);
-      const ty = y + row * 24;
-      pdf.setFillColor(...(index % 2 === 0 ? panel2 : panel));
-      pdf.roundedRect(x, ty, tileW, 19, 4, 4, "F");
-      pdf.setDrawColor(index % 3 === 0 ? cyan[0] : gold[0], index % 3 === 0 ? cyan[1] : gold[1], index % 3 === 0 ? cyan[2] : gold[2]);
-      pdf.roundedRect(x, ty, tileW, 19, 4, 4, "S");
-      pdf.setTextColor(...muted);
-      pdf.setFontSize(6.8);
-      pdf.setFont("helvetica", "bold");
-      pdf.text(String(key).replace(/([A-Z])/g, " $1").toUpperCase().slice(0, 26), x + 4, ty + 7);
-      pdf.setTextColor(...white);
-      pdf.setFontSize(10.5);
-      pdf.text(String(value).slice(0, 34), x + 4, ty + 15);
-    });
-    y += Math.ceil(Math.min(metricEntries.length, 8) / 2) * 24 + 8;
-  }
-
-  if (sections.length) {
-    pdf.setTextColor(...cyan);
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(11);
-    pdf.text("Export Sections", margin, y);
-    y += 7;
-    sections.slice(0, 10).forEach((section, index) => {
-      const heading = section.heading || section.label || `Section ${index + 1}`;
-      const body = section.text || section.value || "";
-      const bodyLines = pdf.splitTextToSize(String(body), contentWidth - 12).slice(0, 7);
-      const h = Math.max(24, 14 + bodyLines.length * 5);
-      ensureSpace(h + 8);
-      pdf.setFillColor(index % 2 ? 5 : 8, index % 2 ? 18 : 25, index % 2 ? 34 : 45);
-      pdf.roundedRect(margin, y, contentWidth, h, 4, 4, "F");
-      pdf.setDrawColor(30, 64, 175);
-      pdf.roundedRect(margin, y, contentWidth, h, 4, 4, "S");
-      pdf.setTextColor(...gold);
-      pdf.setFontSize(7.2);
-      pdf.setFont("helvetica", "bold");
-      pdf.text(String(heading).toUpperCase().slice(0, 44), margin + 5, y + 7);
-      pdf.setTextColor(226, 232, 240);
-      pdf.setFontSize(9.4);
-      pdf.setFont("helvetica", "normal");
-      bodyLines.forEach((line, i) => pdf.text(line, margin + 5, y + 15 + i * 5));
-      y += h + 7;
-    });
-  }
-
-  ensureSpace(34);
-  pdf.setFillColor(15, 23, 42);
-  pdf.roundedRect(margin, pageHeight - 31, contentWidth, 16, 4, 4, "F");
-  pdf.setTextColor(...cyan);
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(8);
-  pdf.text("Generated by ElementOS · Discover · Simulate · Understand · Share", margin + 5, pageHeight - 21);
-  pdf.setTextColor(...muted);
-  pdf.text(now, pageWidth - margin - 5, pageHeight - 21, { align: "right" });
-
-  pdf.save(`${slug}.pdf`);
-
-  downloadFile(`${slug}.json`, JSON.stringify(normalizedPayload, null, 2), "application/json");
-  downloadFile(`${slug}.svg`, customSvg || makeExportSvg({ title, summary, payload: normalizedPayload, sections, variant: "Luxury Scientific" }), "image/svg+xml");
-  notifyUser("Premium PDF, JSON and SVG exports created.");
-}
-function notifyUser(message) {
-  try {
-    window.dispatchEvent(new CustomEvent("elementos:toast", { detail: message }));
-  } catch (error) {
-    console.log(message);
-  }
-}
-
-async function safeCopyText(text, message = "Copied to clipboard.") {
-  try {
-    if (navigator?.clipboard?.writeText && window.isSecureContext) {
-      await navigator.clipboard.writeText(String(text || ""));
-    } else {
-      const input = document.createElement("textarea");
-      input.value = String(text || "");
-      input.setAttribute("readonly", "");
-      input.style.position = "fixed";
-      input.style.left = "-9999px";
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand("copy");
-      input.remove();
-    }
-    notifyUser(message);
-    return true;
-  } catch (error) {
-    console.error("Copy failed", error);
-    notifyUser("Copy failed. Please try again.");
-    return false;
-  }
-}
-
-function handlePlanCTA(plan) {
-  const summary = `${plan?.name || "ElementOS"} plan selected. ${plan?.price || ""} · ${(plan?.features || []).join(", ")}`;
-  safeCopyText(summary, `${plan?.name || "Plan"} details copied.`);
-}
-function Panel({ children, className = "" }) {
-  return (
-    <div className={`eos-panel eos-magnetic-sheen relative overflow-hidden rounded-[1.15rem] border border-[#123257] bg-[#06101d]/88 p-5 shadow-[0_0_0_1px_rgba(35,120,255,.06),0_18px_80px_rgba(0,0,0,.42),inset_0_1px_0_rgba(255,255,255,.05)] backdrop-blur-2xl ${className}`}>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,145,255,.13),transparent_33%),radial-gradient(circle_at_bottom_right,rgba(112,0,255,.10),transparent_36%),linear-gradient(180deg,rgba(255,255,255,.035),transparent_38%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/45 to-transparent" />
-      <div className="relative z-10">{children}</div>
-    </div>
-  );
-}
-function Pill({ children, gold = false }) { return <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] uppercase tracking-[.22em] ${gold ? "border-amber-300/30 bg-amber-300/10 text-amber-100" : "border-cyan-300/30 bg-cyan-400/10 text-cyan-100"}`}>{children}</span>; }
-function Button({ children, onClick, variant = "ghost", className = "" }) {
-  const styles =
-    variant === "primary"
-      ? "border border-[#2478ff] bg-gradient-to-r from-[#0b63ff] via-[#0f7bff] to-[#08b4ff] text-white shadow-[0_0_28px_rgba(0,123,255,.35)]"
-      : variant === "danger"
-      ? "border border-rose-300/25 bg-rose-400/10 text-rose-100 shadow-[0_0_24px_rgba(244,63,94,.12)]"
-      : "border border-[#17365f] bg-[#071425]/80 text-slate-100 hover:border-[#0ea5ff]/60 hover:bg-[#0b1d35]";
-
-  const handleClick = (event) => {
-    if (typeof onClick === "function") {
-      onClick(event);
-      return;
-    }
-    notifyUser("Action registered.");
-  };
-
-  return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className={`eos-button rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 ${styles} ${className}`}
-    >
-      {children}
-    </button>
-  );
-}
-function Info({ title, children }) { return <div className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm text-cyan-50"><div className="mb-1 text-xs font-black uppercase tracking-[.22em] text-cyan-200">{title}</div><div className="leading-6 text-slate-200">{children}</div></div>; }
-function Background() {
-  return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden bg-[#01040a]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_2%,rgba(34,211,238,.28),transparent_26%),radial-gradient(circle_at_82%_8%,rgba(250,204,21,.15),transparent_24%),radial-gradient(circle_at_66%_70%,rgba(79,70,229,.16),transparent_31%),radial-gradient(circle_at_18%_92%,rgba(8,145,178,.16),transparent_30%)]" />
-      <div className="absolute inset-0 opacity-[.40] bg-[linear-gradient(rgba(103,232,249,.075)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,.075)_1px,transparent_1px)] bg-[size:42px_42px]" />
-      <div className="absolute inset-0 opacity-[.16] bg-[linear-gradient(120deg,transparent_0%,rgba(255,255,255,.14)_12%,transparent_24%,transparent_72%,rgba(250,204,21,.12)_84%,transparent_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,13,.16)_42%,rgba(1,4,10,.96)_100%)]" />
-      <div className="absolute left-[12%] top-[-18rem] h-[46rem] w-[46rem] rounded-full bg-cyan-500/16 blur-3xl" />
-      <div className="absolute right-[-10rem] top-[10%] h-[34rem] w-[34rem] rounded-full bg-blue-700/20 blur-3xl" />
-      <div className="absolute bottom-[-18rem] left-[32%] h-[36rem] w-[36rem] rounded-full bg-amber-400/10 blur-3xl" />
-      <div className="eos-scanline absolute inset-0" />
-      <div className="eos-lux-noise absolute inset-0" />
-    </div>
-  );
-}
-
-function ElementOSThemeSkin() {
-  return (
-    <style>{`
-      :root {
-        --eos-bg: #02060d;
-        --eos-panel: rgba(6, 16, 29, .88);
-        --eos-panel-2: rgba(8, 22, 40, .92);
-        --eos-border: rgba(39, 119, 255, .25);
-        --eos-border-soft: rgba(76, 178, 255, .14);
-        --eos-blue: #0b63ff;
-        --eos-cyan: #08b4ff;
-        --eos-text: #edf6ff;
-        --eos-muted: #8ca4c0;
-      }
-      html { background: var(--eos-bg); }
-      body { background: var(--eos-bg); color: var(--eos-text); }
-      * { scrollbar-width: thin; scrollbar-color: rgba(0,145,255,.55) rgba(2,6,13,.65); }
-      *::-webkit-scrollbar { width: 10px; height: 10px; }
-      *::-webkit-scrollbar-track { background: rgba(2,6,13,.8); }
-      *::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#0b63ff,#08b4ff); border-radius: 999px; border: 2px solid rgba(2,6,13,.85); }
-      .eos-shell { background: radial-gradient(circle at 50% 0%, rgba(0,145,255,.08), transparent 38%), var(--eos-bg); }
-      .eos-panel { box-shadow: 0 0 0 1px rgba(0,160,255,.05), 0 22px 90px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.04); }
-      .eos-panel:hover { border-color: rgba(0, 174, 255, .34); box-shadow: 0 0 0 1px rgba(0,160,255,.08), 0 24px 95px rgba(0,0,0,.5), 0 0 34px rgba(0,126,255,.08), inset 0 1px 0 rgba(255,255,255,.06); }
-      .eos-button { position: relative; overflow: hidden; }
-      .eos-button:before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent); transform: translateX(-120%); transition: transform .55s ease; }
-      .eos-button:hover:before { transform: translateX(120%); }
-      .eos-input, input, select, textarea { background: rgba(4, 12, 23, .92) !important; border-color: rgba(40, 105, 190, .32) !important; color: #eaf6ff !important; }
-      input::placeholder, textarea::placeholder { color: rgba(170,190,215,.62); }
-      .eos-nav-item { background: rgba(5,14,26,.72); border: 1px solid rgba(28,72,126,.42); }
-      .eos-nav-item-active { background: linear-gradient(90deg, rgba(11,99,255,.28), rgba(8,180,255,.08)); border-color: rgba(40,132,255,.75); box-shadow: inset 0 0 18px rgba(0,116,255,.12), 0 0 22px rgba(0,116,255,.15); }
-      .eos-orbital:before { content: ''; position: absolute; inset: -40%; border: 1px solid rgba(0,174,255,.18); border-radius: 999px; transform: rotate(25deg); }
-      .eos-orbital:after { content: ''; position: absolute; inset: -22%; border: 1px dashed rgba(0,174,255,.22); border-radius: 999px; transform: rotate(-18deg); }
-      .eos-scanline { background: linear-gradient(to bottom, transparent, rgba(0,174,255,.035), transparent); background-size: 100% 12px; opacity: .32; }
-      .eos-data-card { background: linear-gradient(135deg, rgba(4,16,31,.96), rgba(8,24,42,.82)); border: 1px solid rgba(42,103,185,.28); }
-      .eos-topbar { background: rgba(2, 8, 17, .78); border: 1px solid rgba(37, 96, 170, .25); box-shadow: 0 0 50px rgba(0,106,255,.08), inset 0 1px 0 rgba(255,255,255,.04); }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-      @keyframes eosSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      @keyframes eosSpinReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-      @keyframes eosPulse { 0%,100% { opacity: .72; filter: brightness(1); } 50% { opacity: 1; filter: brightness(1.45); } }
-      @keyframes eosDrift { 0% { transform: translateX(-18%); } 100% { transform: translateX(118%); } }
-
-      .poster-hero {
-        background:
-          radial-gradient(circle at 74% 9%, rgba(14,165,233,.30), transparent 30%),
-          radial-gradient(circle at 18% 80%, rgba(245,158,11,.16), transparent 28%),
-          linear-gradient(135deg, rgba(2,6,13,.98), rgba(4,17,33,.96) 52%, rgba(5,9,18,.98));
-      }
-      .poster-grid { background-image: linear-gradient(rgba(34,211,238,.10) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.10) 1px, transparent 1px); background-size: 48px 48px; }
-      .poster-gold { color:#f8d477; text-shadow: 0 0 24px rgba(245,158,11,.24); }
-      .poster-cyan { color:#67e8f9; text-shadow: 0 0 24px rgba(34,211,238,.34); }
-      .poster-card { background: linear-gradient(145deg, rgba(3,12,24,.92), rgba(4,22,40,.72)); border: 1px solid rgba(103,232,249,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 40px rgba(8,180,255,.07); }
-      .poster-card-gold { background: linear-gradient(145deg, rgba(18,14,4,.82), rgba(3,12,24,.78)); border: 1px solid rgba(250,204,21,.24); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 40px rgba(245,158,11,.08); }
-      .poster-element-tile { background: radial-gradient(circle at top, rgba(34,211,238,.28), rgba(7,20,38,.86)); border:1px solid rgba(103,232,249,.35); box-shadow: 0 0 26px rgba(34,211,238,.16); }
-      .poster-element-tile-gold { background: radial-gradient(circle at top, rgba(245,158,11,.24), rgba(24,14,4,.84)); border:1px solid rgba(250,204,21,.34); box-shadow: 0 0 26px rgba(245,158,11,.14); }
-      .poster-orbit { animation: posterFloat 6s ease-in-out infinite; }
-      @keyframes posterFloat { 0%,100% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-10px) scale(1.015); } }
-
-
-      /* V38: global poster-grade magnetic skin */
-      .eos-magnetic-sheen { position: relative; overflow: hidden; }
-      .eos-magnetic-sheen:after {
-        content: '';
-        position: absolute;
-        inset: -40%;
-        background: conic-gradient(from 180deg at 50% 50%, transparent, rgba(103,232,249,.10), transparent, rgba(250,204,21,.07), transparent);
-        opacity: .46;
-        animation: eosMagneticTurn 16s linear infinite;
-        pointer-events: none;
-      }
-      @keyframes eosMagneticTurn { to { transform: rotate(360deg); } }
-      .eos-panel, .poster-card, .poster-card-gold, .eos-data-card, .eos-topbar, aside {
-        border-color: rgba(103,232,249,.20) !important;
-        background-image:
-          radial-gradient(circle at 18% 0%, rgba(103,232,249,.105), transparent 30%),
-          radial-gradient(circle at 92% 18%, rgba(250,204,21,.055), transparent 25%),
-          linear-gradient(135deg, rgba(3,12,24,.96), rgba(7,25,45,.82) 55%, rgba(2,6,13,.96)) !important;
-      }
-      .eos-panel:before, .poster-card:before, .poster-card-gold:before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background:
-          linear-gradient(120deg, transparent 0%, rgba(255,255,255,.055) 18%, transparent 34%),
-          linear-gradient(90deg, rgba(103,232,249,.09), transparent 22%, transparent 78%, rgba(250,204,21,.055));
-        opacity: .62;
-        pointer-events: none;
-      }
-      h1, h2, h3 { letter-spacing: -0.035em; }
-      .eos-panel h1, .eos-panel h2, .poster-card h1, .poster-card h2 {
-        text-shadow: 0 0 34px rgba(34,211,238,.16);
-      }
-      .eos-nav-item:hover, .eos-button:hover, button:hover {
-        filter: saturate(1.16) brightness(1.06);
-      }
-      .eos-nav-item-active {
-        background: linear-gradient(90deg, rgba(11,99,255,.34), rgba(8,180,255,.14), rgba(250,204,21,.06)) !important;
-        box-shadow: inset 0 0 22px rgba(0,116,255,.16), 0 0 28px rgba(0,116,255,.20) !important;
-      }
-      .eos-command-scroll {
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(103,232,249,.86) rgba(2,6,13,.92);
-      }
-      .eos-command-scroll::-webkit-scrollbar { width: 12px; }
-      .eos-command-scroll::-webkit-scrollbar-track {
-        background: rgba(2,6,13,.92);
-        border-left: 1px solid rgba(103,232,249,.10);
-        border-radius: 999px;
-      }
-      .eos-command-scroll::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg,#67e8f9,#0b63ff,#facc15);
-        border-radius: 999px;
-        border: 3px solid rgba(2,6,13,.92);
-        box-shadow: 0 0 18px rgba(34,211,238,.40);
-      }
-      .eos-command-shell {
-        background:
-          radial-gradient(circle at 12% 0%, rgba(103,232,249,.18), transparent 30%),
-          radial-gradient(circle at 88% 8%, rgba(250,204,21,.10), transparent 24%),
-          linear-gradient(135deg, rgba(2,6,13,.98), rgba(7,20,38,.96) 56%, rgba(2,6,13,.98));
-      }
-
-
-
-      /* V46: billion-dollar gloss system */
-      body {
-        background:
-          radial-gradient(circle at 20% 0%, rgba(34,211,238,.12), transparent 30%),
-          radial-gradient(circle at 80% 8%, rgba(250,204,21,.07), transparent 26%),
-          #01040a;
-      }
-      .eos-lux-noise {
-        opacity: .18;
-        background-image:
-          radial-gradient(circle at 20% 20%, rgba(255,255,255,.12) 0 1px, transparent 1px),
-          radial-gradient(circle at 80% 70%, rgba(103,232,249,.12) 0 1px, transparent 1px);
-        background-size: 33px 33px, 47px 47px;
-        mix-blend-mode: screen;
-      }
-      .eos-panel, .poster-card, .poster-card-gold, .eos-data-card {
-        position: relative;
-        backdrop-filter: blur(22px) saturate(1.25);
-        box-shadow:
-          0 0 0 1px rgba(103,232,249,.075),
-          0 24px 110px rgba(0,0,0,.58),
-          0 0 54px rgba(8,145,178,.075),
-          inset 0 1px 0 rgba(255,255,255,.08),
-          inset 0 -1px 0 rgba(103,232,249,.05) !important;
-      }
-      .eos-panel:after, .poster-card:after, .poster-card-gold:after, .eos-data-card:after {
-        content: '';
-        position: absolute;
-        inset: 1px;
-        border-radius: inherit;
-        pointer-events: none;
-        background:
-          radial-gradient(circle at 14% 0%, rgba(255,255,255,.14), transparent 25%),
-          linear-gradient(125deg, transparent 0%, rgba(255,255,255,.075) 18%, transparent 36%, transparent 70%, rgba(250,204,21,.06) 88%, transparent 100%);
-        opacity: .72;
-      }
-      .eos-panel:hover, .poster-card:hover, .poster-card-gold:hover, .eos-data-card:hover {
-        transform: translateY(-1px);
-        box-shadow:
-          0 0 0 1px rgba(103,232,249,.12),
-          0 28px 120px rgba(0,0,0,.62),
-          0 0 74px rgba(34,211,238,.13),
-          inset 0 1px 0 rgba(255,255,255,.10) !important;
-      }
-      .eos-button, button {
-        text-shadow: 0 1px 10px rgba(0,0,0,.25);
-      }
-      .eos-button {
-        box-shadow:
-          0 12px 30px rgba(0,0,0,.26),
-          inset 0 1px 0 rgba(255,255,255,.12),
-          inset 0 -1px 0 rgba(0,0,0,.28);
-      }
-      .eos-button:after {
-        content: '';
-        position: absolute;
-        inset: 1px;
-        border-radius: inherit;
-        background: linear-gradient(180deg, rgba(255,255,255,.16), transparent 42%);
-        opacity: .65;
-        pointer-events: none;
-      }
-      .eos-button:hover {
-        box-shadow:
-          0 18px 44px rgba(0,0,0,.34),
-          0 0 34px rgba(34,211,238,.20),
-          inset 0 1px 0 rgba(255,255,255,.18),
-          inset 0 -1px 0 rgba(0,0,0,.32) !important;
-      }
-      .eos-nav-item {
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 8px 24px rgba(0,0,0,.18);
-      }
-      .eos-nav-item:hover {
-        border-color: rgba(103,232,249,.46) !important;
-        background: linear-gradient(90deg, rgba(7,20,38,.96), rgba(8,47,73,.72)) !important;
-      }
-      .eos-input, input, select, textarea {
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 0 0 1px rgba(103,232,249,.03) !important;
-      }
-      .eos-input:focus, input:focus, select:focus, textarea:focus {
-        outline: none !important;
-        border-color: rgba(103,232,249,.70) !important;
-        box-shadow: 0 0 0 3px rgba(34,211,238,.12), 0 0 35px rgba(34,211,238,.12), inset 0 1px 0 rgba(255,255,255,.08) !important;
-      }
-      .poster-hero, header, .eos-topbar {
-        box-shadow:
-          0 0 0 1px rgba(103,232,249,.075),
-          0 36px 140px rgba(0,0,0,.56),
-          0 0 120px rgba(34,211,238,.10) !important;
-      }
-      .poster-gold, .text-amber-100, .text-amber-200 {
-        text-shadow: 0 0 22px rgba(250,204,21,.20);
-      }
-      .poster-cyan, .text-cyan-100, .text-cyan-200 {
-        text-shadow: 0 0 24px rgba(34,211,238,.18);
-      }
-      svg { filter: drop-shadow(0 10px 30px rgba(0,0,0,.20)); }
-      .eos-premium-divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(103,232,249,.58), rgba(250,204,21,.32), transparent);
-      }
-
-            @keyframes eosSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-      @keyframes eosSpinReverse { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
-      @keyframes eosPulse { 0%,100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.06); } }
-      @keyframes eosStrataDrift { 0%,100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.18) saturate(1.35); } }
-      @keyframes eosDrillPulse { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.35) saturate(1.35); } }
-      @keyframes eosMudFlow { from { transform: translateY(-55%); } to { transform: translateY(18%); } }
-      @keyframes eosMudBead { 0% { transform: translate(-50%, -28px) scale(.8); opacity: .15; } 35% { opacity: .85; } 100% { transform: translate(-50%, 74px) scale(1.15); opacity: .05; } }
-      @keyframes eosDrillBit { from { filter: brightness(1); } 50% { filter: brightness(1.55) saturate(1.45); } to { filter: brightness(1); } }
-      @keyframes eosReservoirGlow { 0%,100% { opacity: .74; filter: brightness(1); } 50% { opacity: 1; filter: brightness(1.35) saturate(1.25); } }
-      @keyframes eosPressureBloom { 0%,100% { transform: scale(.92); filter: blur(0px) brightness(1); } 50% { transform: scale(1.08); filter: blur(1px) brightness(1.35); } }
-      @keyframes eosWaveShell { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.45) saturate(1.45); } }
-      @keyframes eosWaveTravel { 0% { left: -10%; opacity: .15; } 12% { opacity: 1; } 100% { left: 110%; opacity: .12; } }
-      @keyframes eosTraceFlow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -42; } }
-      @keyframes eosSvgPulse { 0%,100% { opacity: .55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.8); } }
-    `}</style>
-  );
-}
-function MiniBars({ values, max = 5 }) { return <div className="flex h-28 items-end gap-2">{values.map((v, i) => <div key={i} className="flex flex-1 flex-col items-center gap-2"><div className="w-full rounded-t-xl bg-cyan-300/80" style={{ height: `${Math.max(8, (v / max) * 100)}%` }}/><span className="text-[10px] text-slate-500">{i + 1}</span></div>)}</div>; }
-function RadarChart({ data }) {
-  const keys = ["stability", "conductivity", "thermal", "diffusion", "pressure", "rarity"];
-  const points = keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; const r = (data[k] / 5) * 42; return `${50 + Math.cos(angle) * r},${50 + Math.sin(angle) * r}`; }).join(" ");
-  return <svg viewBox="0 0 100 100" className="h-52 w-full"><polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="rgba(255,255,255,.18)"/><polygon points="50,20 76,35 76,65 50,80 24,65 24,35" fill="none" stroke="rgba(255,255,255,.11)"/><polygon points={points} fill="rgba(34,211,238,.28)" stroke="rgba(34,211,238,.95)" strokeWidth="1.5"/>{keys.map((k, i) => { const angle = -Math.PI / 2 + (i / keys.length) * Math.PI * 2; return <text key={k} x={50 + Math.cos(angle) * 48} y={52 + Math.sin(angle) * 48} textAnchor="middle" className="fill-slate-300 text-[4px] uppercase">{k.slice(0, 4)}</text>; })}</svg>;
-}
-function Sidebar({ page, setPage }) {
-  const [openGroups, setOpenGroups] = useState({
-    research: true,
-    simulations: true,
-    advanced: true,
-    publishing: true,
-    workspace: true,
-  });
-
-  const primaryItems = [
-    ["landing", "Home", Sparkles],
-    ["dashboard", "Dashboard", Home],
-    ["copilot", "AI Copilot", Sparkles],
-    ["mission", "Mission Control", CheckCircle2],
-  ];
-
-  const groups = [
-    {
-      id: "research",
-      label: "Research Tools",
-      icon: Search,
-      items: [
-        ["explorer", "Element Explorer", Search],
-        ["compare", "Compare Materials", BarChart3],
-        ["isotopes", "Isotope Lab", Atom],
-        ["periodic", "Periodic Map", Layers],
-        ["atlas", "Behaviour Atlas", Radar],
-        ["graph", "Relationship Graph", Network],
-        ["universe", "Discovery Universe", Orbit],
-      ],
-    },
-    {
-      id: "simulations",
-      label: "Simulations",
-      icon: BarChart3,
-      items: [
-        ["scenario", "Scenario Builder", FileText],
-        ["visualization", "Visual Engine", BarChart3],
-        ["calculations", "Calculation Studio", Calculator],
-      ],
-    },
-    {
-      id: "advanced",
-      label: "Advanced Labs",
-      icon: Radar,
-      items: [
-        ["matterlab", "★ Matter Intelligence OS", Globe2],
-        ["timemachine", "Time Machine", Clock3],
-        ["seismo", "Seismo Lab", Network],
-        ["welldriller", "Well Driller Lab", Radar],
-      ],
-    },
-    {
-      id: "publishing",
-      label: "Publishing",
-      icon: BookOpen,
-      items: [
-        ["discover", "Discovery Feed", Sparkles],
-        ["simreports", "Simulation Dossiers", BookOpen],
-        ["viralcards", "Discovery Media Engine", Sparkles],
-        ["reports", "Research Reports", BookOpen],
-      ],
-    },
-    {
-      id: "workspace",
-      label: "Workspace",
-      icon: Save,
-      items: [
-        ["lab", "Workspace", Save],
-        ["beta", "Founding Beta", UserPlus],
-      ],
-    },
-  ];
-
-  const NavButton = ({ id, label, Icon, nested = false }) => {
-    const active = page === id;
-    return (
-      <button
-        key={id}
-        onClick={() => setPage(id)}
-        className={`eos-nav-item ${active ? "eos-nav-item-active text-white" : "text-slate-300 hover:border-[#2777ff]/50 hover:bg-[#071a30]"} flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition ${nested ? "ml-3 w-[calc(100%-0.75rem)]" : ""}`}
-      >
-        <span className="flex items-center gap-3">
-          <span className={`grid h-8 w-8 place-items-center rounded-lg border ${active ? "border-cyan-300/35 bg-blue-500/20 text-cyan-100" : "border-white/10 bg-white/[.025] text-slate-300"}`}>
-            <Icon size={15} />
-          </span>
-          <span className="text-sm font-semibold">{label}</span>
-        </span>
-        <ChevronRight size={14} className={active ? "text-cyan-100" : "text-slate-500"} />
-      </button>
-    );
-  };
-
-  return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-[306px] overflow-y-auto border-r border-[#14345a] bg-[#020812]/94 p-3 backdrop-blur-2xl lg:block">
-      <div className="mb-3 rounded-2xl border border-[#17365f] bg-[#06101d]/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.05)]">
-        <div className="flex items-center gap-3">
-          <div className="relative grid h-12 w-12 place-items-center rounded-xl border border-cyan-300/30 bg-cyan-400/10 text-cyan-200 shadow-[0_0_26px_rgba(0,145,255,.25)]">
-            <div className="absolute inset-1 rounded-lg border border-blue-500/30" />
-            <Atom size={24} />
-          </div>
-          <div>
-            <div className="text-2xl font-black leading-none tracking-[.08em] text-white">ELEMENT OS</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[.22em] text-slate-400">Material Intelligence Platform</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-1.5">
-        {primaryItems.map(([id, label, Icon]) => (
-          <NavButton key={id} id={id} label={label} Icon={Icon} />
-        ))}
-      </div>
-
-      <div className="mt-3 space-y-3">
-        {groups.map((group) => {
-          const GroupIcon = group.icon;
-          const activeGroup = group.items.some(([id]) => page === id);
-          const isOpen = openGroups[group.id];
-
-          return (
-            <div key={group.id} className={`rounded-2xl border ${activeGroup ? "border-cyan-300/30 bg-cyan-400/5" : "border-[#17365f] bg-[#06101d]/55"} p-2`}>
-              <button
-                onClick={() => setOpenGroups((current) => ({ ...current, [group.id]: !current[group.id] }))}
-                className="flex w-full items-center justify-between rounded-xl px-2 py-2 text-left"
-              >
-                <span className="flex items-center gap-2">
-                  <span className={`grid h-8 w-8 place-items-center rounded-lg border ${activeGroup ? "border-cyan-300/35 bg-blue-500/20 text-cyan-100" : "border-white/10 bg-white/[.025] text-slate-400"}`}>
-                    <GroupIcon size={15} />
-                  </span>
-                  <span>
-                    <span className="block text-[10px] uppercase tracking-[.22em] text-slate-500">Section</span>
-                    <span className={`text-sm font-black ${activeGroup ? "text-cyan-100" : "text-slate-200"}`}>{group.label}</span>
-                  </span>
-                </span>
-                <ChevronRight size={15} className={`text-slate-500 transition ${isOpen ? "rotate-90" : ""}`} />
-              </button>
-
-              {isOpen && (
-                <div className="mt-1 space-y-1.5">
-                  {group.items.map(([id, label, Icon]) => (
-                    <NavButton key={id} id={id} label={label} Icon={Icon} nested />
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="mt-3 rounded-2xl border border-[#17365f] bg-gradient-to-br from-[#061528] to-[#030812] p-4">
-        <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-xl border border-blue-400/30 bg-blue-500/15 text-blue-100 shadow-[0_0_28px_rgba(0,116,255,.16)]">
-            <ShieldCheck size={20} />
-          </div>
-          <div>
-            <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Researcher Status</div>
-            <div className="text-sm font-black text-cyan-100">Elite Researcher</div>
-          </div>
-        </div>
-        <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400">
-          <span>LEVEL 27</span><span>12,540 / 18,000 XP</span>
-        </div>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-950">
-          <div className="h-full w-[70%] rounded-full bg-gradient-to-r from-[#0b63ff] to-[#08b4ff]" />
-        </div>
-        <div className="mt-4 grid gap-2 text-xs text-slate-300">
-          <div className="flex justify-between"><span>Experiments</span><b className="text-cyan-100">1,842</b></div>
-          <div className="flex justify-between"><span>Discoveries</span><b className="text-cyan-100">128</b></div>
-          <div className="flex justify-between"><span>Reports</span><b className="text-cyan-100">342</b></div>
-          <div className="flex justify-between"><span>Streak</span><b className="text-cyan-100">14 Days</b></div>
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Run First Simulation", "scenario", FileText], ["Matter Intelligence OS", "matterlab", Globe2], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Time Machine", "timemachine", Clock3], ["Well Driller Lab", "welldriller", Radar], ["Seismo Lab", "seismo", Network], ["Simulation Dossiers", "simreports", BookOpen], ["Discovery Media Engine", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Workspace", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Founding Beta", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("beta")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Join Founding Beta</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF/JSON/SVG exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
-<GuidePanel page="dashboard" />
-      <DiscoveryNetworkSubscriberEdition setPage={setPage} />
-      <SubscriberWorkspaceVault setPage={setPage} />
-      <SubscriberRecommendedNextStep setPage={setPage} />
-<RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
-<Panel>
-  <div className="flex flex-wrap items-center justify-between gap-4">
-    <div>
-      <Pill gold>
-        <Network size={12} /> live network
-      </Pill>
-      <h2 className="mt-3 text-4xl font-black">ElementOS Activity Layer</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-        Live platform telemetry designed to make the workspace feel active,
-        collaborative and constantly evolving.
-      </p>
-    </div>
-    <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">
-      ● Network Stable
-    </div>
-  </div>
-
-  <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-    {[
-      ["12,482", "simulations today"],
-      ["842", "active researchers"],
-      ["3,942", "reports generated"],
-      ["128", "public discoveries shared"],
-    ].map(([value, label]) => (
-      <div
-        key={label}
-        className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 to-black/40 p-5"
-      >
-        <div className="text-4xl font-black text-cyan-100">{value}</div>
-        <div className="mt-2 text-xs uppercase tracking-[.22em] text-slate-400">{label}</div>
-      </div>
-    ))}
-  </div>
-
-  <div className="mt-6 grid gap-5 xl:grid-cols-3">
-    {[
-      ["Titanium + Tungsten trending", "High thermal-pressure compatibility interactions detected."],
-      ["Copper behaviour spike", "Conductive comparison activity increased 18% this hour."],
-      ["Public report momentum", "New compatibility discoveries are actively being shared."],
-    ].map(([title, desc]) => (
-      <div key={title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-        <div className="text-lg font-black text-cyan-100">{title}</div>
-        <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
-      </div>
-    ))}
-  </div>
-</Panel>
-
-<Panel>
-  <div className="flex flex-wrap items-start justify-between gap-4">
-    <div>
-      <Pill gold>
-        <UserPlus size={12} /> researcher profile
-      </Pill>
-      <h2 className="mt-3 text-4xl font-black">Researcher Identity Layer</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-        Profiles and discovery stats make ElementOS feel personal, returnable and community-driven.
-      </p>
-    </div>
-    <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">
-      Top Titanium Researcher
-    </div>
-  </div>
-
-  <div className="mt-6 grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
-    <div className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-6">
-      <div className="flex items-center gap-4">
-        <div className="grid h-16 w-16 place-items-center rounded-3xl border border-cyan-300/30 bg-cyan-300/10 text-2xl font-black text-cyan-100">
-          {(session?.user?.email || "R").slice(0, 1).toUpperCase()}
-        </div>
-        <div>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Research profile</div>
-          <div className="mt-1 text-2xl font-black text-cyan-100">
-            {session?.user?.email || "Guest Researcher"}
-          </div>
-          <div className="mt-1 text-sm text-slate-400">ElementOS Discovery Network</div>
-        </div>
-      </div>
-
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
-        {[
-          ["1,248", "simulations"],
-          ["32", "exports"],
-          ["14", "shared discoveries"],
-          ["97%", "profile signal"],
-        ].map(([value, label]) => (
-          <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-            <div className="text-3xl font-black text-emerald-200">{value}</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">
-        Badge unlocked: <b>Material Discovery Founder</b>. Users now have a reason to return and grow their research identity.
-      </div>
-    </div>
-
-    <div className="rounded-[2rem] border border-white/10 bg-black/25 p-6">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Public ecosystem</div>
-          <h3 className="mt-2 text-2xl font-black">Recent Public Discoveries</h3>
-        </div>
-        <Pill><Sparkles size={12} /> live feed</Pill>
-      </div>
-
-      <div className="mt-5 space-y-3">
-        {[
-          ["Ti + W", "94%", "Ultra rare thermal-pressure pathway"],
-          ["Cu + Ag", "91%", "High-conductivity substitute corridor"],
-          ["Al + Fe", "88%", "Structural compatibility report shared"],
-          ["Si + Ge", "86%", "Semiconductor-adjacent behaviour match"],
-        ].map(([pair, value, desc]) => (
-          <div key={pair} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/70 p-4">
-            <div>
-              <div className="text-lg font-black text-cyan-100">{pair}</div>
-              <div className="mt-1 text-sm text-slate-400">{desc}</div>
-            </div>
-            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xl font-black text-emerald-100">
-              {value}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</Panel>
-
-
-<Panel>
-  <div className="flex flex-wrap items-start justify-between gap-4">
-    <div>
-      <Pill gold><Sparkles size={12} /> growth engine</Pill>
-      <h2 className="mt-3 text-4xl font-black">Researcher Progression Layer</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-        XP, streaks, daily discoveries and leaderboards create the return-loop that turns ElementOS into a habit instead of a one-time tool.
-      </p>
-    </div>
-    <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
-  </div>
-  <div className="mt-6 grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
-    <div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6">
-      <div className="text-xs uppercase tracking-[.22em] text-emerald-200">Researcher level</div>
-      <div className="mt-3 text-6xl font-black text-emerald-100">LVL 12</div>
-      <div className="mt-3 h-3 overflow-hidden rounded-full bg-black/30">
-        <div className="h-full w-[72%] rounded-full bg-emerald-300" />
-      </div>
-      <p className="mt-4 text-sm leading-6 text-emerald-50/90">7-day discovery streak active. Your next milestone unlocks the Rare Pair Analyst badge.</p>
-    </div>
-    <div className="grid gap-3 sm:grid-cols-2">
-      {[
-        ["Discovery of the Day", "Ti + Hf", "Before 98% of researchers"],
-        ["Current Rank", "#12", "Weekly discovery board"],
-        ["Share Card", "Ready", "Post your strongest pairing"],
-        ["Saved Collection", "24", "Material paths stored"],
-      ].map(([title, value, desc]) => (
-        <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-          <div className="text-xs uppercase tracking-[.2em] text-slate-500">{title}</div>
-          <div className="mt-2 text-3xl font-black text-cyan-100">{value}</div>
-          <div className="mt-1 text-sm text-slate-400">{desc}</div>
-        </div>
-      ))}
-    </div>
-  </div>
-</Panel>
-
-<div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
-}
-
-
-function makePublishableDiscoveries(limit = 12) {
-  return adaptiveDiscoveryRank(generateDiscoveryEngine(limit)).map((d, index) => ({
-    ...d,
-    publicId: `${d.a}-${d.b}-${d.dna?.split("-").pop() || "OS"}-${1047 + index}`.toUpperCase(),
-  }));
-}
-
-function createDiscoveryUrl(discovery) {
-  if (!discovery?.publicId) return "";
-  return `${window.location.origin}${window.location.pathname}?discovery=${discovery.publicId}`;
-}
-
-function DiscoveryOSFeed({ discoveries = [], setPage, setPublicDiscovery }) {
-  const ranked = discoveries.length ? discoveries : adaptiveDiscoveryRank(generateDiscoveryEngine(12));
-  const spotlight = dailyDiscovery(ranked) || ranked[0];
-  const publishable = (discoveries.length ? ranked.slice(0, 9).map((d, index) => ({
-    ...d,
-    publicId: `${d.a}-${d.b}-${d.dna?.split("-").pop() || "OS"}-${1047 + index}`.toUpperCase(),
-  })) : makePublishableDiscoveries(12).slice(0, 9));
-
-  const copyText = (text) => {
-    if (navigator?.clipboard?.writeText) {
-      safeCopyText(text);
-      return;
-    }
-    const input = document.createElement("textarea");
-    input.value = text;
-    document.body.appendChild(input);
-    input.select();
-    document.execCommand("copy");
-    input.remove();
-  };
-
-  const saveDiscovery = (discovery) => {
-    try {
-      const existing = JSON.parse(localStorage.getItem("elementos_saved_discoveries") || "[]");
-      const next = [
-        {
-          id: discovery.publicId,
-          pair: `${discovery.a} + ${discovery.b}`,
-          score: discovery.score,
-          confidence: discovery.aiConfidence,
-          reason: discovery.reason,
-          createdAt: new Date().toISOString(),
-        },
-        ...existing.filter((item) => item.id !== discovery.publicId),
-      ].slice(0, 50);
-      localStorage.setItem("elementos_saved_discoveries", JSON.stringify(next));
-    } catch (error) {
-      console.error("Unable to save discovery", error);
-    }
-  };
-
-  const discoveryUrl = createDiscoveryUrl;
-
-  const openPublicDiscovery = (discovery) => {
-    setPublicDiscovery?.(discovery);
-    const url = discoveryUrl(discovery);
-    if (url) {
-      window.history.replaceState({}, document.title, `${window.location.pathname}?discovery=${discovery.publicId}`);
-    }
-    setPage("publicdiscovery");
-  };
-
-  return (
-    <>
-      <Panel className="border-amber-300/20 bg-gradient-to-br from-amber-300/10 via-[#06101d]/95 to-cyan-400/10">
-        <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
-          <div>
-            <Pill gold><Sparkles size={12}/> discovery OS</Pill>
-            <h2 className="mt-3 text-5xl font-black sm:text-6xl">
-              Turn every simulation into a <span className="bg-gradient-to-r from-amber-100 via-white to-cyan-200 bg-clip-text text-transparent">publishable discovery.</span>
-            </h2>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">
-              The new Discovery Feed connects ElementOS together: compare materials, generate a discovery, save it to the workspace, create a report and share a public research link.
-            </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-4">
-              {[
-                ["1", "Run"],
-                ["2", "Discover"],
-                ["3", "Report"],
-                ["4", "Share"],
-              ].map(([num, label]) => (
-                <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                  <div className="text-2xl font-black text-cyan-100">{num}</div>
-                  <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-400">{label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-[2rem] border border-cyan-300/20 bg-black/35 p-6">
-            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Today's discovery</div>
-            <div className="mt-3 text-5xl font-black text-cyan-100">{spotlight?.a} + {spotlight?.b}</div>
-            <p className="mt-3 text-sm leading-7 text-slate-300">{spotlight?.reason}</p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-cyan-300/10 p-3"><div className="text-2xl font-black text-cyan-100">{spotlight?.score}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">score</div></div>
-              <div className="rounded-2xl border border-white/10 bg-emerald-300/10 p-3"><div className="text-2xl font-black text-emerald-200">{spotlight?.aiConfidence}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI</div></div>
-              <div className="rounded-2xl border border-white/10 bg-amber-300/10 p-3"><div className="text-2xl font-black text-amber-100">{spotlight?.momentum}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">momentum</div></div>
-            </div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Button onClick={() => setPage("compare")} variant="primary">Run Simulation</Button>
-              <Button onClick={() => setPage("reports")}>Generate Report</Button>
-              <Button onClick={() => copyText(`ElementOS Discovery: ${spotlight?.a} + ${spotlight?.b} — ${spotlight?.score}% score. ${spotlight?.reason}`)}>Copy Share Text</Button>
-              <Button onClick={() => openPublicDiscovery({ ...spotlight, publicId: `${spotlight?.a}-${spotlight?.b}-${spotlight?.dna?.split("-").pop() || "OS"}-1047`.toUpperCase() })}>Open Public Page</Button>
-            </div>
-          </div>
-        </div>
-      </Panel>
-
-      <Panel>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <Pill><Network size={12}/> public discovery feed</Pill>
-            <h2 className="mt-3 text-4xl font-black">Latest Publishable Results</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-              Each card now behaves like a research asset: it has an ID, a share link, a report path, a workspace save action and a clear next step.
-            </p>
-          </div>
-          <Button onClick={() => setPage("viralcards")} variant="primary">Create Media</Button>
-        </div>
-
-        <div className="mt-6 grid gap-4 xl:grid-cols-3">
-          {publishable.map((discovery, index) => (
-            <div key={discovery.publicId} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-black/30 to-slate-950 p-5">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="text-[10px] uppercase tracking-[.22em] text-slate-500">{discovery.publicId}</div>
-                  <div className="mt-2 text-3xl font-black text-white">{discovery.a} + {discovery.b}</div>
-                  <div className="mt-1 text-sm text-cyan-100">{discovery.type}</div>
-                </div>
-                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-xl font-black text-emerald-100">{discovery.score}%</div>
-              </div>
-              <p className="mt-4 text-sm leading-6 text-slate-300">{discovery.reason}</p>
-              <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                <div className="rounded-xl bg-black/25 p-3"><b className="text-cyan-100">{discovery.aiConfidence}%</b><br/><span className="text-[10px] uppercase tracking-[.16em] text-slate-500">AI</span></div>
-                <div className="rounded-xl bg-black/25 p-3"><b className="text-emerald-200">+{discovery.velocity}%</b><br/><span className="text-[10px] uppercase tracking-[.16em] text-slate-500">velocity</span></div>
-                <div className="rounded-xl bg-black/25 p-3"><b className="text-amber-100">{discovery.shares}</b><br/><span className="text-[10px] uppercase tracking-[.16em] text-slate-500">shares</span></div>
-              </div>
-              <div className="mt-5 grid gap-2 sm:grid-cols-2">
-                <Button onClick={() => openPublicDiscovery(discovery)} variant="primary">Open Discovery</Button>
-                <Button onClick={() => { saveDiscovery(discovery); setPage("lab"); }}>Save to Workspace</Button>
-                <Button onClick={() => copyText(discoveryUrl(discovery))}>Copy Public URL</Button>
-                <Button onClick={() => setPage("reports")}>Open Report</Button>
-                <Button onClick={() => setPage(index % 2 ? "timemachine" : "scenario")} variant="primary">Next Step</Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Panel>
-
-      <Panel>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <Pill gold><CheckCircle2 size={12}/> guided next step</Pill>
-            <h2 className="mt-3 text-3xl font-black">What should the user do next?</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-              ElementOS now gives a simple path instead of leaving users stranded: simulate, forecast, report, share, save.
-            </p>
-          </div>
-        </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-5">
-          {[
-            ["Compare Materials", "Find a strong pair", "compare"],
-            ["Time Machine", "Forecast long-term behavior", "timemachine"],
-            ["Simulation Dossier", "Package the result", "simreports"],
-            ["Discovery Media Engine", "Make it viral", "viralcards"],
-            ["Workspace", "Save the asset", "lab"],
-          ].map(([title, desc, target]) => (
-            <button key={title} onClick={() => setPage(target)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/30 hover:bg-cyan-300/10">
-              <div className="text-sm font-black text-cyan-100">{title}</div>
-              <div className="mt-2 text-xs leading-5 text-slate-400">{desc}</div>
-            </button>
-          ))}
-        </div>
-      </Panel>
-    </>
   );
 }
 
@@ -3178,279 +1895,149 @@ function GeometryTelemetryLab({ selectedTarget, selectedModule, opportunityScore
 }
 
 function TimeMachine({ selected, setSelected, setPage }) {
-  const [material, setMaterial] = useState(selected || "Al");
-  const [environment, setEnvironment] = useState("Coastal air");
+  const safeProfiles = typeof timeMachineEnvironmentProfiles !== "undefined" ? timeMachineEnvironmentProfiles : {
+    "Coastal air": { category: "Marine", label: "Salt-air corrosion and humidity exposure", corrosion: 1.4, heat: 0.7, pressure: 0.6, radiation: 0.2 },
+    "Deep ocean": { category: "Marine", label: "High pressure, low temperature and chloride load", corrosion: 1.6, heat: 0.3, pressure: 1.7, radiation: 0.2 },
+    "Low orbit": { category: "Aerospace", label: "Vacuum, radiation and thermal cycling", corrosion: 0.2, heat: 1.1, pressure: 0.2, radiation: 1.8 },
+  };
+
+  const extraProfiles = {
+    "Arctic tundra": { category: "Climate", label: "Freeze-thaw cycling with low humidity", corrosion: 0.55, heat: 0.25, pressure: 0.75, radiation: 0.2 },
+    "Sub-arctic mining camp": { category: "Climate", label: "Cold mechanical fatigue and abrasive dust", corrosion: 0.65, heat: 0.35, pressure: 0.9, radiation: 0.25 },
+    "Temperate rain": { category: "Climate", label: "Moderate thermal load with persistent moisture", corrosion: 1.05, heat: 0.55, pressure: 0.55, radiation: 0.15 },
+    "Mediterranean coast": { category: "Climate", label: "Warm salt air with seasonal dryness", corrosion: 1.2, heat: 0.9, pressure: 0.45, radiation: 0.25 },
+    "Hot desert": { category: "Climate", label: "Thermal shock, low humidity and abrasive sand", corrosion: 0.35, heat: 1.65, pressure: 0.55, radiation: 0.55 },
+    "Tropical rainforest": { category: "Climate", label: "High biological and moisture corrosion pressure", corrosion: 1.55, heat: 1.05, pressure: 0.45, radiation: 0.18 },
+    "Monsoon zone": { category: "Climate", label: "Cyclic flooding, heat and humidity", corrosion: 1.75, heat: 1.0, pressure: 0.5, radiation: 0.22 },
+    "Steel plant": { category: "Industrial", label: "Thermal cycling and abrasive particulates", corrosion: 1.05, heat: 1.8, pressure: 0.85, radiation: 0.25 },
+    "Chemical plant": { category: "Industrial", label: "Aggressive chemical exposure", corrosion: 2.1, heat: 1.1, pressure: 0.7, radiation: 0.4 },
+    "Refinery": { category: "Industrial", label: "Heat, hydrocarbons and pressure cycles", corrosion: 1.55, heat: 1.6, pressure: 1.15, radiation: 0.25 },
+    "Mining site": { category: "Industrial", label: "Abrasive dust, vibration and moisture", corrosion: 1.2, heat: 0.8, pressure: 1.05, radiation: 0.35 },
+    "Power station": { category: "Industrial", label: "Heat, vibration and long duty cycles", corrosion: 0.85, heat: 1.45, pressure: 0.95, radiation: 0.55 },
+    "Open ocean": { category: "Marine", label: "Saltwater spray and mechanical wave cycles", corrosion: 1.75, heat: 0.7, pressure: 0.8, radiation: 0.25 },
+    "Harbour": { category: "Marine", label: "Pollutants, salt and wet-dry cycling", corrosion: 1.9, heat: 0.75, pressure: 0.65, radiation: 0.2 },
+    "Offshore platform": { category: "Marine", label: "Salt, wind, vibration and high maintenance load", corrosion: 1.85, heat: 0.9, pressure: 1.2, radiation: 0.25 },
+    "Low orbit": { category: "Aerospace", label: "Vacuum, radiation and thermal cycling", corrosion: 0.2, heat: 1.1, pressure: 0.2, radiation: 1.8 },
+    "High orbit": { category: "Aerospace", label: "Extended radiation and low pressure exposure", corrosion: 0.15, heat: 1.0, pressure: 0.15, radiation: 2.1 },
+    "Re-entry": { category: "Aerospace", label: "Extreme heat, shock and ablation", corrosion: 0.4, heat: 2.5, pressure: 1.8, radiation: 0.85 },
+    "Sandstone basin": { category: "Geological", label: "Porous formation with moderate pressure", corrosion: 0.9, heat: 0.75, pressure: 1.15, radiation: 0.25 },
+    "Shale basin": { category: "Geological", label: "Layered formation with pressure and low permeability", corrosion: 1.0, heat: 0.8, pressure: 1.5, radiation: 0.3 },
+    "Granite formation": { category: "Geological", label: "Hard crystalline formation", corrosion: 0.45, heat: 0.9, pressure: 1.65, radiation: 0.35 },
+    "Volcanic zone": { category: "Geological", label: "Heat, fractured basalt and geothermal chemistry", corrosion: 1.25, heat: 2.1, pressure: 1.4, radiation: 0.5 },
+    "Fault zone": { category: "Geological", label: "Mechanical instability and fluid migration", corrosion: 1.15, heat: 0.95, pressure: 1.85, radiation: 0.35 },
+    "High radiation": { category: "Extreme", label: "Accelerated radiation damage and embrittlement", corrosion: 0.45, heat: 0.8, pressure: 0.6, radiation: 2.6 },
+    "Cryogenic": { category: "Extreme", label: "Low-temperature contraction and brittleness", corrosion: 0.2, heat: 0.15, pressure: 1.1, radiation: 0.25 },
+    "High pressure": { category: "Extreme", label: "Compression, creep and pressure drift", corrosion: 0.75, heat: 0.65, pressure: 2.4, radiation: 0.25 },
+    "Corrosive acid": { category: "Extreme", label: "Acidic chemical attack", corrosion: 2.7, heat: 0.9, pressure: 0.65, radiation: 0.3 },
+    "Molten salt": { category: "Extreme", label: "Thermal and chemical salt attack", corrosion: 2.2, heat: 2.0, pressure: 0.9, radiation: 0.55 },
+  };
+  const environmentProfiles = { ...safeProfiles, ...extraProfiles };
+
+  const [material, setMaterial] = useState(selected || "H");
+  const [environment, setEnvironment] = useState(environmentProfiles["Coastal air"] ? "Coastal air" : Object.keys(environmentProfiles)[0]);
+  const [envCategory, setEnvCategory] = useState("All");
+  const [selectedYear, setSelectedYear] = useState(100);
   const [stress, setStress] = useState(55);
   const [temperature, setTemperature] = useState(35);
   const [pressure, setPressure] = useState(40);
   const [humidity, setHumidity] = useState(62);
   const [radiation, setRadiation] = useState(18);
 
-  const base = elementMap[material] || elementMap.Al;
+  const base = elementMap[material] || elementMap.H || elements[0];
   const baseScore = score(material);
+  const profile = environmentProfiles[environment] || Object.values(environmentProfiles)[0] || { category: "Default", label: "Default exposure", corrosion: 1, heat: 1, pressure: 1, radiation: 1 };
+  const horizons = [0, 1, 5, 10, 25, 50, 100, 250, 500, 1000].includes(selectedYear) ? [0, 1, 5, 10, 25, 50, 100, 250, 500, 1000] : [0, 1, 5, 10, 25, 50, 100, 250, 500, 1000, selectedYear].sort((a, b) => a - b);
 
-  const environmentProfiles = timeMachineEnvironmentProfiles;
-  const [envCategory, setEnvCategory] = useState("All");
-  const [selectedYear, setSelectedYear] = useState(100);
-  const [temporalSpeed, setTemporalSpeed] = useState(60);
-
-  const profile = environmentProfiles[environment] || environmentProfiles["Coastal air"];
-  const horizons = Array.from(new Set([0, 1, 5, 10, 25, 50, 100, 250, 500, 1000, selectedYear])).sort((a, b) => a - b);
-
-  const resilience = Math.round(
-    Math.min(
-      99,
-      Math.max(
-        12,
-        baseScore.stability * 15 +
-          baseScore.pressure * 7 +
-          baseScore.thermal * 6 +
-          baseScore.conductivity * 2 -
-          profile.corrosion * 8 -
-          stress * 0.075 -
-          temperature * 0.055 -
-          pressure * 0.055 -
-          humidity * profile.corrosion * 0.055 -
-          radiation * profile.radiation * 0.08
-      )
-    )
-  );
-
+  const resilience = Math.round(Math.min(99, Math.max(8, baseScore.stability * 16 + baseScore.pressure * 7 + baseScore.thermal * 6 - profile.corrosion * 8 - profile.heat * 5 - profile.pressure * 4 - profile.radiation * 6 - stress * 0.06 - humidity * 0.04)));
   const timeline = horizons.map((year) => {
-    const ageing = Math.log10(year + 1) * (profile.corrosion * 11 + profile.heat * 8 + profile.pressure * 7 + profile.radiation * 6);
-    const load = stress * 0.04 + temperature * 0.045 + pressure * 0.04 + humidity * profile.corrosion * 0.035 + radiation * profile.radiation * 0.05;
-    const stability = Math.max(2, Math.round(resilience - ageing - load));
-    const corrosion = Math.min(99, Math.round(year * profile.corrosion * 0.52 + humidity * profile.corrosion * 0.23));
-    const fatigue = Math.min(99, Math.round(year * profile.heat * 0.43 + temperature * 0.24 + stress * 0.08));
-    const pressureDrift = Math.min(99, Math.round(year * profile.pressure * 0.39 + pressure * 0.2));
-    const radiationDrift = Math.min(99, Math.round(year * profile.radiation * 0.35 + radiation * 0.26));
+    const time = Math.log10(year + 1);
+    const exposure = profile.corrosion * 8 + profile.heat * 6 + profile.pressure * 6 + profile.radiation * 7;
+    const load = stress * 0.045 + temperature * 0.05 + pressure * 0.05 + humidity * 0.035 + radiation * 0.055;
+    const stability = Math.max(2, Math.round(resilience - time * exposure - load));
+    const corrosion = Math.min(99, Math.round(time * profile.corrosion * 24 + humidity * profile.corrosion * 0.18));
+    const fatigue = Math.min(99, Math.round(time * profile.heat * 22 + temperature * 0.22 + stress * 0.08));
+    const pressureDrift = Math.min(99, Math.round(time * profile.pressure * 24 + pressure * 0.16));
+    const radiationDrift = Math.min(99, Math.round(time * profile.radiation * 26 + radiation * 0.19));
     return { year, stability, corrosion, fatigue, pressureDrift, radiationDrift };
   });
+  const finalState = timeline[timeline.length - 1] || timeline[0];
+  const risk = Math.max(1, Math.min(99, Math.round(100 - finalState.stability + finalState.corrosion * 0.2 + finalState.fatigue * 0.12)));
+  const verdict = finalState.stability > 70 ? "Long-horizon survivor" : finalState.stability > 45 ? "Protected-use candidate" : finalState.stability > 24 ? "Monitor heavily" : "High-risk environment";
 
-  const finalState = timeline[timeline.length - 1];
-  const survivalYear = Math.max(2, Math.round((resilience / Math.max(0.5, profile.corrosion + profile.heat + profile.pressure + profile.radiation)) * 6.8));
-  const futureVerdict = finalState.stability >= 72 ? "Excellent long-horizon candidate" : finalState.stability >= 48 ? "Strong candidate with protection" : finalState.stability >= 28 ? "Conditional candidate with monitoring" : "High-risk across long horizons";
-  const timeRisk = Math.max(1, Math.min(99, Math.round(100 - finalState.stability + finalState.corrosion * 0.22 + finalState.fatigue * 0.18)));
+  const filteredEnvs = Object.keys(environmentProfiles).filter((key) => envCategory === "All" || environmentProfiles[key].category === envCategory);
+  const chartPoints = timeline.map((t, i) => `${8 + (i / Math.max(1, timeline.length - 1)) * 84},${92 - t.stability * 0.78}`).join(" ");
+  const corrosionPoints = timeline.map((t, i) => `${8 + (i / Math.max(1, timeline.length - 1)) * 84},${92 - t.corrosion * 0.6}`).join(" ");
+  const categories = ["All", ...Array.from(new Set(Object.values(environmentProfiles).map((item) => item.category)))];
 
-  const recommended = elements
-    .filter((e) => e.symbol !== material)
-    .map((e) => {
-      const s = score(e.symbol);
-      const durability = Math.round(s.stability * 13 + s.pressure * 7 + s.thermal * 6 - profile.corrosion * 5 - profile.radiation * 3);
-      return { ...e, durability: Math.max(1, Math.min(99, durability)) };
-    })
-    .sort((a, b) => b.durability - a.durability)
-    .slice(0, 5);
-
-  const chartPoints = timeline
-    .map((t, index) => {
-      const x = 8 + (index / Math.max(1, timeline.length - 1)) * 84;
-      const y = 92 - t.stability * 0.78;
-      return `${x},${Math.max(12, Math.min(92, y))}`;
-    })
-    .join(" ");
-
-  const exportTimeline = () => {
-    const content = `ElementOS Time Machine Report\n\nMaterial: ${base.name} (${base.symbol})\nEnvironment: ${environment}\nScenario: ${profile.label}\nResilience Index: ${resilience}%\n100-Year Risk: ${timeRisk}%\nPredicted survival horizon: ${survivalYear} years\nVerdict: ${futureVerdict}\n\nInputs:\nStress: ${stress}%\nTemperature: ${temperature} C\nPressure: ${pressure}%\nHumidity: ${humidity}%\nRadiation: ${radiation}%\n\nTimeline:\n${timeline.map((t) => `Year ${t.year}: stability ${t.stability}%, corrosion ${t.corrosion}%, fatigue ${t.fatigue}%, pressure drift ${t.pressureDrift}%, radiation drift ${t.radiationDrift}%`).join("\n")}\n\nGenerated by ElementOS Time Machine`;
-    exportAllFormats({ baseName: `${base.symbol}-time-machine-report`, title: `Time Machine Report: ${base.name}`, summary: content, payload: { material: base.symbol, environment, stress, temperature, pressure, humidity, radiation, resilience, timeRisk, survivalYear, futureVerdict } });
-  };
-
-  const setMaterialAndSelected = (value) => {
-    setMaterial(value);
-    setSelected?.(value);
-  };
+  const setMaterialAndSelected = (value) => { setMaterial(value); setSelected?.(value); };
+  const exportTimeline = () => exportAllFormats({
+    baseName: `${base.symbol}-temporal-simulation`,
+    title: `Temporal Simulation Engine: ${base.name}`,
+    summary: `${base.name} simulated in ${environment}. Resilience ${resilience}%. Long-horizon risk ${risk}%. Verdict: ${verdict}.`,
+    payload: { material: base.symbol, environment, selectedYear, stress, temperature, pressure, humidity, radiation, resilience, risk, verdict, timeline },
+  });
 
   return (
-    <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
+    <div className="space-y-6">
+      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr] border-cyan-300/25 bg-gradient-to-br from-cyan-950/25 via-slate-950 to-fuchsia-950/20">
         <div>
-          <Pill gold><Clock3 size={12}/> temporal material simulator</Pill>
-          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
-            Time <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Machine</span>
-          </h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Project how a material evolves across corrosion, fatigue, pressure drift, radiation exposure and environmental ageing. This page now behaves like a cinematic future-state lab.
-          </p>
-          <Info title="Temporal intelligence upgrade">
-            Choose a material and environment, tune the exposure controls, then inspect the survival curve, future-state cards, 3D time tunnel and recommended long-horizon substitutes.
-          </Info>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Time PDF/JSON/SVG</Button>
-            <Button onClick={() => setPage("scenario")}>Send to Scenario Builder</Button>
-            <Button onClick={() => setPage("visualization")}>Open Visual Engine</Button>
-          </div>
+          <Pill gold><Clock3 size={12}/> temporal simulation engine</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">Temporal <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Simulation Engine</span></h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A cinematic future-state lab for forecasting material behaviour across time, stress, pressure, corrosion, radiation and 50+ environment profiles.</p>
+          <Info title="Blank-page safety rebuild">This version avoids the previous fragile render path and uses a self-contained temporal graph, environment library, telemetry controls and export system.</Info>
+          <div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Time PDF/JSON/SVG</Button><Button onClick={() => setPage("scenario")}>Send to Scenario Builder</Button><Button onClick={() => setPage("matterlab")}>Open Matter Intelligence</Button></div>
         </div>
-
         <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Future-state verdict</div>
-          <div className="mt-3 text-5xl font-black text-cyan-100">{base.symbol}</div>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">future-state verdict</div>
+          <div className="mt-3 text-6xl font-black text-cyan-100">{base.symbol}</div>
           <div className="mt-2 text-xl font-black text-white">{base.name}</div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4">
-              <div className="text-3xl font-black text-emerald-100">{resilience}%</div>
-              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">resilience</div>
-            </div>
-            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">
-              <div className="text-3xl font-black text-amber-100">{survivalYear}y</div>
-              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">survival</div>
-            </div>
-            <div className="rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4">
-              <div className="text-3xl font-black text-rose-100">{timeRisk}%</div>
-              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">100y risk</div>
-            </div>
-          </div>
-          <p className="mt-5 text-sm leading-7 text-slate-300">{futureVerdict}. Environment profile: {profile.label}.</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3"><div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-3xl font-black text-emerald-100">{resilience}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">resilience</div></div><div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4"><div className="text-3xl font-black text-amber-100">{selectedYear}y</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">horizon</div></div><div className="rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4"><div className="text-3xl font-black text-rose-100">{risk}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">risk</div></div></div>
+          <p className="mt-5 text-sm leading-7 text-slate-300">{verdict}. Environment profile: {profile.label}.</p>
         </Panel>
       </Panel>
 
       <GuidePanel page="timemachine" />
 
       <Panel className="border-cyan-300/25 bg-gradient-to-br from-slate-950 via-blue-950/20 to-cyan-950/20">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <Pill gold><Radar size={12}/> future-state simulation 2.0</Pill>
-            <h2 className="mt-3 text-5xl font-black">Temporal Field Graph</h2>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">A multi-layer future-state graph with confidence envelope, baseline drift, anomaly markers and environmental influence streams.</p>
-          </div>
-          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">LIVE · {environment}</div>
-        </div>
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><Pill gold><Radar size={12}/> future-state simulation</Pill><h2 className="mt-3 text-5xl font-black">Temporal Field Graph</h2><p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">Glowing stability curve, corrosion drift, confidence fog, anomaly markers and live telemetry streams.</p></div><div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">LIVE · {environment}</div></div>
         <div className="mt-6 grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
-          <TemporalFieldGraph timeline={timeline} profile={profile} stress={stress} temperature={temperature} pressure={pressure} humidity={humidity} radiation={radiation} />
+          <div className="relative h-[520px] overflow-hidden rounded-[2.5rem] border border-cyan-300/20 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.18),transparent_30%),linear-gradient(135deg,#020617,#07152a_55%,#0b1020)] p-5">
+            <div className="absolute inset-0 opacity-30 bg-[linear-gradient(rgba(34,211,238,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.08)_1px,transparent_1px)] bg-[size:42px_42px]" />
+            <svg viewBox="0 0 100 100" className="relative z-10 h-full w-full">
+              <defs><linearGradient id="tmLine" x1="0" x2="1"><stop offset="0%" stopColor="#22d3ee"/><stop offset="55%" stopColor="#60a5fa"/><stop offset="100%" stopColor="#fbbf24"/></linearGradient><filter id="tmGlow"><feGaussianBlur stdDeviation="1.4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+              {[20,40,60,80].map((y) => <line key={y} x1="6" x2="94" y1={y} y2={y} stroke="rgba(255,255,255,.08)" />)}
+              <polygon points={`8,12 ${chartPoints} 92,92 8,92`} fill="rgba(34,211,238,.10)" />
+              <polyline points={chartPoints} fill="none" stroke="url(#tmLine)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" filter="url(#tmGlow)" />
+              <polyline points={corrosionPoints} fill="none" stroke="rgba(251,191,36,.85)" strokeWidth="2" strokeDasharray="2 2" strokeLinecap="round" />
+              {timeline.map((t, i) => <g key={t.year}><circle cx={8 + (i / Math.max(1, timeline.length - 1)) * 84} cy={92 - t.stability * .78} r="1.6" fill="#e0f2fe"/><text x={8 + (i / Math.max(1, timeline.length - 1)) * 84} y="97" textAnchor="middle" className="fill-slate-400 text-[3px]">{t.year}</text></g>)}
+              <text x="8" y="8" className="fill-cyan-100 text-[4px] uppercase">stability</text><text x="70" y="8" className="fill-amber-100 text-[4px] uppercase">corrosion drift</text>
+            </svg>
+          </div>
           <div className="space-y-4">
-            <TemporalSpiralNavigator timeline={timeline} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
-            <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-              <div className="text-xs uppercase tracking-[.22em] text-slate-500">selected horizon</div>
-              <div className="mt-2 text-5xl font-black text-cyan-100">{selectedYear} years</div>
-              <p className="mt-3 text-sm leading-6 text-slate-300">The model now expands from short-term exposure into century and millennium-scale futures using your environment, stress and telemetry inputs.</p>
-            </div>
+            <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.22em] text-slate-500">active horizon</div><div className="mt-2 text-6xl font-black text-cyan-100">{selectedYear}y</div><p className="mt-3 text-sm leading-6 text-slate-300">Drag the controls below to update the future state instantly.</p></div>
+            {[['Stress', stress], ['Temperature', temperature], ['Pressure', pressure], ['Humidity', humidity], ['Radiation', radiation]].map(([label, value]) => <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"><div className="flex justify-between text-xs uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span>{value}%</span></div><div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-amber-300" style={{ width: `${Math.max(4, Math.min(100, value))}%` }} /></div></div>)}
           </div>
         </div>
-        <div className="mt-5"><TelemetryStreamDeck values={{ stress, temperature, pressure, humidity, radiation }} /></div>
       </Panel>
 
       <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
         <Panel>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <Pill gold><Clock3 size={12}/> temporal controls 2.0</Pill>
-              <h2 className="mt-3 text-4xl font-black">Temporal Control Deck</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-400">Choose a material, filter 50 environment profiles, tune telemetry exposure and jump across future horizons.</p>
-            </div>
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-right">
-              <div className="text-3xl font-black text-cyan-100">{selectedYear}y</div>
-              <div className="text-[10px] uppercase tracking-[.18em] text-cyan-200">active horizon</div>
-            </div>
-          </div>
+          <div className="flex items-start justify-between gap-4"><div><Pill gold><Clock3 size={12}/> temporal controls</Pill><h2 className="mt-3 text-4xl font-black">Temporal Control Deck</h2></div><div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-right"><div className="text-3xl font-black text-cyan-100">{selectedYear}y</div><div className="text-[10px] uppercase tracking-[.18em] text-cyan-200">horizon</div></div></div>
           <div className="mt-5 grid gap-4">
-            <label className="grid gap-2">
-              <span className="text-xs uppercase tracking-[.2em] text-slate-500">Material</span>
-              <select value={material} onChange={(e) => setMaterialAndSelected(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
-                {elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
-              </select>
-            </label>
-            <div>
-              <span className="text-xs uppercase tracking-[.2em] text-slate-500">Environment Library</span>
-              <EnvCategoryStrip profiles={environmentProfiles} active={envCategory} setActive={setEnvCategory} />
-              <select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
-                {Object.keys(environmentProfiles).filter((k) => envCategory === "All" || environmentProfiles[k].category === envCategory).map((k) => <option key={k}>{k}</option>)}
-              </select>
-              <div className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-sm leading-6 text-cyan-50"><b>{environmentProfiles[environment]?.category}</b> · {profile.label}</div>
-            </div>
-            <div className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4">
-              <div className="flex items-center justify-between text-sm"><span className="font-bold text-slate-200">Temporal Horizon</span><span className="font-black text-amber-100">{selectedYear} years</span></div>
-              <input type="range" min="1" max="1000" step="1" value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))} />
-              <div className="flex flex-wrap gap-2">{[1,5,10,25,50,100,250,500,1000].map((y) => <button key={y} onClick={() => setSelectedYear(y)} className={`rounded-full border px-3 py-1 text-xs font-bold ${selectedYear === y ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{y}y</button>)}</div>
-            </div>
-            {[
-              ["Stress Load", stress, setStress, "%"],
-              ["Temperature", temperature, setTemperature, "°C"],
-              ["Pressure Load", pressure, setPressure, "%"],
-              ["Humidity / Corrosion Feed", humidity, setHumidity, "%"],
-              ["Radiation / Field Exposure", radiation, setRadiation, "%"],
-              ["Temporal Speed", temporalSpeed, setTemporalSpeed, "%"],
-            ].map(([label, value, setter, unit]) => (
-              <label key={label} className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-bold text-slate-200">{label}</span>
-                  <span className="font-black text-cyan-100">{value}{unit}</span>
-                </div>
-                <input type="range" min="0" max="100" value={value} onChange={(e) => setter(Number(e.target.value))} />
-              </label>
-            ))}
+            <label className="grid gap-2"><span className="text-xs uppercase tracking-[.2em] text-slate-500">Material</span><select value={material} onChange={(e) => setMaterialAndSelected(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">{elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select></label>
+            <div><span className="text-xs uppercase tracking-[.2em] text-slate-500">50+ Environment Library</span><div className="mt-3 flex max-h-28 flex-wrap gap-2 overflow-auto rounded-2xl border border-white/10 bg-black/20 p-3">{categories.map((cat) => <button key={cat} onClick={() => { setEnvCategory(cat); const first = cat === "All" ? Object.keys(environmentProfiles)[0] : Object.keys(environmentProfiles).find((key) => environmentProfiles[key].category === cat); if (first) setEnvironment(first); }} className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] ${envCategory === cat ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{cat}</button>)}</div><select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">{filteredEnvs.map((key) => <option key={key}>{key}</option>)}</select><div className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-sm leading-6 text-cyan-50"><b>{profile.category}</b> · {profile.label}</div></div>
+            <label className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4"><div className="flex items-center justify-between text-sm"><span className="font-bold text-slate-200">Temporal Horizon</span><span className="font-black text-amber-100">{selectedYear} years</span></div><input type="range" min="1" max="1000" value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))} /><div className="flex flex-wrap gap-2">{[1,5,10,25,50,100,250,500,1000].map((y) => <button key={y} onClick={() => setSelectedYear(y)} className={`rounded-full border px-3 py-1 text-xs font-bold ${selectedYear === y ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{y}y</button>)}</div></label>
+            {[["Stress Load", stress, setStress, "%"], ["Temperature", temperature, setTemperature, "°C"], ["Pressure Load", pressure, setPressure, "%"], ["Humidity", humidity, setHumidity, "%"], ["Radiation", radiation, setRadiation, "%"]].map(([label, value, setter, unit]) => <label key={label} className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4"><div className="flex items-center justify-between text-sm"><span className="font-bold text-slate-200">{label}</span><span className="font-black text-cyan-100">{value}{unit}</span></div><input type="range" min="0" max="100" value={value} onChange={(e) => setter(Number(e.target.value))} /></label>)}
           </div>
         </Panel>
-
         <Panel>
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <Pill><Radar size={12}/> 3D time tunnel</Pill>
-              <h2 className="mt-3 text-3xl font-black">Future-State Simulation</h2>
-            </div>
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm font-bold text-cyan-100">LIVE</div>
-          </div>
-
-          <div className="mt-6 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-slate-950/80 p-6 [perspective:1100px]">
-            <div className="relative mx-auto h-[360px] max-w-3xl [transform-style:preserve-3d] [transform:rotateX(58deg)_rotateZ(-32deg)]">
-              {timeline.map((t, index) => (
-                <div
-                  key={t.year}
-                  className="absolute left-1/2 top-1/2 grid place-items-center rounded-[2rem] border border-cyan-300/25 bg-cyan-300/10 text-center shadow-[0_0_40px_rgba(34,211,238,.14)]"
-                  style={{
-                    width: `${300 + index * 28}px`,
-                    height: `${72 + index * 8}px`,
-                    transform: `translate(-50%, -50%) translateZ(${index * 28}px)`,
-                    opacity: 1 - index * 0.075,
-                  }}
-                >
-                  <div className="text-xs uppercase tracking-[.22em] text-cyan-100">Year {t.year}</div>
-                  <div className="text-2xl font-black text-white">{t.stability}%</div>
-                </div>
-              ))}
-              <div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 shadow-[0_0_80px_rgba(251,191,36,.85)]" />
-            </div>
-          </div>
-
-          <svg viewBox="0 0 100 100" className="mt-6 h-64 w-full rounded-[2rem] border border-white/10 bg-black/25 p-4">
-            <polyline points={chartPoints} fill="none" stroke="rgba(34,211,238,.95)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            <polyline points={timeline.map((t, i) => `${8 + (i / Math.max(1, timeline.length - 1)) * 84},${92 - t.corrosion * .65}`).join(" ")} fill="none" stroke="rgba(251,191,36,.8)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            {[20,40,60,80].map((y) => <line key={y} x1="6" x2="94" y1={y} y2={y} stroke="rgba(255,255,255,.08)" />)}
-            {timeline.map((t, i) => <text key={t.year} x={8 + (i / Math.max(1, timeline.length - 1)) * 84} y="98" textAnchor="middle" className="fill-slate-400 text-[3px]">{t.year}</text>)}
-          </svg>
+          <Pill><Radar size={12}/> future state tunnel</Pill><h2 className="mt-3 text-3xl font-black">Future-State Simulation</h2>
+          <div className="mt-6 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-slate-950/80 p-6 [perspective:1100px]"><div className="relative mx-auto h-[430px] max-w-3xl [transform-style:preserve-3d] [transform:rotateX(58deg)_rotateZ(-32deg)]">{timeline.map((t, index) => <div key={t.year} className="absolute left-1/2 top-1/2 grid place-items-center rounded-[2rem] border border-cyan-300/25 bg-cyan-300/10 text-center shadow-[0_0_40px_rgba(34,211,238,.14)]" style={{ width: `${260 + index * 30}px`, height: `${68 + index * 8}px`, transform: `translate(-50%, -50%) translateZ(${index * 28}px)`, opacity: Math.max(.25, 1 - index * .075) }}><div className="text-xs uppercase tracking-[.22em] text-cyan-100">Year {t.year}</div><div className="text-2xl font-black text-white">{t.stability}%</div></div>)}<div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 shadow-[0_0_80px_rgba(251,191,36,.85)]" /></div></div>
         </Panel>
       </div>
 
-      <Panel>
-        <h2 className="text-4xl font-black">Temporal Milestone Cards</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {timeline.slice(1).map((t) => (
-            <div key={t.year} className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-black/35 to-amber-400/10 p-5">
-              <div className="text-xs uppercase tracking-[.22em] text-slate-500">year {t.year}</div>
-              <div className="mt-3 text-4xl font-black text-cyan-100">{t.stability}%</div>
-              <div className="mt-3 space-y-2 text-sm text-slate-300">
-                <div>Corrosion: <b className="text-amber-100">{t.corrosion}%</b></div>
-                <div>Fatigue: <b className="text-rose-100">{t.fatigue}%</b></div>
-                <div>Pressure drift: <b className="text-cyan-100">{t.pressureDrift}%</b></div>
-                <div>Radiation drift: <b className="text-fuchsia-100">{t.radiationDrift}%</b></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Panel>
-
-      <Panel>
-        <h2 className="text-3xl font-black">Best Long-Horizon Substitutes</h2>
-        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          {recommended.map((e) => (
-            <button key={e.symbol} onClick={() => setMaterialAndSelected(e.symbol)} className="rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5 text-left transition hover:scale-[1.02]">
-              <div className="text-4xl font-black text-cyan-100">{e.symbol}</div>
-              <div className="mt-1 text-sm text-slate-300">{e.name}</div>
-              <div className="mt-4 text-2xl font-black text-emerald-200">{e.durability}%</div>
-              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">future fit</div>
-            </button>
-          ))}
-        </div>
-      </Panel>
-    </>
+      <Panel><h2 className="text-4xl font-black">Temporal Milestone Cards</h2><div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{timeline.slice(1).map((t) => <div key={t.year} className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-black/35 to-amber-400/10 p-5"><div className="text-xs uppercase tracking-[.22em] text-slate-500">year {t.year}</div><div className="mt-3 text-4xl font-black text-cyan-100">{t.stability}%</div><div className="mt-3 space-y-2 text-sm text-slate-300"><div>Corrosion: <b className="text-amber-100">{t.corrosion}%</b></div><div>Fatigue: <b className="text-rose-100">{t.fatigue}%</b></div><div>Pressure drift: <b className="text-cyan-100">{t.pressureDrift}%</b></div><div>Radiation drift: <b className="text-fuchsia-100">{t.radiationDrift}%</b></div></div></div>)}</div></Panel>
+    </div>
   );
 }
 
@@ -6332,7 +4919,7 @@ function ExperimentalWellDriller({ setPage }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <Pill gold><Layers size={12}/> formation explorer</Pill>
-            <h2 className="mt-3 text-4xl font-black">30+ Formation Library</h2>
+            <h2 className="mt-3 text-4xl font-black">Formation Intelligence Engine</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Choose from sedimentary, igneous, metamorphic, reservoir and geothermal formations. Every option changes the live geometry, drilling risk, reservoir potential and export report.</p>
           </div>
           <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">{visibleFormations.length} formations visible</div>
