@@ -5439,6 +5439,7 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
   const [headlineMode, setHeadlineMode] = useState("AI Headline");
   const [exportLayout, setExportLayout] = useState("Portrait Poster");
   const [seriesNumber, setSeriesNumber] = useState(36);
+  const [exportHistory, setExportHistory] = useState([]);
   const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(24)), []);
   const activeMaterial = elementMap[selected] || elementMap.Al;
   const compareSet = compare?.length ? compare : ["Al", "Ti", "Hf", "W"];
@@ -5526,6 +5527,44 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
     ["Product Hunt", "Use the founder card plus a clear before/after workflow demo."],
   ];
 
+  const performanceScore = Math.min(99, Math.round((cardData.score * 0.42) + (cardStats.shares / 8) + (cardStats.saves / 14) + 18));
+  const viralReadiness = performanceScore >= 92 ? "LAUNCH READY" : performanceScore >= 82 ? "HIGH POTENTIAL" : performanceScore >= 72 ? "NEEDS STRONGER HOOK" : "REFINE BEFORE POSTING";
+  const confidenceMetrics = [
+    ["Signal Agreement", Math.min(99, Math.round(cardData.score * 0.94 + 5))],
+    ["Historical Match", Math.min(99, Math.round(cardData.score * 0.88 + 8))],
+    ["Simulation Consistency", Math.min(99, Math.round(cardData.score * 0.91 + 6))],
+  ];
+  const genomeMetrics = [
+    ["Thermal", Math.min(99, Math.round(cardData.score * 0.96))],
+    ["Pressure", Math.min(99, Math.round(cardData.score * 0.91))],
+    ["Stability", Math.min(99, Math.round(cardData.score * 0.94))],
+    ["Conductivity", Math.min(99, Math.round(cardData.score * 0.78))],
+  ];
+  const genomePair = String(cardData.title || "Ti + Hf").split("+").map((item) => item.trim()).filter(Boolean);
+  const discoveryGenome = `${genomePair[0] || "Ti"}${genomePair[1] || "Hf"}-X${String(cardStats.rank).padStart(2, "0")}-P${Math.round(cardData.score / 10)}`;
+  const ctaVariants = ["Open the discovery", "Generate your own", "View the full report", "Save this signal", "Join the founding beta"];
+  const abVariants = [
+    ["A", "Rare signal headline", cardData.headline, "Best for X curiosity."],
+    ["B", "Score-first headline", `${cardData.score}% ${cardData.metric}`, "Best for LinkedIn authority."],
+    ["C", "Story-first headline", cardData.hook, "Best for Reddit explanation."],
+  ];
+  const collections = [
+    ["Advanced Thermal Materials", "12 discoveries", "Ti + Hf, W + Ta, Zr + Hf"],
+    ["Aerospace Stability Set", "8 discoveries", "Al + Ti, Mg + Al, Ti + V"],
+    ["Rare Earth Intelligence", "16 discoveries", "Nd + Pr, Dy + Tb, Ce + La"],
+  ];
+  const tournamentPairs = [
+    ["Ti + Hf", "Al + Ti", "Ti + Hf", "+8% thermal · +12% pressure"],
+    ["Ga + In", "Au + Pt", "Ga + In", "+14% conductivity · +6% novelty"],
+  ];
+  const hallOfFame = discoveries.slice(0, 5).map((d, index) => ({ ...d, rank: index + 1 }));
+  const platformRecommendations = [
+    ["X", "Use the square card, short curiosity hook, one number, one public discovery link."],
+    ["LinkedIn", "Use portrait poster, professional narrative, report preview, founder context."],
+    ["Reddit", "Lead with useful explanation, then card. Ask for critique rather than sales."],
+    ["Product Hunt", "Use founder card plus the discovery loop: simulate → report → share."],
+  ];
+
   const safeText = (value) => String(value ?? "").replace(/[&<>\"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   const smartTitle = (value = "") => {
@@ -5590,6 +5629,24 @@ ${cardData.cardNumber}
 Generated in ElementOS`;
     navigator.clipboard?.writeText(text);
     alert("Viral card copy saved to clipboard.");
+  };
+
+  const copyCaption = (channel = "X") => {
+    const pair = cardData.title;
+    const captions = {
+      X: `${cardData.headline}
+
+${pair}
+${cardData.score}% ${cardData.metric}
+${cardData.tier} · ${cardData.top}
+
+Generated in ElementOS.`,
+      LinkedIn: `I generated a new ElementOS discovery asset: ${pair}. The model returned ${cardData.score}% ${cardData.metric}, classified as ${cardData.tier}. This is the kind of shareable scientific intelligence workflow ElementOS is being built for.`,
+      Reddit: `I am testing a material-discovery prototype called ElementOS. This card shows ${pair} with ${cardData.score}% ${cardData.metric}. I am looking for feedback on whether the explanation and export format make the result understandable.`,
+      ProductHunt: `ElementOS turns material simulations into discoveries, reports and shareable scientific cards. Today's example: ${pair} at ${cardData.score}% ${cardData.metric}.`,
+    };
+    navigator.clipboard?.writeText(captions[channel] || captions.X);
+    alert(`${channel} caption copied.`);
   };
 
   const exportSVG = () => {
@@ -5683,6 +5740,10 @@ Generated in ElementOS`;
   <text x="1450" y="1928" fill="#67e8f9" class="label" font-size="28" text-anchor="end">ELEMENTOS</text>
   <text x="150" y="1972" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">${safeText(cardData.cardNumber)} · ${safeText(exportLayout)} · DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
 </svg>`;
+    setExportHistory((history) => [
+      { format, layout: exportLayout, title: cardData.title, score: cardData.score, time: new Date().toLocaleTimeString() },
+      ...history,
+    ].slice(0, 8));
     downloadFile(`ElementOS-${format.replace(/\s+/g, "-")}-${layoutMeta.name}-viral-card.svg`, svg, "image/svg+xml");
   };
 
@@ -5827,6 +5888,168 @@ Generated in ElementOS`;
           </Panel>
         </div>
       </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Activity size={12}/> measurable media engine</Pill>
+            <h2 className="mt-3 text-4xl font-black">Viral readiness, performance score and post intelligence.</h2>
+            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">This turns Viral Cards from a design export into a growth system: score the asset, pick the right platform, test caption variants and track what you exported.</p>
+          </div>
+          <div className="rounded-[2rem] border border-emerald-300/25 bg-emerald-300/10 px-5 py-4 text-right">
+            <div className="text-5xl font-black text-emerald-100">{performanceScore}</div>
+            <div className="text-[10px] uppercase tracking-[.22em] text-emerald-200">performance score</div>
+            <div className="mt-1 text-xs font-black text-white">{viralReadiness}</div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 xl:grid-cols-4">
+          {platformRecommendations.map(([platform, recommendation]) => (
+            <div key={platform} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5">
+              <div className="text-2xl font-black text-cyan-100">{platform}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{recommendation}</p>
+              <Button onClick={() => copyCaption(platform)} className="mt-4 w-full">Copy {platform} Caption</Button>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          {abVariants.map(([label, title, text, bestFor]) => (
+            <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-amber-100">Variant {label}</div>
+              <div className="mt-2 text-lg font-black text-white">{title}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-300">{text}</p>
+              <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-xs font-bold text-cyan-100">{bestFor}</div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+        <Panel>
+          <Pill gold><ShieldCheck size={12}/> discovery confidence</Pill>
+          <h2 className="mt-3 text-3xl font-black">Confidence Meter</h2>
+          <div className="mt-5 rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6 text-center">
+            <div className="text-7xl font-black text-cyan-100">{Math.min(99, cardData.score + 2)}%</div>
+            <div className="mt-2 text-xs uppercase tracking-[.25em] text-slate-400">discovery confidence</div>
+          </div>
+          <div className="mt-5 space-y-3">
+            {confidenceMetrics.map(([label, value]) => (
+              <div key={label}>
+                <div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div>
+                <div className="h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${value}%` }} /></div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><Dna size={12}/> discovery genome</Pill>
+          <h2 className="mt-3 text-3xl font-black">Discovery Genome™</h2>
+          <div className="mt-4 rounded-[2rem] border border-white/10 bg-black/30 p-5">
+            <div className="font-mono text-4xl font-black text-amber-100">{discoveryGenome}</div>
+            <div className="mt-2 text-xs uppercase tracking-[.22em] text-slate-500">unique discovery fingerprint</div>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {genomeMetrics.map(([label, value]) => (
+              <div key={label} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-4">
+                <div className="flex justify-between text-sm font-black text-cyan-100"><span>{label}</span><span>{value}%</span></div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        <Panel>
+          <Pill gold><Clock3 size={12}/> discovery evolution</Pill>
+          <h2 className="mt-3 text-3xl font-black">Evolution Timeline</h2>
+          <div className="mt-5 space-y-3">
+            {["Generated", "Validated", "Reported", "Published", "Trending"].map((step, index) => (
+              <div key={step} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{index + 1}</div>
+                <div><div className="font-black text-white">{step}</div><div className="text-xs text-slate-400">Day {index === 0 ? 1 : index * 2 + 1} · discovery asset progressed</div></div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><BarChart3 size={12}/> discovery forecast</Pill>
+          <h2 className="mt-3 text-3xl font-black">Forecast Engine</h2>
+          <div className="mt-5 grid gap-3">
+            {[ ["30 Days", "▲", "Rising interest"], ["90 Days", "▲▲", "Increasing similarity"], ["1 Year", "▲▲▲", "Network candidate"] ].map(([range, trend, note]) => (
+              <div key={range} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="flex items-center justify-between"><b className="text-white">{range}</b><span className="text-2xl font-black text-emerald-200">{trend}</span></div>
+                <div className="mt-1 text-sm text-slate-400">{note}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><Orbit size={12}/> constellation universe</Pill>
+          <h2 className="mt-3 text-3xl font-black">Discovery Constellation</h2>
+          <div className="relative mt-5 h-72 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_35%),#020617]">
+            {[ [22,24,splitPair(cardData.title)[0]], [66,34,splitPair(cardData.title)[1]], [48,66,"Report"], [82,72,"Share"], [28,78,"Save"] ].map(([left, top, label], index) => (
+              <div key={label} className="absolute grid h-16 w-16 place-items-center rounded-2xl border border-cyan-300/30 bg-cyan-300/10 text-sm font-black text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,.18)]" style={{ left: `${left}%`, top: `${top}%`, transform: 'translate(-50%,-50%)' }}>{label}</div>
+            ))}
+            <div className="absolute left-[22%] top-[24%] h-px w-[45%] origin-left rotate-[12deg] bg-cyan-300/40" />
+            <div className="absolute left-[48%] top-[66%] h-px w-[35%] origin-left rotate-[10deg] bg-amber-300/40" />
+          </div>
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Gem size={12}/> scientific discovery network</Pill>
+            <h2 className="mt-3 text-4xl font-black">Collections, Battles, Hall of Fame and Discovery TV.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">These systems give ElementOS network effects: people collect discoveries, compare them, watch them trend and build reputation around them.</p>
+          </div>
+          <div className="rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 px-4 py-3 text-sm font-black text-fuchsia-100">LIVE DISCOVERY CHANNEL</div>
+        </div>
+
+        <div className="mt-6 grid gap-5 xl:grid-cols-4">
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xl font-black text-cyan-100">Discovery Collections</div>
+            <div className="mt-4 space-y-3">{collections.map(([name, count, examples]) => <div key={name} className="rounded-2xl bg-white/[.04] p-3"><b>{name}</b><div className="text-xs text-slate-400">{count} · {examples}</div></div>)}</div>
+          </div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xl font-black text-cyan-100">Discovery Battles</div>
+            <div className="mt-4 space-y-3">{tournamentPairs.map(([a,b,winner,reason]) => <div key={a} className="rounded-2xl bg-white/[.04] p-3"><b>{a} VS {b}</b><div className="text-xs text-emerald-200">Winner: {winner}</div><div className="text-xs text-slate-400">{reason}</div></div>)}</div>
+          </div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xl font-black text-cyan-100">Hall of Fame</div>
+            <div className="mt-4 space-y-3">{hallOfFame.slice(0,3).map((d) => <div key={d.dna} className="rounded-2xl bg-white/[.04] p-3"><b>#{d.rank} {d.a} + {d.b}</b><div className="text-xs text-slate-400">{d.aiConfidence}% · {d.saves} saves · {d.shares} shares</div></div>)}</div>
+          </div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xl font-black text-cyan-100">Discovery Passport</div>
+            <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">
+              <div className="text-2xl font-black text-white">{founderName || "Paul Roper"}</div>
+              <div className="mt-1 text-sm text-amber-100">Discovery Architect</div>
+              <div className="mt-4 grid grid-cols-2 gap-2 text-center text-xs"><div className="rounded-xl bg-black/25 p-2"><b>184</b><br/>Discoveries</div><div className="rounded-xl bg-black/25 p-2"><b>42</b><br/>Reports</div><div className="rounded-xl bg-black/25 p-2"><b>4210</b><br/>Score</div><div className="rounded-xl bg-black/25 p-2"><b>Top 1%</b><br/>Rank</div></div>
+            </div>
+          </div>
+        </div>
+      </Panel>
+
+      {exportHistory.length > 0 && (
+        <Panel>
+          <Pill gold><Download size={12}/> export history</Pill>
+          <h2 className="mt-3 text-3xl font-black">Recent Exports</h2>
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {exportHistory.map((item, index) => (
+              <div key={`${item.time}-${index}`} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="font-black text-cyan-100">{item.format}</div>
+                <div className="mt-1 text-xs text-slate-400">{item.layout} · {item.title}</div>
+                <div className="mt-2 text-sm font-black text-emerald-200">{item.score}% · {item.time}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      )}
 
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-4">
