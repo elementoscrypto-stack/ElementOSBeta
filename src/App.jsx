@@ -1998,6 +1998,9 @@ function Sidebar({ page, setPage }) {
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
   return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Run First Simulation", "scenario", FileText], ["Matter Intelligence OS", "matterlab", Globe2], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Time Machine", "timemachine", Clock3], ["Well Driller Lab", "welldriller", Radar], ["Seismo Lab", "seismo", Network], ["Simulation Dossiers", "simreports", BookOpen], ["Discovery Media Engine", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Workspace", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Founding Beta", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("beta")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Join Founding Beta</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF/JSON/SVG exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
+      <DiscoveryNetworkSubscriberEdition setPage={setPage} />
+      <SubscriberWorkspaceVault setPage={setPage} />
+      <SubscriberRecommendedNextStep setPage={setPage} />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
   <div className="flex flex-wrap items-center justify-between gap-4">
@@ -5456,6 +5459,220 @@ function FiveUserSimulationAudit({ setPage }) {
   );
 }
 
+
+
+function SubscriberWorkspaceVault({ setPage }) {
+  const vaultItems = [
+    ["184", "My Discoveries", "Saved discoveries, media cards and public pages.", "discover", Sparkles],
+    ["42", "My Reports", "Executive briefs, dossiers and PDF exports.", "simreports", FileText],
+    ["18", "My Posters", "SVG cards, LinkedIn assets and social packs.", "viralcards", Download],
+    ["6", "Collections", "Thermal, aerospace, battery and rare-earth sets.", "lab", Save],
+    ["12", "Watchlist", "Signals worth checking tomorrow.", "matterlab", Radar],
+  ];
+
+  return (
+    <Panel className="poster-card-gold">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Pill gold><Save size={12} /> subscriber workspace vault</Pill>
+          <h2 className="mt-3 text-4xl font-black">Your permanent discovery library.</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">
+            First subscribers need to feel ownership. This vault turns ElementOS into the place where discoveries, reports, posters, watchlists and collections live.
+          </p>
+        </div>
+        <Button onClick={() => setPage("lab")} variant="primary">Open Workspace</Button>
+      </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-5">
+        {vaultItems.map(([value, label, body, target, Icon]) => (
+          <button key={label} onClick={() => setPage(target)} className="rounded-[1.6rem] border border-white/10 bg-black/30 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-300/10">
+            <Icon size={22} className="text-cyan-200" />
+            <div className="mt-3 text-4xl font-black text-white">{value}</div>
+            <div className="mt-1 text-sm font-black uppercase tracking-[.16em] text-cyan-100">{label}</div>
+            <p className="mt-2 text-xs leading-5 text-slate-400">{body}</p>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function ExecutiveReportGeneratorPro({ setPage, compare = ["Al", "Ti", "Hf"] }) {
+  const presets = [
+    ["Executive Brief", "Board-ready summary with discovery score, key risks and recommendation.", "PDF"],
+    ["Research Report", "Technical material behaviour, metrics and comparison narrative.", "PDF + JSON"],
+    ["Investor Report", "Commercial explanation, opportunity framing and shareable visual appendix.", "PDF"],
+    ["Field Survey", "Ground-intelligence layout for Matter Intelligence and well/seismic scenarios.", "PDF + SVG"],
+    ["Discovery Dossier", "Complete discovery media pack with card, story, rank and export bundle.", "PDF + SVG + JSON"],
+  ];
+
+  const exportPreset = (name, format) => {
+    const payload = {
+      title: name,
+      compareSet: compare.join(" + "),
+      discoveryScore: 94,
+      readiness: "Subscriber-grade",
+      format,
+      generatedAt: new Date().toISOString(),
+    };
+    exportAllFormats({
+      title: `ElementOS ${name}`,
+      summary: `${name} generated for ${compare.join(" + ")} with branded PDF, JSON and SVG intelligence output.`,
+      payload,
+      sections: [
+        { label: "Recommended Action", value: "Save to Workspace, generate media, and share the public discovery page." },
+        { label: "Subscriber Value", value: "Turns a simulation into a professional asset." },
+      ],
+      formats: ["pdf", "json", "svg"],
+    });
+  };
+
+  return (
+    <Panel>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Pill gold><FileText size={12} /> executive report generator</Pill>
+          <h2 className="mt-3 text-4xl font-black">Reports that feel worth paying for.</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">
+            Every export should look designed, not dumped. Choose a preset and generate a branded PDF, JSON archive and SVG cover asset.
+          </p>
+        </div>
+        <Button onClick={() => setPage("simreports")} variant="primary">Open Dossiers</Button>
+      </div>
+      <div className="mt-6 grid gap-4 lg:grid-cols-5">
+        {presets.map(([name, body, format], index) => (
+          <div key={name} className={`${index === 4 ? "poster-card-gold" : "poster-card"} rounded-[1.7rem] p-5`}>
+            <div className="text-[10px] uppercase tracking-[.22em] text-slate-500">{format}</div>
+            <h3 className="mt-3 text-xl font-black text-white">{name}</h3>
+            <p className="mt-3 min-h-[72px] text-sm leading-6 text-slate-400">{body}</p>
+            <div className="mt-5 grid gap-2">
+              <Button onClick={() => exportPreset(name, format)} variant={index === 4 ? "primary" : "ghost"} className="w-full text-xs">Export Pack</Button>
+              <Button onClick={() => setPage("reports")} className="w-full text-xs">Preview</Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function DiscoveryReputationSystem({ setPage }) {
+  const badges = [
+    ["First Discovery", "Unlocked"],
+    ["100 Simulations", "Unlocked"],
+    ["Matter Intelligence Pioneer", "Active"],
+    ["Discovery Architect", "Rank"],
+    ["Public Publisher", "Next"],
+  ];
+  return (
+    <Panel className="overflow-hidden">
+      <div className="grid gap-6 xl:grid-cols-[.85fr_1.15fr]">
+        <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
+          <Pill gold><ShieldCheck size={12} /> discovery reputation</Pill>
+          <h2 className="mt-4 text-5xl font-black text-white">Paul Roper</h2>
+          <div className="mt-2 text-xl font-black text-cyan-100">Discovery Architect</div>
+          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            {[["4,210", "Discovery Score"], ["184", "Discoveries"], ["42", "Reports"]].map(([v,l]) => (
+              <div key={l} className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                <div className="text-3xl font-black text-white">{v}</div>
+                <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{l}</div>
+              </div>
+            ))}
+          </div>
+          <Button onClick={() => setPage("lab")} variant="primary" className="mt-5 w-full">Open My Discovery Vault</Button>
+        </div>
+        <div>
+          <Pill><Sparkles size={12} /> achievements</Pill>
+          <h3 className="mt-3 text-3xl font-black">Progression makes subscribers return.</h3>
+          <div className="mt-5 grid gap-3 md:grid-cols-5">
+            {badges.map(([name, status]) => (
+              <button key={name} onClick={() => setPage(status === "Next" ? "publicdiscovery" : "discover")} className="rounded-[1.4rem] border border-white/10 bg-white/[.035] p-4 text-left transition hover:bg-cyan-300/10">
+                <div className="mb-3 grid h-12 w-12 place-items-center rounded-xl border border-amber-300/30 bg-amber-300/10 text-amber-100">★</div>
+                <div className="text-sm font-black text-white">{name}</div>
+                <div className="mt-2 text-[10px] uppercase tracking-[.2em] text-cyan-200">{status}</div>
+              </button>
+            ))}
+          </div>
+          <Info title="Subscriber psychology">People share and keep using tools that reflect identity. Discovery Score, ranks and badges turn ElementOS into a personal scientific profile, not just a tool.</Info>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function DiscoveryNetworkSubscriberEdition({ setPage }) {
+  const network = [
+    ["+42", "Reports Today", "simreports"],
+    ["+18", "New Discoveries", "discover"],
+    ["+6", "Trending Signals", "matterlab"],
+    ["+11", "Public Pages", "publicdiscovery"],
+    ["+24", "Media Exports", "viralcards"],
+  ];
+  const feed = [
+    ["Researcher_204", "generated a Discovery Dossier", "Ti + Hf"],
+    ["Nova Alloy", "published a public page", "Ga + In"],
+    ["Paul Roper", "saved a Matter Intelligence target", "DK-27"],
+    ["Cu Corridor", "exported a social pack", "Al + Cu"],
+  ];
+  return (
+    <Panel className="poster-card">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Pill gold><Network size={12} /> live discovery network</Pill>
+          <h2 className="mt-3 text-4xl font-black">The platform should feel alive before the crowd arrives.</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">A live network layer gives first subscribers the sense that ElementOS is active, useful and growing every day.</p>
+        </div>
+        <Button onClick={() => setPage("discover")} variant="primary">Open Network Feed</Button>
+      </div>
+      <div className="mt-6 grid gap-4 lg:grid-cols-[.95fr_1.05fr]">
+        <div className="grid gap-3 sm:grid-cols-5 lg:grid-cols-1">
+          {network.map(([value, label, target]) => (
+            <button key={label} onClick={() => setPage(target)} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-left transition hover:bg-cyan-300/15">
+              <div className="text-3xl font-black text-cyan-100">{value}</div>
+              <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+            </button>
+          ))}
+        </div>
+        <div className="space-y-3">
+          {feed.map(([who, action, asset]) => (
+            <button key={`${who}-${asset}`} onClick={() => setPage("discover")} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:bg-white/[.06]">
+              <div>
+                <div className="text-sm font-black text-cyan-100">{who}</div>
+                <div className="mt-1 text-sm text-slate-300">{action}</div>
+              </div>
+              <div className="rounded-xl border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-sm font-black text-amber-100">{asset}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function SubscriberRecommendedNextStep({ setPage, context = "Titanium + Hafnium" }) {
+  const actions = [
+    ["Generate Executive Report", "simreports", FileText],
+    ["Create Viral Poster", "viralcards", Download],
+    ["Save to Workspace", "lab", Save],
+    ["Open Matter Intelligence", "matterlab", Globe2],
+  ];
+  return (
+    <Panel className="border-emerald-300/20 bg-emerald-300/5">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <Pill gold><Sparkles size={12} /> recommended next step</Pill>
+          <h2 className="mt-3 text-3xl font-black">You have a strong signal. Turn {context} into a subscriber-grade asset.</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">No dead ends: every useful result should become a report, poster, workspace save or public discovery page.</p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {actions.map(([label, target, Icon], index) => (
+            <Button key={label} onClick={() => setPage(target)} variant={index === 0 ? "primary" : "ghost"}><Icon size={15} className="mr-2 inline" />{label}</Button>
+          ))}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function LandingPage({ setPage, session, isPro, startCheckout }) {
   const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(18)), []);
   const daily = discoveries[0] || { a: "Ti", b: "Hf", aiConfidence: 94, momentum: 91, tier: "RARE", score: 94, type: "Rare thermal-pressure alignment" };
@@ -5614,6 +5831,11 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
       </Panel>
 
       <DiscoveryCommandCenter setPage={setPage} compare={heroCompare} />
+      <DiscoveryNetworkSubscriberEdition setPage={setPage} />
+      <SubscriberWorkspaceVault setPage={setPage} />
+      <ExecutiveReportGeneratorPro setPage={setPage} compare={heroCompare} />
+      <DiscoveryReputationSystem setPage={setPage} />
+      <SubscriberRecommendedNextStep setPage={setPage} context={discoveryTitle} />
       <ScienceCommandElite setPage={setPage} />
       <LiveScienceHeartbeat setPage={setPage} />
       <MissionProgressPanel setPage={setPage} />
