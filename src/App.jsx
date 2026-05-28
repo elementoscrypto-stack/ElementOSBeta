@@ -3366,7 +3366,7 @@ function PeriodicTable({ selected, setSelected }) {
 }
 
 function Compare({ compare, setCompare, setPage }) {
-  const [candidate, setCandidate] = useState("Al");
+  const [candidate, setCandidate] = useState("H");
   const rows = compare.map((sym) => ({ ...elementMap[sym], metrics: score(sym) }));
 
   return (
@@ -3410,12 +3410,20 @@ function Compare({ compare, setCompare, setPage }) {
           </Button>
 
           <Button
-            onClick={() => {
-              setCompare([]);
-              setTimeout(() => setCompare(["Al", "Fe", "Cu", "Ti"]), 10);
-            }}
+            onClick={() =>
+              setCompare((x) => {
+                const next = x.filter((sym) => sym !== candidate);
+                return next.length ? next : ["H"];
+              })
+            }
           >
-            Reset
+            Remove Element
+          </Button>
+
+          <Button
+            onClick={() => setCompare(["H"])}
+          >
+            Reset to Hydrogen
           </Button>
 
           <Button onClick={() => setPage("reports")}>Create Report</Button>
@@ -8214,7 +8222,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
 export default function App() {
   const [page, setPage] = useState("landing");
   const [selected, setSelected] = useState("Al");
-  const [compare, setCompare] = useState(["Al", "Fe", "Cu", "Ti"]);
+  const [compare, setCompare] = useState(["H"]);
   const [session, setSession] = useState(null);
   const [isPro, setIsPro] = useState(false);
   const [publicReportRequested, setPublicReportRequested] = useState(false);
@@ -8354,7 +8362,7 @@ useEffect(() => {
     const workspace = data[0];
 
     setSelected(workspace.selected_element || "Al");
-    setCompare(workspace.compare_set || ["Al", "Fe", "Cu", "Ti"]);
+    setCompare(workspace.compare_set || ["H"]);
 
     alert("Workspace restored.");
   };
