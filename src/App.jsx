@@ -6407,8 +6407,17 @@ Generated in ElementOS.`,
             <h2 className="mt-3 text-4xl font-black">Trending Discovery Queue</h2>
             <p className="mt-3 text-sm leading-6 text-slate-400">Use these as your daily content calendar. Each row can become a card, poster, report or public discovery page.</p>
             <div className="mt-6 space-y-3">
-              {discoveries.slice(0, 7).map((d, index) => (
-                <button key={`${d.dna}-viral`} onClick={() => setCardIndex(index)} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/30 hover:bg-cyan-300/10">
+              {discoveries.slice(0, 7).map((d, index) => {
+                const activeQueueItem = mediaSourceId === "discovery" && cardIndex === index;
+                return (
+                <button
+                  key={`${d.dna}-viral`}
+                  onClick={() => {
+                    setCardIndex(index);
+                    setMediaSourceId("discovery");
+                  }}
+                  className={`flex w-full items-center justify-between gap-4 rounded-2xl border p-4 text-left transition ${activeQueueItem ? "border-cyan-300/50 bg-cyan-300/15 shadow-[0_0_34px_rgba(34,211,238,.16)]" : "border-white/10 bg-black/25 hover:border-cyan-300/30 hover:bg-cyan-300/10"}`}
+                >
                   <div>
                     <div className="text-lg font-black text-cyan-100">#{index + 1} · {d.a} + {d.b}</div>
                     <div className="mt-1 text-sm text-slate-400">{d.type} · {d.tier} · {d.dna}</div>
@@ -6418,7 +6427,8 @@ Generated in ElementOS.`,
                     <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI</div>
                   </div>
                 </button>
-              ))}
+              );
+              })}
             </div>
           </Panel>
 
