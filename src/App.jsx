@@ -3622,14 +3622,14 @@ function BehaviourAtlas({ selected, setSelected }) {
       <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
         <Panel>
           <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-3xl font-black">Live Behaviour Field</h2><p className="mt-2 text-sm text-slate-400">{environment}: {env.label}</p></div><Pill gold>{fieldMode} mode</Pill></div>
-          <div className="mt-5 flex flex-wrap gap-2">{metrics.map(l => <Button key={l} onClick={() => setLayer(l)} variant={layer === l ? "primary" : "ghost"}>{l === "alignment" ? "Alignment" : l}</Button>)}<select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">{Object.keys(environmentProfiles).map(x => <option key={x}>{x}</option>)}</select><select value={fieldMode} onChange={(e) => setFieldMode(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">{["wave","magnetic","thermal","pressure","corrosion"].map(x => <option key={x}>{x}</option>)}</select></div>
+          <div className="mt-5 flex flex-wrap gap-2">{metrics.map(l => <Button key={l} onClick={() => setLayer(l)} variant={layer === l ? "primary" : "ghost"}>{({ stability: "Stability", conductivity: "Conductivity", thermal: "Thermal", diffusion: "Diffusion", pressure: "Pressure", rarity: "Rarity", alignment: "Alignment" })[l]}</Button>)}<select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">{Object.keys(environmentProfiles).map(x => <option key={x}>{x}</option>)}</select><select value={fieldMode} onChange={(e) => setFieldMode(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">{["wave","magnetic","thermal","pressure","corrosion"].map(x => <option key={x}>{x}</option>)}</select></div>
           <div className="mt-6 grid grid-cols-8 gap-2 md:grid-cols-12 xl:grid-cols-16">
             {fieldCells.map((cell, i) => <button key={`${cell.element.symbol}-${i}`} onClick={() => setSelected(cell.element.symbol)} className={`relative aspect-square overflow-hidden rounded-2xl border text-xs font-black transition hover:scale-110 ${selected === cell.element.symbol ? "ring-2 ring-white" : "border-white/10"}`} style={heatStyle(cell.value, layer === "alignment" ? 100 : 5)}><span className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,.35),transparent_45%)] opacity-60"/><span className="relative z-10">{cell.element.symbol}</span></button>)}
           </div>
         </Panel>
         <Panel>
           <Pill gold><Activity size={12}/> environment load</Pill>
-          <h2 className="mt-3 text-3xl font-black">Telemetry Streams</h2>
+          <h2 className="mt-3 text-3xl font-black">Telemetry Streams — {selectedElement.name} ({selectedElement.symbol})</h2>
           <div className="mt-5 space-y-4">
             {Object.entries(env).filter(([k]) => k !== "label").map(([label, value]) => <div key={label}><div className="mb-1 flex justify-between text-xs uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span>{value}%</span></div><div className="h-3 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-300 to-amber-300" style={{ width: `${value}%` }}/></div></div>)}
           </div>
@@ -3637,7 +3637,7 @@ function BehaviourAtlas({ selected, setSelected }) {
           <p className="text-sm leading-7 text-slate-300">{selectedElement.name} shows a {selectedScore[layer] > (layer === "alignment" ? 65 : 3.5) ? "strong" : "moderate"} {layer} signal inside the {environment} profile.</p>
         </Panel>
       </div>
-      <Panel><h2 className="text-3xl font-black">Top Materials for {layer}</h2><div className="mt-5 grid gap-3 md:grid-cols-5">{top.map((e, i) => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40"><div className="text-xs text-slate-500">#{i + 1}</div><div className="text-2xl font-black text-cyan-100">{e.symbol}</div><div className="text-sm text-slate-400">{e.name}</div></button>)}</div></Panel>
+      <Panel><h2 className="text-3xl font-black">Top Materials for {({ stability: "Stability", conductivity: "Conductivity", thermal: "Thermal", diffusion: "Diffusion", pressure: "Pressure", rarity: "Rarity", alignment: "Alignment" })[layer]}</h2><div className="mt-5 grid gap-3 md:grid-cols-5">{top.map((e, i) => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40"><div className="text-xs text-slate-500">#{i + 1}</div><div className="text-2xl font-black text-cyan-100">{e.symbol}</div><div className="text-sm text-slate-400">{e.name}</div></button>)}</div></Panel>
     </>
   );
 }
@@ -3647,16 +3647,41 @@ function BehaviourGraph({ selected, setSelected }) {
   const [mode, setMode] = useState("network");
   const selectedElement = elementMap[selected] || elementMap.Al;
   const selectedScore = score(selected);
-  const related = elements.filter(e => e.symbol !== selected).map(e => {
+  const metricLabels = {
+    stability: "Stability",
+    conductivity: "Conductivity",
+    thermal: "Thermal",
+    diffusion: "Diffusion",
+    pressure: "Pressure",
+    rarity: "Rarity",
+    alignment: "Alignment",
+  };
+  const modeLabels = {
+    network: "Network",
+    orbit: "Orbit",
+    rank: "Rank",
+  };
+  const metricMax = metric === "alignment" ? 100 : 5;
+  const allRelated = elements.filter(e => e.symbol !== selected).map(e => {
     const s = score(e.symbol);
     const distance = Math.abs(s.stability - selectedScore.stability) + Math.abs(s.conductivity - selectedScore.conductivity) + Math.abs(s.thermal - selectedScore.thermal) + Math.abs(s.diffusion - selectedScore.diffusion) + Math.abs(s.pressure - selectedScore.pressure);
-    return { ...e, metrics: s, similarity: Math.max(0, Math.min(99, 100 - distance * 11)), relationship: compatibilityScore(selected, e.symbol) };
-  }).sort((a,b) => b.similarity - a.similarity).slice(0, 22);
-  const nodes = related.map((e, i) => ({ ...e, x: 50 + Math.cos(i / related.length * Math.PI * 2) * (18 + (i % 5) * 5.5), y: 50 + Math.sin(i / related.length * Math.PI * 2) * (18 + (i % 5) * 5.5) }));
+    const metricValue = Number(s[metric] || 0);
+    const focusMetric = Number(selectedScore[metric] || 0);
+    const metricAffinity = Math.max(0, Math.min(99, 100 - Math.abs(metricValue - focusMetric) * (metric === "alignment" ? 0.8 : 18)));
+    const similarity = Math.max(0, Math.min(99, Math.round((100 - distance * 11) * 0.58 + metricAffinity * 0.42)));
+    return { ...e, metrics: s, metricValue, metricAffinity, similarity, relationship: compatibilityScore(selected, e.symbol) };
+  });
+  const related = allRelated.sort((a,b) => mode === "rank" ? b.metricValue - a.metricValue : b.similarity - a.similarity).slice(0, 22);
+  const nodes = related.map((e, i) => {
+    const ratio = Math.max(0.08, Math.min(1, (e.metricValue || 0) / metricMax));
+    const angle = mode === "rank" ? -Math.PI / 2 + (i / Math.max(1, related.length - 1)) * Math.PI : (i / related.length) * Math.PI * 2;
+    const radius = mode === "orbit" ? 16 + ratio * 36 : mode === "rank" ? 12 + i * 2.25 : 18 + (i % 5) * 5.5;
+    return { ...e, ratio, x: 50 + Math.cos(angle) * radius, y: 50 + Math.sin(angle) * radius };
+  });
   const top = related[0] || selectedElement;
   const exportGraph = () => {
-    const content = `ElementOS Relationship Graph\n\nFocus: ${selectedElement.name} (${selectedElement.symbol})\nMetric: ${metric}\nTop relationship: ${top.symbol} — ${top.name}\nSimilarity: ${Number(top.similarity || 0).toFixed(1)}%\n\nClosest materials:\n${related.slice(0, 10).map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${e.similarity.toFixed(1)}%`).join("\n")}`;
-    exportAllFormats({ baseName: `${selectedElement.symbol}-relationship-graph`, title: `Relationship Graph: ${selectedElement.symbol}`, summary: content, payload: { selected, metric, related: related.slice(0, 10) } });
+    const content = `ElementOS Relationship Graph\n\nFocus: ${selectedElement.name} (${selectedElement.symbol})\nMetric: ${metricLabels[metric]}\nMode: ${modeLabels[mode]}\nTop relationship: ${top.symbol} — ${top.name}\nSimilarity: ${Number(top.similarity || 0).toFixed(1)}%\n\nClosest materials:\n${related.slice(0, 10).map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${e.similarity.toFixed(1)}% · ${metricLabels[metric]} ${Number(e.metricValue).toFixed(metric === "alignment" ? 0 : 2)}`).join("\n")}`;
+    exportAllFormats({ baseName: `${selectedElement.symbol}-relationship-graph`, title: `Relationship Graph: ${selectedElement.symbol}`, summary: content, payload: { selected, metric, mode, related: related.slice(0, 10) } });
   };
   return (
     <>
@@ -3665,31 +3690,37 @@ function BehaviourGraph({ selected, setSelected }) {
           <div>
             <Pill gold><Network size={12}/> relationship intelligence</Pill>
             <h1 className="mt-4 text-5xl font-black sm:text-7xl">Relationship <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Graph</span></h1>
-            <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A magnetic network of material relationships. See which elements behave like your selected material, which ones are substitutes, and which connections deserve a report.</p>
-            <Info title="What changed">The old Relationship Graph title is gone. This page now behaves like a relationship intelligence engine with ranked matches, network geometry and exportable relationship reports.</Info>
+            <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A magnetic network of material relationships. The metric buttons now actively re-rank the network, rebuild the geometry and update the relationship signal.</p>
+            <Info title="Active relationship lens">Viewing <b>{metricLabels[metric]}</b> in <b>{modeLabels[mode]}</b> mode for {selectedElement.name}. Click a metric to change how ElementOS scores and draws the network.</Info>
           </div>
           <Panel>
             <div className="text-xs uppercase tracking-[.22em] text-slate-500">Current focus</div>
-            <div className="mt-3 flex items-end justify-between"><div><div className="text-7xl font-black text-amber-100">{selectedElement.symbol}</div><div className="text-2xl font-black">{selectedElement.name}</div></div><div className="text-right"><div className="text-4xl font-black text-cyan-100">{Number(top.similarity || 0).toFixed(0)}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">top match</div></div></div>
+            <div className="mt-3 flex items-end justify-between"><div><div className="text-7xl font-black text-amber-100">{selectedElement.symbol}</div><div className="text-2xl font-black">{selectedElement.name}</div></div><div className="text-right"><div className="text-4xl font-black text-cyan-100">{Number(top.similarity || 0).toFixed(0)}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{metricLabels[metric]} match</div></div></div>
             <Button onClick={exportGraph} variant="primary" className="mt-5 w-full">Export Relationship Graph</Button>
           </Panel>
         </div>
       </Panel>
       <GuidePanel page="graph" />
-      <Panel><div className="flex flex-wrap gap-2">{metrics.map(m => <Button key={m} onClick={() => setMetric(m)} variant={metric === m ? "primary" : "ghost"}>{m === "alignment" ? "Alignment" : m}</Button>)}{["network","orbit","rank"].map(x => <Button key={x} onClick={() => setMode(x)} variant={mode === x ? "primary" : "ghost"}>{x}</Button>)}</div></Panel>
+      <Panel>
+        <div className="flex flex-wrap gap-2">
+          {metrics.map(m => <Button key={m} onClick={() => setMetric(m)} variant={metric === m ? "primary" : "ghost"}>{metricLabels[m]}</Button>)}
+          {Object.entries(modeLabels).map(([id, label]) => <Button key={id} onClick={() => setMode(id)} variant={mode === id ? "primary" : "ghost"}>{label}</Button>)}
+        </div>
+      </Panel>
       <div className="grid gap-6 xl:grid-cols-[1fr_430px]">
         <Panel>
           <div className="relative h-[700px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_35%),linear-gradient(135deg,#020617,#07111f)]">
             <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
-            <svg className="absolute inset-0 h-full w-full">{nodes.map((n, i) => <line key={n.symbol} x1="50%" y1="50%" x2={`${n.x}%`} y2={`${n.y}%`} stroke={i < 5 ? "rgba(251,191,36,.35)" : "rgba(34,211,238,.22)"} strokeWidth={i < 5 ? "2.4" : "1.2"}/>)}</svg>
-            <div className="absolute left-1/2 top-1/2 grid h-36 w-36 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[2rem] border border-amber-300/40 bg-amber-300/10 text-center shadow-[0_0_70px_rgba(251,191,36,.25)]"><div><div className="text-5xl font-black text-amber-100">{selected}</div><div className="text-[10px] uppercase tracking-[.2em] text-amber-100/70">source</div></div></div>
-            {nodes.map((n, i) => <button key={n.symbol} onClick={() => setSelected(n.symbol)} className="absolute grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-2xl border border-cyan-300/25 bg-slate-950/85 text-sm font-black text-cyan-100 transition hover:scale-125" style={{ left: `${n.x}%`, top: `${n.y}%`, boxShadow: `0 0 ${12 + (n.metrics[metric] / (metric === "alignment" ? 100 : 5)) * 44}px rgba(34,211,238,.42)` }}><span>{n.symbol}</span><span className="text-[10px] text-slate-300">{n.similarity.toFixed(0)}%</span></button>)}
+            <svg className="absolute inset-0 h-full w-full">{nodes.map((n, i) => <line key={n.symbol} x1="50%" y1="50%" x2={`${n.x}%`} y2={`${n.y}%`} stroke={i < 5 ? "rgba(251,191,36,.42)" : "rgba(34,211,238,.24)"} strokeWidth={i < 5 ? "2.8" : "1.3"}/>)}</svg>
+            <div className="absolute left-1/2 top-1/2 grid h-36 w-36 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[2rem] border border-amber-300/40 bg-amber-300/10 text-center shadow-[0_0_70px_rgba(251,191,36,.25)]"><div><div className="text-5xl font-black text-amber-100">{selected}</div><div className="text-[10px] uppercase tracking-[.2em] text-amber-100/70">{metricLabels[metric]}</div></div></div>
+            {nodes.map((n, i) => <button key={n.symbol} onClick={() => setSelected(n.symbol)} className="absolute grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-2xl border border-cyan-300/25 bg-slate-950/85 text-sm font-black text-cyan-100 transition hover:scale-125" style={{ left: `${n.x}%`, top: `${n.y}%`, boxShadow: `0 0 ${14 + n.ratio * 52}px rgba(34,211,238,.48)` }}><span>{n.symbol}</span><span className="text-[10px] text-slate-300">{mode === "rank" ? Number(n.metricValue).toFixed(metric === "alignment" ? 0 : 1) : `${n.similarity.toFixed(0)}%`}</span></button>)}
           </div>
         </Panel>
         <Panel>
           <Pill gold><Sparkles size={12}/> closest relationships</Pill>
           <h2 className="mt-3 text-3xl font-black">Best matches for {selected}</h2>
-          <div className="mt-4 space-y-2">{related.slice(0, 10).map((e, i) => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10"><span><b className="text-cyan-100">#{i + 1} {e.symbol}</b> <span className="text-slate-400">{e.name}</span><div className="text-xs text-slate-500">Compatibility {e.relationship}%</div></span><span className="font-black text-emerald-200">{e.similarity.toFixed(0)}%</span></button>)}</div>
+          <div className="mt-2 text-sm text-slate-400">Sorted by {mode === "rank" ? metricLabels[metric] : `${metricLabels[metric]} relationship affinity`}.</div>
+          <div className="mt-4 space-y-2">{related.slice(0, 10).map((e, i) => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10"><span><b className="text-cyan-100">#{i + 1} {e.symbol}</b> <span className="text-slate-400">{e.name}</span><div className="text-xs text-slate-500">Compatibility {e.relationship}% · {metricLabels[metric]} {Number(e.metricValue).toFixed(metric === "alignment" ? 0 : 2)}</div></span><span className="font-black text-emerald-200">{e.similarity.toFixed(0)}%</span></button>)}</div>
         </Panel>
       </div>
     </>
@@ -3829,6 +3860,20 @@ function IsotopeLab() {
   const isotopeName = `${selectedElement.name}-${massNumber}`;
   const shellLabel = stability > 78 ? "high stability candidate" : stability > 52 ? "moderate stability candidate" : "unstable / high decay-risk candidate";
   const isotopeClass = stability > 82 ? "MAGIC SHELL" : stability > 68 ? "PROMISING" : stability > 48 ? "EXPERIMENTAL" : "VOLATILE";
+  const isotopeModeLabels = { stability: "Stability", binding: "Binding", decay: "Decay", shell: "Shell" };
+  const modeScores = {
+    stability,
+    binding: bindingSignal,
+    decay: decayRisk,
+    shell: shellBonus ? 100 : Math.max(0, Math.min(100, 42 + Math.abs(neutronRatio - 1.35) * -38 + field * 0.16)),
+  };
+  const activeModeScore = modeScores[mode] ?? stability;
+  const modeNarratives = {
+    stability: `${isotopeName} is being scored by neutron balance, shell bonus and environmental load.`,
+    binding: `${isotopeName} is being scored by binding signal strength and modelled nuclear cohesion.`,
+    decay: `${isotopeName} is being scored by decay pressure; lower decay risk means a cleaner isotope signal.`,
+    shell: `${isotopeName} is being scored by shell-favourable proton/neutron positions and magic-number proximity.`,
+  };
 
   const nucleus = Array.from({ length: Math.min(132, Math.max(1, massNumber)) }, (_, i) => ({
     type: i < protons ? "p" : "n",
@@ -3847,8 +3892,12 @@ function IsotopeLab() {
     const p = e.atomicNumber;
     const n = Math.round(p * 1.18);
     const st = Math.max(0, Math.min(100, 82 - Math.abs(n - p * 1.35) * 2.1 + (magicNumbers.includes(p) || magicNumbers.includes(n) ? 12 : 0)));
-    return { ...e, protons: p, neutrons: n, stability: st };
-  }).sort((a, b) => b.stability - a.stability).slice(0, 10);
+    const bind = Math.max(0, Math.min(100, 42 + st * 0.48 + Math.sin((p + n) / 7) * 8));
+    const decay = Math.max(0, Math.min(100, 100 - st));
+    const shell = magicNumbers.includes(p) || magicNumbers.includes(n) ? 100 : Math.max(0, Math.min(100, 42 + Math.abs(n / Math.max(1, p) - 1.35) * -38));
+    const modeValue = { stability: st, binding: bind, decay, shell }[mode] ?? st;
+    return { ...e, protons: p, neutrons: n, stability: st, binding: bind, decay, shell, modeValue };
+  }).sort((a, b) => mode === "decay" ? a.modeValue - b.modeValue : b.modeValue - a.modeValue).slice(0, 10);
 
   const exportSummary = () => {
     const content = `ElementOS Isotope Intelligence Report\n\nIsotope: ${isotopeName}\nElement: ${selectedElement.name} (${selectedElement.symbol})\nProtons: ${protons}\nNeutrons: ${neutrons}\nMass Number: ${massNumber}\nNeutron Ratio: ${neutronRatio.toFixed(3)}\nStability Score: ${stability.toFixed(1)} / 100\nDecay Risk: ${decayRisk.toFixed(1)} / 100\nBinding Signal: ${bindingSignal.toFixed(1)} / 100\nClass: ${isotopeClass}\nInterpretation: ${shellLabel}\nGenerated: ${new Date().toLocaleString()}`;
@@ -3880,16 +3929,16 @@ function IsotopeLab() {
           <h2 className="text-2xl font-black">Nucleus Builder</h2>
           <label className="mt-5 block text-sm text-slate-400">Base element<select value={symbol} onChange={(e) => applyElement(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select></label>
           <div className="mt-5 grid gap-4">{[["Protons", protons, setProtons, 1, 118],["Neutrons", neutrons, setNeutrons, 0, 180],["Field Strength", field, setField, 0, 100],["Thermal Load", temperature, setTemperature, 0, 100],["Pressure Load", pressure, setPressure, 0, 100]].map(([label, value, setter, min, max]) => <label key={label} className="text-sm text-slate-400"><div className="flex justify-between"><span>{label}</span><span className="font-mono text-cyan-200">{value}</span></div><input type="range" min={min} max={max} value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-2 w-full"/></label>)}</div>
-          <div className="mt-5 grid gap-2 sm:grid-cols-2">{["stability","binding","decay","shell"].map(x => <Button key={x} onClick={() => setMode(x)} variant={mode === x ? "primary" : "ghost"}>{x}</Button>)}</div>
-          <Button variant="primary" onClick={exportSummary} className="mt-6 w-full"><Download size={15} className="inline"/> Export Isotope PDF/JSON/SVG</Button>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">{Object.entries(isotopeModeLabels).map(([x, label]) => <Button key={x} onClick={() => setMode(x)} variant={mode === x ? "primary" : "ghost"}>{label}</Button>)}</div>
+          <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-cyan-200">Active isotope lens</div><div className="mt-2 text-3xl font-black text-cyan-100">{isotopeModeLabels[mode]} · {Number(activeModeScore).toFixed(1)}%</div><p className="mt-2 text-sm leading-6 text-slate-300">{modeNarratives[mode]}</p></div><Button variant="primary" onClick={exportSummary} className="mt-6 w-full"><Download size={15} className="inline"/> Export Isotope PDF/JSON/SVG</Button>
         </Panel>
         <Panel>
           <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
             <div>
-              <div className="text-xs uppercase tracking-[.22em] text-slate-500">Nuclear readout</div>
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">Nuclear readout · {isotopeModeLabels[mode]} lens</div>
               <h2 className="mt-2 text-5xl font-black text-cyan-100">{selectedElement.symbol}-{massNumber}</h2>
               <p className="mt-3 text-slate-300">{selectedElement.name} nucleus with {protons} protons and {neutrons} neutrons. Neutron ratio {neutronRatio.toFixed(3)}.</p>
-              <div className="mt-6 grid gap-4 md:grid-cols-3">{[["Stability", stability, 100],["Decay Risk", decayRisk, 100],["Binding Signal", bindingSignal, 100]].map(([label, value, max]) => <div key={label} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div><div className="mt-2 text-3xl font-black text-cyan-100">{value.toFixed(1)}</div><div className="mt-3 h-3 rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-fuchsia-300" style={{ width: `${Math.min(100, (value / max) * 100)}%` }}/></div></div>)}</div>
+              <div className="mt-6 grid gap-4 md:grid-cols-4">{[[isotopeModeLabels[mode], activeModeScore, 100],["Stability", stability, 100],["Decay Risk", decayRisk, 100],["Binding Signal", bindingSignal, 100]].map(([label, value, max]) => <div key={label} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div><div className="mt-2 text-3xl font-black text-cyan-100">{value.toFixed(1)}</div><div className="mt-3 h-3 rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-fuchsia-300" style={{ width: `${Math.min(100, (value / max) * 100)}%` }}/></div></div>)}</div>
               <Info title="Simulation Interpretation">{isotopeName} is currently a <b>{shellLabel}</b>. Stability improves when neutron balance approaches the modelled stable band and when proton/neutron counts land near shell-favourable numbers.</Info>
             </div>
             <div className="relative h-[450px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(217,70,239,.18),transparent_34%),linear-gradient(135deg,#020617,#07111f)]">
@@ -3901,7 +3950,7 @@ function IsotopeLab() {
         </Panel>
       </div>
       <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-        <Panel><h2 className="text-3xl font-black">Isotope Family Candidates</h2><div className="mt-5 grid gap-3 md:grid-cols-5">{isotopeFamilies.map((e, i) => <button key={e.symbol} onClick={() => applyElement(e.symbol)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40"><div className="text-xs text-slate-500">#{i + 1}</div><div className="text-2xl font-black text-cyan-100">{e.symbol}</div><div className="text-sm text-slate-400">{e.name}</div><div className="mt-2 text-sm font-black text-emerald-100">{e.stability.toFixed(0)}%</div></button>)}</div></Panel>
+        <Panel><h2 className="text-3xl font-black">Isotope Family Candidates</h2><div className="mt-5 grid gap-3 md:grid-cols-5">{isotopeFamilies.map((e, i) => <button key={e.symbol} onClick={() => applyElement(e.symbol)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40"><div className="text-xs text-slate-500">#{i + 1}</div><div className="text-2xl font-black text-cyan-100">{e.symbol}</div><div className="text-sm text-slate-400">{e.name}</div><div className="mt-2 text-sm font-black text-emerald-100">{Number(e.modeValue).toFixed(0)}% {isotopeModeLabels[mode]}</div></button>)}</div></Panel>
         <Panel><Pill gold><Dna size={12}/> isotope genome</Pill><h2 className="mt-3 text-3xl font-black">Discovery Genome</h2>{[["Proton field", protons / 118 * 100],["Neutron field", Math.min(100, neutrons / 180 * 100)],["Shell signal", shellBonus ? 100 : 42],["Binding", bindingSignal],["Stability", stability]].map(([label, value]) => <div key={label} className="mt-4"><div className="mb-1 flex justify-between text-xs uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span>{Number(value).toFixed(0)}%</span></div><div className="h-3 rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-amber-300" style={{ width: `${Math.min(100, value)}%` }}/></div></div>)}</Panel>
       </div>
     </>
