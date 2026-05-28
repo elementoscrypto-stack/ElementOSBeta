@@ -1798,6 +1798,17 @@ function ElementOSThemeSkin() {
             @keyframes eosSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
       @keyframes eosSpinReverse { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
       @keyframes eosPulse { 0%,100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.06); } }
+      @keyframes eosStrataDrift { 0%,100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.18) saturate(1.35); } }
+      @keyframes eosDrillPulse { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.35) saturate(1.35); } }
+      @keyframes eosMudFlow { from { transform: translateY(-55%); } to { transform: translateY(18%); } }
+      @keyframes eosMudBead { 0% { transform: translate(-50%, -28px) scale(.8); opacity: .15; } 35% { opacity: .85; } 100% { transform: translate(-50%, 74px) scale(1.15); opacity: .05; } }
+      @keyframes eosDrillBit { from { filter: brightness(1); } 50% { filter: brightness(1.55) saturate(1.45); } to { filter: brightness(1); } }
+      @keyframes eosReservoirGlow { 0%,100% { opacity: .74; filter: brightness(1); } 50% { opacity: 1; filter: brightness(1.35) saturate(1.25); } }
+      @keyframes eosPressureBloom { 0%,100% { transform: scale(.92); filter: blur(0px) brightness(1); } 50% { transform: scale(1.08); filter: blur(1px) brightness(1.35); } }
+      @keyframes eosWaveShell { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.45) saturate(1.45); } }
+      @keyframes eosWaveTravel { 0% { left: -10%; opacity: .15; } 12% { opacity: 1; } 100% { left: 110%; opacity: .12; } }
+      @keyframes eosTraceFlow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -42; } }
+      @keyframes eosSvgPulse { 0%,100% { opacity: .55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.8); } }
     `}</style>
   );
 }
@@ -5713,6 +5724,12 @@ function ExperimentalWellDriller({ setPage }) {
   const kickRisk = Math.round(Math.min(99, Math.max(1, pressure * 0.72 + depthKm * 7 - mud * 0.45 + fp.instability * 11)));
   const rateOfPenetration = Math.round(Math.max(2, Math.min(80, rpm * 0.12 - fp.hardness * 6 + mud * 0.08 + pressure * 0.04)));
   const casingLoad = Math.round(Math.min(99, Math.max(10, depthKm * 16 + inclination * 0.5 + pressure * 0.2)));
+  const drillTempo = Math.max(0.9, Math.min(4.8, 260 / Math.max(40, rpm)));
+  const mudPulseSpeed = Math.max(1.2, Math.min(5.5, 7 - mud / 18));
+  const pressurePulseSpeed = Math.max(1.1, Math.min(4.2, 5 - pressure / 28));
+  const boreShift = inclination * 1.4 - 40;
+  const targetShift = inclination * 1.8 - 54;
+  const boreGlow = Math.max(0.16, Math.min(0.72, boreStability / 135));
 
   const strata = [
     ["Surface cap", 12, "bg-cyan-300/15"],
@@ -5820,6 +5837,9 @@ function ExperimentalWellDriller({ setPage }) {
                     width: `${500 - index * 32}px`,
                     height: `${height * 7}px`,
                     transform: `translate(-50%, ${-230 + index * 78}px) translateZ(${-index * 22}px)`,
+                    animation: `eosStrataDrift ${16 + index * 2}s ease-in-out infinite`,
+                    animationDelay: `${index * -0.7}s`,
+                    boxShadow: index === 3 ? `0 0 ${28 + pressure * 0.45}px rgba(251,113,133,.${Math.min(65, 20 + Math.round(pressure / 2))})` : undefined,
                   }}
                 >
                   <div className="p-4 text-xs font-black uppercase tracking-[.2em] text-slate-300">{label}</div>
@@ -5827,16 +5847,33 @@ function ExperimentalWellDriller({ setPage }) {
               ))}
 
               <div
-                className="absolute left-1/2 top-5 h-[450px] w-12 -translate-x-1/2 rounded-full border border-cyan-200/50 bg-cyan-300/20 shadow-[0_0_80px_rgba(34,211,238,.45)]"
-                style={{ transform: `translateX(${inclination * 1.4 - 40}px) rotateZ(${inclination / 2}deg)` }}
-              />
+                className="absolute left-1/2 top-5 h-[450px] w-12 -translate-x-1/2 overflow-hidden rounded-full border border-cyan-200/50 bg-cyan-300/20 shadow-[0_0_80px_rgba(34,211,238,.45)]"
+                style={{
+                  transform: `translateX(${boreShift}px) rotateZ(${inclination / 2}deg)`,
+                  boxShadow: `0 0 ${58 + boreStability * 0.4}px rgba(34,211,238,${boreGlow})`,
+                  animation: `eosDrillPulse ${drillTempo}s ease-in-out infinite`,
+                }}
+              >
+                <div className="absolute inset-x-2 top-0 h-[180%] rounded-full bg-gradient-to-b from-cyan-100/0 via-cyan-100/55 to-cyan-100/0" style={{ animation: `eosMudFlow ${mudPulseSpeed}s linear infinite` }} />
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-cyan-100 shadow-[0_0_24px_rgba(103,232,249,.95)]"
+                    style={{ top: `${10 + i * 52}px`, opacity: 0.25 + mud / 150, animation: `eosMudBead ${mudPulseSpeed}s linear infinite`, animationDelay: `${i * -0.32}s` }}
+                  />
+                ))}
+              </div>
               <div
                 className="absolute left-1/2 top-[380px] h-20 w-20 -translate-x-1/2 rounded-full border border-amber-200/60 bg-amber-300/30 shadow-[0_0_80px_rgba(251,191,36,.65)]"
-                style={{ transform: `translateX(${inclination * 1.8 - 54}px)` }}
+                style={{ transform: `translateX(${targetShift}px)`, animation: `eosDrillBit ${drillTempo}s linear infinite` }}
               />
               <div
                 className="absolute left-1/2 top-[430px] h-14 w-52 -translate-x-1/2 rounded-full border border-emerald-200/40 bg-emerald-300/20 shadow-[0_0_90px_rgba(52,211,153,.35)]"
-                style={{ transform: `translateX(${inclination * 1.8 - 54}px) translateZ(30px)` }}
+                style={{ transform: `translateX(${targetShift}px) translateZ(30px)`, animation: `eosReservoirGlow ${pressurePulseSpeed}s ease-in-out infinite` }}
+              />
+              <div
+                className="absolute left-1/2 top-[318px] h-32 w-32 -translate-x-1/2 rounded-full border border-rose-300/25 bg-rose-400/10"
+                style={{ transform: `translateX(${targetShift * 0.8}px) translateZ(16px)`, animation: `eosPressureBloom ${pressurePulseSpeed}s ease-in-out infinite`, opacity: Math.min(0.9, 0.25 + pressure / 130) }}
               />
             </div>
           </div>
@@ -5879,10 +5916,18 @@ function SeismoSimulator({ setPage }) {
   const confidence = Math.round(Math.min(99, Math.max(35, clarity * 0.62 + depth / 180 - Math.abs(pVelocity - sVelocity) / 900)));
   const waveRatio = (pVelocity / Math.max(1, sVelocity)).toFixed(2);
 
+  const pFrequency = 0.52 + pVelocity / 14500 + distance / 520;
+  const sFrequency = 0.34 + sVelocity / 13500 + depth / 18000;
+  const pAmplitude = 7 + density * 0.08 + Math.min(6, depth / 1300);
+  const sAmplitude = 12 + noise * 0.12 + Math.min(7, distance / 35);
+  const wavePhase = gap * 0.16 + density * 0.012;
+  const pTraceSpeed = Math.max(1.0, Math.min(5.5, pArrival * 0.55));
+  const sTraceSpeed = Math.max(1.4, Math.min(7.5, sArrival * 0.45));
+
   const waveSamples = Array.from({ length: 42 }, (_, i) => {
     const x = 4 + i * 2.25;
-    const p = 50 + Math.sin(i * 0.75) * (10 + density * 0.05);
-    const s = 50 + Math.sin(i * 0.43 + 1.2) * (18 + noise * 0.08);
+    const p = 50 + Math.sin(i * pFrequency + wavePhase) * pAmplitude + Math.cos(i * 0.17 + distance * 0.02) * 2;
+    const s = 50 + Math.sin(i * sFrequency + 1.2 + wavePhase * 1.4) * sAmplitude + Math.cos(i * 0.21 + noise * 0.05) * 3;
     return { x, p, s };
   });
 
@@ -5979,13 +6024,20 @@ function SeismoSimulator({ setPage }) {
                     width: `${120 + i * 70}px`,
                     height: `${54 + i * 32}px`,
                     transform: `translate(-50%, -50%) translateZ(${i * 18}px)`,
-                    boxShadow: i % 2 === 0 ? "0 0 42px rgba(34,211,238,.16)" : "0 0 42px rgba(251,191,36,.12)",
+                    boxShadow: i % 2 === 0 ? `0 0 ${32 + density * 0.18}px rgba(34,211,238,.22)` : `0 0 ${30 + noise * 0.16}px rgba(251,191,36,.18)`,
+                    animation: `eosWaveShell ${1.8 + i * 0.18 + gap * 0.03}s ease-in-out infinite`,
+                    animationDelay: `${i * -0.16}s`,
+                    opacity: Math.max(0.22, 0.86 - i * 0.055),
                   }}
                 />
               ))}
-              <div className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 shadow-[0_0_80px_rgba(251,191,36,.85)]" />
-              <div className="absolute left-[15%] top-[45%] h-5 w-[70%] rounded-full bg-cyan-300/40 shadow-[0_0_70px_rgba(34,211,238,.5)]" />
-              <div className="absolute left-[22%] top-[58%] h-5 w-[56%] rounded-full bg-amber-300/35 shadow-[0_0_70px_rgba(251,191,36,.45)]" />
+              <div className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 shadow-[0_0_80px_rgba(251,191,36,.85)]" style={{ animation: `eosReservoirGlow ${Math.max(1.1, gap * 0.12)}s ease-in-out infinite` }} />
+              <div className="absolute left-[15%] top-[45%] h-5 w-[70%] overflow-hidden rounded-full bg-cyan-300/40 shadow-[0_0_70px_rgba(34,211,238,.5)]">
+                <div className="absolute top-0 h-full w-16 rounded-full bg-cyan-100 shadow-[0_0_40px_rgba(103,232,249,.95)]" style={{ animation: `eosWaveTravel ${pTraceSpeed}s linear infinite` }} />
+              </div>
+              <div className="absolute left-[22%] top-[58%] h-5 w-[56%] overflow-hidden rounded-full bg-amber-300/35 shadow-[0_0_70px_rgba(251,191,36,.45)]">
+                <div className="absolute top-0 h-full w-16 rounded-full bg-amber-100 shadow-[0_0_40px_rgba(253,230,138,.95)]" style={{ animation: `eosWaveTravel ${sTraceSpeed}s linear infinite`, animationDelay: `${gap * 0.08}s` }} />
+              </div>
             </div>
           </div>
         </Panel>
@@ -6003,8 +6055,10 @@ function SeismoSimulator({ setPage }) {
         </div>
         <svg viewBox="0 0 100 100" className="mt-6 h-72 w-full rounded-[2rem] border border-white/10 bg-black/25 p-4">
           {[20,40,60,80].map((y) => <line key={y} x1="4" x2="96" y1={y} y2={y} stroke="rgba(255,255,255,.08)" />)}
-          <polyline points={waveSamples.map((s) => `${s.x},${s.p}`).join(" ")} fill="none" stroke="rgba(34,211,238,.95)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-          <polyline points={waveSamples.map((s) => `${s.x},${s.s}`).join(" ")} fill="none" stroke="rgba(251,191,36,.92)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          <polyline points={waveSamples.map((s) => `${s.x},${s.p}`).join(" ")} fill="none" stroke="rgba(34,211,238,.95)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: "5 4", animation: `eosTraceFlow ${pTraceSpeed}s linear infinite` }} />
+          <polyline points={waveSamples.map((s) => `${s.x},${s.s}`).join(" ")} fill="none" stroke="rgba(251,191,36,.92)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: "4 5", animation: `eosTraceFlow ${sTraceSpeed}s linear infinite reverse` }} />
+          <circle cx={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((pVelocity / 9200) * waveSamples.length)))].x} cy={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((pVelocity / 9200) * waveSamples.length)))].p} r="1.9" fill="rgba(103,232,249,.98)" style={{ animation: `eosSvgPulse ${pTraceSpeed}s ease-in-out infinite` }} />
+          <circle cx={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((sVelocity / 6200) * waveSamples.length)))].x} cy={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((sVelocity / 6200) * waveSamples.length)))].s} r="1.8" fill="rgba(253,230,138,.98)" style={{ animation: `eosSvgPulse ${sTraceSpeed}s ease-in-out infinite` }} />
           <text x="6" y="10" className="fill-cyan-100 text-[4px]">P-wave trace</text>
           <text x="6" y="18" className="fill-amber-100 text-[4px]">S-wave trace</text>
         </svg>
