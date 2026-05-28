@@ -1299,49 +1299,187 @@ function exportAllFormats({ baseName = "elementos-export", title = "ElementOS Ex
     ...payload,
   };
 
+  const metricEntries = Object.entries(normalizedPayload || {})
+    .filter(([, value]) => ["string", "number", "boolean"].includes(typeof value))
+    .filter(([key]) => !["summary", "source", "generatedAt", "title", "narrative"].includes(key))
+    .slice(0, 8);
+
+  const narrative = [
+    summary,
+    ...sections.map((section) => section.text || section.value || ""),
+  ].filter(Boolean).join("\n\n") || "ElementOS generated this export as a research-ready intelligence asset.";
+
   const pdf = new jsPDF("p", "mm", "a4");
   const pageWidth = pdf.internal.pageSize.getWidth();
-  const margin = 16;
-  let y = 18;
-  pdf.setFillColor(2, 6, 23);
-  pdf.rect(0, 0, pageWidth, 34, "F");
-  pdf.setTextColor(103, 232, 249);
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(21);
-  pdf.text("ElementOS", margin, y);
-  pdf.setFontSize(10);
-  pdf.setTextColor(255, 255, 255);
-  pdf.text("PDF · JSON · SVG export bundle", margin, y + 9);
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 14;
+  const contentWidth = pageWidth - margin * 2;
+  let y = 0;
 
-  y = 48;
-  pdf.setTextColor(15, 23, 42);
-  pdf.setFontSize(18);
+  const dark = [2, 6, 23];
+  const panel = [7, 18, 34];
+  const panel2 = [10, 28, 48];
+  const cyan = [103, 232, 249];
+  const gold = [251, 191, 36];
+  const white = [241, 245, 249];
+  const muted = [148, 163, 184];
+
+  const addPageShell = (pageNo = 1) => {
+    pdf.setFillColor(...dark);
+    pdf.rect(0, 0, pageWidth, pageHeight, "F");
+    pdf.setFillColor(4, 16, 31);
+    pdf.roundedRect(7, 7, pageWidth - 14, pageHeight - 14, 5, 5, "F");
+    pdf.setDrawColor(...cyan);
+    pdf.setLineWidth(0.35);
+    pdf.roundedRect(9, 9, pageWidth - 18, pageHeight - 18, 4, 4, "S");
+    pdf.setDrawColor(251, 191, 36);
+    pdf.setLineWidth(0.18);
+    pdf.line(margin, 24, pageWidth - margin, 24);
+    pdf.setTextColor(...cyan);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(10);
+    pdf.text("ELEMENTOS", margin, 17);
+    pdf.setTextColor(...gold);
+    pdf.text("DISCOVERY OPERATING SYSTEM", pageWidth - margin, 17, { align: "right" });
+    pdf.setTextColor(100, 116, 139);
+    pdf.setFontSize(7);
+    pdf.text(`PDF · JSON · SVG export bundle · Page ${pageNo}`, margin, pageHeight - 9);
+  };
+
+  const ensureSpace = (needed = 30) => {
+    if (y + needed > pageHeight - 20) {
+      pdf.addPage();
+      addPageShell(pdf.getNumberOfPages());
+      y = 34;
+    }
+  };
+
+  const textBlock = (text, x, yStart, maxWidth, size = 10, color = white, bold = false, lineHeight = 5.5) => {
+    pdf.setFont("helvetica", bold ? "bold" : "normal");
+    pdf.setFontSize(size);
+    pdf.setTextColor(...color);
+    const lines = pdf.splitTextToSize(String(text || ""), maxWidth);
+    lines.forEach((line, index) => pdf.text(line, x, yStart + index * lineHeight));
+    return yStart + Math.max(1, lines.length) * lineHeight;
+  };
+
+  addPageShell(1);
+  y = 36;
+
+  pdf.setFillColor(4, 12, 24);
+  pdf.roundedRect(margin, y, contentWidth, 56, 5, 5, "F");
+  pdf.setDrawColor(...cyan);
+  pdf.setLineWidth(0.22);
+  pdf.roundedRect(margin, y, contentWidth, 56, 5, 5, "S");
+  pdf.setTextColor(...gold);
   pdf.setFont("helvetica", "bold");
-  pdf.text(String(title).slice(0, 80), margin, y);
-  y += 9;
+  pdf.setFontSize(7.5);
+  pdf.text("PREMIUM SCIENTIFIC EXPORT", margin + 6, y + 9);
+  pdf.setTextColor(...white);
+  pdf.setFontSize(19);
+  const titleLines = pdf.splitTextToSize(String(title || "ElementOS Export"), contentWidth - 72).slice(0, 3);
+  titleLines.forEach((line, index) => pdf.text(line, margin + 6, y + 22 + index * 8));
+
+  const scoreValue = normalizedPayload.score || normalizedPayload.aiConfidence || normalizedPayload.compatibility || normalizedPayload.opportunityScore || normalizedPayload.discoveryScore;
+  pdf.setFillColor(8, 48, 68);
+  pdf.roundedRect(pageWidth - margin - 52, y + 10, 44, 34, 4, 4, "F");
+  pdf.setTextColor(...cyan);
+  pdf.setFontSize(22);
+  pdf.text(`${scoreValue || "EOS"}${scoreValue ? "%" : ""}`, pageWidth - margin - 30, y + 26, { align: "center" });
+  pdf.setFontSize(6.5);
+  pdf.setTextColor(...muted);
+  pdf.text(scoreValue ? "DISCOVERY SCORE" : "EXPORT", pageWidth - margin - 30, y + 36, { align: "center" });
+
+  y += 68;
+
+  const introLines = pdf.splitTextToSize(narrative, contentWidth - 12).slice(0, 8);
+  const introHeight = Math.max(34, 16 + introLines.length * 5.2);
+  pdf.setFillColor(...panel);
+  pdf.roundedRect(margin, y, contentWidth, introHeight, 5, 5, "F");
+  pdf.setDrawColor(37, 99, 235);
+  pdf.roundedRect(margin, y, contentWidth, introHeight, 5, 5, "S");
+  pdf.setTextColor(...gold);
+  pdf.setFontSize(7.5);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("DISCOVERY NARRATIVE", margin + 6, y + 9);
+  pdf.setTextColor(226, 232, 240);
+  pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(9);
-  pdf.setTextColor(71, 85, 105);
-  pdf.text(`Generated: ${now}`, margin, y);
-  y += 10;
-  pdf.setFontSize(11);
-  pdf.setTextColor(30, 41, 59);
-  const body = [summary, ...sections.map((section) => `${section.label}: ${section.value}`)].filter(Boolean).join("\n\n") || JSON.stringify(payload, null, 2);
-  const bodyLines = pdf.splitTextToSize(body, pageWidth - margin * 2);
-  bodyLines.forEach((line) => {
-    if (y > 280) { pdf.addPage(); y = 18; }
-    pdf.text(line, margin, y);
+  introLines.forEach((line, index) => pdf.text(line, margin + 6, y + 19 + index * 5.2));
+  y += introHeight + 10;
+
+  if (metricEntries.length) {
+    ensureSpace(64);
+    pdf.setTextColor(...cyan);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(11);
+    pdf.text("Key Metrics", margin, y);
     y += 6;
-  });
-  y += 5;
+    const tileW = (contentWidth - 6) / 2;
+    metricEntries.slice(0, 8).forEach(([key, value], index) => {
+      const col = index % 2;
+      const row = Math.floor(index / 2);
+      const x = margin + col * (tileW + 6);
+      const ty = y + row * 24;
+      pdf.setFillColor(...(index % 2 === 0 ? panel2 : panel));
+      pdf.roundedRect(x, ty, tileW, 19, 4, 4, "F");
+      pdf.setDrawColor(index % 3 === 0 ? cyan[0] : gold[0], index % 3 === 0 ? cyan[1] : gold[1], index % 3 === 0 ? cyan[2] : gold[2]);
+      pdf.roundedRect(x, ty, tileW, 19, 4, 4, "S");
+      pdf.setTextColor(...muted);
+      pdf.setFontSize(6.8);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(String(key).replace(/([A-Z])/g, " $1").toUpperCase().slice(0, 26), x + 4, ty + 7);
+      pdf.setTextColor(...white);
+      pdf.setFontSize(10.5);
+      pdf.text(String(value).slice(0, 34), x + 4, ty + 15);
+    });
+    y += Math.ceil(Math.min(metricEntries.length, 8) / 2) * 24 + 8;
+  }
+
+  if (sections.length) {
+    pdf.setTextColor(...cyan);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(11);
+    pdf.text("Export Sections", margin, y);
+    y += 7;
+    sections.slice(0, 10).forEach((section, index) => {
+      const heading = section.heading || section.label || `Section ${index + 1}`;
+      const body = section.text || section.value || "";
+      const bodyLines = pdf.splitTextToSize(String(body), contentWidth - 12).slice(0, 7);
+      const h = Math.max(24, 14 + bodyLines.length * 5);
+      ensureSpace(h + 8);
+      pdf.setFillColor(index % 2 ? 5 : 8, index % 2 ? 18 : 25, index % 2 ? 34 : 45);
+      pdf.roundedRect(margin, y, contentWidth, h, 4, 4, "F");
+      pdf.setDrawColor(30, 64, 175);
+      pdf.roundedRect(margin, y, contentWidth, h, 4, 4, "S");
+      pdf.setTextColor(...gold);
+      pdf.setFontSize(7.2);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(String(heading).toUpperCase().slice(0, 44), margin + 5, y + 7);
+      pdf.setTextColor(226, 232, 240);
+      pdf.setFontSize(9.4);
+      pdf.setFont("helvetica", "normal");
+      bodyLines.forEach((line, i) => pdf.text(line, margin + 5, y + 15 + i * 5));
+      y += h + 7;
+    });
+  }
+
+  ensureSpace(34);
+  pdf.setFillColor(15, 23, 42);
+  pdf.roundedRect(margin, pageHeight - 31, contentWidth, 16, 4, 4, "F");
+  pdf.setTextColor(...cyan);
   pdf.setFont("helvetica", "bold");
-  pdf.text("Structured JSON payload is included as a companion export file.", margin, Math.min(y, 286));
+  pdf.setFontSize(8);
+  pdf.text("Generated by ElementOS · Discover · Simulate · Understand · Share", margin + 5, pageHeight - 21);
+  pdf.setTextColor(...muted);
+  pdf.text(now, pageWidth - margin - 5, pageHeight - 21, { align: "right" });
+
   pdf.save(`${slug}.pdf`);
 
   downloadFile(`${slug}.json`, JSON.stringify(normalizedPayload, null, 2), "application/json");
   downloadFile(`${slug}.svg`, customSvg || makeExportSvg({ title, summary, payload: normalizedPayload, sections, variant: "Luxury Scientific" }), "image/svg+xml");
+  notifyUser("Premium PDF, JSON and SVG exports created.");
 }
-
 function notifyUser(message) {
   try {
     window.dispatchEvent(new CustomEvent("elementos:toast", { detail: message }));
