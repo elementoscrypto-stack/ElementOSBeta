@@ -386,8 +386,8 @@ function guidanceForPage(page) {
       next: "Pick a material, inspect the survival curve, compare the pulse cards, then export the visual telemetry summary.",
     },
     viralcards: {
-      title: "What Share Card Studio does",
-      description: "Share Card Studio turns discoveries, Time Machine forecasts, Scenario Builder results, Well Driller paths and Seismo readouts into cinematic share cards for social growth.",
+      title: "What Discovery Media Engine does",
+      description: "Discovery Media Engine turns discoveries, Time Machine forecasts, Scenario Builder results, Well Driller paths and Seismo readouts into cinematic share cards for social growth.",
       next: "Choose a source, generate a card, export SVG or copy the social post text, then share it with a public report link.",
     },
     simreports: {
@@ -1091,7 +1091,7 @@ const PAGE_LABELS = {
   matterlab: "Matter Intelligence OS",
   publicdiscovery: "Public Discovery Page",
   simreports: "Simulation Dossiers",
-  viralcards: "Share Card Studio",
+  viralcards: "Discovery Media Engine",
   reports: "Research Reports",
   lab: "Workspace",
   beta: "Founding Beta",
@@ -1600,7 +1600,7 @@ function Sidebar({ page, setPage }) {
       items: [
         ["discover", "Discovery Feed", Sparkles],
         ["simreports", "Simulation Dossiers", BookOpen],
-        ["viralcards", "Share Card Studio", Sparkles],
+        ["viralcards", "Discovery Media Engine", Sparkles],
         ["reports", "Research Reports", BookOpen],
       ],
     },
@@ -1719,7 +1719,7 @@ function Sidebar({ page, setPage }) {
 }
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Run First Simulation", "scenario", FileText], ["Matter Intelligence OS", "matterlab", Globe2], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Time Machine", "timemachine", Clock3], ["Well Driller Lab", "welldriller", Radar], ["Seismo Lab", "seismo", Network], ["Simulation Dossiers", "simreports", BookOpen], ["Share Card Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Workspace", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Founding Beta", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("beta")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Join Founding Beta</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF/JSON/SVG exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Run First Simulation", "scenario", FileText], ["Matter Intelligence OS", "matterlab", Globe2], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Time Machine", "timemachine", Clock3], ["Well Driller Lab", "welldriller", Radar], ["Seismo Lab", "seismo", Network], ["Simulation Dossiers", "simreports", BookOpen], ["Discovery Media Engine", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Workspace", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Founding Beta", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("beta")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Join Founding Beta</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Lab</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock premium PDF/JSON/SVG exports and Pro workspace features through Stripe Sandbox.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
 <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(8)} setPage={setPage} />
 <Panel>
@@ -2012,7 +2012,7 @@ function DiscoveryOSFeed({ discoveries = [], setPage, setPublicDiscovery }) {
               Each card now behaves like a research asset: it has an ID, a share link, a report path, a workspace save action and a clear next step.
             </p>
           </div>
-          <Button onClick={() => setPage("viralcards")} variant="primary">Create Share Card</Button>
+          <Button onClick={() => setPage("viralcards")} variant="primary">Create Media</Button>
         </div>
 
         <div className="mt-6 grid gap-4 xl:grid-cols-3">
@@ -2059,7 +2059,7 @@ function DiscoveryOSFeed({ discoveries = [], setPage, setPublicDiscovery }) {
             ["Compare Materials", "Find a strong pair", "compare"],
             ["Time Machine", "Forecast long-term behavior", "timemachine"],
             ["Simulation Dossier", "Package the result", "simreports"],
-            ["Share Card Studio", "Make it viral", "viralcards"],
+            ["Discovery Media Engine", "Make it viral", "viralcards"],
             ["Workspace", "Save the asset", "lab"],
           ].map(([title, desc, target]) => (
             <button key={title} onClick={() => setPage(target)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/30 hover:bg-cyan-300/10">
@@ -4476,7 +4476,7 @@ function MyLab({ session, selected, compare, setPage }) {
 function BetaLaunch({ session, setPage, startCheckout }) {
   const [email, setEmail] = useState(session?.user?.email || "");
   const [role, setRole] = useState("Founder / creator");
-  const [feature, setFeature] = useState("Viral discovery cards for Seismo, Time Machine and Well Driller");
+  const [feature, setFeature] = useState("Discovery media assets for Seismo, Time Machine and Well Driller");
   const [submitted, setSubmitted] = useState(false);
 
   const seed = (email || "founder@elementos.ai").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
@@ -4489,7 +4489,7 @@ function BetaLaunch({ session, setPage, startCheckout }) {
   ];
 
   const roadmap = [
-    ["Now", "Viral Cards + Universal Simulation Dossiers", "Turn every discovery into a shareable output."],
+    ["Now", "Media Engine + Universal Simulation Dossiers", "Turn every discovery into a shareable output."],
     ["Next", "Mobile-first simulator polish", "Make TikTok/X/Reddit traffic feel instant and premium."],
     ["Soon", "Public discovery URLs", "Every report, Seismo readout and Time Machine forecast becomes indexable."],
     ["Later", "Team labs + API access", "Move from creator tool into enterprise-ready simulation workspace."],
@@ -4517,7 +4517,7 @@ function BetaLaunch({ session, setPage, startCheckout }) {
   const copyLaunchPost = () => {
     const post = `I just joined the ElementOS beta as Founding Researcher #${founderNumber}.
 
-ElementOS is an AI-native exploratory simulation platform for material intelligence, Time Machine forecasts, Seismo wave modelling, Well Driller simulations, Scenario Builder reports and viral discovery cards.
+ElementOS is an AI-native exploratory simulation platform for material intelligence, Time Machine forecasts, Seismo wave modelling, Well Driller simulations, Scenario Builder reports and discovery media assets.
 
 Early access: ElementOS beta is opening now.`;
 
@@ -4538,7 +4538,7 @@ Early access: ElementOS beta is opening now.`;
       "ElementOS turns simulations, discoveries and forecasts into shareable research-ready outputs.",
       "",
       "Core launch loops:",
-      "- Viral discovery cards",
+      "- Discovery media assets",
       "- TikTok/X/Reddit-ready visuals",
       "- Public reports",
       "- Mobile app feel",
@@ -4566,7 +4566,7 @@ Early access: ElementOS beta is opening now.`;
             The goal is no longer only adding features. The goal is getting real users to join, test, share, request improvements and feel early ownership in the platform.
           </Info>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Button onClick={() => setPage("viralcards")} variant="primary">Create Viral Card</Button>
+            <Button onClick={() => setPage("viralcards")} variant="primary">Create Media</Button>
             <Button onClick={() => setPage("simreports")}>Open Simulation Dossiers</Button>
             <Button onClick={copyLaunchPost}>Copy Launch Post</Button>
           </div>
@@ -4669,7 +4669,7 @@ Early access: ElementOS beta is opening now.`;
 
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {[
-            ["Viral Cards", "Can users create a card they would actually post?", "viralcards"],
+            ["Media Engine", "Can users create a card they would actually post?", "viralcards"],
             ["Time Machine", "Does the future-state simulation feel understandable and premium?", "timemachine"],
             ["Seismo", "Do P-wave and S-wave visuals feel clear, useful and cool?", "seismo"],
             ["Well Driller", "Does the subsurface simulation feel like a serious demo?", "welldriller"],
@@ -4838,7 +4838,7 @@ function DiscoveryCommandCenter({ setPage, compare = ["Al", "Ti", "Hf"] }) {
             <h2 className="mt-3 text-4xl font-black">Every simulation should become an asset.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Discovery Cards make results collectible, reportable, saveable and shareable. This is the product loop that turns visits into returning usage.</p>
           </div>
-          <Button onClick={() => setPage("viralcards")} variant="primary">Create Share Card</Button>
+          <Button onClick={() => setPage("viralcards")} variant="primary">Create Media</Button>
         </div>
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           {discoveryCards.map((d, index) => (
@@ -5105,7 +5105,7 @@ function FiveUserSimulationAudit({ setPage }) {
   const simulatedUsers = [
     ["User A", "New visitor", "Home → Discovery Feed → Public Discovery → Share Card", "Pass", "Understands the product loop and reaches an export."],
     ["User B", "Scientist", "Compare → Time Machine → Simulation Dossier → PDF/JSON/SVG", "Pass", "Can generate useful export assets without dead ends."],
-    ["User C", "Marketer", "Share Card Studio → Social Pack → SVG Poster → Caption", "Pass", "Viral card flow produces platform-specific assets."],
+    ["User C", "Marketer", "Discovery Media Engine → Social Pack → SVG Poster → Caption", "Pass", "Viral card flow produces platform-specific assets."],
     ["User D", "Investor", "Matter Intelligence → Report → Workspace → Public Page", "Pass", "Opportunity workflow now has visible next steps."],
     ["User E", "Mobile user", "CTRL-K → Search → Navigate → Export", "Pass", "Command engine has a scrollable result area and route actions."],
   ];
@@ -5170,7 +5170,7 @@ function FiveUserSimulationAudit({ setPage }) {
       </div>
 
       <div className="mt-5 flex flex-wrap gap-3">
-        <Button onClick={() => setPage("viralcards")} variant="primary">Test Viral Cards</Button>
+        <Button onClick={() => setPage("viralcards")} variant="primary">Test Media Engine</Button>
         <Button onClick={() => setPage("simreports")}>Test Reports</Button>
         <Button onClick={() => setPage("matterlab")}>Test Matter Intelligence</Button>
         <Button onClick={() => setPage("lab")}>Test Workspace</Button>
@@ -5771,12 +5771,118 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
   const [founderName, setFounderName] = useState("Paul Roper");
   const [headlineMode, setHeadlineMode] = useState("AI Headline");
   const [exportLayout, setExportLayout] = useState("Portrait Poster");
+  const [mediaSourceId, setMediaSourceId] = useState("compare");
   const [seriesNumber, setSeriesNumber] = useState(36);
   const [exportHistory, setExportHistory] = useState([]);
   const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(24)), []);
   const activeMaterial = elementMap[selected] || elementMap.Al;
   const compareSet = compare?.length ? compare : ["Al", "Ti", "Hf", "W"];
   const discovery = discoveries[cardIndex % discoveries.length] || discoveries[0];
+  const mediaSources = useMemo(() => {
+    const primaryPair = compareSet.slice(0, 2);
+    const compareTitle = primaryPair.length >= 2 ? `${primaryPair[0]} + ${primaryPair[1]}` : `${activeMaterial.symbol} + Ti`;
+    const compareScore = primaryPair.length >= 2 ? compatibilityScore(primaryPair[0], primaryPair[1]) : Math.round(score(activeMaterial.symbol).alignment);
+    const discoveryPair = discovery ? `${discovery.a} + ${discovery.b}` : "Ti + Hf";
+    return [
+      {
+        id: "compare",
+        label: "Current Compare Set",
+        type: "Compare Materials",
+        title: compareTitle,
+        code: `COMPARE-${compareSet.join("-") || activeMaterial.symbol}`,
+        headline: "Comparison-Ready Discovery Asset",
+        subtitle: `${compareSet.join(" + ")} comparison converted into media`,
+        score: compareScore,
+        metric: "Compatibility",
+        tier: rarityTier(compareScore),
+        narrative: `This card is generated directly from the current Compare workflow using ${compareSet.join(" + ")}. It turns the user's active material selection into a shareable discovery asset.`,
+        source: "Compare Engine",
+        hook: "A live compare result became a report, poster and social pack.",
+        constellation: `${compareSet.slice(0, 4).join(" → ")} → Media`,
+      },
+      {
+        id: "discovery",
+        label: "Discovery Feed Asset",
+        type: "Discovery Feed",
+        title: discoveryPair,
+        code: selectedMediaSource.code,
+        headline: discovery?.type || "Rare Material Signal Detected",
+        subtitle: discovery?.tier || "Network-ranked discovery",
+        score: discovery?.aiConfidence || discovery?.score || 94,
+        metric: selectedMediaSource.metric,
+        tier: selectedMediaSource.tier,
+        narrative: discovery?.reason || "A high-signal material pairing surfaced inside the ElementOS discovery network.",
+        source: "Discovery Feed",
+        hook: "A trending network discovery became a public media asset.",
+        constellation: selectedMediaSource.constellation,
+      },
+      {
+        id: "matter",
+        label: "Matter Intelligence Opportunity",
+        type: "Matter Intelligence",
+        title: "Diamond Cluster",
+        code: "MIOS-DK-27",
+        headline: "Ground Opportunity Signal Rising",
+        subtitle: "Matter Intelligence scan converted into an opportunity poster",
+        score: 92,
+        metric: "Opportunity Score",
+        tier: "RISING",
+        narrative: "Multiple evidence layers are converging around one potential ground opportunity. The signal is strong enough to become a report-ready opportunity card.",
+        source: "Matter Intelligence",
+        hook: "An opportunity scan became a shareable intelligence poster.",
+        constellation: "Signal → Target → Report",
+      },
+      {
+        id: "timemachine",
+        label: "Time Machine Forecast",
+        type: "Time Machine",
+        title: `${activeMaterial.symbol} 25-Year Forecast`,
+        code: `TIME-${activeMaterial.symbol}-25Y`,
+        headline: "Future-State Material Forecast",
+        subtitle: "Long-horizon behaviour converted into a forecast poster",
+        score: Math.round(score(activeMaterial.symbol).stability * 19),
+        metric: "Survival Signal",
+        tier: "FORECAST",
+        narrative: `${activeMaterial.name} is projected across long-term stress, pressure and exposure conditions, then packaged as a forecast card for reporting and sharing.`,
+        source: "Time Machine",
+        hook: "A future-state simulation became a visual forecast asset.",
+        constellation: `${activeMaterial.symbol} → 25Y → Forecast`,
+      },
+      {
+        id: "seismo",
+        label: "Seismo / Well Signal",
+        type: "Advanced Labs",
+        title: "Subsurface Wave Signal",
+        code: "SEISMO-P-S-1047",
+        headline: "Seismic Signal Gap Detected",
+        subtitle: "P-wave and S-wave readout packaged for technical sharing",
+        score: 88,
+        metric: "Signal Clarity",
+        tier: "TECHNICAL",
+        narrative: "A simulated subsurface wave response was converted into a clear poster-style readout for field review, reporting and public explanation.",
+        source: "Seismo Lab",
+        hook: "A technical lab result became a visual explanation asset.",
+        constellation: "P-Wave → S-Wave → Report",
+      },
+      {
+        id: "report",
+        label: "Research Report",
+        type: "Reports",
+        title: "Research Dossier",
+        code: `REPORT-${compareSet.slice(0, 3).join("-")}`,
+        headline: "Report-Ready Scientific Asset",
+        subtitle: "Executive summary converted into a media pack",
+        score: 90,
+        metric: "Report Strength",
+        tier: "REPORTABLE",
+        narrative: "This export packages an ElementOS result as a polished report, SVG poster, JSON dataset and platform-specific social copy.",
+        source: "Report Engine",
+        hook: "A report became a social-ready discovery pack.",
+        constellation: "Insight → Report → Public Page",
+      },
+    ];
+  }, [compareSet, activeMaterial, discovery]);
+  const selectedMediaSource = mediaSources.find((source) => source.id === mediaSourceId) || mediaSources[0];
   const globalAverage = 68;
 
   const cardStats = useMemo(() => {
@@ -5805,25 +5911,25 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
     const base = {
       format,
       badge: format.toUpperCase(),
-      title: `${discovery?.a || "Ti"} + ${discovery?.b || "Hf"}`,
-      code: discovery?.dna || "TI-HF-1047",
-      headline: headlineMode === "AI Headline" ? "Rare Thermal Stability Alignment Detected" : "ElementOS Discovery Card",
-      subtitle: discovery?.type || "Rare material pathway",
-      score: discovery?.aiConfidence || 94,
-      metric: "Discovery Score",
-      tier: discovery?.tier || "ULTRA RARE",
+      title: selectedMediaSource.title,
+      code: selectedMediaSource.code,
+      headline: headlineMode === "AI Headline" ? selectedMediaSource.headline : `${selectedMediaSource.type} Media Asset`,
+      subtitle: selectedMediaSource.subtitle,
+      score: selectedMediaSource.score,
+      metric: selectedMediaSource.metric,
+      tier: selectedMediaSource.tier,
       rank: `#${cardStats.rank} Global`,
       top: `Top ${cardStats.percentile}%`,
       founder: founderName || "ElementOS Researcher",
-      narrative: discovery?.reason || "High-signal material pairing with strong discovery potential.",
+      narrative: selectedMediaSource.narrative,
       statA: `${cardStats.views.toLocaleString()} views`,
       statB: `${cardStats.saves.toLocaleString()} saves`,
       statC: `${cardStats.reports.toLocaleString()} reports`,
       statD: `${cardStats.shares.toLocaleString()} shares`,
-      source: "Material Discovery",
+      source: selectedMediaSource.source,
       cardNumber: `Discovery #${String(seriesNumber).padStart(3, "0")}`,
-      hook: "A rare signal surfaced inside the ElementOS discovery network.",
-      constellation: `${discovery?.a || "Ti"} → ${discovery?.b || "Hf"} → Report`,
+      hook: selectedMediaSource.hook,
+      constellation: selectedMediaSource.constellation,
     };
 
     if (format === "Scientific Trading Card") {
@@ -5848,7 +5954,7 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
       return { ...base, badge: "DAILY DISCOVERY", headline: `Daily Discovery Series ${String(seriesNumber).padStart(3, "0")}`, source: "Daily Series", subtitle: "collectible discovery drop", tier: "SERIES", hook: "A new shareable discovery every day keeps ElementOS alive." };
     }
     return base;
-  }, [format, discovery, cardStats, founderName, headlineMode]);
+  }, [format, discovery, cardStats, founderName, headlineMode, selectedMediaSource]);
 
   const formats = ["Discovery DNA", "Discovery Poster", "Daily Discovery Series", "Scientific Trading Card", "Founder Card", "Opportunity Poster", "Report Poster", "League Table"];
   const exportLayouts = ["Square Card", "Portrait Poster", "Landscape Banner", "X Post", "LinkedIn", "Reddit"];
@@ -6136,20 +6242,37 @@ Generated in ElementOS.`,
     <>
       <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
         <div>
-          <Pill gold><Sparkles size={12}/> viral growth engine</Pill>
+          <Pill gold><Sparkles size={12}/> connected media engine</Pill>
           <h1 className="mt-4 text-5xl font-black leading-none sm:text-7xl">
-            Viral <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery Studio</span>
+            Discovery <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Media Engine</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Turn every discovery into a collectible scientific asset: Discovery DNA cards, founder cards, opportunity posters, rankings, badges, story hooks and exportable SVGs for X, LinkedIn, Reddit and launch campaigns.
+            Anything valuable in ElementOS can become media: Compare results, Discovery Feed assets, Matter Intelligence scans, Time Machine forecasts, Seismo readouts, Well Driller signals, reports and workspace discoveries.
           </p>
-          <Info title="Viral doctrine">
-            People do not share dashboards. They share identity, status, surprise, proof and story. This studio packages ElementOS outputs into content people can understand in three seconds.
+          <Info title="Media doctrine">
+            The studio is no longer anchored to one fixed pair. Select a source from across the website, then generate a card, poster, report, social pack, SVG, PDF and JSON export from that live context.
           </Info>
         </div>
 
         <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Card format</div>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Media source</div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {mediaSources.map((source) => (
+              <button
+                key={source.id}
+                onClick={() => setMediaSourceId(source.id)}
+                className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition ${mediaSourceId === source.id ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-black/20 text-slate-300 hover:bg-white/[.05]"}`}
+              >
+                <span className="block text-[10px] uppercase tracking-[.18em] text-slate-500">{source.type}</span>
+                {source.label}
+              </button>
+            ))}
+          </div>
+          <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
+            <b>Selected source:</b> {selectedMediaSource.title} · {selectedMediaSource.score}% {selectedMediaSource.metric}. This source controls the exported card, poster, social captions and PDF/JSON/SVG pack.
+          </div>
+
+          <div className="mt-6 text-xs uppercase tracking-[.22em] text-slate-500">Card format</div>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {formats.map((m) => (
               <button
@@ -6196,7 +6319,7 @@ Generated in ElementOS.`,
           <div>
             <Pill gold><ShieldCheck size={12}/> button value audit</Pill>
             <h2 className="mt-3 text-3xl font-black">Every major card action now creates value.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Use this studio to export PDF/JSON/SVG, copy platform captions, create a full social pack, save the asset path and move users toward reports, workspace and public discovery pages.</p>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Use this engine to choose a live source from anywhere in ElementOS, export PDF/JSON/SVG, copy platform captions, create a full social pack, save the asset path and move users toward reports, workspace and public discovery pages.</p>
           </div>
           <div className="grid gap-2 sm:grid-cols-3">
             {["Export", "Save", "Share"].map((label) => (
@@ -6257,6 +6380,29 @@ Generated in ElementOS.`,
 
         <div className="space-y-6">
           <Panel>
+            <Pill gold><Database size={12}/> connected sources</Pill>
+            <h2 className="mt-3 text-3xl font-black">Create media from any ElementOS result.</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Pick the source that matches what the user just did. Compare should feel connected to cards; Matter Intelligence, Time Machine and Reports should feel connected too.</p>
+            <div className="mt-5 grid gap-3">
+              {mediaSources.map((source) => (
+                <button key={`source-card-${source.id}`} onClick={() => setMediaSourceId(source.id)} className={`rounded-2xl border p-4 text-left transition ${mediaSourceId === source.id ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25 hover:bg-white/[.05]"}`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-xs uppercase tracking-[.22em] text-slate-500">{source.type}</div>
+                      <div className="mt-1 text-lg font-black text-cyan-100">{source.title}</div>
+                      <div className="mt-1 text-xs text-slate-400">{source.headline}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-black text-emerald-200">{source.score}%</div>
+                      <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">{source.metric}</div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel>
             <Pill><Network size={12}/> viral ranking</Pill>
             <h2 className="mt-3 text-4xl font-black">Trending Discovery Queue</h2>
             <p className="mt-3 text-sm leading-6 text-slate-400">Use these as your daily content calendar. Each row can become a card, poster, report or public discovery page.</p>
@@ -6295,7 +6441,7 @@ Generated in ElementOS.`,
           <div>
             <Pill gold><Activity size={12}/> measurable media engine</Pill>
             <h2 className="mt-3 text-4xl font-black">Viral readiness, performance score and post intelligence.</h2>
-            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">This turns Viral Cards from a design export into a growth system: score the asset, pick the right platform, test caption variants and track what you exported.</p>
+            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">This turns Media Engine from a design export into a growth system: score the asset, pick the right platform, test caption variants and track what you exported.</p>
           </div>
           <div className="rounded-[2rem] border border-emerald-300/25 bg-emerald-300/10 px-5 py-4 text-right">
             <div className="text-5xl font-black text-emerald-100">{performanceScore}</div>
@@ -6649,7 +6795,7 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
     ["Simulate", "Open Time Machine", "timemachine", "Project how the strongest material changes over long time horizons."],
     ["Scenario", "Open Scenario Builder", "scenario", "Turn the prompt into a risk score, lifespan estimate and substitute recommendation."],
     ["Report", "Create Simulation Dossier", "simreports", "Bundle Time Machine, Scenario, Well Driller and Seismo outputs into a dossier."],
-    ["Share", "Create Share Card", "viralcards", "Turn this insight into a cinematic social asset for growth."],
+    ["Share", "Create Media", "viralcards", "Turn this insight into a cinematic social asset for growth."],
   ];
 
   const applySuggestion = () => {
@@ -7021,7 +7167,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const pageActions = [
     ["dashboard", "Open Dashboard", "Command centre, live network, researcher identity and launch workspace.", "Navigation", "Dashboard"],
     ["copilot", "Ask AI Copilot", "Turn a plain-English research goal into simulations, reports and cards.", "AI", "Copilot"],
-    ["mission", "Open Mission Control", "Guided onboarding missions for comparison, Time Machine, Scenario Builder, Viral Cards and reports.", "Onboarding", "Mission"],
+    ["mission", "Open Mission Control", "Guided onboarding missions for comparison, Time Machine, Scenario Builder, Media Engine and reports.", "Onboarding", "Mission"],
     ["discover", "Open Discovery Feed", "Trending pairings, momentum scores and AI-ranked material discoveries.", "Discovery", "Discover"],
     ["matterlab", "Open Matter Intelligence OS", "Opportunity intelligence for ranked targets, ground signals, AI explanations and reports.", "Advanced Lab", "MIOS"],
     ["isotopes", "Open Isotope Lab", "Advanced material variants and isotope-style scenario exploration.", "Research", "Isotope"],
@@ -7030,7 +7176,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["welldriller", "Open Well Driller Lab", "Model a deep bore path, reservoir target and pressure profile.", "Simulation", "Well"],
     ["seismo", "Open Seismo Lab", "Compare P-wave and S-wave travel, arrival gaps and wave response.", "Simulation", "Seismo"],
     ["simreports", "Create Simulation Dossier", "Create a universal dossier across Time Machine, Seismo, Scenario and Well Driller.", "Reports", "Report"],
-    ["viralcards", "Create Share Card", "Generate a cinematic share card for discoveries, simulations and reports.", "Growth", "Share"],
+    ["viralcards", "Create Media", "Generate a cinematic share card for discoveries, simulations and reports.", "Growth", "Share"],
     ["beta", "Open Founding Beta", "Founding Researcher badge, roadmap, feedback and waitlist conversion.", "Growth", "Beta"],
     ["calculations", "Open Calculation Studio", "Use premium calculation blocks to support report narratives.", "Tools", "Calc"],
     ["lab", "Open Workspace", "Return to saved scenarios, reports, discoveries and research assets.", "Workspace", "Lab"],
@@ -7064,7 +7210,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["smart:seismic", "Compare P-wave / S-wave arrival gap", "Opens Seismo for seismic travel and arrival-gap response.", "Smart Action", "Seismic"],
     ["smart:well", "Model a deep Well Driller Lab path", "Opens Well Driller Lab with drilling simulation focus.", "Smart Action", "Well"],
     ["smart:time", "Forecast material decay across 100 years", "Opens Time Machine for long-horizon material survivability.", "Smart Action", "Time"],
-    ["smart:viral", "Turn current work into a share card", "Opens Share Card Studio with social-growth workflow.", "Smart Action", "Share"],
+    ["smart:viral", "Turn current work into a share card", "Opens Discovery Media Engine with social-growth workflow.", "Smart Action", "Share"],
     ["smart:report", "Generate a simulation dossier", "Opens Simulation Dossiers for a polished export dossier.", "Smart Action", "Report"],
     ["smart:mission", "Start the user onboarding mission path", "Opens Founding Beta as the current conversion and early-user pathway.", "Smart Action", "Mission"],
     ["smart:checkout", isPro ? "Pro Lab is active" : "Upgrade to Pro Lab", "Unlock premium export and workspace features.", "Billing", "Pro"],
@@ -7496,7 +7642,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
             <div className="mt-5 flex flex-wrap gap-2">
               <Button onClick={() => setPage("discover")} variant="primary" className="px-4 py-3 text-xs">Open Discovery Feed</Button>
               <Button onClick={() => setPage("matterlab")} className="px-4 py-3 text-xs">Matter Intelligence</Button>
-              <Button onClick={() => setPage("viralcards")} className="px-4 py-3 text-xs">Viral Studio</Button>
+              <Button onClick={() => setPage("viralcards")} className="px-4 py-3 text-xs">Media Engine</Button>
               <Button onClick={exportExecutivePack} className="px-4 py-3 text-xs">Export Pack</Button>
               <Button onClick={launchSocialPack} className="px-4 py-3 text-xs">Create Social Pack</Button>
               <Button onClick={copyLaunchPitch} className="px-4 py-3 text-xs">Copy Launch Pitch</Button>
