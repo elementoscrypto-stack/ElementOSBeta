@@ -5937,22 +5937,61 @@ function ExperimentalWellDriller({ setPage }) {
   const [rpm, setRpm] = useState(118);
   const [mud, setMud] = useState(48);
   const [inclination, setInclination] = useState(22);
-  const [formation, setFormation] = useState("Layered sandstone");
+  const [formation, setFormation] = useState("Sandstone");
+  const [formationCategory, setFormationCategory] = useState("Sedimentary");
+  const [compareFormation, setCompareFormation] = useState("Limestone");
 
-  const formationProfiles = {
-    "Layered sandstone": { hardness: 0.85, porosity: 72, instability: 0.7, color: "from-amber-300/20 to-orange-500/10" },
-    "Shale pressure zone": { hardness: 1.15, porosity: 44, instability: 1.25, color: "from-slate-400/20 to-cyan-500/10" },
-    "Basalt cap rock": { hardness: 1.55, porosity: 24, instability: 0.85, color: "from-zinc-200/20 to-slate-700/20" },
-    "Carbonate reservoir": { hardness: 0.95, porosity: 82, instability: 0.75, color: "from-emerald-300/20 to-cyan-500/10" },
-  };
+  const formationLibrary = [
+    { name: "Sandstone", category: "Sedimentary", hardness: 0.85, porosity: 72, permeability: 86, instability: 0.7, reservoir: 88, geothermal: 48, drillability: 88, color: "from-amber-300/25 to-orange-500/10", layer: "bg-amber-300/16", texture: "grain" },
+    { name: "Quartz Sandstone", category: "Sedimentary", hardness: 0.92, porosity: 68, permeability: 82, instability: 0.62, reservoir: 84, geothermal: 46, drillability: 84, color: "from-yellow-200/25 to-amber-500/10", layer: "bg-yellow-300/15", texture: "grain" },
+    { name: "Arkose", category: "Sedimentary", hardness: 0.98, porosity: 58, permeability: 66, instability: 0.78, reservoir: 70, geothermal: 42, drillability: 78, color: "from-orange-300/25 to-rose-500/10", layer: "bg-orange-300/15", texture: "grain" },
+    { name: "Greywacke", category: "Sedimentary", hardness: 1.18, porosity: 42, permeability: 44, instability: 0.92, reservoir: 52, geothermal: 45, drillability: 63, color: "from-slate-300/25 to-zinc-600/15", layer: "bg-slate-400/16", texture: "band" },
+    { name: "Siltstone", category: "Sedimentary", hardness: 0.82, porosity: 49, permeability: 40, instability: 0.9, reservoir: 56, geothermal: 44, drillability: 82, color: "from-stone-300/25 to-slate-500/10", layer: "bg-stone-300/14", texture: "band" },
+    { name: "Mudstone", category: "Sedimentary", hardness: 0.72, porosity: 38, permeability: 24, instability: 1.08, reservoir: 38, geothermal: 39, drillability: 76, color: "from-stone-500/25 to-slate-700/15", layer: "bg-stone-500/15", texture: "band" },
+    { name: "Claystone", category: "Sedimentary", hardness: 0.68, porosity: 34, permeability: 18, instability: 1.18, reservoir: 32, geothermal: 36, drillability: 72, color: "from-zinc-400/25 to-slate-800/10", layer: "bg-zinc-400/14", texture: "band" },
+    { name: "Shale", category: "Sedimentary", hardness: 1.15, porosity: 44, permeability: 22, instability: 1.25, reservoir: 40, geothermal: 42, drillability: 58, color: "from-slate-400/25 to-cyan-500/10", layer: "bg-slate-500/18", texture: "laminated" },
+    { name: "Black Shale", category: "Sedimentary", hardness: 1.22, porosity: 36, permeability: 14, instability: 1.42, reservoir: 46, geothermal: 44, drillability: 52, color: "from-zinc-200/20 to-black/40", layer: "bg-zinc-800/28", texture: "laminated" },
+    { name: "Limestone", category: "Sedimentary", hardness: 0.95, porosity: 60, permeability: 62, instability: 0.72, reservoir: 76, geothermal: 50, drillability: 78, color: "from-cyan-100/20 to-emerald-500/10", layer: "bg-cyan-100/14", texture: "block" },
+    { name: "Dolomite", category: "Sedimentary", hardness: 1.05, porosity: 52, permeability: 58, instability: 0.82, reservoir: 70, geothermal: 52, drillability: 72, color: "from-emerald-200/20 to-teal-600/10", layer: "bg-emerald-200/14", texture: "block" },
+    { name: "Chalk", category: "Sedimentary", hardness: 0.58, porosity: 76, permeability: 48, instability: 1.05, reservoir: 60, geothermal: 38, drillability: 92, color: "from-white/25 to-sky-200/10", layer: "bg-white/12", texture: "soft" },
+    { name: "Marl", category: "Sedimentary", hardness: 0.76, porosity: 46, permeability: 28, instability: 1.02, reservoir: 44, geothermal: 40, drillability: 80, color: "from-lime-200/20 to-slate-500/10", layer: "bg-lime-200/12", texture: "band" },
+    { name: "Conglomerate", category: "Sedimentary", hardness: 1.08, porosity: 56, permeability: 74, instability: 0.86, reservoir: 74, geothermal: 45, drillability: 68, color: "from-amber-200/25 to-stone-700/10", layer: "bg-amber-200/14", texture: "clast" },
+    { name: "Breccia", category: "Sedimentary", hardness: 1.12, porosity: 54, permeability: 70, instability: 1.05, reservoir: 68, geothermal: 48, drillability: 64, color: "from-rose-200/20 to-stone-700/15", layer: "bg-rose-200/13", texture: "clast" },
+    { name: "Coal Seam", category: "Sedimentary", hardness: 0.55, porosity: 32, permeability: 38, instability: 1.35, reservoir: 48, geothermal: 35, drillability: 86, color: "from-zinc-100/15 to-black/50", layer: "bg-black/36", texture: "soft" },
+    { name: "Granite", category: "Igneous", hardness: 1.55, porosity: 18, permeability: 12, instability: 0.55, reservoir: 24, geothermal: 70, drillability: 38, color: "from-pink-200/25 to-fuchsia-700/10", layer: "bg-pink-300/14", texture: "crystal" },
+    { name: "Granodiorite", category: "Igneous", hardness: 1.48, porosity: 20, permeability: 14, instability: 0.58, reservoir: 26, geothermal: 72, drillability: 42, color: "from-rose-200/20 to-slate-600/10", layer: "bg-rose-200/13", texture: "crystal" },
+    { name: "Diorite", category: "Igneous", hardness: 1.42, porosity: 18, permeability: 12, instability: 0.6, reservoir: 23, geothermal: 68, drillability: 44, color: "from-slate-200/25 to-zinc-700/15", layer: "bg-slate-300/13", texture: "crystal" },
+    { name: "Gabbro", category: "Igneous", hardness: 1.5, porosity: 16, permeability: 10, instability: 0.62, reservoir: 20, geothermal: 66, drillability: 39, color: "from-zinc-300/20 to-black/35", layer: "bg-zinc-600/18", texture: "crystal" },
+    { name: "Basalt", category: "Igneous", hardness: 1.55, porosity: 24, permeability: 18, instability: 0.85, reservoir: 30, geothermal: 78, drillability: 36, color: "from-zinc-200/20 to-slate-700/20", layer: "bg-slate-700/22", texture: "volcanic" },
+    { name: "Andesite", category: "Igneous", hardness: 1.38, porosity: 24, permeability: 20, instability: 0.72, reservoir: 30, geothermal: 74, drillability: 46, color: "from-slate-300/20 to-purple-700/10", layer: "bg-purple-300/12", texture: "volcanic" },
+    { name: "Rhyolite", category: "Igneous", hardness: 1.32, porosity: 28, permeability: 24, instability: 0.68, reservoir: 34, geothermal: 76, drillability: 50, color: "from-fuchsia-200/20 to-rose-700/10", layer: "bg-fuchsia-200/12", texture: "volcanic" },
+    { name: "Peridotite", category: "Igneous", hardness: 1.68, porosity: 12, permeability: 10, instability: 0.58, reservoir: 18, geothermal: 82, drillability: 28, color: "from-lime-300/20 to-emerald-900/15", layer: "bg-lime-500/14", texture: "crystal" },
+    { name: "Pegmatite", category: "Igneous", hardness: 1.25, porosity: 26, permeability: 26, instability: 0.66, reservoir: 38, geothermal: 65, drillability: 55, color: "from-cyan-200/20 to-fuchsia-500/10", layer: "bg-cyan-200/12", texture: "crystal" },
+    { name: "Obsidian", category: "Igneous", hardness: 1.18, porosity: 10, permeability: 8, instability: 0.7, reservoir: 12, geothermal: 58, drillability: 58, color: "from-zinc-100/15 to-black/55", layer: "bg-black/34", texture: "glass" },
+    { name: "Slate", category: "Metamorphic", hardness: 1.05, porosity: 22, permeability: 15, instability: 0.92, reservoir: 20, geothermal: 50, drillability: 62, color: "from-slate-300/25 to-indigo-700/10", layer: "bg-indigo-300/12", texture: "laminated" },
+    { name: "Schist", category: "Metamorphic", hardness: 1.22, porosity: 20, permeability: 18, instability: 1.05, reservoir: 22, geothermal: 54, drillability: 50, color: "from-violet-200/20 to-slate-700/15", layer: "bg-violet-300/12", texture: "foliated" },
+    { name: "Gneiss", category: "Metamorphic", hardness: 1.42, porosity: 16, permeability: 14, instability: 0.72, reservoir: 22, geothermal: 62, drillability: 42, color: "from-slate-100/20 to-blue-900/10", layer: "bg-blue-200/12", texture: "foliated" },
+    { name: "Quartzite", category: "Metamorphic", hardness: 1.62, porosity: 14, permeability: 12, instability: 0.56, reservoir: 18, geothermal: 58, drillability: 30, color: "from-cyan-100/20 to-white/10", layer: "bg-cyan-100/12", texture: "crystal" },
+    { name: "Marble", category: "Metamorphic", hardness: 1.08, porosity: 22, permeability: 18, instability: 0.75, reservoir: 24, geothermal: 56, drillability: 66, color: "from-white/25 to-emerald-200/10", layer: "bg-white/13", texture: "block" },
+    { name: "Fractured Reservoir", category: "Reservoir", hardness: 0.92, porosity: 78, permeability: 92, instability: 1.05, reservoir: 96, geothermal: 58, drillability: 72, color: "from-emerald-300/25 to-cyan-500/10", layer: "bg-emerald-300/22", texture: "fracture" },
+    { name: "Tight Gas Reservoir", category: "Reservoir", hardness: 1.08, porosity: 38, permeability: 32, instability: 0.88, reservoir: 70, geothermal: 52, drillability: 62, color: "from-blue-300/20 to-cyan-700/10", layer: "bg-blue-300/13", texture: "grain" },
+    { name: "Heavy Oil Reservoir", category: "Reservoir", hardness: 0.74, porosity: 70, permeability: 74, instability: 1.12, reservoir: 82, geothermal: 46, drillability: 82, color: "from-amber-500/25 to-black/35", layer: "bg-amber-700/20", texture: "soft" },
+    { name: "High Temperature Geothermal", category: "Geothermal", hardness: 1.35, porosity: 34, permeability: 42, instability: 0.82, reservoir: 45, geothermal: 96, drillability: 48, color: "from-orange-300/25 to-red-600/20", layer: "bg-orange-400/20", texture: "hot" },
+    { name: "Enhanced Geothermal System", category: "Geothermal", hardness: 1.5, porosity: 28, permeability: 55, instability: 0.9, reservoir: 50, geothermal: 94, drillability: 40, color: "from-red-300/25 to-fuchsia-600/15", layer: "bg-red-400/20", texture: "hot" },
+  ];
 
-  const fp = formationProfiles[formation] || formationProfiles["Layered sandstone"];
+  const formationProfiles = Object.fromEntries(formationLibrary.map((f) => [f.name, f]));
+  const categories = ["All", ...Array.from(new Set(formationLibrary.map((f) => f.category)))];
+  const visibleFormations = formationCategory === "All" ? formationLibrary : formationLibrary.filter((f) => f.category === formationCategory);
+  const fp = formationProfiles[formation] || formationLibrary[0];
+  const cf = formationProfiles[compareFormation] || formationLibrary[9];
   const depthKm = depth / 1000;
   const torque = Math.round(rpm * fp.hardness + pressure * 1.8 - mud * 0.5 + inclination * 0.75);
-  const reservoirScore = Math.round(Math.min(99, Math.max(5, depth / 55 + pressure * 0.42 + fp.porosity * 0.18 - mud * 0.16)));
-  const boreStability = Math.round(Math.min(99, Math.max(1, 100 - pressure * fp.instability * 0.42 + mud * 0.46 - rpm * 0.045 - inclination * 0.18)));
-  const kickRisk = Math.round(Math.min(99, Math.max(1, pressure * 0.72 + depthKm * 7 - mud * 0.45 + fp.instability * 11)));
-  const rateOfPenetration = Math.round(Math.max(2, Math.min(80, rpm * 0.12 - fp.hardness * 6 + mud * 0.08 + pressure * 0.04)));
+  const reservoirScore = Math.round(Math.min(99, Math.max(5, depth / 55 + pressure * 0.42 + fp.porosity * 0.18 + fp.permeability * 0.16 + fp.reservoir * 0.18 - mud * 0.16)));
+  const geothermalScore = Math.round(Math.min(99, Math.max(5, fp.geothermal * 0.82 + depthKm * 4 + pressure * 0.08)));
+  const boreStability = Math.round(Math.min(99, Math.max(1, 100 - pressure * fp.instability * 0.42 + mud * 0.46 - rpm * 0.045 - inclination * 0.18 + fp.drillability * 0.06)));
+  const kickRisk = Math.round(Math.min(99, Math.max(1, pressure * 0.72 + depthKm * 7 - mud * 0.45 + fp.instability * 11 - fp.drillability * 0.04)));
+  const rateOfPenetration = Math.round(Math.max(2, Math.min(90, rpm * 0.12 - fp.hardness * 6 + mud * 0.08 + pressure * 0.04 + fp.drillability * 0.08)));
   const casingLoad = Math.round(Math.min(99, Math.max(10, depthKm * 16 + inclination * 0.5 + pressure * 0.2)));
   const drillTempo = Math.max(0.9, Math.min(4.8, 260 / Math.max(40, rpm)));
   const mudPulseSpeed = Math.max(1.2, Math.min(5.5, 7 - mud / 18));
@@ -5961,75 +6000,116 @@ function ExperimentalWellDriller({ setPage }) {
   const targetShift = inclination * 1.8 - 54;
   const boreGlow = Math.max(0.16, Math.min(0.72, boreStability / 135));
 
-  const strata = [
-    ["Surface cap", 12, "bg-cyan-300/15"],
-    ["Clay seal", 16, "bg-slate-400/15"],
-    ["Sand channel", 18, "bg-amber-300/15"],
-    ["Pressure lens", 20, "bg-rose-300/15"],
-    ["Target reservoir", 24, "bg-emerald-300/20"],
+  const stackFormations = [
+    formationLibrary[(depth + 3) % formationLibrary.length],
+    formationLibrary[(depth + 11) % formationLibrary.length],
+    fp,
+    formationLibrary[(depth + 21) % formationLibrary.length],
+    formationLibrary[(depth + 29) % formationLibrary.length],
   ];
 
   const exportWell = () => {
-    const content = `ElementOS Well Driller Lab Report\n\nFormation: ${formation}\nDepth: ${depth} m\nInclination: ${inclination} deg\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nTorque index: ${torque}\nReservoir score: ${reservoirScore}%\nBore stability: ${boreStability}%\nKick risk: ${kickRisk}%\nRate of penetration: ${rateOfPenetration} m/hr\nCasing load: ${casingLoad}%`;
-    exportAllFormats({ baseName: "elementos-well-driller-report", title: "Well Driller Lab Report", summary: content, payload: { formation, depth, inclination, pressure, rpm, mud, torque, reservoirScore, boreStability, kickRisk, rateOfPenetration, casingLoad } });
+    const content = `ElementOS Well Driller Lab Report\n\nFormation: ${formation}\nFormation class: ${fp.category}\nDepth: ${depth} m\nInclination: ${inclination} deg\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nPorosity: ${fp.porosity}%\nPermeability: ${fp.permeability}%\nDrillability: ${fp.drillability}%\nReservoir score: ${reservoirScore}%\nGeothermal score: ${geothermalScore}%\nBore stability: ${boreStability}%\nKick risk: ${kickRisk}%\nRate of penetration: ${rateOfPenetration} m/hr\nCasing load: ${casingLoad}%`;
+    exportAllFormats({ baseName: "elementos-well-driller-formation-report", title: "Well Driller Formation Report", summary: content, payload: { formation, formationProfile: fp, depth, inclination, pressure, rpm, mud, torque, reservoirScore, geothermalScore, boreStability, kickRisk, rateOfPenetration, casingLoad } });
+  };
+
+  const selectFormation = (name) => {
+    setFormation(name);
+    if (compareFormation === name) {
+      const alt = formationLibrary.find((f) => f.name !== name)?.name || "Limestone";
+      setCompareFormation(alt);
+    }
   };
 
   return (
     <>
       <Panel className="grid gap-8 xl:grid-cols-[1fr_.95fr]">
         <div>
-          <Pill gold><Radar size={12}/> experimental subsurface simulator</Pill>
+          <Pill gold><Radar size={12}/> formation intelligence simulator</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">
-            Experimental <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Well Driller</span>
+            Well Driller <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Formation OS</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            A cinematic subsurface drilling simulator for wellbore geometry, formation pressure, mud balance, kick risk, target reservoir quality and seismic readiness.
+            A cinematic subsurface drilling simulator with a 30+ formation library, animated geology layers, reservoir scoring, geothermal scoring, formation comparison and export-ready drilling reports.
           </p>
-          <Info title="3D drilling intelligence">
-            This page now shows a visible 3D-style wellbore, layered geology, drilling telemetry, reservoir target scoring and direct handoff into Seismo for P-wave/S-wave analysis.
+          <Info title="Subscriber-grade drilling workflow">
+            Select a formation, watch the wellbore and geology react, compare reservoir quality against another formation, then export a smart PDF, JSON and SVG report for the selected drilling case.
           </Info>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Button onClick={exportWell} variant="primary"><Download size={16} className="inline"/> Export Well PDF/JSON/SVG</Button>
+            <Button onClick={exportWell} variant="primary"><Download size={16} className="inline"/> Export Formation PDF/JSON/SVG</Button>
             <Button onClick={() => setPage("seismo")}>Open Seismo</Button>
-            <Button onClick={() => setPage("calculations")}>Open Calculation Core</Button>
+            <Button onClick={() => setPage("calculations")}>Open Calculation Studio</Button>
           </div>
         </div>
 
         <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Drilling command readout</div>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Formation command readout</div>
+          <div className="mt-3 text-2xl font-black text-white">{formation}</div>
+          <div className="mt-1 text-sm text-slate-400">{fp.category} · {fp.texture} texture · target depth {depth}m</div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4">
-              <div className="text-4xl font-black text-emerald-100">{reservoirScore}%</div>
-              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">reservoir score</div>
-            </div>
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4">
-              <div className="text-4xl font-black text-cyan-100">{boreStability}%</div>
-              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">bore stability</div>
-            </div>
-            <div className="rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4">
-              <div className="text-4xl font-black text-rose-100">{kickRisk}%</div>
-              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">kick risk</div>
-            </div>
-            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">
-              <div className="text-4xl font-black text-amber-100">{rateOfPenetration}</div>
-              <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">m/hr rop</div>
-            </div>
+            {[
+              ["Reservoir", `${reservoirScore}%`, "emerald"],
+              ["Bore Stability", `${boreStability}%`, "cyan"],
+              ["Kick Risk", `${kickRisk}%`, "rose"],
+              ["ROP", `${rateOfPenetration} m/hr`, "amber"],
+            ].map(([label, value, tone]) => (
+              <div key={label} className={`rounded-2xl border p-4 ${tone === "emerald" ? "border-emerald-300/20 bg-emerald-300/10" : tone === "rose" ? "border-rose-300/20 bg-rose-300/10" : tone === "amber" ? "border-amber-300/20 bg-amber-300/10" : "border-cyan-300/20 bg-cyan-300/10"}`}>
+                <div className="text-4xl font-black text-white">{value}</div>
+                <div className="text-[10px] uppercase tracking-[.18em] text-slate-400">{label}</div>
+              </div>
+            ))}
           </div>
         </Panel>
       </Panel>
 
       <GuidePanel page="welldriller" />
 
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Layers size={12}/> formation explorer</Pill>
+            <h2 className="mt-3 text-4xl font-black">30+ Formation Library</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Choose from sedimentary, igneous, metamorphic, reservoir and geothermal formations. Every option changes the live geometry, drilling risk, reservoir potential and export report.</p>
+          </div>
+          <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">{visibleFormations.length} formations visible</div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          {categories.map((cat) => (
+            <button key={cat} onClick={() => setFormationCategory(cat)} className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[.18em] transition ${formationCategory === cat ? "border-cyan-300/50 bg-cyan-300/20 text-cyan-50" : "border-white/10 bg-white/[0.04] text-slate-400 hover:bg-white/[0.08]"}`}>
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6 grid max-h-[520px] gap-3 overflow-y-auto pr-2 md:grid-cols-2 xl:grid-cols-4">
+          {visibleFormations.map((f) => (
+            <button key={f.name} onClick={() => selectFormation(f.name)} className={`rounded-[1.5rem] border p-4 text-left transition ${formation === f.name ? "border-cyan-300/50 bg-cyan-300/12 shadow-[0_0_45px_rgba(34,211,238,.18)]" : "border-white/10 bg-black/25 hover:border-cyan-300/30 hover:bg-white/[.06]"}`}>
+              <div className={`mb-4 h-20 rounded-2xl border border-white/10 bg-gradient-to-br ${f.color} relative overflow-hidden`}>
+                <div className="absolute inset-0 opacity-40 bg-[linear-gradient(135deg,rgba(255,255,255,.25)_1px,transparent_1px)] bg-[size:18px_18px]" />
+                <div className="absolute bottom-2 left-3 text-[10px] uppercase tracking-[.18em] text-white/70">{f.category}</div>
+              </div>
+              <div className="text-lg font-black text-white">{f.name}</div>
+              <div className="mt-1 text-xs text-slate-400">Porosity {f.porosity}% · Perm {f.permeability}%</div>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[10px]">
+                <div className="rounded-xl bg-white/[.04] p-2"><b className="text-cyan-100">{f.drillability}</b><br/>Drill</div>
+                <div className="rounded-xl bg-white/[.04] p-2"><b className="text-emerald-100">{f.reservoir}</b><br/>Res</div>
+                <div className="rounded-xl bg-white/[.04] p-2"><b className="text-amber-100">{f.geothermal}</b><br/>Geo</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </Panel>
+
       <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
         <Panel>
           <h2 className="text-3xl font-black">Well Controls</h2>
           <div className="mt-5 grid gap-4">
-            <label className="grid gap-2">
-              <span className="text-xs uppercase tracking-[.2em] text-slate-500">Formation</span>
-              <select value={formation} onChange={(e) => setFormation(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
-                {Object.keys(formationProfiles).map((k) => <option key={k}>{k}</option>)}
-              </select>
-            </label>
+            <div className={`rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br ${fp.color} p-5`}>
+              <div className="text-xs uppercase tracking-[.22em] text-cyan-100/80">Selected formation</div>
+              <div className="mt-2 text-3xl font-black text-white">{formation}</div>
+              <div className="mt-2 text-sm leading-6 text-slate-200">{fp.category} formation with {fp.porosity}% porosity, {fp.permeability}% permeability and {fp.drillability}% drillability.</div>
+            </div>
             {[
               ["Target Depth", depth, setDepth, 800, 6200, "m"],
               ["Formation Pressure", pressure, setPressure, 5, 100, "%"],
@@ -6051,33 +6131,36 @@ function ExperimentalWellDriller({ setPage }) {
         <Panel>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <Pill gold><Layers size={12}/> 3D subsurface profile</Pill>
+              <Pill gold><Layers size={12}/> animated formation stack</Pill>
               <h2 className="mt-3 text-4xl font-black">Live Wellbore Geometry</h2>
             </div>
             <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-sm font-bold text-emerald-100">Target {depth}m</div>
           </div>
 
           <div className="mt-6 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-slate-950/90 p-6 [perspective:1100px]">
-            <div className="relative mx-auto h-[520px] max-w-4xl [transform-style:preserve-3d] [transform:rotateX(58deg)_rotateZ(-24deg)]">
-              {strata.map(([label, height, cls], index) => (
+            <div className="relative mx-auto h-[560px] max-w-4xl [transform-style:preserve-3d] [transform:rotateX(58deg)_rotateZ(-24deg)]">
+              {stackFormations.map((layer, index) => (
                 <div
-                  key={label}
-                  className={`absolute left-1/2 top-1/2 rounded-[2rem] border border-white/10 ${cls} shadow-[0_0_50px_rgba(34,211,238,.08)]`}
+                  key={`${layer.name}-${index}`}
+                  className={`absolute left-1/2 top-1/2 rounded-[2rem] border border-white/10 ${layer.layer} shadow-[0_0_50px_rgba(34,211,238,.08)]`}
                   style={{
-                    width: `${500 - index * 32}px`,
-                    height: `${height * 7}px`,
-                    transform: `translate(-50%, ${-230 + index * 78}px) translateZ(${-index * 22}px)`,
-                    animation: `eosStrataDrift ${16 + index * 2}s ease-in-out infinite`,
+                    width: `${540 - index * 34}px`,
+                    height: `${80 + index * 8}px`,
+                    transform: `translate(-50%, ${-250 + index * 92}px) translateZ(${-index * 22}px)`,
+                    animation: `eosStrataDrift ${14 + index * 2}s ease-in-out infinite`,
                     animationDelay: `${index * -0.7}s`,
-                    boxShadow: index === 3 ? `0 0 ${28 + pressure * 0.45}px rgba(251,113,133,.${Math.min(65, 20 + Math.round(pressure / 2))})` : undefined,
+                    boxShadow: layer.name === formation ? `0 0 ${40 + pressure * 0.5}px rgba(34,211,238,.32)` : undefined,
                   }}
                 >
-                  <div className="p-4 text-xs font-black uppercase tracking-[.2em] text-slate-300">{label}</div>
+                  <div className="flex justify-between p-4 text-xs font-black uppercase tracking-[.18em] text-slate-200">
+                    <span>{layer.name}</span><span>{Math.round((index + 1) * depth / 5)}m</span>
+                  </div>
+                  <div className="absolute inset-0 opacity-35 bg-[linear-gradient(90deg,rgba(255,255,255,.18)_1px,transparent_1px)] bg-[size:28px_28px]" />
                 </div>
               ))}
 
               <div
-                className="absolute left-1/2 top-5 h-[450px] w-12 -translate-x-1/2 overflow-hidden rounded-full border border-cyan-200/50 bg-cyan-300/20 shadow-[0_0_80px_rgba(34,211,238,.45)]"
+                className="absolute left-1/2 top-5 h-[470px] w-12 -translate-x-1/2 overflow-hidden rounded-full border border-cyan-200/50 bg-cyan-300/20 shadow-[0_0_80px_rgba(34,211,238,.45)]"
                 style={{
                   transform: `translateX(${boreShift}px) rotateZ(${inclination / 2}deg)`,
                   boxShadow: `0 0 ${58 + boreStability * 0.4}px rgba(34,211,238,${boreGlow})`,
@@ -6089,23 +6172,74 @@ function ExperimentalWellDriller({ setPage }) {
                   <div
                     key={i}
                     className="absolute left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-cyan-100 shadow-[0_0_24px_rgba(103,232,249,.95)]"
-                    style={{ top: `${10 + i * 52}px`, opacity: 0.25 + mud / 150, animation: `eosMudBead ${mudPulseSpeed}s linear infinite`, animationDelay: `${i * -0.32}s` }}
+                    style={{ top: `${10 + i * 54}px`, opacity: 0.25 + mud / 150, animation: `eosMudBead ${mudPulseSpeed}s linear infinite`, animationDelay: `${i * -0.32}s` }}
                   />
                 ))}
               </div>
               <div
-                className="absolute left-1/2 top-[380px] h-20 w-20 -translate-x-1/2 rounded-full border border-amber-200/60 bg-amber-300/30 shadow-[0_0_80px_rgba(251,191,36,.65)]"
+                className="absolute left-1/2 top-[395px] h-20 w-20 -translate-x-1/2 rounded-full border border-amber-200/60 bg-amber-300/30 shadow-[0_0_80px_rgba(251,191,36,.65)]"
                 style={{ transform: `translateX(${targetShift}px)`, animation: `eosDrillBit ${drillTempo}s linear infinite` }}
               />
               <div
-                className="absolute left-1/2 top-[430px] h-14 w-52 -translate-x-1/2 rounded-full border border-emerald-200/40 bg-emerald-300/20 shadow-[0_0_90px_rgba(52,211,153,.35)]"
-                style={{ transform: `translateX(${targetShift}px) translateZ(30px)`, animation: `eosReservoirGlow ${pressurePulseSpeed}s ease-in-out infinite` }}
+                className="absolute left-1/2 top-[450px] h-14 w-56 -translate-x-1/2 rounded-full border border-emerald-200/40 bg-emerald-300/20 shadow-[0_0_90px_rgba(52,211,153,.35)]"
+                style={{ transform: `translateX(${targetShift}px) translateZ(30px)`, animation: `eosReservoirGlow ${pressurePulseSpeed}s ease-in-out infinite`, opacity: Math.min(1, 0.35 + fp.reservoir / 120) }}
               />
               <div
-                className="absolute left-1/2 top-[318px] h-32 w-32 -translate-x-1/2 rounded-full border border-rose-300/25 bg-rose-400/10"
+                className="absolute left-1/2 top-[330px] h-32 w-32 -translate-x-1/2 rounded-full border border-rose-300/25 bg-rose-400/10"
                 style={{ transform: `translateX(${targetShift * 0.8}px) translateZ(16px)`, animation: `eosPressureBloom ${pressurePulseSpeed}s ease-in-out infinite`, opacity: Math.min(0.9, 0.25 + pressure / 130) }}
               />
             </div>
+          </div>
+        </Panel>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1fr_.85fr]">
+        <Panel>
+          <Pill gold><BarChart3 size={12}/> formation intelligence</Pill>
+          <h2 className="mt-3 text-4xl font-black">{formation} Intelligence Panel</h2>
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {[
+              ["Porosity", fp.porosity, "void openness"],
+              ["Permeability", fp.permeability, "fluid movement"],
+              ["Drillability", fp.drillability, "ease of drilling"],
+              ["Reservoir", fp.reservoir, "hydrocarbon potential"],
+              ["Geothermal", geothermalScore, "heat opportunity"],
+              ["Instability", Math.round(fp.instability * 50), "risk multiplier"],
+            ].map(([label, value, desc]) => (
+              <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div>
+                <div className="mt-2 text-4xl font-black text-cyan-100">{value}%</div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${Math.min(99, value)}%` }} /></div>
+                <p className="mt-2 text-xs text-slate-400">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><Network size={12}/> formation comparison</Pill>
+          <h2 className="mt-3 text-3xl font-black">Compare Formations</h2>
+          <select value={compareFormation} onChange={(e) => setCompareFormation(e.target.value)} className="mt-5 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
+            {formationLibrary.filter((f) => f.name !== formation).map((f) => <option key={f.name}>{f.name}</option>)}
+          </select>
+          <div className="mt-5 grid gap-3">
+            {[
+              ["Reservoir Quality", fp.reservoir, cf.reservoir],
+              ["Drillability", fp.drillability, cf.drillability],
+              ["Permeability", fp.permeability, cf.permeability],
+              ["Geothermal", fp.geothermal, cf.geothermal],
+            ].map(([label, a, b]) => {
+              const winner = a >= b ? formation : compareFormation;
+              return (
+                <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                  <div className="flex items-center justify-between gap-3 text-sm"><b>{label}</b><span className="text-cyan-100">Winner: {winner}</span></div>
+                  <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
+                    <div>{formation}: <b className="text-emerald-100">{a}%</b></div>
+                    <div>{compareFormation}: <b className="text-amber-100">{b}%</b></div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </Panel>
       </div>
@@ -6114,20 +6248,19 @@ function ExperimentalWellDriller({ setPage }) {
         {[
           ["Torque Index", torque, "rotary load through formation hardness"],
           ["Casing Load", `${casingLoad}%`, "structural demand on well casing"],
-          ["Porosity Signal", `${fp.porosity}%`, "estimated reservoir openness"],
+          ["Geothermal Score", `${geothermalScore}%`, "heat opportunity based on formation and depth"],
         ].map(([title, value, desc]) => (
           <Panel key={title}>
             <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
             <div className="mt-3 text-5xl font-black text-cyan-100">{value}</div>
             <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
-            <div className="mt-5 h-28 rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-black/30 to-fuchsia-400/10 [transform:perspective(700px)_rotateX(54deg)_rotateZ(-8deg)] shadow-[0_30px_80px_rgba(34,211,238,.12)]" />
+            <div className={`mt-5 h-28 rounded-[2rem] border border-white/10 bg-gradient-to-br ${fp.color} [transform:perspective(700px)_rotateX(54deg)_rotateZ(-8deg)] shadow-[0_30px_80px_rgba(34,211,238,.12)]`} />
           </Panel>
         ))}
       </div>
     </>
   );
 }
-
 
 
 function SeismoSimulator({ setPage }) {
