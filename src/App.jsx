@@ -1201,6 +1201,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 
 const PAGE_LABELS = {
   landing: "Home",
+  firstsession: "First Session",
   dashboard: "Dashboard",
   copilot: "Discovery AI",
   mission: "Mission Control",
@@ -1230,6 +1231,7 @@ const PAGE_LABELS = {
 
 const MOBILE_PAGE_ORDER = [
   "landing",
+  "firstsession",
   "dashboard",
   "copilot",
   "mission",
@@ -6001,7 +6003,203 @@ function SubscriberRecommendedNextStep({ setPage, context = "Titanium + Hafnium"
 }
 
 
-function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, session, isPro, startCheckout, setShowFirstSubscriberGuide }) {
+
+function FirstSessionJourney({ setPage, setSelected, setCompare, setCommandOpen, session, isPro, startCheckout }) {
+  const [activeStep, setActiveStep] = useState(0);
+  const [completed, setCompleted] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("elementos_first_session_steps") || "{}");
+    } catch {
+      return {};
+    }
+  });
+
+  const steps = [
+    {
+      id: "discover",
+      title: "Run First Discovery",
+      subtitle: "Hydrogen + Titanium starter signal",
+      body: "Loads a clean first comparison so the user immediately sees a real material discovery instead of a blank tool.",
+      target: "compare",
+      icon: Sparkles,
+      action: () => {
+        setCommandOpen?.(false);
+        setSelected?.("H");
+        setCompare?.(["H", "Ti"]);
+        setPage("compare");
+        notifyUser("Step 1 started: Hydrogen + Titanium loaded in Compare.");
+      },
+    },
+    {
+      id: "explain",
+      title: "Ask Discovery AI",
+      subtitle: "Turn result into meaning",
+      body: "Moves from numbers into explanation: what changed, why it matters, what to try next.",
+      target: "copilot",
+      icon: Bot,
+      action: () => {
+        setCommandOpen?.(false);
+        setPage("copilot");
+        notifyUser("Step 2 opened: Discovery AI.");
+      },
+    },
+    {
+      id: "matter",
+      title: "Open Matter Intelligence",
+      subtitle: "Scan opportunity fields",
+      body: "Shows the bigger operating system: opportunities, targets, signal agreement and research-grade next steps.",
+      target: "matterlab",
+      icon: Globe2,
+      action: () => {
+        setCommandOpen?.(false);
+        setPage("matterlab");
+        notifyUser("Step 3 opened: Matter Intelligence OS.");
+      },
+    },
+    {
+      id: "report",
+      title: "Generate Report",
+      subtitle: "Create the value asset",
+      body: "Turns the discovery into a PDF, SVG and JSON-ready dossier so the product feels subscriber-worthy.",
+      target: "simreports",
+      icon: FileText,
+      action: () => {
+        setCommandOpen?.(false);
+        setPage("simreports");
+        notifyUser("Step 4 opened: Simulation Dossiers.");
+      },
+    },
+    {
+      id: "vault",
+      title: "Save to Discovery Vault",
+      subtitle: "Give users a reason to return",
+      body: "The Vault makes ElementOS feel permanent: discoveries, reports, posters, watchlists and future work live here.",
+      target: "lab",
+      icon: Save,
+      action: () => {
+        setCommandOpen?.(false);
+        setPage("lab");
+        notifyUser("Step 5 opened: Discovery Vault.");
+      },
+    },
+  ];
+
+  const markComplete = (id) => {
+    setCompleted((current) => {
+      const next = { ...current, [id]: true };
+      localStorage.setItem("elementos_first_session_steps", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const launchStep = (index) => {
+    const step = steps[index];
+    if (!step) return;
+    markComplete(step.id);
+    localStorage.setItem("elementos_first_session_complete", "true");
+    setActiveStep(index);
+    step.action();
+  };
+
+  const resetJourney = () => {
+    localStorage.removeItem("elementos_first_session_steps");
+    localStorage.removeItem("elementos_first_session_complete");
+    setCompleted({});
+    setActiveStep(0);
+    notifyUser("First-session journey reset.");
+  };
+
+  const completeCount = steps.filter((step) => completed[step.id]).length;
+  const progress = Math.round((completeCount / steps.length) * 100);
+  const current = steps[activeStep] || steps[0];
+  const CurrentIcon = current.icon;
+
+  return (
+    <div className="space-y-6">
+      <Panel className="overflow-hidden border-amber-300/25 bg-gradient-to-br from-slate-950 via-blue-950/35 to-amber-950/20 p-0">
+        <div className="relative p-6 md:p-8">
+          <div className="pointer-events-none absolute -right-20 -top-28 h-96 w-96 rounded-full bg-cyan-300/18 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-28 left-1/4 h-96 w-96 rounded-full bg-amber-300/12 blur-3xl" />
+          <div className="relative grid gap-8 xl:grid-cols-[1.1fr_.9fr] xl:items-center">
+            <div>
+              <Pill gold><Sparkles size={12} /> guided first session</Pill>
+              <h1 className="mt-4 text-5xl font-black leading-[.95] tracking-tight md:text-7xl">
+                Start here. <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Create your first discovery loop.</span>
+              </h1>
+              <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+                This is the subscriber onboarding path: compare, explain, scan, report and save. Every step has a clear return path, so users never disappear into the app or accidentally open CTRL-K.
+              </p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Button onClick={() => launchStep(0)} variant="primary" className="px-7 py-5 text-base"><Sparkles size={17} className="mr-2 inline" /> Begin Step 1</Button>
+                <Button onClick={() => setPage("landing")} className="px-7 py-5 text-base">Back to Home</Button>
+                <Button onClick={resetJourney} className="px-7 py-5 text-base">Reset Journey</Button>
+                {!session && <Button onClick={() => setPage("beta")} className="px-7 py-5 text-base">Join Founding Beta</Button>}
+                {session && !isPro && <Button onClick={startCheckout} variant="primary" className="px-7 py-5 text-base">Upgrade Pro</Button>}
+              </div>
+            </div>
+            <Panel className="bg-black/35">
+              <div className="flex items-center gap-4">
+                <div className="grid h-16 w-16 place-items-center rounded-2xl border border-cyan-300/25 bg-cyan-300/10 text-cyan-100"><CurrentIcon size={28} /></div>
+                <div>
+                  <div className="text-xs uppercase tracking-[.25em] text-slate-500">current focus</div>
+                  <div className="mt-1 text-3xl font-black text-white">{current.title}</div>
+                  <div className="mt-1 text-sm text-cyan-100">{current.subtitle}</div>
+                </div>
+              </div>
+              <div className="mt-6 text-xs uppercase tracking-[.25em] text-cyan-200">journey progress</div>
+              <div className="mt-2 text-7xl font-black text-cyan-100">{progress}%</div>
+              <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-amber-300" style={{ width: `${progress}%` }} /></div>
+              <p className="mt-4 text-sm leading-6 text-slate-300">{current.body}</p>
+              <Button onClick={() => launchStep(activeStep)} variant="primary" className="mt-5 w-full">Launch {current.title}</Button>
+            </Panel>
+          </div>
+        </div>
+      </Panel>
+
+      <div className="grid gap-4 md:grid-cols-5">
+        {steps.map((step, index) => {
+          const Icon = step.icon;
+          const done = completed[step.id];
+          const active = activeStep === index;
+          return (
+            <button
+              key={step.id}
+              onClick={() => setActiveStep(index)}
+              className={`rounded-[2rem] border p-5 text-left transition ${active ? "border-cyan-300/45 bg-cyan-300/12 shadow-[0_0_45px_rgba(34,211,238,.13)]" : done ? "border-emerald-300/25 bg-emerald-300/10" : "border-white/10 bg-white/[.035] hover:border-cyan-300/30 hover:bg-cyan-300/10"}`}
+            >
+              <div className="mb-5 flex items-center justify-between">
+                <div className="grid h-12 w-12 place-items-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-cyan-100"><Icon size={19} /></div>
+                <div className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] ${done ? "border-emerald-300/25 bg-emerald-300/10 text-emerald-100" : "border-white/10 bg-black/25 text-slate-400"}`}>{done ? "Complete" : `Step ${index + 1}`}</div>
+              </div>
+              <div className="text-xl font-black text-white">{step.title}</div>
+              <div className="mt-1 text-xs font-bold uppercase tracking-[.18em] text-cyan-200">{step.subtitle}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{step.body}</p>
+              <Button onClick={(event) => { event.stopPropagation(); launchStep(index); }} variant={active ? "primary" : "ghost"} className="mt-5 w-full">Launch Step</Button>
+            </button>
+          );
+        })}
+      </div>
+
+      <Panel className="border-cyan-300/20 bg-cyan-300/5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><CheckCircle2 size={12} /> no dead-end UX</Pill>
+            <h2 className="mt-3 text-3xl font-black">Every guided page now has a way back.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              Step 1 takes users to Compare with Hydrogen + Titanium preloaded. The Compare page shows a return button. Start Here always opens this page, not CTRL-K.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => launchStep(0)} variant="primary">Run First Discovery</Button>
+            <Button onClick={() => setPage("mission")}>Open Mission Control</Button>
+          </div>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, session, isPro, startCheckout, setShowFirstSubscriberGuide, setCommandOpen }) {
   const [completed, setCompleted] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("elementos_first_session_steps") || "{}");
@@ -6065,11 +6263,13 @@ function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, ses
               return (
                 <button key={id} onClick={() => {
                   if (id === "discover") {
+                    setCommandOpen?.(false);
                     setSelected?.("H");
                     setCompare?.(["H", "Ti"]);
                     setPage("compare");
                     notifyUser("First discovery started: Hydrogen + Titanium loaded in Compare.");
                   } else {
+                    setCommandOpen?.(false);
                     setPage(target);
                     notifyUser(`${title} opened.`);
                   }
@@ -8671,7 +8871,7 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
       </div>
 
       <button
-        onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setPage("landing"); setShowFirstSubscriberGuide(false); window.setTimeout(() => setShowFirstSubscriberGuide(true), 0); }}
+        onClick={() => { setCommandOpen?.(false); localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(false); setPage("firstsession"); }}
         className="fixed bottom-40 right-4 z-50 rounded-2xl border border-amber-300/25 bg-amber-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(251,191,36,.25)] lg:bottom-24"
       >
         Start Here
@@ -9165,7 +9365,7 @@ export default function App() {
   const [publicReportStatus, setPublicReportStatus] = useState("");
   const [commandOpen, setCommandOpen] = useState(false);
   const [publicDiscovery, setPublicDiscovery] = useState(null);
-  const [showFirstSubscriberGuide, setShowFirstSubscriberGuide] = useState(() => localStorage.getItem("elementos_first_session_complete") !== "true");
+  const [showFirstSubscriberGuide, setShowFirstSubscriberGuide] = useState(false);
 
 useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -9355,6 +9555,7 @@ const startCheckout = async () => {
   
   const pages = useMemo(
     () => ({
+      firstsession: <FirstSessionJourney setPage={setPage} setSelected={setSelected} setCompare={setCompare} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} />,
       landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
       copilot: <DiscoveryAIV57 selected={selected} compare={compare} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
@@ -9368,6 +9569,7 @@ const startCheckout = async () => {
           isPro={isPro}
           startCheckout={startCheckout}
           setShowFirstSubscriberGuide={setShowFirstSubscriberGuide}
+          setCommandOpen={setCommandOpen}
         />
       ),
       discover: <Discover setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
@@ -9473,7 +9675,7 @@ const startCheckout = async () => {
       />
 
       <button
-        onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setPage("landing"); setShowFirstSubscriberGuide(false); window.setTimeout(() => setShowFirstSubscriberGuide(true), 0); }}
+        onClick={() => { setCommandOpen?.(false); localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(false); setPage("firstsession"); }}
         className="fixed bottom-40 right-4 z-50 rounded-2xl border border-amber-300/25 bg-amber-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(251,191,36,.25)] lg:bottom-24"
       >
         Start Here
@@ -9527,9 +9729,9 @@ const startCheckout = async () => {
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[.26em] text-amber-100">first-session loop</div>
                 <div className="mt-1 text-lg font-black text-white">You are in Step 1: Compare Materials.</div>
-                <div className="mt-1 text-sm leading-6 text-amber-50/80">Hydrogen + Titanium is loaded as your first safe discovery signal. Return to the guide when you are ready for Step 2.</div>
+                <div className="mt-1 text-sm leading-6 text-amber-50/80">Hydrogen + Titanium is loaded as your first safe discovery signal. Return to the First Session Journey when you are ready for Step 2.</div>
               </div>
-              <Button onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setPage("landing"); setShowFirstSubscriberGuide(false); window.setTimeout(() => setShowFirstSubscriberGuide(true), 0); }} variant="primary">Back to First Session</Button>
+              <Button onClick={() => { setCommandOpen?.(false); localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(false); setPage("firstsession"); }} variant="primary">Back to First Session Journey</Button>
             </div>
           </div>
         )}
