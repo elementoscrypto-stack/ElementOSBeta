@@ -6001,8 +6001,7 @@ function SubscriberRecommendedNextStep({ setPage, context = "Titanium + Hafnium"
 }
 
 
-function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, session, isPro, startCheckout }) {
-  const [open, setOpen] = useState(() => localStorage.getItem("elementos_first_session_complete") !== "true");
+function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, session, isPro, startCheckout, setShowFirstSubscriberGuide }) {
   const [completed, setCompleted] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("elementos_first_session_steps") || "{}");
@@ -6035,11 +6034,10 @@ function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, ses
 
   const closeForNow = () => {
     localStorage.setItem("elementos_first_session_complete", "true");
-    setOpen(false);
-    notifyUser("First-session guide hidden. Open Mission Control anytime to continue.");
+    setShowFirstSubscriberGuide?.(false);
+    notifyUser("First-session guide hidden. Press Start Here anytime to reopen it.");
   };
 
-  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-[95] grid place-items-center bg-black/70 p-4 backdrop-blur-xl">
@@ -6075,7 +6073,7 @@ function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, ses
                     setPage(target);
                     notifyUser(`${title} opened.`);
                   }
-                  setOpen(false);
+                  setShowFirstSubscriberGuide?.(false);
                 }} className={`rounded-[1.5rem] border p-4 text-left transition ${done ? "border-emerald-300/25 bg-emerald-300/10" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}>
                   <div className="mb-4 flex items-center justify-between">
                     <div className="grid h-11 w-11 place-items-center rounded-xl border border-cyan-300/25 bg-cyan-300/10 text-cyan-100"><Icon size={18} /></div>
@@ -6095,7 +6093,7 @@ function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, ses
               <div className="mt-1 text-xs text-amber-50/80">Free users explore. Pro users export, save, publish and build a permanent Discovery Vault.</div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button onClick={() => { setPage("beta"); setOpen(false); }} className="px-3 py-2 text-xs">Join Founding Beta</Button>
+              <Button onClick={() => { setPage("beta"); setShowFirstSubscriberGuide?.(false); }} className="px-3 py-2 text-xs">Join Founding Beta</Button>
               {!isPro && <Button onClick={startCheckout} variant="primary" className="px-3 py-2 text-xs">Upgrade Pro</Button>}
             </div>
           </div>
@@ -8534,7 +8532,6 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
 
   const currentContext = currentCompare.length ? currentCompare.slice(0, 5).join(" + ") : selected;
 
-  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-[80] bg-black/75 p-4 backdrop-blur-xl" onClick={onClose} onKeyDown={onKeyDown}>
@@ -8663,7 +8660,7 @@ function ToastCenter() {
   );
 }
 
-function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startCheckout }) {
+function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startCheckout, setShowFirstSubscriberGuide }) {
   return (
     <div className="eos-topbar sticky top-4 z-20 mb-6 hidden items-center justify-between gap-4 rounded-2xl px-4 py-3 backdrop-blur-2xl lg:flex">
       <div className="flex min-w-0 items-center gap-3">
@@ -8674,7 +8671,7 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
       </div>
 
       <button
-        onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(true); }}
+        onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setPage("landing"); setShowFirstSubscriberGuide(false); window.setTimeout(() => setShowFirstSubscriberGuide(true), 0); }}
         className="fixed bottom-40 right-4 z-50 rounded-2xl border border-amber-300/25 bg-amber-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(251,191,36,.25)] lg:bottom-24"
       >
         Start Here
@@ -9370,6 +9367,7 @@ const startCheckout = async () => {
           session={session}
           isPro={isPro}
           startCheckout={startCheckout}
+          setShowFirstSubscriberGuide={setShowFirstSubscriberGuide}
         />
       ),
       discover: <Discover setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
@@ -9456,6 +9454,7 @@ const startCheckout = async () => {
           session={session}
           isPro={isPro}
           startCheckout={startCheckout}
+          setShowFirstSubscriberGuide={setShowFirstSubscriberGuide}
         />
       )}
       <Sidebar page={page} setPage={setPage} />
@@ -9474,7 +9473,7 @@ const startCheckout = async () => {
       />
 
       <button
-        onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(true); }}
+        onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setPage("landing"); setShowFirstSubscriberGuide(false); window.setTimeout(() => setShowFirstSubscriberGuide(true), 0); }}
         className="fixed bottom-40 right-4 z-50 rounded-2xl border border-amber-300/25 bg-amber-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(251,191,36,.25)] lg:bottom-24"
       >
         Start Here
@@ -9511,7 +9510,7 @@ const startCheckout = async () => {
           </select>
         </div>
 
-        <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} />
+        <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setShowFirstSubscriberGuide={setShowFirstSubscriberGuide} />
         <UltimateScienceCommandLayer
           page={page}
           setPage={setPage}
@@ -9522,6 +9521,18 @@ const startCheckout = async () => {
           startCheckout={startCheckout}
         />
         <PageHelpStrip page={page} />
+        {page === "compare" && (
+          <div className="rounded-[1.65rem] border border-amber-300/20 bg-amber-300/10 p-4 shadow-[0_0_45px_rgba(251,191,36,.12)]">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[.26em] text-amber-100">first-session loop</div>
+                <div className="mt-1 text-lg font-black text-white">You are in Step 1: Compare Materials.</div>
+                <div className="mt-1 text-sm leading-6 text-amber-50/80">Hydrogen + Titanium is loaded as your first safe discovery signal. Return to the guide when you are ready for Step 2.</div>
+              </div>
+              <Button onClick={() => { localStorage.removeItem("elementos_first_session_complete"); setPage("landing"); setShowFirstSubscriberGuide(false); window.setTimeout(() => setShowFirstSubscriberGuide(true), 0); }} variant="primary">Back to First Session</Button>
+            </div>
+          </div>
+        )}
         <CopilotEverywhereBar page={page} setPage={setPage} />
         <FirstSubscriberReadinessStrip page={page} setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />
         {(page === "landing" || page === "dashboard" || page === "mission") && <SubscriberLaunchChecklist setPage={setPage} />}
