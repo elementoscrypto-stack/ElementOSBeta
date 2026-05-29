@@ -6099,6 +6099,7 @@ function FirstSessionJourney({ setPage, setSelected, setCompare, setCommandOpen,
     localStorage.setItem("elementos_first_session_complete", "true");
     setActiveStep(index);
     step.action();
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30);
   };
 
   const resetJourney = () => {
@@ -6174,7 +6175,7 @@ function FirstSessionJourney({ setPage, setSelected, setCompare, setCommandOpen,
               <div className="text-xl font-black text-white">{step.title}</div>
               <div className="mt-1 text-xs font-bold uppercase tracking-[.18em] text-cyan-200">{step.subtitle}</div>
               <p className="mt-3 text-sm leading-6 text-slate-400">{step.body}</p>
-              <Button onClick={(event) => { event.stopPropagation(); launchStep(index); }} variant={active ? "primary" : "ghost"} className="mt-5 w-full">Launch Step</Button>
+              <Button onClick={(event) => { event.stopPropagation(); launchStep(index); }} variant={active ? "primary" : "ghost"} className="mt-5 w-full">Go to Step {index + 1}</Button>
             </button>
           );
         })}
@@ -6238,8 +6239,8 @@ function FirstSubscriberOnboarding({ page, setPage, setSelected, setCompare, ses
 
 
   return (
-    <div className="fixed inset-0 z-[95] grid place-items-center bg-black/70 p-4 backdrop-blur-xl">
-      <div className="relative w-full max-w-5xl overflow-hidden rounded-[2.5rem] border border-cyan-300/25 bg-[#020817]/95 p-6 shadow-[0_0_120px_rgba(34,211,238,.22)]">
+    <div className="fixed inset-0 z-[95] overflow-y-auto bg-black/70 p-4 backdrop-blur-xl">
+      <div className="relative mx-auto my-6 w-full max-w-5xl overflow-hidden rounded-[2.5rem] border border-cyan-300/25 bg-[#020817]/95 p-6 shadow-[0_0_120px_rgba(34,211,238,.22)]">
         <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-300/15 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 left-1/3 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
         <div className="relative z-10">
@@ -8871,8 +8872,8 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
       </div>
 
       <button
-        onClick={() => { setCommandOpen?.(false); localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(false); setPage("firstsession"); }}
-        className="fixed bottom-40 right-4 z-50 rounded-2xl border border-amber-300/25 bg-amber-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(251,191,36,.25)] lg:bottom-24"
+        onClick={() => { setCommandOpen?.(false); localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(false); setPage("firstsession"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+        className="rounded-xl border border-amber-300/30 bg-amber-300 px-4 py-2 text-sm font-black text-slate-950 shadow-[0_0_30px_rgba(251,191,36,.22)] transition hover:scale-[1.02]"
       >
         Start Here
       </button>
@@ -9657,6 +9658,7 @@ const startCheckout = async () => {
           isPro={isPro}
           startCheckout={startCheckout}
           setShowFirstSubscriberGuide={setShowFirstSubscriberGuide}
+          setCommandOpen={setCommandOpen}
         />
       )}
       <Sidebar page={page} setPage={setPage} />
@@ -9675,8 +9677,8 @@ const startCheckout = async () => {
       />
 
       <button
-        onClick={() => { setCommandOpen?.(false); localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(false); setPage("firstsession"); }}
-        className="fixed bottom-40 right-4 z-50 rounded-2xl border border-amber-300/25 bg-amber-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(251,191,36,.25)] lg:bottom-24"
+        onClick={() => { setCommandOpen?.(false); localStorage.removeItem("elementos_first_session_complete"); setShowFirstSubscriberGuide(false); setPage("firstsession"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+        className="rounded-xl border border-amber-300/30 bg-amber-300 px-4 py-2 text-sm font-black text-slate-950 shadow-[0_0_30px_rgba(251,191,36,.22)] transition hover:scale-[1.02]"
       >
         Start Here
       </button>
@@ -9712,17 +9714,21 @@ const startCheckout = async () => {
           </select>
         </div>
 
-        <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setShowFirstSubscriberGuide={setShowFirstSubscriberGuide} />
-        <UltimateScienceCommandLayer
-          page={page}
-          setPage={setPage}
-          selected={selected}
-          compare={compare}
-          session={session}
-          isPro={isPro}
-          startCheckout={startCheckout}
-        />
-        <PageHelpStrip page={page} />
+        {page !== "firstsession" && (
+          <>
+            <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setShowFirstSubscriberGuide={setShowFirstSubscriberGuide} />
+            <UltimateScienceCommandLayer
+              page={page}
+              setPage={setPage}
+              selected={selected}
+              compare={compare}
+              session={session}
+              isPro={isPro}
+              startCheckout={startCheckout}
+            />
+            <PageHelpStrip page={page} />
+          </>
+        )}
         {page === "compare" && (
           <div className="rounded-[1.65rem] border border-amber-300/20 bg-amber-300/10 p-4 shadow-[0_0_45px_rgba(251,191,36,.12)]">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -9735,9 +9741,13 @@ const startCheckout = async () => {
             </div>
           </div>
         )}
-        <CopilotEverywhereBar page={page} setPage={setPage} />
-        <FirstSubscriberReadinessStrip page={page} setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />
-        {(page === "landing" || page === "dashboard" || page === "mission") && <SubscriberLaunchChecklist setPage={setPage} />}
+        {page !== "firstsession" && (
+          <>
+            <CopilotEverywhereBar page={page} setPage={setPage} />
+            <FirstSubscriberReadinessStrip page={page} setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />
+            {(page === "landing" || page === "dashboard" || page === "mission") && <SubscriberLaunchChecklist setPage={setPage} />}
+          </>
+        )}
         <div className="animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
       </main>
 
