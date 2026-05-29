@@ -8171,18 +8171,112 @@ function MobileLabSwipeRail({ setPage }) {
 }
 
 function MobileDiscoverExperience({ discoveries = [], top, today, setPage, setPublicDiscovery }) {
-  const [tab, setTab] = useState("Hot");
-  const safe = discoveries?.length ? discoveries : generateDiscoveryEngine(12).map((d, i) => adaptiveDiscoveryMetrics(d, i));
-  const sorted = tab === "Saved" ? safe.slice(3, 9) : tab === "Rare" ? [...safe].sort((a,b) => b.score - a.score) : tab === "Rising" ? [...safe].sort((a,b) => b.velocity - a.velocity) : safe;
-  const hero = top || sorted[0];
-  const tabs = ["Hot", "Rising", "Rare", "Saved"];
+  const [tab, setTab] = useState("Trending");
+  const [query, setQuery] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [saved, setSaved] = useState({});
+  const [copied, setCopied] = useState("");
+
+  const fallbackDiscoveries = useMemo(
+    () => adaptiveDiscoveryRank(generateDiscoveryEngine(18)).map((d, i) => ({
+      ...d,
+      publicId: `${d.a}-${d.b}-${d.dna?.split("-").pop() || "OS"}-${1047 + i}`.toUpperCase(),
+    })),
+    []
+  );
+
+  const safe = (discoveries && discoveries.length ? discoveries : fallbackDiscoveries).map((d, i) => ({
+    ...d,
+    publicId: d.publicId || `${d.a}-${d.b}-${d.dna?.split("-").pop() || "OS"}-${1047 + i}`.toUpperCase(),
+    aiConfidence: d.aiConfidence || Math.min(99, (d.score || 80) + 4),
+    velocity: d.velocity || 12 + i * 3,
+    saves: d.saves || 18 + i * 9,
+    views: d.views || 440 + i * 137,
+    momentum: d.momentum || d.score || 82,
+  }));
+
+  const filtered = safe.filter((d) => {
+    const haystack = `${d.a} ${d.b} ${d.aName || ""} ${d.bName || ""} ${d.type || ""} ${d.tier || ""}`.toLowerCase();
+    return !query.trim() || haystack.includes(query.toLowerCase());
+  });
+
+  const sorted =
+    tab === "Saved"
+      ? filtered.filter((d) => saved[d.publicId]).concat(filtered.slice(0, 4))
+      : tab === "Rare"
+      ? [...filtered].sort((a, b) => (b.score || 0) - (a.score || 0))
+      : tab === "Reports"
+      ? [...filtered].sort((a, b) => (b.aiConfidence || 0) - (a.aiConfidence || 0))
+      : tab === "Rising"
+      ? [...filtered].sort((a, b) => (b.velocity || 0) - (a.velocity || 0))
+      : filtered;
+
+  const hero = top || today || sorted[0] || fallbackDiscoveries[0];
+  const tabs = ["Trending", "Rising", "Rare", "Saved", "Reports"];
+
+  const openDiscovery = (d) => {
+    const payload = d || hero || fallbackDiscoveries[0];
+    setPublicDiscovery?.(payload);
+    setPage?.("publicdiscovery");
+  };
+
+  const copyDiscovery = async (d) => {
+    const payload = d || hero || fallbackDiscoveries[0];
+    const url = `${window.location.origin}${window.location.pathname}?discovery=${payload.publicId}`;
+    try {
+      await navigator.clipboard?.writeText(url);
+      setCopied(payload.publicId);
+      window.setTimeout(() => setCopied(""), 1300);
+    } catch (error) {
+      setCopied("Copy failed");
+    }
+  };
+
+  const runRefresh = () => {
+    setRefreshing(true);
+    window.setTimeout(() => setRefreshing(false), 700);
+  };
+
+  const demoSteps = [
+    ["Explore", "Find a live signal"],
+    ["Simulate", "Run pair logic"],
+    ["Save", "Vault the result"],
+    ["Export", "Create a report"],
+  ];
 
   return (
     <div className="lg:hidden space-y-4">
-      <div className="rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-950/45 via-slate-950 to-fuchsia-950/20 p-5 shadow-[0_0_70px_rgba(34,211,238,.14)]">
-        <Pill gold><Sparkles size={12}/> mobile discover feed</Pill>
-        <h1 className="mt-4 text-4xl font-black leading-[.95]">Trending Discoveries</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-300">A mobile-first discovery feed with no blank state: AI recommendations, saved paths, recent simulations and upgrade-ready actions.</p>
+      <div className="overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-950/45 via-slate-950 to-fuchsia-950/20 p-5 shadow-[0_0_70px_rgba(34,211,238,.14)]">
+        <div className="flex flex-wrap gap-2">
+          <Pill gold><Sparkles size={12}/> V63 mobile discover</Pill>
+          <Pill><Radar size={12}/> never blank</Pill>
+        </div>
+        <h1 className="mt-4 text-4xl font-black leading-[.95]">Discoveries that feel alive.</h1>
+        <p className="mt-3 text-sm leading-6 text-slate-300">Mobile Discover now has a guaranteed feed, search, filters, pull refresh, saved cards, report previews, pricing prompts and one-tap share actions.</p>
+
+        <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-black/35 p-3">
+          <div className="flex items-center gap-2 rounded-2xl border border-cyan-300/15 bg-slate-950/85 px-3 py-3">
+            <Search size={16} className="text-cyan-200" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search discoveries, elements, reports..."
+              className="min-w-0 flex-1 bg-transparent text-sm font-bold text-white outline-none placeholder:text-slate-500"
+            />
+            {query && <button onClick={() => setQuery("")} className="rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-slate-300">Clear</button>}
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-4 gap-2 text-center">
+          {demoSteps.map(([title, body], index) => (
+            <button key={title} onClick={() => setPage(index === 0 ? "discover" : index === 1 ? "compare" : index === 2 ? "lab" : "reports")} className="rounded-2xl border border-white/10 bg-white/[.045] p-3 active:scale-95">
+              <div className="text-lg font-black text-cyan-100">{index + 1}</div>
+              <div className="mt-1 text-[10px] font-black uppercase tracking-[.12em] text-white">{title}</div>
+              <div className="mt-1 text-[10px] leading-4 text-slate-500">{body}</div>
+            </button>
+          ))}
+        </div>
+
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3"><div className="text-2xl font-black text-cyan-100">{safe.length}</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">signals</div></div>
           <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/10 p-3"><div className="text-2xl font-black text-emerald-100">{hero?.aiConfidence || 91}%</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">AI</div></div>
@@ -8190,40 +8284,147 @@ function MobileDiscoverExperience({ discoveries = [], top, today, setPage, setPu
         </div>
       </div>
 
+      <div className="rounded-[1.75rem] border border-emerald-300/20 bg-emerald-300/10 p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="text-xs uppercase tracking-[.2em] text-emerald-200">Continue where you left off</div>
+            <div className="mt-1 text-2xl font-black text-white">{hero?.a} + {hero?.b}</div>
+            <div className="mt-1 text-sm text-emerald-50/80">Ready for compare, report preview or share card.</div>
+          </div>
+          <button onClick={() => openDiscovery(hero)} className="rounded-2xl bg-emerald-300 px-4 py-3 text-xs font-black text-slate-950">Open</button>
+        </div>
+      </div>
+
       <div className="sticky top-2 z-30 -mx-1 overflow-x-auto pb-2 backdrop-blur-xl">
         <div className="flex gap-2 px-1">
+          <button onClick={runRefresh} className="shrink-0 rounded-full border border-emerald-300/25 bg-emerald-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.14em] text-emerald-100">
+            {refreshing ? "Refreshing..." : "Pull Refresh"}
+          </button>
           {tabs.map((item) => (
             <button key={item} onClick={() => setTab(item)} className={`shrink-0 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[.14em] ${tab === item ? "border-cyan-300/40 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-slate-950/80 text-slate-400"}`}>{item}</button>
           ))}
         </div>
       </div>
 
-      <div className="space-y-3">
-        {sorted.slice(0, 10).map((d, index) => (
-          <button key={`${d.a}-${d.b}-${index}`} onClick={() => { setPublicDiscovery?.(d); setPage("publicdiscovery"); }} className="w-full rounded-[1.75rem] border border-white/10 bg-white/[.045] p-4 text-left shadow-xl shadow-black/20 active:scale-[.99]">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-xs uppercase tracking-[.2em] text-cyan-200">{d.tier || "AI discovery"}</div>
-                <div className="mt-1 text-3xl font-black text-white">{d.a} + {d.b}</div>
-                <div className="mt-1 text-sm text-slate-400">{d.type || "Material intelligence signal"}</div>
+      {refreshing && (
+        <div className="space-y-3">
+          {[1,2,3].map((i) => <div key={i} className="h-28 animate-pulse rounded-[1.75rem] border border-white/10 bg-white/[.045]" />)}
+        </div>
+      )}
+
+      {!refreshing && sorted.length === 0 && (
+        <div className="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-5 text-center">
+          <div className="text-3xl font-black text-amber-100">No blank pages.</div>
+          <p className="mt-2 text-sm leading-6 text-amber-50/80">No result matched your search, so ElementOS can still launch a demo simulation or return to trending discoveries.</p>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <Button onClick={() => setQuery("")} variant="primary" className="py-3 text-xs">Show Trending</Button>
+            <Button onClick={() => setPage("compare")} className="py-3 text-xs">Run Demo</Button>
+          </div>
+        </div>
+      )}
+
+      {!refreshing && sorted.length > 0 && (
+        <div className="-mx-1 overflow-x-auto pb-2">
+          <div className="flex gap-3 px-1">
+            {sorted.slice(0, 5).map((d, index) => (
+              <button key={`${d.publicId}-swipe-${index}`} onClick={() => openDiscovery(d)} className="min-w-[86vw] rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,.16),transparent_35%),rgba(255,255,255,.045)] p-5 text-left shadow-xl shadow-black/30 active:scale-[.99]">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Swipe discovery #{index + 1}</div>
+                    <div className="mt-2 text-4xl font-black text-white">{d.a} + {d.b}</div>
+                    <div className="mt-2 text-sm leading-6 text-slate-300">{d.reason || d.type || "AI-ranked material intelligence signal."}</div>
+                  </div>
+                  <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-right">
+                    <div className="text-3xl font-black text-emerald-100">{d.momentum}</div>
+                    <div className="text-[9px] uppercase tracking-[.16em] text-slate-500">score</div>
+                  </div>
+                </div>
+                <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{d.aiConfidence}%</b><br/><span className="text-[10px] text-slate-500">AI</span></div>
+                  <div className="rounded-xl bg-black/25 p-2"><b className="text-amber-100">+{d.velocity}%</b><br/><span className="text-[10px] text-slate-500">Rising</span></div>
+                  <div className="rounded-xl bg-black/25 p-2"><b className="text-fuchsia-100">{d.saves}</b><br/><span className="text-[10px] text-slate-500">Saved</span></div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!refreshing && sorted.length > 0 && (
+        <div className="space-y-3">
+          {sorted.slice(0, 12).map((d, index) => (
+            <div key={`${d.publicId}-${index}`} className="rounded-[1.75rem] border border-white/10 bg-white/[.045] p-4 shadow-xl shadow-black/20">
+              <button onClick={() => openDiscovery(d)} className="w-full text-left active:scale-[.99]">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-xs uppercase tracking-[.2em] text-cyan-200">{d.tier || "AI discovery"}</div>
+                    <div className="mt-1 text-3xl font-black text-white">{d.a} + {d.b}</div>
+                    <div className="mt-1 text-sm text-slate-400">{d.type || "Material intelligence signal"}</div>
+                  </div>
+                  <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-right">
+                    <div className="text-2xl font-black text-emerald-100">{d.momentum}</div>
+                    <div className="text-[9px] uppercase tracking-[.16em] text-slate-500">score</div>
+                  </div>
+                </div>
+              </button>
+
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{d.aiConfidence}%</b><br/><span className="text-[10px] text-slate-500">AI</span></div>
+                <div className="rounded-xl bg-black/25 p-2"><b className="text-amber-100">+{d.velocity}%</b><br/><span className="text-[10px] text-slate-500">Rising</span></div>
+                <div className="rounded-xl bg-black/25 p-2"><b className="text-fuchsia-100">{d.saves}</b><br/><span className="text-[10px] text-slate-500">Saved</span></div>
               </div>
-              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-right">
-                <div className="text-2xl font-black text-emerald-100">{d.momentum || d.score}</div>
-                <div className="text-[9px] uppercase tracking-[.16em] text-slate-500">score</div>
+
+              <div className="mt-4 grid grid-cols-4 gap-2">
+                <button onClick={() => openDiscovery(d)} className="rounded-xl bg-cyan-300 px-3 py-3 text-xs font-black text-slate-950">Open</button>
+                <button onClick={() => setPage("reports")} className="rounded-xl border border-white/10 px-3 py-3 text-xs font-black text-slate-300">Report</button>
+                <button onClick={() => copyDiscovery(d)} className="rounded-xl border border-white/10 px-3 py-3 text-xs font-black text-slate-300">{copied === d.publicId ? "Copied" : "Share"}</button>
+                <button onClick={() => setSaved((prev) => ({ ...prev, [d.publicId]: !prev[d.publicId] }))} className={`rounded-xl border px-3 py-3 text-xs font-black ${saved[d.publicId] ? "border-fuchsia-300/40 bg-fuchsia-300/15 text-fuchsia-100" : "border-white/10 text-slate-300"}`}>{saved[d.publicId] ? "Saved" : "Save"}</button>
               </div>
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-              <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{d.aiConfidence || d.score}%</b><br/><span className="text-[10px] text-slate-500">AI</span></div>
-              <div className="rounded-xl bg-black/25 p-2"><b className="text-amber-100">+{d.velocity || 18}%</b><br/><span className="text-[10px] text-slate-500">Rising</span></div>
-              <div className="rounded-xl bg-black/25 p-2"><b className="text-fuchsia-100">{d.saves || 44}</b><br/><span className="text-[10px] text-slate-500">Saved</span></div>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <span className="flex-1 rounded-xl bg-cyan-300 px-3 py-2 text-center text-xs font-black text-slate-950">Open</span>
-              <span className="rounded-xl border border-white/10 px-3 py-2 text-xs font-black text-slate-300">Report</span>
-              <span className="rounded-xl border border-white/10 px-3 py-2 text-xs font-black text-slate-300">Share</span>
-            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="grid gap-3">
+        <div className="rounded-[1.75rem] border border-cyan-300/15 bg-cyan-300/10 p-4">
+          <div className="text-xs uppercase tracking-[.2em] text-cyan-200">Mobile report preview</div>
+          <div className="mt-2 text-2xl font-black text-white">Discovery dossier ready</div>
+          <p className="mt-2 text-sm leading-6 text-slate-300">Preview summary cards first. Export PDF, SVG and JSON only after upgrade.</p>
+          <Button onClick={() => setPage("reports")} variant="primary" className="mt-4 w-full py-3 text-xs">Open Reports</Button>
+        </div>
+
+        <div className="rounded-[1.75rem] border border-amber-300/20 bg-amber-300/10 p-4">
+          <div className="text-xs uppercase tracking-[.2em] text-amber-200">Founding Researcher</div>
+          <div className="mt-2 text-3xl font-black text-white">$19/month</div>
+          <p className="mt-2 text-sm leading-6 text-amber-50/80">Unlock reports, vault, exports, media cards and AI Copilot. Future Pro Lab price remains $35/month.</p>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <Button onClick={() => setPage("login")} variant="primary" className="py-3 text-xs">Create Account</Button>
+            <Button onClick={() => setPage("reports")} className="py-3 text-xs">See Value</Button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button onClick={() => setPage("periodic")} className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-4 text-left">
+            <Atom size={20} className="text-cyan-200" />
+            <div className="mt-2 text-lg font-black text-white">Compact Table</div>
+            <div className="text-xs leading-5 text-slate-400">Mobile periodic mode</div>
           </button>
-        ))}
+          <button onClick={() => setPage("timemachine")} className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-4 text-left">
+            <Clock3 size={20} className="text-cyan-200" />
+            <div className="mt-2 text-lg font-black text-white">Timeline</div>
+            <div className="text-xs leading-5 text-slate-400">1, 10, 50, 100 years</div>
+          </button>
+          <button onClick={() => setPage("welldriller")} className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-4 text-left">
+            <Target size={20} className="text-cyan-200" />
+            <div className="mt-2 text-lg font-black text-white">Depth View</div>
+            <div className="text-xs leading-5 text-slate-400">Vertical well path</div>
+          </button>
+          <button onClick={() => setPage("seismo")} className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-4 text-left">
+            <Waves size={20} className="text-cyan-200" />
+            <div className="mt-2 text-lg font-black text-white">Landscape Seismo</div>
+            <div className="text-xs leading-5 text-slate-400">Best viewed wide</div>
+          </button>
+        </div>
       </div>
     </div>
   );
