@@ -6932,891 +6932,489 @@ function SeismoSimulator({ setPage }) {
 
 
 function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
-  const [format, setFormat] = useState("Discovery DNA");
+  const [styleMode, setStyleMode] = useState("Classic EOS");
+  const [exportLayout, setExportLayout] = useState("Square 1080");
+  const [sourceId, setSourceId] = useState("compare");
   const [cardIndex, setCardIndex] = useState(0);
   const [founderName, setFounderName] = useState("Paul Roper");
-  const [headlineMode, setHeadlineMode] = useState("AI Headline");
-  const [exportLayout, setExportLayout] = useState("Portrait Poster");
-  const [mediaSourceId, setMediaSourceId] = useState("compare");
-  const [seriesNumber, setSeriesNumber] = useState(36);
+  const [posterMotion, setPosterMotion] = useState(true);
+  const [showGrid, setShowGrid] = useState(true);
   const [exportHistory, setExportHistory] = useState([]);
-  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(24)), []);
+
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(30)), []);
   const activeMaterial = elementMap[selected] || elementMap.Al;
   const compareSet = compare?.length ? compare : ["Al", "Ti", "Hf", "W"];
-  const discovery = discoveries[cardIndex % discoveries.length] || discoveries[0];
+  const discovery = discoveries[cardIndex % Math.max(1, discoveries.length)] || discoveries[0];
+
   const mediaSources = useMemo(() => {
     const primaryPair = compareSet.slice(0, 2);
     const compareTitle = primaryPair.length >= 2 ? `${primaryPair[0]} + ${primaryPair[1]}` : `${activeMaterial.symbol} + Ti`;
     const compareScore = primaryPair.length >= 2 ? compatibilityScore(primaryPair[0], primaryPair[1]) : Math.round(score(activeMaterial.symbol).alignment);
-    const discoveryPair = discovery ? `${discovery.a} + ${discovery.b}` : "Ti + Hf";
+    const discoveryPair = discovery ? `${discovery.a} + ${discovery.b}` : "Al + Ti";
     return [
       {
         id: "compare",
-        label: "Current Compare Set",
-        type: "Compare Materials",
+        label: "Current Compare",
         title: compareTitle,
-        code: `COMPARE-${compareSet.join("-") || activeMaterial.symbol}`,
-        headline: "Comparison-Ready Discovery Asset",
-        subtitle: `${compareSet.join(" + ")} comparison converted into media`,
-        score: compareScore,
-        metric: "Compatibility",
-        tier: rarityTier(compareScore),
-        narrative: `This card is generated directly from the current Compare workflow using ${compareSet.join(" + ")}. It turns the user's active material selection into a shareable discovery asset.`,
+        subtitle: "Element pairing converted into a cinematic discovery card",
+        headline: "A DISCOVERY WORTH SHARING",
+        code: `EOS-${materialDNA(primaryPair[0] || activeMaterial.symbol, primaryPair[1] || "Ti")}`,
         source: "Compare Engine",
-        hook: "A live compare result became a report, poster and social pack.",
-        constellation: `${compareSet.slice(0, 4).join(" → ")} → Media`,
+        score: Math.max(82, compareScore),
+        metric: "Discovery Signal Score",
+        tier: rarityTier(compareScore),
+        left: primaryPair[0] || activeMaterial.symbol,
+        right: primaryPair[1] || "Ti",
+        narrative: `ElementOS converted ${compareTitle} into a premium social discovery asset with ARC connection visuals, animated signal traces and export-ready EOS branding.`,
       },
       {
         id: "discovery",
-        label: "Discovery Feed Asset",
-        type: "Discovery Feed",
+        label: "Trending Discovery",
         title: discoveryPair,
-        code: discovery?.dna || "DISCOVERY-TI-HF",
-        headline: discovery?.type || "Rare Material Signal Detected",
-        subtitle: discovery?.tier || "Network-ranked discovery",
-        score: discovery?.aiConfidence || discovery?.score || 94,
+        subtitle: "Network-ranked discovery signal packaged for sharing",
+        headline: "RARE MATERIAL CONNECTION REVEALED",
+        code: discovery?.dna || "EOS-1047",
+        source: "Discovery Feed",
+        score: discovery?.aiConfidence || discovery?.score || 96,
         metric: "AI Confidence",
         tier: discovery?.tier || "ULTRA RARE",
-        narrative: discovery?.reason || "A high-signal material pairing surfaced inside the ElementOS discovery network.",
-        source: "Discovery Feed",
-        hook: "A trending network discovery became a public media asset.",
-        constellation: discovery ? `${discovery.a} → ${discovery.b} → Public Discovery` : "Ti → Hf → Public Discovery",
+        left: discovery?.a || "Al",
+        right: discovery?.b || "Ti",
+        narrative: discovery?.reason || "A high-signal material pairing surfaced inside the ElementOS discovery network and is now ready to become a public card.",
       },
       {
         id: "matter",
-        label: "Matter Intelligence Opportunity",
-        type: "Matter Intelligence",
-        title: "Diamond Cluster",
+        label: "Matter Intelligence",
+        title: "Diamond Signal",
+        subtitle: "Opportunity intelligence transformed into a premium field poster",
+        headline: "GROUND OPPORTUNITY SIGNAL RISING",
         code: "MIOS-DK-27",
-        headline: "Ground Opportunity Signal Rising",
-        subtitle: "Matter Intelligence scan converted into an opportunity poster",
-        score: 92,
-        metric: "Opportunity Score",
-        tier: "RISING",
-        narrative: "Multiple evidence layers are converging around one potential ground opportunity. The signal is strong enough to become a report-ready opportunity card.",
         source: "Matter Intelligence",
-        hook: "An opportunity scan became a shareable intelligence poster.",
-        constellation: "Signal → Target → Report",
+        score: 94,
+        metric: "Opportunity Score",
+        tier: "LEGENDARY",
+        left: "C",
+        right: "Ti",
+        narrative: "Multiple signal layers are converging into one report-ready opportunity card with EOS-style target graphics, score architecture and field-intelligence branding.",
       },
       {
         id: "timemachine",
-        label: "Time Machine Forecast",
-        type: "Time Machine",
-        title: `${activeMaterial.symbol} 25-Year Forecast`,
-        code: `TIME-${activeMaterial.symbol}-25Y`,
-        headline: "Future-State Material Forecast",
-        subtitle: "Long-horizon behaviour converted into a forecast poster",
-        score: Math.round(score(activeMaterial.symbol).stability * 19),
+        label: "Time Machine",
+        title: `${activeMaterial.symbol} 50Y Forecast`,
+        subtitle: "Long-horizon behaviour converted into a future-state poster",
+        headline: "FUTURE MATERIAL BEHAVIOUR DETECTED",
+        code: `TIME-${activeMaterial.symbol}-50Y`,
+        source: "Time Machine",
+        score: Math.max(82, Math.min(99, Math.round(score(activeMaterial.symbol).stability * 21))),
         metric: "Survival Signal",
         tier: "FORECAST",
-        narrative: `${activeMaterial.name} is projected across long-term stress, pressure and exposure conditions, then packaged as a forecast card for reporting and sharing.`,
-        source: "Time Machine",
-        hook: "A future-state simulation became a visual forecast asset.",
-        constellation: `${activeMaterial.symbol} → 25Y → Forecast`,
+        left: activeMaterial.symbol,
+        right: "50Y",
+        narrative: `${activeMaterial.name} is projected through long-horizon stress and exposure conditions, then transformed into an export-ready social forecast asset.`,
       },
       {
         id: "seismo",
-        label: "Seismo / Well Signal",
-        type: "Advanced Labs",
-        title: "Subsurface Wave Signal",
-        code: "SEISMO-P-S-1047",
-        headline: "Seismic Signal Gap Detected",
-        subtitle: "P-wave and S-wave readout packaged for technical sharing",
-        score: 88,
+        label: "Seismo Signal",
+        title: "P + S Wave",
+        subtitle: "Subsurface wave intelligence turned into technical share media",
+        headline: "SEISMIC SIGNAL GAP DETECTED",
+        code: "SEISMO-1047",
+        source: "Seismo Lab",
+        score: 91,
         metric: "Signal Clarity",
         tier: "TECHNICAL",
-        narrative: "A simulated subsurface wave response was converted into a clear poster-style readout for field review, reporting and public explanation.",
-        source: "Seismo Lab",
-        hook: "A technical lab result became a visual explanation asset.",
-        constellation: "P-Wave → S-Wave → Report",
-      },
-      {
-        id: "report",
-        label: "Research Report",
-        type: "Reports",
-        title: "Research Dossier",
-        code: `REPORT-${compareSet.slice(0, 3).join("-")}`,
-        headline: "Report-Ready Scientific Asset",
-        subtitle: "Executive summary converted into a media pack",
-        score: 90,
-        metric: "Report Strength",
-        tier: "REPORTABLE",
-        narrative: "This export packages an ElementOS result as a polished report, SVG poster, JSON dataset and platform-specific social copy.",
-        source: "Report Engine",
-        hook: "A report became a social-ready discovery pack.",
-        constellation: "Insight → Report → Public Page",
+        left: "P",
+        right: "S",
+        narrative: "A P-wave and S-wave response has been packaged as a cinematic EOS signal card for technical explanation, reporting and public sharing.",
       },
     ];
   }, [compareSet, activeMaterial, discovery]);
-  const selectedMediaSource = mediaSources.find((source) => source.id === mediaSourceId) || mediaSources[0];
-  const globalAverage = 68;
 
-  const cardStats = useMemo(() => {
-    const seed = String(discovery?.dna || "TI-HF-1047").split("").reduce((sum, c) => sum + c.charCodeAt(0), 0);
-    return {
-      views: 2400 + (seed % 4200),
-      saves: 84 + (seed % 360),
-      reports: 17 + (seed % 92),
-      shares: 22 + (seed % 280),
-      rank: 1 + (seed % 99),
-      percentile: Math.max(0.2, Math.min(9.9, ((100 - (discovery?.score || 92)) / 2.4).toFixed(1))),
-    };
-  }, [discovery]);
+  const cardData = mediaSources.find((source) => source.id === sourceId) || mediaSources[0];
+  const leftElement = elementMap[cardData.left] || { symbol: cardData.left, name: cardData.left === "P" ? "P-Wave" : cardData.left === "C" ? "Carbon" : cardData.left, atomicNumber: cardData.left === "50Y" ? 50 : 13 };
+  const rightElement = elementMap[cardData.right] || { symbol: cardData.right, name: cardData.right === "S" ? "S-Wave" : cardData.right === "50Y" ? "Future" : cardData.right, atomicNumber: cardData.right === "S" ? 2 : 22 };
+  const scoreValue = Math.max(1, Math.min(99.9, Number(cardData.score) || 94));
+  const normalizedScore = scoreValue.toFixed(scoreValue >= 98 ? 1 : 0);
 
-  const storyLines = useMemo(() => {
-    const pair = `${discovery?.a || "Ti"} + ${discovery?.b || "Hf"}`;
-    return [
-      `Rare alignment detected across ${pair}.`,
-      `${discovery?.type || "Hidden compatibility signal"} moved into the public discovery queue.`,
-      `AI confidence sits ${Math.max(1, (discovery?.aiConfidence || 94) - globalAverage)} points above the network average.`,
-      "This is designed to become a discovery, report, share card and public research asset.",
-    ];
-  }, [discovery]);
+  const layoutMeta = {
+    "Square 1080": { label: "Square", aspect: "aspect-square", size: "1080 × 1080", width: 1080, height: 1080 },
+    "Portrait 1350": { label: "Portrait", aspect: "aspect-[4/5]", size: "1080 × 1350", width: 1080, height: 1350 },
+    "Landscape 1600": { label: "Landscape", aspect: "aspect-video", size: "1600 × 900", width: 1600, height: 900 },
+  }[exportLayout] || { label: "Square", aspect: "aspect-square", size: "1080 × 1080", width: 1080, height: 1080 };
 
-  const cardData = useMemo(() => {
-    const base = {
-      format,
-      badge: format.toUpperCase(),
-      title: selectedMediaSource.title,
-      code: discovery?.dna || "DISCOVERY-TI-HF",
-      headline: headlineMode === "AI Headline" ? selectedMediaSource.headline : `${selectedMediaSource.type} Media Asset`,
-      subtitle: selectedMediaSource.subtitle,
-      score: selectedMediaSource.score,
-      metric: "AI Confidence",
-      tier: discovery?.tier || "ULTRA RARE",
-      rank: `#${cardStats.rank} Global`,
-      top: `Top ${cardStats.percentile}%`,
-      founder: founderName || "ElementOS Researcher",
-      narrative: selectedMediaSource.narrative,
-      statA: `${cardStats.views.toLocaleString()} views`,
-      statB: `${cardStats.saves.toLocaleString()} saves`,
-      statC: `${cardStats.reports.toLocaleString()} reports`,
-      statD: `${cardStats.shares.toLocaleString()} shares`,
-      source: selectedMediaSource.source,
-      cardNumber: `Discovery #${String(seriesNumber).padStart(3, "0")}`,
-      hook: selectedMediaSource.hook,
-      constellation: discovery ? `${discovery.a} → ${discovery.b} → Public Discovery` : "Ti → Hf → Public Discovery",
-    };
-
-    if (format === "Scientific Trading Card") {
-      return { ...base, badge: "SCIENTIFIC TRADING CARD", headline: "Collectible Material Intelligence", source: "Trading Card", subtitle: "front/back research collectible", tier: "COLLECTIBLE" };
-    }
-    if (format === "Founder Card") {
-      return { ...base, badge: "FOUNDER DISCOVERY", headline: `Found by ${founderName || "Paul Roper"}`, source: "Founder Card", subtitle: "researcher identity + discovery proof", tier: "FOUNDER" };
-    }
-    if (format === "Opportunity Poster") {
-      return { ...base, badge: "OPPORTUNITY SIGNAL", title: "Diamond Cluster", code: "MIOS-DK-27", headline: "Ground Opportunity Signal Rising", subtitle: "Matter Intelligence target card", score: 92, metric: "Opportunity Score", tier: "RISING", source: "Matter Intelligence" };
-    }
-    if (format === "Report Poster") {
-      return { ...base, badge: "DISCOVERY REPORT", headline: "Report-Ready Discovery Asset", source: "Report Poster", subtitle: "executive brief + technical narrative", tier: "REPORTABLE" };
-    }
-    if (format === "League Table") {
-      return { ...base, badge: "TOP DISCOVERIES TODAY", headline: "Discovery Leaderboard", source: "League Table", subtitle: "ranked by momentum, saves and AI confidence", tier: "TRENDING", hook: "The network is ranking today’s strongest material signals." };
-    }
-    if (format === "Discovery Poster") {
-      return { ...base, badge: "DISCOVERY POSTER", headline: "Exceptional Material Signal Detected", source: "Poster Export", subtitle: "premium launch poster for X, LinkedIn and Reddit", tier: "POSTER", hook: "Built to stop the scroll and turn a simulation into a public discovery." };
-    }
-    if (format === "Daily Discovery Series") {
-      return { ...base, badge: "DAILY DISCOVERY", headline: `Daily Discovery Series ${String(seriesNumber).padStart(3, "0")}`, source: "Daily Series", subtitle: "collectible discovery drop", tier: "SERIES", hook: "A new shareable discovery every day keeps ElementOS alive." };
-    }
-    return base;
-  }, [format, discovery, cardStats, founderName, headlineMode, selectedMediaSource]);
-
-  const formats = ["Discovery DNA", "Discovery Poster", "Daily Discovery Series", "Scientific Trading Card", "Founder Card", "Opportunity Poster", "Report Poster", "League Table"];
-  const exportLayouts = ["Square Card", "Portrait Poster", "Landscape Banner", "X Post", "LinkedIn", "Reddit"];
-  const badges = ["First Discovery", "Top 1%", "Matter Pioneer", "Report Ready", "Public Asset"];
-  const channels = [
-    ["X / Twitter", "One sharp discovery card, one curiosity hook, one public discovery link."],
-    ["LinkedIn", "Frame it as a professional material-intelligence insight with a report preview."],
-    ["Reddit", "Lead with explanation, not hype. Show the card after the useful context."],
-    ["Product Hunt", "Use the founder card plus a clear before/after workflow demo."],
-  ];
-
-  const performanceScore = Math.min(99, Math.round((cardData.score * 0.42) + (cardStats.shares / 8) + (cardStats.saves / 14) + 18));
-  const viralReadiness = performanceScore >= 92 ? "LAUNCH READY" : performanceScore >= 82 ? "HIGH POTENTIAL" : performanceScore >= 72 ? "NEEDS STRONGER HOOK" : "REFINE BEFORE POSTING";
-  const confidenceMetrics = [
-    ["Signal Agreement", Math.min(99, Math.round(cardData.score * 0.94 + 5))],
-    ["Historical Match", Math.min(99, Math.round(cardData.score * 0.88 + 8))],
-    ["Simulation Consistency", Math.min(99, Math.round(cardData.score * 0.91 + 6))],
-  ];
-  const genomeMetrics = [
-    ["Thermal", Math.min(99, Math.round(cardData.score * 0.96))],
-    ["Pressure", Math.min(99, Math.round(cardData.score * 0.91))],
-    ["Stability", Math.min(99, Math.round(cardData.score * 0.94))],
-    ["Conductivity", Math.min(99, Math.round(cardData.score * 0.78))],
-  ];
-  const genomePair = String(cardData.title || "Ti + Hf").split("+").map((item) => item.trim()).filter(Boolean);
-  const discoveryGenome = `${genomePair[0] || "Ti"}${genomePair[1] || "Hf"}-X${String(cardStats.rank).padStart(2, "0")}-P${Math.round(cardData.score / 10)}`;
-  const ctaVariants = ["Open the discovery", "Generate your own", "View the full report", "Save this signal", "Join the founding beta"];
-  const abVariants = [
-    ["A", "Rare signal headline", cardData.headline, "Best for X curiosity."],
-    ["B", "Score-first headline", `${cardData.score}% ${cardData.metric}`, "Best for LinkedIn authority."],
-    ["C", "Story-first headline", cardData.hook, "Best for Reddit explanation."],
-  ];
-  const collections = [
-    ["Advanced Thermal Materials", "12 discoveries", "Ti + Hf, W + Ta, Zr + Hf"],
-    ["Aerospace Stability Set", "8 discoveries", "Al + Ti, Mg + Al, Ti + V"],
-    ["Rare Earth Intelligence", "16 discoveries", "Nd + Pr, Dy + Tb, Ce + La"],
-  ];
-  const tournamentPairs = [
-    ["Ti + Hf", "Al + Ti", "Ti + Hf", "+8% thermal · +12% pressure"],
-    ["Ga + In", "Au + Pt", "Ga + In", "+14% conductivity · +6% novelty"],
-  ];
-  const hallOfFame = discoveries.slice(0, 5).map((d, index) => ({ ...d, rank: index + 1 }));
-  const platformRecommendations = [
-    ["X", "Use the square card, short curiosity hook, one number, one public discovery link."],
-    ["LinkedIn", "Use portrait poster, professional narrative, report preview, founder context."],
-    ["Reddit", "Lead with useful explanation, then card. Ask for critique rather than sales."],
-    ["Product Hunt", "Use founder card plus the discovery loop: simulate → report → share."],
-  ];
-
-  const safeText = (value) => String(value ?? "").replace(/[&<>\"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
-  const smartTitle = (value = "") => {
-    const text = String(value || "").trim();
-    if (!text) return "Discovery Signal Detected";
-    if (text.length <= 48) return text;
-    return text
-      .replace("Rare Thermal and Pressure Alignment Suitable for Advanced Structural Comparison", "Rare Thermal-Pressure Alignment")
-      .replace("Hidden compatibility signal", "Hidden Compatibility Signal")
-      .slice(0, 64)
-      .replace(/\s+\S*$/, "") + "...";
+  const styleMeta = {
+    "Classic EOS": {
+      badge: "EOS CLASSIC",
+      shell: "from-cyan-950/45 via-slate-950 to-amber-950/25",
+      left: "cyan",
+      right: "amber",
+      glow: "shadow-[0_0_100px_rgba(34,211,238,.18)]",
+    },
+    "Deep Lab": {
+      badge: "DEEP LAB",
+      shell: "from-blue-950/50 via-slate-950 to-fuchsia-950/25",
+      left: "blue",
+      right: "fuchsia",
+      glow: "shadow-[0_0_100px_rgba(59,130,246,.18)]",
+    },
+    "Gold Signal": {
+      badge: "GOLD SIGNAL",
+      shell: "from-amber-950/45 via-black to-orange-950/30",
+      left: "amber",
+      right: "yellow",
+      glow: "shadow-[0_0_120px_rgba(251,191,36,.20)]",
+    },
+  }[styleMode] || {
+    badge: "EOS CLASSIC",
+    shell: "from-cyan-950/45 via-slate-950 to-amber-950/25",
+    left: "cyan",
+    right: "amber",
+    glow: "shadow-[0_0_100px_rgba(34,211,238,.18)]",
   };
 
-  const wrapWords = (value = "", maxChars = 34, maxLines = 3) => {
-    const words = String(value || "").replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
-    const lines = [];
-    let line = "";
-
-    words.forEach((word) => {
-      const next = line ? `${line} ${word}` : word;
-      if (next.length > maxChars && line) {
-        lines.push(line);
-        line = word;
-      } else {
-        line = next;
-      }
-    });
-
-    if (line) lines.push(line);
-
-    if (lines.length > maxLines) {
-      const clipped = lines.slice(0, maxLines);
-      clipped[maxLines - 1] = clipped[maxLines - 1].replace(/[.,;:]?$/, "") + "...";
-      return clipped;
-    }
-
-    return lines.length ? lines : [""];
+  const palette = {
+    cyan: { text: "text-cyan-100", border: "border-cyan-300/35", bg: "bg-cyan-300/10", glow: "shadow-[0_0_70px_rgba(34,211,238,.42)]", stroke: "rgba(34,211,238,.94)", fill: "rgba(103,232,249,.95)" },
+    amber: { text: "text-amber-100", border: "border-amber-300/35", bg: "bg-amber-300/10", glow: "shadow-[0_0_70px_rgba(251,191,36,.42)]", stroke: "rgba(251,191,36,.94)", fill: "rgba(253,230,138,.95)" },
+    blue: { text: "text-blue-100", border: "border-blue-300/35", bg: "bg-blue-300/10", glow: "shadow-[0_0_70px_rgba(59,130,246,.42)]", stroke: "rgba(96,165,250,.94)", fill: "rgba(147,197,253,.95)" },
+    fuchsia: { text: "text-fuchsia-100", border: "border-fuchsia-300/35", bg: "bg-fuchsia-300/10", glow: "shadow-[0_0_70px_rgba(217,70,239,.42)]", stroke: "rgba(217,70,239,.94)", fill: "rgba(240,171,252,.95)" },
+    yellow: { text: "text-yellow-100", border: "border-yellow-300/35", bg: "bg-yellow-300/10", glow: "shadow-[0_0_70px_rgba(234,179,8,.42)]", stroke: "rgba(234,179,8,.94)", fill: "rgba(254,240,138,.95)" },
   };
 
-  const svgTextLines = (lines = [], { x = 0, y = 0, lineHeight = 46, fill = "#e0f2fe", size = 34, weight = 700, anchor = "start", family = "Inter, Arial, sans-serif", spacing = 0 } = {}) => {
-    return lines
-      .map((line, index) => `<text x="${x}" y="${y + index * lineHeight}" fill="${fill}" font-family="${family}" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}" letter-spacing="${spacing}">${safeText(line)}</text>`)
-      .join("\n");
-  };
+  const leftPalette = palette[styleMeta.left] || palette.cyan;
+  const rightPalette = palette[styleMeta.right] || palette.amber;
+  const metricRows = [
+    ["Thermal Stability", `${Math.min(99.9, scoreValue - 1.4).toFixed(1)}%`, Activity],
+    ["Corrosion Resistance", `${Math.min(99.9, scoreValue - 2.6).toFixed(1)}%`, ShieldCheck],
+    ["Pressure Tolerance", `${Math.min(99.9, scoreValue - 0.8).toFixed(1)}%`, Radar],
+    ["Structural Integrity", `${Math.min(99.9, scoreValue - 1.1).toFixed(1)}%`, Network],
+  ];
 
-  const splitPair = (title = "Ti + Hf") => {
-    const parts = String(title).split("+").map((item) => item.trim()).filter(Boolean);
-    return [parts[0] || "Ti", parts[1] || "Hf"];
-  };
+  const caption = `ELEMENTOS ${cardData.title} — ${normalizedScore}% ${cardData.metric}. ${cardData.headline}. Generated from ${cardData.source}. Explore the discovery at https://theelementos.com`;
 
-
-  const copyCard = () => {
-    const text = `${cardData.headline}
-${cardData.title} · ${cardData.code}
-${cardData.score}% ${cardData.metric}
-${cardData.tier} · ${cardData.rank} · ${cardData.top}
-Found by ${cardData.founder}
-${cardData.narrative}
-${cardData.statA} · ${cardData.statB} · ${cardData.statC}
-${cardData.hook}
-${cardData.cardNumber}
-Generated in ElementOS`;
-    navigator.clipboard?.writeText(text);
-    alert("Viral card copy saved to clipboard.");
-  };
-
-  const copyCaption = (channel = "X") => {
-    const pair = cardData.title;
-    const captions = {
-      X: `${cardData.headline}
-
-${pair}
-${cardData.score}% ${cardData.metric}
-${cardData.tier} · ${cardData.top}
-
-Generated in ElementOS.`,
-      LinkedIn: `I generated a new ElementOS discovery asset: ${pair}. The model returned ${cardData.score}% ${cardData.metric}, classified as ${cardData.tier}. This is the kind of shareable scientific intelligence workflow ElementOS is being built for.`,
-      Reddit: `I am testing a material-discovery prototype called ElementOS. This card shows ${pair} with ${cardData.score}% ${cardData.metric}. I am looking for feedback on whether the explanation and export format make the result understandable.`,
-      ProductHunt: `ElementOS turns material simulations into discoveries, reports and shareable scientific cards. Today's example: ${pair} at ${cardData.score}% ${cardData.metric}.`,
-    };
-    navigator.clipboard?.writeText(captions[channel] || captions.X);
-    alert(`${channel} caption copied.`);
-  };
-
-
-  const createSocialPack = () => {
-    const pair = cardData.title;
-    const socialPack = {
-      product: "ElementOS",
-      asset: "Discovery Social Pack",
-      discovery: {
-        title: pair,
-        code: cardData.code,
-        headline: cardData.headline,
-        score: `${cardData.score}%`,
-        tier: cardData.tier,
-        rank: cardData.rank,
-        founder: cardData.founder,
-      },
-      exportsIncluded: ["PDF report", "JSON data", "SVG poster"],
-      captions: {
-        x: `${cardData.headline}\n\n${pair} · ${cardData.score}% ${cardData.metric}\n${cardData.tier} · ${cardData.top}\n\nBuilt in ElementOS.`,
-        linkedin: `I generated a new ElementOS discovery asset: ${pair}. It scored ${cardData.score}% ${cardData.metric} and is classified as ${cardData.tier}. ElementOS turns simulations into reports, posters and shareable scientific discovery pages.`,
-        reddit: `I am testing ElementOS, a material-discovery prototype. This export shows ${pair} with ${cardData.score}% ${cardData.metric}. I would love feedback on whether the card explains the discovery clearly.`,
-      },
-      ctaVariants,
-      platformRecommendations,
-      generatedAt: new Date().toISOString(),
-    };
-
-    exportAllFormats({
-      baseName: `elementos-social-pack-${slugifyExportName(cardData.code)}`,
-      title: `${cardData.title} Social Pack`,
-      summary: `${cardData.headline}. ${cardData.score}% ${cardData.metric}. ${cardData.tier}.`,
-      payload: socialPack,
-      sections: [
-        { heading: "Discovery", text: `${cardData.title} · ${cardData.code} · ${cardData.score}% ${cardData.metric}` },
-        { heading: "X Post", text: socialPack.captions.x },
-        { heading: "LinkedIn Post", text: socialPack.captions.linkedin },
-        { heading: "Reddit Post", text: socialPack.captions.reddit },
-        { heading: "Call To Action Variants", text: ctaVariants.join(" · ") },
-      ],
-    });
-
-    setExportHistory((history) => [
-      { type: "Social Pack", layout: "PDF + JSON + SVG", time: new Date().toLocaleTimeString() },
-      ...history,
-    ].slice(0, 8));
-  };
-
-  const exportSVG = () => {
-    const layoutMeta = {
-      "Square Card": { w: 1600, h: 1600, name: "square" },
-      "Portrait Poster": { w: 1600, h: 2100, name: "portrait" },
-      "Landscape Banner": { w: 2100, h: 1200, name: "landscape" },
-      "X Post": { w: 1600, h: 900, name: "x-post" },
-      "LinkedIn": { w: 1600, h: 1200, name: "linkedin" },
-      "Reddit": { w: 1600, h: 1200, name: "reddit" },
-    }[exportLayout] || { w: 1600, h: 2100, name: "portrait" };
-    const [leftSymbol, rightSymbol] = splitPair(cardData.title);
-    const exportHeadline = smartTitle(cardData.headline);
-    const exportSubtitle = smartTitle(cardData.subtitle);
-    const narrativeLines = wrapWords(cardData.narrative, 42, 4);
-    const titleLines = wrapWords(cardData.title, 16, 2);
-    const headlineLines = wrapWords(exportHeadline, 34, 2);
-    const subtitleLines = wrapWords(exportSubtitle, 42, 2);
-    const footerLine = `Generated by ${cardData.founder} in ElementOS`;
-    const ringColor = platform === "LinkedIn" ? "#38bdf8" : platform === "Reddit" ? "#f97316" : platform === "X" ? "#67e8f9" : "#fbbf24";
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${layoutMeta.w}" height="${layoutMeta.h}" viewBox="0 0 1600 2100">
+  const makePosterSvg = () => {
+    const left = leftElement.symbol;
+    const right = rightElement.symbol;
+    const w = layoutMeta.width;
+    const h = layoutMeta.height;
+    const isLandscape = exportLayout === "Landscape 1600";
+    const cx1 = isLandscape ? w * 0.31 : w * 0.30;
+    const cx2 = isLandscape ? w * 0.69 : w * 0.70;
+    const cy = h * 0.47;
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#061a31"/>
-      <stop offset="0.34" stop-color="#020617"/>
-      <stop offset="0.67" stop-color="#101336"/>
-      <stop offset="1" stop-color="#34124a"/>
-    </linearGradient>
-    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#67e8f9"/>
-      <stop offset="0.42" stop-color="#818cf8"/>
-      <stop offset="0.72" stop-color="#f472b6"/>
-      <stop offset="1" stop-color="#fbbf24"/>
-    </linearGradient>
-    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="#061a31"/></linearGradient>
-    <radialGradient id="pulse" cx="74%" cy="16%" r="70%"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.72"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
-    <radialGradient id="gold" cx="18%" cy="84%" r="58%"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.38"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>
-    <radialGradient id="pink" cx="82%" cy="78%" r="52%"><stop offset="0" stop-color="#e879f9" stop-opacity="0.26"/><stop offset="1" stop-color="#e879f9" stop-opacity="0"/></radialGradient>
-    <filter id="softGlow"><feGaussianBlur stdDeviation="13" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="blur"><feGaussianBlur stdDeviation="34"/></filter>
-    <style>.tiny{font-family:Inter,Arial,sans-serif;letter-spacing:8px;font-weight:950}.label{font-family:Inter,Arial,sans-serif;letter-spacing:5px;font-weight:950}.mono{font-family:JetBrains Mono,Consolas,monospace}</style>
+    <radialGradient id="bg" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#0b2b3f"/><stop offset="45%" stop-color="#020617"/><stop offset="100%" stop-color="#000"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="arc" x1="0" x2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#fbbf24"/></linearGradient>
   </defs>
-
-  <rect width="1600" height="2100" fill="url(#bg)"/>
-  <rect width="1600" height="2100" fill="url(#pulse)"/>
-  <rect width="1600" height="2100" fill="url(#gold)"/>
-  <rect width="1600" height="2100" fill="url(#pink)"/>
-  ${Array.from({ length: 84 }).map((_, i) => `<circle cx="${(i * 137) % 1600}" cy="${(i * 89) % 2100}" r="${1 + (i % 4)}" fill="${["#67e8f9", "#fbbf24", "#f472b6", "#ffffff"][i % 4]}" opacity="${0.14 + (i % 6) * 0.045}"/>`).join("")}
-  <path d="M0 260 H1600 M0 600 H1600 M0 940 H1600 M0 1280 H1600 M0 1620 H1600 M220 0 V2100 M560 0 V2100 M900 0 V2100 M1240 0 V2100" stroke="#38bdf8" stroke-opacity="0.058" stroke-width="2"/>
-  <circle cx="1270" cy="260" r="270" fill="#22d3ee" opacity=".16" filter="url(#blur)"/>
-  <circle cx="260" cy="1760" r="320" fill="#fbbf24" opacity=".12" filter="url(#blur)"/>
-  <circle cx="1380" cy="1620" r="250" fill="#e879f9" opacity=".12" filter="url(#blur)"/>
-
-  <rect x="78" y="78" width="1444" height="1944" rx="100" fill="rgba(2,6,23,0.58)" stroke="url(#frame)" stroke-opacity="0.86" stroke-width="5"/>
-  <rect x="118" y="118" width="1364" height="1864" rx="76" fill="rgba(255,255,255,0.036)" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
-  <rect x="150" y="150" width="1300" height="212" rx="48" fill="rgba(2,6,23,.58)" stroke="#67e8f9" stroke-opacity=".20"/>
-
-  <text x="170" y="222" fill="#fef3c7" class="tiny" font-size="34">${safeText(cardData.badge)}</text>
-  <text x="1428" y="222" fill="#67e8f9" class="tiny" font-size="28" text-anchor="end">${safeText(platform)} · ${safeText(format)}</text>
-  <text x="170" y="290" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="850">${safeText(cardData.cardNumber)} · ${safeText(cardData.source)} · SVG / PDF / JSON READY</text>
-
-  ${svgTextLines(headlineLines, { x: 160, y: 450, lineHeight: 58, fill: "#67e8f9", size: 48, weight: 950 })}
-  ${svgTextLines(titleLines, { x: 160, y: 662, lineHeight: 122, fill: "#f8fafc", size: titleLines.length > 1 ? 94 : 132, weight: 950 })}
-  ${svgTextLines(subtitleLines, { x: 160, y: titleLines.length > 1 ? 886 : 810, lineHeight: 44, fill: "#cbd5e1", size: 35, weight: 820 })}
-  <text x="160" y="970" fill="#64748b" class="mono" font-size="30" font-weight="850" letter-spacing="3">${safeText(cardData.code)}</text>
-
-  <g transform="translate(800 1190)" filter="url(#softGlow)">
-    <circle r="360" fill="rgba(34,211,238,0.045)" stroke="#22d3ee" stroke-opacity="0.30" stroke-width="30"/>
-    <circle r="276" fill="rgba(251,191,36,0.035)" stroke="#fbbf24" stroke-opacity="0.42" stroke-width="18"/>
-    <circle r="184" fill="rgba(2,6,23,0.78)" stroke="#ffffff" stroke-opacity="0.13" stroke-width="2"/>
-    <circle r="430" fill="none" stroke="${ringColor}" stroke-opacity=".18" stroke-width="3" stroke-dasharray="18 20"/>
-    <line x1="-420" y1="0" x2="420" y2="0" stroke="#67e8f9" stroke-opacity="0.20" stroke-width="4"/>
-    <line x1="0" y1="-420" x2="0" y2="420" stroke="#fbbf24" stroke-opacity="0.18" stroke-width="4"/>
-    <text y="-48" fill="#67e8f9" font-family="Inter, Arial, sans-serif" font-size="196" font-weight="950" text-anchor="middle">${safeText(cardData.score)}%</text>
-    <text y="42" fill="#dbeafe" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="900" text-anchor="middle" letter-spacing="4">${safeText(cardData.metric).toUpperCase()}</text>
-    <text y="124" fill="#fef3c7" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="950" text-anchor="middle">${safeText(cardData.rank)} · ${safeText(cardData.top)}</text>
-    <g transform="translate(-132 -282)"><rect width="112" height="112" rx="26" fill="url(#tile)" stroke="#67e8f9" stroke-opacity=".55"/><text x="56" y="70" text-anchor="middle" fill="#e0f2fe" font-family="Inter,Arial" font-size="46" font-weight="950">${safeText(leftSymbol)}</text></g>
-    <g transform="translate(26 170)"><rect width="112" height="112" rx="26" fill="url(#tile)" stroke="#fbbf24" stroke-opacity=".62"/><text x="56" y="70" text-anchor="middle" fill="#fef3c7" font-family="Inter,Arial" font-size="46" font-weight="950">${safeText(rightSymbol)}</text></g>
-  </g>
-
-  <rect x="150" y="1548" width="1300" height="250" rx="48" fill="rgba(2,6,23,0.70)" stroke="#ffffff" stroke-opacity="0.12"/>
-  <text x="190" y="1622" fill="#fef3c7" class="label" font-size="26">DISCOVERY SUMMARY</text>
-  ${svgTextLines(narrativeLines, { x: 190, y: 1687, lineHeight: 41, fill: "#e2e8f0", size: 31, weight: 760 })}
-
-  <g transform="translate(150 1848)">
-    ${[
-      [0, cardData.statA, "VIEWS", "#67e8f9"],
-      [332, cardData.statB, "SAVES", "#34d399"],
-      [664, cardData.statC, "REPORTS", "#f472b6"],
-      [996, cardData.tier, "CLASS", "#fbbf24"],
-    ].map(([x, value, label, color]) => `<g transform="translate(${x} 0)"><rect width="294" height="142" rx="34" fill="rgba(2,6,23,0.72)" stroke="${color}" stroke-opacity="0.45"/><circle cx="250" cy="33" r="25" fill="${color}" opacity=".16"/><text x="147" y="61" fill="${color}" font-family="Inter,Arial" font-size="29" font-weight="950" text-anchor="middle">${safeText(value)}</text><text x="147" y="101" fill="#94a3b8" font-family="Inter,Arial" font-size="18" font-weight="900" text-anchor="middle" letter-spacing="4">${label}</text></g>`).join("\n")}
-  </g>
-
-  <text x="150" y="2040" fill="#fef3c7" class="label" font-size="24">${safeText(footerLine.toUpperCase())}</text>
-  <text x="1450" y="2040" fill="#67e8f9" class="label" font-size="30" text-anchor="end">ELEMENTOS</text>
-  <text x="150" y="2078" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="850">${safeText(exportLayout)} · DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <rect x="28" y="28" width="${w-56}" height="${h-56}" rx="32" fill="none" stroke="#22d3ee" stroke-opacity=".55" stroke-width="3"/>
+  <rect x="44" y="44" width="${w-88}" height="${h-88}" rx="24" fill="none" stroke="#fbbf24" stroke-opacity=".25" stroke-width="2"/>
+  <text x="${w/2}" y="80" text-anchor="middle" fill="#e2e8f0" font-size="42" font-family="Arial" font-weight="900" letter-spacing="18">ELEMENTOS</text>
+  <text x="${w/2}" y="130" text-anchor="middle" fill="#67e8f9" font-size="20" font-family="Arial" font-weight="700" letter-spacing="9">DISCOVERY AT THE SPEED OF MATTER</text>
+  <text x="${w/2}" y="${h*0.22}" text-anchor="middle" fill="#cbd5e1" font-size="36" font-family="Arial" font-weight="900" letter-spacing="12">${cardData.headline}</text>
+  <text x="${w/2}" y="${h*0.34}" text-anchor="middle" fill="#fff" font-size="110" font-family="Arial" font-weight="900">${left} + ${right}</text>
+  <line x1="${cx1+95}" y1="${cy}" x2="${cx2-95}" y2="${cy}" stroke="url(#arc)" stroke-width="12" filter="url(#glow)"/>
+  <circle cx="${cx1}" cy="${cy}" r="120" fill="none" stroke="#22d3ee" stroke-width="8" stroke-opacity=".85" filter="url(#glow)"/>
+  <circle cx="${cx2}" cy="${cy}" r="120" fill="none" stroke="#fbbf24" stroke-width="8" stroke-opacity=".85" filter="url(#glow)"/>
+  <text x="${cx1}" y="${cy-8}" text-anchor="middle" fill="#e0f2fe" font-size="90" font-family="Arial" font-weight="900">${left}</text>
+  <text x="${cx1}" y="${cy+52}" text-anchor="middle" fill="#67e8f9" font-size="24" font-family="Arial" font-weight="700" letter-spacing="5">${leftElement.name}</text>
+  <text x="${cx2}" y="${cy-8}" text-anchor="middle" fill="#fef3c7" font-size="90" font-family="Arial" font-weight="900">${right}</text>
+  <text x="${cx2}" y="${cy+52}" text-anchor="middle" fill="#fbbf24" font-size="24" font-family="Arial" font-weight="700" letter-spacing="5">${rightElement.name}</text>
+  <text x="${w/2}" y="${h*0.69}" text-anchor="middle" fill="#fbbf24" font-size="88" font-family="Arial" font-weight="900">${normalizedScore}%</text>
+  <text x="${w/2}" y="${h*0.74}" text-anchor="middle" fill="#67e8f9" font-size="24" font-family="Arial" font-weight="800" letter-spacing="7">${cardData.metric.toUpperCase()}</text>
+  <text x="${w/2}" y="${h-78}" text-anchor="middle" fill="#e2e8f0" font-size="20" font-family="Arial" font-weight="800" letter-spacing="8">EXPLORE · DISCOVER · UNDERSTAND · CREATE</text>
+  <text x="${w/2}" y="${h-38}" text-anchor="middle" fill="#67e8f9" font-size="18" font-family="Arial" font-weight="700" letter-spacing="6">THEELEMENTOS.COM · ${cardData.code}</text>
 </svg>`;
-;
-    setExportHistory((history) => [
-      { format, layout: exportLayout, title: cardData.title, score: cardData.score, time: new Date().toLocaleTimeString() },
-      ...history,
-    ].slice(0, 8));
+  };
+
+  const exportPoster = () => {
+    const customSvg = makePosterSvg();
     exportAllFormats({
-      baseName: `ElementOS-${format.replace(/\s+/g, "-")}-${layoutMeta.name}-viral-card`,
-      title: `${cardData.title} ${format}`,
-      summary: `${cardData.headline}. ${cardData.subtitle}. ${cardData.story}`,
-      payload: { ...cardData, format, layout: exportLayout, viralScore, readiness, platform, ctaVariant },
-      customSvg: svg,
+      baseName: `ElementOS-${cardData.title.replace(/\s+/g, "-")}-${exportLayout.replace(/\s+/g, "-")}-viral-poster`,
+      title: `ElementOS Viral Poster: ${cardData.title}`,
+      summary: `${cardData.headline}. ${cardData.narrative}`,
+      payload: {
+        title: cardData.title,
+        source: cardData.source,
+        score: normalizedScore,
+        metric: cardData.metric,
+        tier: cardData.tier,
+        layout: exportLayout,
+        style: styleMode,
+        code: cardData.code,
+      },
+      sections: [
+        { heading: "EOS Poster Style", text: `${styleMode} · ${layoutMeta.size} · animated ARC connection · orbit rings · signal waveform · poster export.` },
+        { heading: "Social Caption", text: caption },
+        { heading: "Discovery Narrative", text: cardData.narrative },
+      ],
+      customSvg,
     });
+    setExportHistory((items) => [{ title: cardData.title, score: normalizedScore, layout: exportLayout, style: styleMode, time: new Date().toLocaleTimeString() }, ...items].slice(0, 8));
+  };
+
+  const copyCaption = () => safeCopyText(caption, "EOS viral caption copied.");
+
+  const particles = useMemo(() => Array.from({ length: 42 }, (_, i) => ({
+    left: `${(i * 17) % 100}%`,
+    top: `${(i * 29) % 100}%`,
+    delay: `${(i % 11) * 0.27}s`,
+    size: `${2 + (i % 4)}px`,
+    opacity: 0.18 + (i % 7) * 0.08,
+  })), []);
+
+  const nextCard = () => {
+    setCardIndex((value) => value + 1);
+    setSourceId("discovery");
   };
 
   return (
     <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
-        <div>
-          <Pill gold><Sparkles size={12}/> connected media engine</Pill>
-          <h1 className="mt-4 text-5xl font-black leading-none sm:text-7xl">
-            Discovery <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Media Engine</span>
-          </h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Anything valuable in ElementOS can become media: Compare results, Discovery Feed assets, Matter Intelligence scans, Time Machine forecasts, Seismo readouts, Well Driller signals, reports and workspace discoveries.
-          </p>
-          <Info title="Media doctrine">
-            The studio is no longer anchored to one fixed pair. Select a source from across the website, then generate a card, poster, report, social pack, SVG, PDF and JSON export from that live context.
-          </Info>
-        </div>
-
-        <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Media source</div>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {mediaSources.map((source) => (
-              <button
-                key={source.id}
-                onClick={() => setMediaSourceId(source.id)}
-                className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition ${mediaSourceId === source.id ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-black/20 text-slate-300 hover:bg-white/[.05]"}`}
-              >
-                <span className="block text-[10px] uppercase tracking-[.18em] text-slate-500">{source.type}</span>
-                {source.label}
-              </button>
-            ))}
-          </div>
-          <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
-            <b>Selected source:</b> {selectedMediaSource.title} · {selectedMediaSource.score}% {selectedMediaSource.metric}. This source controls the exported card, poster, social captions and PDF/JSON/SVG pack.
-          </div>
-
-          <div className="mt-6 text-xs uppercase tracking-[.22em] text-slate-500">Card format</div>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {formats.map((m) => (
-              <button
-                key={m}
-                onClick={() => setFormat(m)}
-                className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition ${format === m ? "border-cyan-300/40 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-black/20 text-slate-300 hover:bg-white/[.05]"}`}
-              >
-                {m}
-              </button>
-            ))}
-          </div>
-          <div className="mt-5 grid gap-2 sm:grid-cols-2">
-            <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Founder name" />
-            <button onClick={() => setHeadlineMode(headlineMode === "AI Headline" ? "Simple" : "AI Headline")} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-left text-sm font-black text-cyan-100">{headlineMode}</button>
-          </div>
-          <div className="mt-5">
-            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Export layout</div>
-            <div className="mt-3 grid gap-2 sm:grid-cols-3">
-              {exportLayouts.map((layout) => (
-                <button
-                  key={layout}
-                  onClick={() => setExportLayout(layout)}
-                  className={`rounded-2xl border px-3 py-3 text-left text-xs font-black transition ${exportLayout === layout ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-black/20 text-slate-300 hover:bg-white/[.05]"}`}
-                >
-                  {layout}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="mt-5 grid gap-2 sm:grid-cols-3">
-            <input value={seriesNumber} onChange={(e) => setSeriesNumber(Number(e.target.value) || 1)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Series number" />
-            <Button onClick={() => setCardIndex((v) => v + 1)}>Next Discovery</Button>
-            <Button onClick={copyCard}>Copy Post</Button>
-            <Button onClick={createSocialPack}>Create Social Pack</Button>
-            <Button onClick={exportSVG} variant="primary" className="sm:col-span-3">Export PDF/JSON/SVG</Button>
-          </div>
-        </Panel>
-      </Panel>
+      <style>{`
+        @keyframes eosPosterOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes eosPosterOrbitReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        @keyframes eosPosterPulse { 0%,100% { opacity:.72; filter: brightness(1); transform: scale(1); } 50% { opacity:1; filter: brightness(1.4); transform: scale(1.035); } }
+        @keyframes eosPosterArc { 0%,100% { opacity:.64; filter: brightness(1); } 50% { opacity:1; filter: brightness(1.75); } }
+        @keyframes eosPosterParticle { 0% { transform: translate3d(-20px, 20px, 0); opacity:.08; } 45% { opacity:.8; } 100% { transform: translate3d(30px, -44px, 0); opacity:.05; } }
+        @keyframes eosPosterWave { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -120; } }
+        @keyframes eosPosterShimmer { 0% { transform: translateX(-140%) skewX(-18deg); } 100% { transform: translateX(160%) skewX(-18deg); } }
+      `}</style>
 
       <GuidePanel page="viralcards" />
 
-      <Panel>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <Pill gold><ShieldCheck size={12}/> button value audit</Pill>
-            <h2 className="mt-3 text-3xl font-black">Every major card action now creates value.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Use this engine to choose a live source from anywhere in ElementOS, export PDF/JSON/SVG, copy platform captions, create a full social pack, save the asset path and move users toward reports, workspace and public discovery pages.</p>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-3">
-            {["Export", "Save", "Share"].map((label) => (
-              <div key={label} className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-center text-sm font-black text-cyan-100">{label}</div>
-            ))}
-          </div>
-        </div>
-      </Panel>
-
-      <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
-        <div className="relative min-h-[780px] overflow-hidden rounded-[2.5rem] border border-cyan-300/25 bg-gradient-to-br from-cyan-400/15 via-slate-950 to-fuchsia-500/20 p-6 shadow-[0_0_120px_rgba(34,211,238,.20)]">
-          <div className="absolute -right-28 top-10 h-80 w-80 rounded-full bg-cyan-300/20 blur-3xl" />
-          <div className="absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-amber-300/10 blur-3xl" />
-          <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:42px_42px]" />
-
-          <div className="relative z-10 flex h-full flex-col justify-between rounded-[2rem] border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/25 via-slate-950 to-amber-950/20 p-0">
+        <div className="relative p-6 md:p-8">
+          <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-amber-400/15 blur-3xl" />
+          <div className="relative z-10 grid gap-8 xl:grid-cols-[.82fr_1.18fr] xl:items-start">
             <div>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <Pill gold>{cardData.badge}</Pill>
-                <div className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.2em] text-cyan-100">{cardData.source}</div>
-              </div>
-              <div className="mt-6 text-sm font-black uppercase tracking-[.25em] text-amber-100">{cardData.headline}</div>
-              <h2 className="mt-4 text-6xl font-black leading-none text-cyan-100 sm:text-7xl">{cardData.title}</h2>
-              <p className="mt-4 text-xl font-bold text-slate-300">{cardData.subtitle}</p>
-              <div className="mt-4 font-mono text-sm text-slate-500">{cardData.code}</div>
-            </div>
+              <Pill gold><Sparkles size={12}/> V68 viral poster engine</Pill>
+              <h1 className="mt-5 text-5xl font-black leading-[.92] sm:text-7xl">
+                Viral Cards now look like <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">EOS poster art.</span>
+              </h1>
+              <p className="mt-5 text-lg leading-8 text-slate-300">
+                This turns discoveries, reports, Seismo signals and Time Machine forecasts into animated classic ElementOS graphics: orbit rings, ARC beams, energy cores, signal strips and cinematic export layouts.
+              </p>
 
-            <div className="my-10 grid place-items-center">
-              <div className="relative grid h-76 w-76 place-items-center rounded-full border-[18px] border-cyan-300/20 bg-cyan-300/5 shadow-[0_0_90px_rgba(34,211,238,.28)]">
-                <div className="absolute h-56 w-56 rounded-full border-[14px] border-amber-300/25" />
-                <div className="absolute h-40 w-40 rounded-full border border-white/15" />
-                <div className="text-center">
-                  <div className="text-7xl font-black text-cyan-100">{cardData.score}%</div>
-                  <div className="mt-2 text-xs uppercase tracking-[.24em] text-slate-400">{cardData.metric}</div>
-                  <div className="mt-4 text-sm font-black text-amber-100">{cardData.rank} · {cardData.top}</div>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <Button onClick={exportPoster} variant="primary" className="py-4"><Download size={16} className="inline"/> Export PDF / SVG / JSON</Button>
+                <Button onClick={copyCaption} className="py-4"><Share2 size={16} className="inline"/> Copy Viral Caption</Button>
+                <Button onClick={nextCard} className="py-4"><Radar size={16} className="inline"/> Load Trending Discovery</Button>
+                <Button onClick={() => setPage?.("discover")} className="py-4"><Sparkles size={16} className="inline"/> Open Discover</Button>
+              </div>
+
+              <div className="mt-6 grid gap-4">
+                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                  <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Source</div>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {mediaSources.map((source) => (
+                      <button key={source.id} onClick={() => setSourceId(source.id)} className={`rounded-2xl border p-3 text-left text-sm transition ${sourceId === source.id ? "border-cyan-300/50 bg-cyan-300/10 text-cyan-50" : "border-white/10 bg-white/[.04] text-slate-300 hover:bg-white/[.07]"}`}>
+                        <div className="font-black">{source.label}</div>
+                        <div className="mt-1 text-xs text-slate-500">{source.title}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {["Classic EOS", "Deep Lab", "Gold Signal"].map((mode) => (
+                    <button key={mode} onClick={() => setStyleMode(mode)} className={`rounded-2xl border px-3 py-3 text-xs font-black uppercase tracking-[.16em] transition ${styleMode === mode ? "border-amber-300/60 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[.04] text-slate-400 hover:text-white"}`}>{mode}</button>
+                  ))}
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {["Square 1080", "Portrait 1350", "Landscape 1600"].map((layout) => (
+                    <button key={layout} onClick={() => setExportLayout(layout)} className={`rounded-2xl border px-3 py-3 text-xs font-black uppercase tracking-[.16em] transition ${exportLayout === layout ? "border-cyan-300/60 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[.04] text-slate-400 hover:text-white"}`}>{layout}</button>
+                  ))}
+                </div>
+
+                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                  <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Founder / publisher stamp</div>
+                  <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-white outline-none focus:border-cyan-300/50" placeholder="Founder name" />
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button onClick={() => setPosterMotion(!posterMotion)} className="rounded-full border border-white/10 bg-white/[.04] px-3 py-2 text-xs font-bold text-slate-300">{posterMotion ? "Motion On" : "Motion Off"}</button>
+                    <button onClick={() => setShowGrid(!showGrid)} className="rounded-full border border-white/10 bg-white/[.04] px-3 py-2 text-xs font-bold text-slate-300">{showGrid ? "Grid On" : "Grid Off"}</button>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div>
-              <p className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-5 text-sm leading-7 text-slate-200">{cardData.narrative}</p>
-              <div className="mt-3 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50"><b>{cardData.cardNumber}</b> · {cardData.hook}<br/><span className="text-amber-100">Constellation:</span> {cardData.constellation}</div>
-              <div className="mt-5 grid gap-3 sm:grid-cols-4">
-                {[cardData.statA, cardData.statB, cardData.statC, cardData.tier].map((stat) => (
-                  <div key={stat} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-center text-sm font-black text-cyan-100">{stat}</div>
-                ))}
-              </div>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {badges.map((badge) => <span key={badge} className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-amber-100">{badge}</span>)}
-              </div>
-              <div className="mt-6 flex items-center justify-between gap-4 text-xs uppercase tracking-[.24em] text-slate-500">
-                <span>FOUND BY {cardData.founder}</span>
-                <span>ELEMENTOS</span>
-              </div>
-            </div>
-          </div>
-        </div>
+            <div className="xl:sticky xl:top-6">
+              <div className={`relative mx-auto w-full max-w-[760px] ${layoutMeta.aspect}`}>
+                <div className={`absolute inset-0 overflow-hidden rounded-[2.25rem] border border-cyan-300/25 bg-gradient-to-br ${styleMeta.shell} ${styleMeta.glow}`}>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,rgba(34,211,238,.25),transparent_25%),radial-gradient(circle_at_76%_42%,rgba(251,191,36,.23),transparent_24%),radial-gradient(circle_at_center,rgba(255,255,255,.08),transparent_18%)]" />
+                  {showGrid && <div className="absolute inset-0 opacity-25 bg-[linear-gradient(rgba(103,232,249,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,.12)_1px,transparent_1px)] bg-[size:36px_36px]" />}
+                  <div className="absolute inset-0 opacity-25 bg-[radial-gradient(circle,rgba(255,255,255,.13)_1px,transparent_1px)] bg-[size:22px_22px]" />
 
-        <div className="space-y-6">
-          <Panel>
-            <Pill gold><Database size={12}/> connected sources</Pill>
-            <h2 className="mt-3 text-3xl font-black">Create media from any ElementOS result.</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Pick the source that matches what the user just did. Compare should feel connected to cards; Matter Intelligence, Time Machine and Reports should feel connected too.</p>
-            <div className="mt-5 grid gap-3">
-              {mediaSources.map((source) => (
-                <button key={`source-card-${source.id}`} onClick={() => setMediaSourceId(source.id)} className={`rounded-2xl border p-4 text-left transition ${mediaSourceId === source.id ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25 hover:bg-white/[.05]"}`}>
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-xs uppercase tracking-[.22em] text-slate-500">{source.type}</div>
-                      <div className="mt-1 text-lg font-black text-cyan-100">{source.title}</div>
-                      <div className="mt-1 text-xs text-slate-400">{source.headline}</div>
+                  {particles.map((p, index) => (
+                    <span key={index} className="absolute rounded-full bg-cyan-100" style={{ left: p.left, top: p.top, width: p.size, height: p.size, opacity: p.opacity, animation: posterMotion ? `eosPosterParticle ${4 + (index % 7)}s ease-in-out ${p.delay} infinite` : undefined }} />
+                  ))}
+
+                  <div className="absolute left-6 top-5 rounded-2xl border border-cyan-300/30 bg-black/35 px-4 py-3 backdrop-blur-xl">
+                    <div className="text-[10px] font-black uppercase tracking-[.35em] text-cyan-100">ElementOS</div>
+                    <div className="mt-1 text-[9px] uppercase tracking-[.26em] text-slate-400">Viral Card Series</div>
+                    <div className="mt-3 rounded-xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-black text-cyan-100">{cardData.code}</div>
+                  </div>
+
+                  <div className="absolute right-6 top-5 rounded-2xl border border-amber-300/30 bg-black/35 px-4 py-3 text-right backdrop-blur-xl">
+                    <div className="text-2xl font-black text-amber-100">{cardData.tier}</div>
+                    <div className="mt-1 text-[9px] uppercase tracking-[.26em] text-amber-200/80">{styleMeta.badge}</div>
+                    <Gem className="ml-auto mt-3 text-amber-100" size={30} />
+                  </div>
+
+                  <div className="absolute left-1/2 top-6 -translate-x-1/2 text-center">
+                    <div className="text-2xl font-black tracking-[.45em] text-white sm:text-3xl">ELEMENTOS</div>
+                    <div className="mt-2 text-[10px] font-black uppercase tracking-[.55em] text-cyan-100">Discovery at the speed of matter</div>
+                  </div>
+
+                  <div className="absolute left-1/2 top-[18%] w-[92%] -translate-x-1/2 text-center">
+                    <div className="text-xs font-black uppercase tracking-[.65em] text-slate-300 sm:text-sm">{cardData.headline}</div>
+                    <div className="mt-5 bg-gradient-to-r from-cyan-100 via-white to-amber-100 bg-clip-text text-6xl font-black leading-none text-transparent sm:text-8xl xl:text-9xl">
+                      {leftElement.symbol} <span className="text-white">+</span> {rightElement.symbol}
                     </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-black text-emerald-200">{source.score}%</div>
-                      <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">{source.metric}</div>
+                    <div className="mt-3 text-xs font-black uppercase tracking-[.45em] text-cyan-100 sm:text-sm">{cardData.subtitle}</div>
+                  </div>
+
+                  <div className="absolute left-[14%] top-[42%] h-[24%] w-[28%] rounded-full border border-cyan-300/35 bg-black/35 backdrop-blur-xl">
+                    <div className={`absolute inset-0 rounded-full border-4 ${leftPalette.border} ${leftPalette.glow}`} style={{ animation: posterMotion ? "eosPosterPulse 4s ease-in-out infinite" : undefined }} />
+                    {[1,2,3].map((i) => <div key={i} className={`absolute rounded-full border ${leftPalette.border}`} style={{ inset: `${-12 + i * 10}%`, animation: posterMotion ? `eosPosterOrbit ${18 + i * 8}s linear infinite` : undefined }} />)}
+                    <div className="absolute inset-0 grid place-items-center text-center">
+                      <div>
+                        <div className="text-xs text-slate-400">{leftElement.atomicNumber || "13"}</div>
+                        <div className={`text-5xl font-black ${leftPalette.text} sm:text-7xl`}>{leftElement.symbol}</div>
+                        <div className="mt-1 text-[10px] font-black uppercase tracking-[.24em] text-slate-300">{leftElement.name}</div>
+                      </div>
                     </div>
                   </div>
-                </button>
-              ))}
-            </div>
-          </Panel>
 
-          <Panel>
-            <Pill><Network size={12}/> viral ranking</Pill>
-            <h2 className="mt-3 text-4xl font-black">Trending Discovery Queue</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-400">Use these as your daily content calendar. Each row can become a card, poster, report or public discovery page.</p>
-            <div className="mt-6 space-y-3">
-              {discoveries.slice(0, 7).map((d, index) => {
-                const activeQueueItem = mediaSourceId === "discovery" && cardIndex === index;
-                return (
-                <button
-                  key={`${d.dna}-viral`}
-                  onClick={() => {
-                    setCardIndex(index);
-                    setMediaSourceId("discovery");
-                  }}
-                  className={`flex w-full items-center justify-between gap-4 rounded-2xl border p-4 text-left transition ${activeQueueItem ? "border-cyan-300/50 bg-cyan-300/15 shadow-[0_0_34px_rgba(34,211,238,.16)]" : "border-white/10 bg-black/25 hover:border-cyan-300/30 hover:bg-cyan-300/10"}`}
-                >
-                  <div>
-                    <div className="text-lg font-black text-cyan-100">#{index + 1} · {d.a} + {d.b}</div>
-                    <div className="mt-1 text-sm text-slate-400">{d.type} · {d.tier} · {d.dna}</div>
+                  <div className="absolute right-[14%] top-[42%] h-[24%] w-[28%] rounded-full border border-amber-300/35 bg-black/35 backdrop-blur-xl">
+                    <div className={`absolute inset-0 rounded-full border-4 ${rightPalette.border} ${rightPalette.glow}`} style={{ animation: posterMotion ? "eosPosterPulse 4.5s ease-in-out infinite" : undefined }} />
+                    {[1,2,3].map((i) => <div key={i} className={`absolute rounded-full border ${rightPalette.border}`} style={{ inset: `${-12 + i * 10}%`, animation: posterMotion ? `eosPosterOrbitReverse ${20 + i * 9}s linear infinite` : undefined }} />)}
+                    <div className="absolute inset-0 grid place-items-center text-center">
+                      <div>
+                        <div className="text-xs text-slate-400">{rightElement.atomicNumber || "22"}</div>
+                        <div className={`text-5xl font-black ${rightPalette.text} sm:text-7xl`}>{rightElement.symbol}</div>
+                        <div className="mt-1 text-[10px] font-black uppercase tracking-[.24em] text-slate-300">{rightElement.name}</div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-black text-emerald-200">{d.aiConfidence}%</div>
-                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI</div>
+
+                  <div className="absolute left-[35%] top-[52%] h-3 w-[30%] rounded-full bg-gradient-to-r from-cyan-300 via-white to-amber-300 shadow-[0_0_45px_rgba(255,255,255,.65)]" style={{ animation: posterMotion ? "eosPosterArc 2.4s ease-in-out infinite" : undefined }} />
+                  <div className="absolute left-1/2 top-[50%] -translate-x-1/2 rounded-full border border-white/15 bg-black/50 px-5 py-4 text-center backdrop-blur-xl">
+                    <div className="text-xs font-black uppercase tracking-[.35em] text-cyan-100">ARC</div>
+                    <div className="mt-1 text-[9px] uppercase tracking-[.22em] text-slate-400">Connection</div>
                   </div>
-                </button>
-              );
-              })}
-            </div>
-          </Panel>
 
-          <Panel>
-            <Pill gold><Sparkles size={12}/> story engine</Pill>
-            <h2 className="mt-3 text-3xl font-black">Post Hook Generator</h2>
-            <div className="mt-5 space-y-3">
-              {storyLines.map((line) => <div key={line} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm leading-6 text-slate-300">{line}</div>)}
-            </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <Button onClick={copyCard} className="w-full">Copy Hook</Button>
-              <Button onClick={() => setPage("publicdiscovery")} variant="primary" className="w-full">Open Public Discovery</Button>
-            </div>
-          </Panel>
-        </div>
-      </div>
+                  <div className="absolute bottom-[19%] left-1/2 -translate-x-1/2 text-center">
+                    <div className="text-[10px] font-black uppercase tracking-[.4em] text-slate-300">{cardData.metric}</div>
+                    <div className="mt-1 bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-6xl font-black text-transparent sm:text-8xl">{normalizedScore}%</div>
+                    <div className="mt-1 text-xl tracking-[.22em] text-amber-100">★★★★★</div>
+                  </div>
 
-      <Panel>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <Pill gold><Activity size={12}/> measurable media engine</Pill>
-            <h2 className="mt-3 text-4xl font-black">Viral readiness, performance score and post intelligence.</h2>
-            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">This turns Media Engine from a design export into a growth system: score the asset, pick the right platform, test caption variants and track what you exported.</p>
+                  <div className="absolute bottom-[11%] left-6 right-6 grid gap-2 sm:grid-cols-4">
+                    {metricRows.map(([label, value, Icon]) => (
+                      <div key={label} className="rounded-2xl border border-cyan-300/20 bg-black/45 p-3 text-center backdrop-blur-xl">
+                        <Icon className="mx-auto text-cyan-100" size={20} />
+                        <div className="mt-1 text-lg font-black text-cyan-100">{value}</div>
+                        <div className="text-[8px] font-black uppercase tracking-[.18em] text-slate-400">{label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <svg viewBox="0 0 100 12" className="absolute bottom-[7%] left-6 right-6 h-10 w-[calc(100%-3rem)] rounded-2xl border border-white/10 bg-black/45 p-1">
+                    <polyline points="0,6 5,5 10,7 15,3 20,8 25,6 30,2 35,7 40,6 45,8 50,3 55,7 60,6 65,2 70,9 75,5 80,7 85,3 90,6 95,4 100,7" fill="none" stroke="rgba(34,211,238,.95)" strokeWidth=".7" strokeDasharray="3 2" style={{ animation: posterMotion ? "eosPosterWave 5s linear infinite" : undefined }} />
+                    <polyline points="0,7 5,8 10,5 15,9 20,4 25,6 30,8 35,4 40,7 45,5 50,9 55,4 60,7 65,8 70,3 75,6 80,4 85,8 90,5 95,7 100,4" fill="none" stroke="rgba(251,191,36,.9)" strokeWidth=".7" strokeDasharray="3 2" style={{ animation: posterMotion ? "eosPosterWave 6s linear infinite reverse" : undefined }} />
+                  </svg>
+
+                  <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between gap-4 text-[9px] uppercase tracking-[.24em] text-slate-400">
+                    <div><span className="text-cyan-100">Discovered by</span><br />{founderName || "ElementOS AI"}</div>
+                    <div className="hidden max-w-[42%] text-center leading-4 sm:block">{cardData.narrative}</div>
+                    <div className="text-right"><span className="text-amber-100">Share · Inspire · Discover</span><br />theelementos.com</div>
+                  </div>
+
+                  <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent" style={{ animation: posterMotion ? "eosPosterShimmer 6s ease-in-out infinite" : undefined }} />
+                </div>
+              </div>
+              <div className="mt-3 text-center text-xs text-slate-500">Preview mode: {layoutMeta.label} · export target {layoutMeta.size}</div>
+            </div>
           </div>
-          <div className="rounded-[2rem] border border-emerald-300/25 bg-emerald-300/10 px-5 py-4 text-right">
-            <div className="text-5xl font-black text-emerald-100">{performanceScore}</div>
-            <div className="text-[10px] uppercase tracking-[.22em] text-emerald-200">performance score</div>
-            <div className="mt-1 text-xs font-black text-white">{viralReadiness}</div>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-4 xl:grid-cols-4">
-          {platformRecommendations.map(([platform, recommendation]) => (
-            <div key={platform} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5">
-              <div className="text-2xl font-black text-cyan-100">{platform}</div>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{recommendation}</p>
-              <Button onClick={() => copyCaption(platform)} className="mt-4 w-full">Copy {platform} Caption</Button>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 grid gap-4 lg:grid-cols-3">
-          {abVariants.map(([label, title, text, bestFor]) => (
-            <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
-              <div className="text-xs uppercase tracking-[.22em] text-amber-100">Variant {label}</div>
-              <div className="mt-2 text-lg font-black text-white">{title}</div>
-              <p className="mt-3 text-sm leading-6 text-slate-300">{text}</p>
-              <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-xs font-bold text-cyan-100">{bestFor}</div>
-            </div>
-          ))}
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+      <div className="grid gap-6 xl:grid-cols-[1fr_.8fr]">
         <Panel>
-          <Pill gold><ShieldCheck size={12}/> discovery confidence</Pill>
-          <h2 className="mt-3 text-3xl font-black">Confidence Meter</h2>
-          <div className="mt-5 rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6 text-center">
-            <div className="text-7xl font-black text-cyan-100">{Math.min(99, cardData.score + 2)}%</div>
-            <div className="mt-2 text-xs uppercase tracking-[.25em] text-slate-400">discovery confidence</div>
-          </div>
-          <div className="mt-5 space-y-3">
-            {confidenceMetrics.map(([label, value]) => (
-              <div key={label}>
-                <div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div>
-                <div className="h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${value}%` }} /></div>
+          <Pill gold><Gem size={12}/> viral quality system</Pill>
+          <h2 className="mt-3 text-4xl font-black">Make every export feel collectible.</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {[
+              ["Poster DNA", "Classic EOS graphics: dark space, cyan/amber energy, ARC beam, orbit rings and discovery score."],
+              ["Share Modes", "Square for Instagram, portrait for LinkedIn, landscape for X, decks and landing page hero graphics."],
+              ["Premium Export", "PDF, JSON and SVG generated together so the card becomes both media and research asset."],
+              ["Subscriber Value", "Explorer can view. Pro Researcher generates cards. Pro Lab gets animated premium poster modes."],
+            ].map(([title, text]) => (
+              <div key={title} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+                <div className="text-xl font-black text-cyan-100">{title}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{text}</p>
               </div>
             ))}
           </div>
         </Panel>
 
         <Panel>
-          <Pill gold><Dna size={12}/> discovery genome</Pill>
-          <h2 className="mt-3 text-3xl font-black">Discovery Genome™</h2>
-          <div className="mt-4 rounded-[2rem] border border-white/10 bg-black/30 p-5">
-            <div className="font-mono text-4xl font-black text-amber-100">{discoveryGenome}</div>
-            <div className="mt-2 text-xs uppercase tracking-[.22em] text-slate-500">unique discovery fingerprint</div>
+          <Pill><Share2 size={12}/> viral caption</Pill>
+          <h2 className="mt-3 text-3xl font-black">Ready-to-post copy</h2>
+          <div className="mt-5 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/10 p-5 text-sm leading-7 text-cyan-50">{caption}</div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <Button onClick={copyCaption}>Copy Caption</Button>
+            <Button onClick={exportPoster} variant="primary">Export Pack</Button>
           </div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {genomeMetrics.map(([label, value]) => (
-              <div key={label} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-4">
-                <div className="flex justify-between text-sm font-black text-cyan-100"><span>{label}</span><span>{value}%</span></div>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div>
-              </div>
-            ))}
-          </div>
-        </Panel>
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-3">
-        <Panel>
-          <Pill gold><Clock3 size={12}/> discovery evolution</Pill>
-          <h2 className="mt-3 text-3xl font-black">Evolution Timeline</h2>
-          <div className="mt-5 space-y-3">
-            {["Generated", "Validated", "Reported", "Published", "Trending"].map((step, index) => (
-              <div key={step} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{index + 1}</div>
-                <div><div className="font-black text-white">{step}</div><div className="text-xs text-slate-400">Day {index === 0 ? 1 : index * 2 + 1} · discovery asset progressed</div></div>
-              </div>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel>
-          <Pill gold><BarChart3 size={12}/> discovery forecast</Pill>
-          <h2 className="mt-3 text-3xl font-black">Forecast Engine</h2>
-          <div className="mt-5 grid gap-3">
-            {[ ["30 Days", "▲", "Rising interest"], ["90 Days", "▲▲", "Increasing similarity"], ["1 Year", "▲▲▲", "Network candidate"] ].map(([range, trend, note]) => (
-              <div key={range} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="flex items-center justify-between"><b className="text-white">{range}</b><span className="text-2xl font-black text-emerald-200">{trend}</span></div>
-                <div className="mt-1 text-sm text-slate-400">{note}</div>
-              </div>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel>
-          <Pill gold><Orbit size={12}/> constellation universe</Pill>
-          <h2 className="mt-3 text-3xl font-black">Discovery Constellation</h2>
-          <div className="relative mt-5 h-72 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_35%),#020617]">
-            {[ [22,24,splitPair(cardData.title)[0]], [66,34,splitPair(cardData.title)[1]], [48,66,"Report"], [82,72,"Share"], [28,78,"Save"] ].map(([left, top, label], index) => (
-              <div key={label} className="absolute grid h-16 w-16 place-items-center rounded-2xl border border-cyan-300/30 bg-cyan-300/10 text-sm font-black text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,.18)]" style={{ left: `${left}%`, top: `${top}%`, transform: 'translate(-50%,-50%)' }}>{label}</div>
-            ))}
-            <div className="absolute left-[22%] top-[24%] h-px w-[45%] origin-left rotate-[12deg] bg-cyan-300/40" />
-            <div className="absolute left-[48%] top-[66%] h-px w-[35%] origin-left rotate-[10deg] bg-amber-300/40" />
-          </div>
+          <Info title="Export note">The visual preview is animated in-app. The SVG/PDF export captures the same EOS poster style as a static share asset.</Info>
         </Panel>
       </div>
 
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <Pill gold><Gem size={12}/> scientific discovery network</Pill>
-            <h2 className="mt-3 text-4xl font-black">Collections, Battles, Hall of Fame and Discovery TV.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">These systems give ElementOS network effects: people collect discoveries, compare them, watch them trend and build reputation around them.</p>
+            <Pill gold><Network size={12}/> trending discoveries</Pill>
+            <h2 className="mt-3 text-4xl font-black">One tap turns any discovery into a poster.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Pick a ranked discovery below and the poster engine rebuilds the graphics, caption and export bundle instantly.</p>
           </div>
-          <div className="rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 px-4 py-3 text-sm font-black text-fuchsia-100">LIVE DISCOVERY CHANNEL</div>
+          <Button onClick={() => setPage?.("discover")} variant="primary">Open Discover</Button>
         </div>
-
-        <div className="mt-6 grid gap-5 xl:grid-cols-4">
-          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
-            <div className="text-xl font-black text-cyan-100">Discovery Collections</div>
-            <div className="mt-4 space-y-3">{collections.map(([name, count, examples]) => <div key={name} className="rounded-2xl bg-white/[.04] p-3"><b>{name}</b><div className="text-xs text-slate-400">{count} · {examples}</div></div>)}</div>
-          </div>
-          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
-            <div className="text-xl font-black text-cyan-100">Discovery Battles</div>
-            <div className="mt-4 space-y-3">{tournamentPairs.map(([a,b,winner,reason]) => <div key={a} className="rounded-2xl bg-white/[.04] p-3"><b>{a} VS {b}</b><div className="text-xs text-emerald-200">Winner: {winner}</div><div className="text-xs text-slate-400">{reason}</div></div>)}</div>
-          </div>
-          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
-            <div className="text-xl font-black text-cyan-100">Hall of Fame</div>
-            <div className="mt-4 space-y-3">{hallOfFame.slice(0,3).map((d) => <div key={d.dna} className="rounded-2xl bg-white/[.04] p-3"><b>#{d.rank} {d.a} + {d.b}</b><div className="text-xs text-slate-400">{d.aiConfidence}% · {d.saves} saves · {d.shares} shares</div></div>)}</div>
-          </div>
-          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
-            <div className="text-xl font-black text-cyan-100">Discovery Passport</div>
-            <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">
-              <div className="text-2xl font-black text-white">{founderName || "Paul Roper"}</div>
-              <div className="mt-1 text-sm text-amber-100">Discovery Architect</div>
-              <div className="mt-4 grid grid-cols-2 gap-2 text-center text-xs"><div className="rounded-xl bg-black/25 p-2"><b>184</b><br/>Discoveries</div><div className="rounded-xl bg-black/25 p-2"><b>42</b><br/>Reports</div><div className="rounded-xl bg-black/25 p-2"><b>4210</b><br/>Score</div><div className="rounded-xl bg-black/25 p-2"><b>Top 1%</b><br/>Rank</div></div>
-            </div>
-          </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {discoveries.slice(0, 8).map((item, index) => (
+            <button key={item.dna} onClick={() => { setCardIndex(index); setSourceId("discovery"); }} className="group rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-300/10">
+              <div className="flex items-center justify-between">
+                <div className="text-xl font-black text-white">{item.a} + {item.b}</div>
+                <div className="rounded-full border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-[10px] font-black text-amber-100">{item.tier}</div>
+              </div>
+              <div className="mt-3 text-4xl font-black text-cyan-100">{item.aiConfidence || item.score}%</div>
+              <p className="mt-3 text-xs leading-5 text-slate-400">{item.type}</p>
+              <div className="mt-4 text-xs font-black text-cyan-200 opacity-0 transition group-hover:opacity-100">Create EOS poster →</div>
+            </button>
+          ))}
         </div>
       </Panel>
 
       {exportHistory.length > 0 && (
         <Panel>
           <Pill gold><Download size={12}/> export history</Pill>
-          <h2 className="mt-3 text-3xl font-black">Recent Exports</h2>
+          <h2 className="mt-3 text-3xl font-black">Recent EOS Poster Exports</h2>
           <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {exportHistory.map((item, index) => (
               <div key={`${item.time}-${index}`} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="font-black text-cyan-100">{item.format}</div>
-                <div className="mt-1 text-xs text-slate-400">{item.layout} · {item.title}</div>
+                <div className="font-black text-cyan-100">{item.title}</div>
+                <div className="mt-1 text-xs text-slate-400">{item.style} · {item.layout}</div>
                 <div className="mt-2 text-sm font-black text-emerald-200">{item.score}% · {item.time}</div>
               </div>
             ))}
           </div>
         </Panel>
       )}
-
-      <Panel>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <Pill gold><Share2 size={12}/> channel playbook</Pill>
-            <h2 className="mt-3 text-4xl font-black">Make every discovery travel further.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">The same asset should be framed differently on each channel. Curiosity for X, credibility for LinkedIn, explanation for Reddit, launch proof for Product Hunt.</p>
-          </div>
-          <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
-        </div>
-        <div className="mt-6 grid gap-4 xl:grid-cols-4">
-          {channels.map(([title, desc]) => (
-            <div key={title} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5">
-              <div className="text-xl font-black text-cyan-100">{title}</div>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
-              <button onClick={copyCard} className="mt-4 rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-sm font-black text-white transition hover:bg-cyan-300/10">Copy tailored post</button>
-            </div>
-          ))}
-        </div>
-      </Panel>
-
-      <Panel>
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <Pill gold><Target size={12}/> next growth step</Pill>
-            <h2 className="mt-3 text-4xl font-black">Turn this card into the viral loop.</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Export the card, post it, link to the public discovery page, then invite viewers to generate their own discovery. That is the loop: discover → card → share → click → create.</p>
-          </div>
-          <div className="grid gap-3">
-            <Button onClick={exportSVG} variant="primary">Export Poster PDF/JSON/SVG</Button>
-            <Button onClick={() => setPage("reports")}>Generate Report</Button>
-            <Button onClick={() => setPage("lab")}>Save to Workspace</Button>
-          </div>
-        </div>
-      </Panel>
     </>
   );
 }
-
 
 function UniversalSimulationReports({ selected = "Al", compare = [], session, isPro, startCheckout, setPage }) {
   const [source, setSource] = useState("Complete Simulation Dossier");
