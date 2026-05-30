@@ -8,6 +8,12 @@ import {
   Activity, Bot, BriefcaseBusiness, ClipboardList, Compass, Database, Dna, Gem, Globe2, LineChart, Map, Settings, Share2, Target, Users, Waves, Zap
 } from "lucide-react";
 
+// =====================================================
+// ELEMENTOS V63 CLARITY + MOBILE UX EDITION
+// Preserves the existing site, but reduces visible clutter,
+// simplifies labels, and keeps pricing consistent.
+// =====================================================
+
 const rawElements = `H|Hydrogen|1|Nonmetal,He|Helium|2|Noble gas,Li|Lithium|3|Alkali metal,Be|Beryllium|4|Alkaline earth metal,B|Boron|5|Metalloid,C|Carbon|6|Nonmetal,N|Nitrogen|7|Nonmetal,O|Oxygen|8|Nonmetal,F|Fluorine|9|Halogen,Ne|Neon|10|Noble gas,Na|Sodium|11|Alkali metal,Mg|Magnesium|12|Alkaline earth metal,Al|Aluminium|13|Post-transition metal,Si|Silicon|14|Metalloid,P|Phosphorus|15|Nonmetal,S|Sulfur|16|Nonmetal,Cl|Chlorine|17|Halogen,Ar|Argon|18|Noble gas,K|Potassium|19|Alkali metal,Ca|Calcium|20|Alkaline earth metal,Sc|Scandium|21|Transition metal,Ti|Titanium|22|Transition metal,V|Vanadium|23|Transition metal,Cr|Chromium|24|Transition metal,Mn|Manganese|25|Transition metal,Fe|Iron|26|Transition metal,Co|Cobalt|27|Transition metal,Ni|Nickel|28|Transition metal,Cu|Copper|29|Transition metal,Zn|Zinc|30|Transition metal,Ga|Gallium|31|Post-transition metal,Ge|Germanium|32|Metalloid,As|Arsenic|33|Metalloid,Se|Selenium|34|Nonmetal,Br|Bromine|35|Halogen,Kr|Krypton|36|Noble gas,Rb|Rubidium|37|Alkali metal,Sr|Strontium|38|Alkaline earth metal,Y|Yttrium|39|Transition metal,Zr|Zirconium|40|Transition metal,Nb|Niobium|41|Transition metal,Mo|Molybdenum|42|Transition metal,Tc|Technetium|43|Transition metal,Ru|Ruthenium|44|Transition metal,Rh|Rhodium|45|Transition metal,Pd|Palladium|46|Transition metal,Ag|Silver|47|Transition metal,Cd|Cadmium|48|Transition metal,In|Indium|49|Post-transition metal,Sn|Tin|50|Post-transition metal,Sb|Antimony|51|Metalloid,Te|Tellurium|52|Metalloid,I|Iodine|53|Halogen,Xe|Xenon|54|Noble gas,Cs|Caesium|55|Alkali metal,Ba|Barium|56|Alkaline earth metal,La|Lanthanum|57|Lanthanide,Ce|Cerium|58|Lanthanide,Pr|Praseodymium|59|Lanthanide,Nd|Neodymium|60|Lanthanide,Pm|Promethium|61|Lanthanide,Sm|Samarium|62|Lanthanide,Eu|Europium|63|Lanthanide,Gd|Gadolinium|64|Lanthanide,Tb|Terbium|65|Lanthanide,Dy|Dysprosium|66|Lanthanide,Ho|Holmium|67|Lanthanide,Er|Erbium|68|Lanthanide,Tm|Thulium|69|Lanthanide,Yb|Ytterbium|70|Lanthanide,Lu|Lutetium|71|Lanthanide,Hf|Hafnium|72|Transition metal,Ta|Tantalum|73|Transition metal,W|Tungsten|74|Transition metal,Re|Rhenium|75|Transition metal,Os|Osmium|76|Transition metal,Ir|Iridium|77|Transition metal,Pt|Platinum|78|Transition metal,Au|Gold|79|Transition metal,Hg|Mercury|80|Transition metal,Tl|Thallium|81|Post-transition metal,Pb|Lead|82|Post-transition metal,Bi|Bismuth|83|Post-transition metal,Po|Polonium|84|Metalloid,At|Astatine|85|Halogen,Rn|Radon|86|Noble gas,Fr|Francium|87|Alkali metal,Ra|Radium|88|Alkaline earth metal,Ac|Actinium|89|Actinide,Th|Thorium|90|Actinide,Pa|Protactinium|91|Actinide,U|Uranium|92|Actinide,Np|Neptunium|93|Actinide,Pu|Plutonium|94|Actinide,Am|Americium|95|Actinide,Cm|Curium|96|Actinide,Bk|Berkelium|97|Actinide,Cf|Californium|98|Actinide,Es|Einsteinium|99|Actinide,Fm|Fermium|100|Actinide,Md|Mendelevium|101|Actinide,No|Nobelium|102|Actinide,Lr|Lawrencium|103|Actinide,Rf|Rutherfordium|104|Transition metal,Db|Dubnium|105|Transition metal,Sg|Seaborgium|106|Transition metal,Bh|Bohrium|107|Transition metal,Hs|Hassium|108|Transition metal,Mt|Meitnerium|109|Unknown,Ds|Darmstadtium|110|Unknown,Rg|Roentgenium|111|Unknown,Cn|Copernicium|112|Transition metal,Nh|Nihonium|113|Unknown,Fl|Flerovium|114|Unknown,Mc|Moscovium|115|Unknown,Lv|Livermorium|116|Unknown,Ts|Tennessine|117|Unknown,Og|Oganesson|118|Unknown`;
 
 const elements = rawElements.split(",").map(row => {
@@ -283,12 +289,12 @@ function guidanceForPage(page) {
     landing: {
       title: "What ElementOS does",
       description: "ElementOS is an AI-native material intelligence platform for exploring elements, comparing behaviours, simulating future states, building real-world scenarios and exporting research-ready reports.",
-      next: "Start with the demo, open Time Machine or create a free account when you are ready to save work.",
+      next: "Start with the demo, open Future Simulation or create a free account when you are ready to save work.",
     },
     beta: {
-      title: "What subscriptions unlock",
-      description: "ElementOS subscriptions turn visitors into Explorer, Pro Researcher and Pro Lab users with clear upgrade value, saved workspaces, reports, exports and advanced labs.",
-      next: "Start as Explorer, upgrade to Pro Researcher for reports and exports, or move to Pro Lab for the full advanced research stack.",
+      title: "What Explorer Launch does",
+      description: "Explorer Launch is the free account and conversion path for ElementOS: Explorer $0, Pro Researcher $19/month, and Pro Lab $35/month.",
+      next: "Create a free Explorer account, try the platform, then upgrade to Pro Researcher or Pro Lab when exports, reports, vault, media and advanced labs are needed.",
     },
     copilot: {
       title: "What AI Copilot does",
@@ -296,8 +302,8 @@ function guidanceForPage(page) {
       next: "Ask a goal like deep ocean pressure for 40 years, then launch the suggested simulation, report or viral card.",
     },
     mission: {
-      title: "What Mission Control does",
-      description: "Mission Control gives new users a clear guided path through ElementOS: compare, forecast, build a scenario, generate a media card, export a simulation report and upgrade when value is clear.",
+      title: "What Mission Intelligence does",
+      description: "Mission Intelligence gives new users one clear path: ask a question, generate a discovery, review the result, then save, report, or export it.",
       next: "Complete the first mission, then follow the guided path until the user reaches a report, card or upgrade moment.",
     },
     dashboard: {
@@ -336,7 +342,7 @@ function guidanceForPage(page) {
       next: "Click nearby nodes to explore substitute paths.",
     },
     universe: {
-      title: "What the Discovery Universe does",
+      title: "What the Element Relationships does",
       description: "This view finds materials that behave similarly in alloy, conductive or thermal contexts. It turns discovery into a guided search path.",
       next: "Select a mode, then follow the strongest similarity matches.",
     },
@@ -351,34 +357,34 @@ function guidanceForPage(page) {
       next: "Use the calculation blocks to support your report narrative.",
     },
     timemachine: {
-      title: "What the Time Machine does",
-      description: "The Time Machine simulates how materials change across 1, 10, 50 and 100 year horizons under heat, pressure, corrosion, stress and environmental exposure.",
+      title: "What the Future Simulation does",
+      description: "The Future Simulation simulates how materials change across 1, 10, 50 and 100 year horizons under heat, pressure, corrosion, stress and environmental exposure.",
       next: "Choose a material and environment, scan the future-state cards, then export the timeline or compare the strongest result.",
     },
     scenario: {
-      title: "What Scenario Builder does",
-      description: "Scenario Builder turns plain-English material situations into risk scores, lifespan estimates, failure probabilities, substitute suggestions and exportable scenario reports.",
-      next: "Type a real-world scenario, run the simulation, then export or send the result into Time Machine.",
+      title: "What Mission Intelligence does",
+      description: "Mission Intelligence turns plain-English material questions into suggested materials, environments, timelines, reports, posters and opportunity scans.",
+      next: "Type a real-world scenario, run the simulation, then export or send the result into Future Simulation.",
     },
     welldriller: {
-      title: "What Well Driller Lab does",
-      description: "Well Driller Lab models a deep subsurface bore path, drilling load, formation pressure, reservoir depth and seismic-readiness using clear visual simulation cards.",
+      title: "What Resource Discovery Lab does",
+      description: "Resource Discovery Lab models a deep subsurface bore path, drilling load, formation pressure, reservoir depth and seismic-readiness using clear visual simulation cards.",
       next: "Adjust depth and formation pressure, inspect the 3D-style well profile, then open Seismo to compare P-wave and S-wave behaviour.",
     },
     matterlab: {
-      title: "What Matter Intelligence OS does",
-      description: "Matter Intelligence OS is a flagship advanced lab for ranking ground targets, signal agreement, discovery maps, AI explanations, reports, and project workspaces.",
+      title: "What Advanced Material Analysis does",
+      description: "Advanced Material Analysis is a flagship advanced lab for ranking ground targets, signal agreement, discovery maps, AI explanations, reports, and project workspaces.",
       next: "Run a discovery scan, review ranked targets, then generate a report or compare the signal logic with ElementOS material simulations.",
     },
     seismo: {
-      title: "What Seismo Lab does",
-      description: "Seismo Lab compares P-wave and S-wave travel through a simulated subsurface field so users can understand arrival gaps, wave speed and depth response.",
+      title: "What Wave Intelligence does",
+      description: "Wave Intelligence compares P-wave and S-wave travel through a simulated subsurface field so users can understand arrival gaps, wave speed and depth response.",
       next: "Tune distance, depth and wave speeds, then export the seismic readout or return to Well Driller.",
     },
     lab: {
-      title: "What Workspace does",
+      title: "What Saved Discoveries do",
       description: "Workspace collects saved scenarios, favourite materials, recent simulations and report-ready discovery assets in one workspace-style page.",
-      next: "Review saved scenario cards, reopen Scenario Builder or Time Machine, then export your strongest cases.",
+      next: "Review saved scenario cards, reopen Scenario Builder or Future Simulation, then export your strongest cases.",
     },
     visualization: {
       title: "What Advanced Visualization does",
@@ -386,13 +392,13 @@ function guidanceForPage(page) {
       next: "Pick a material, inspect the survival curve, compare the pulse cards, then export the visual telemetry summary.",
     },
     viralcards: {
-      title: "What Discovery Media Engine does",
-      description: "Discovery Media Engine turns discoveries, Time Machine forecasts, Scenario Builder results, Well Driller paths and Seismo readouts into cinematic share cards for social growth.",
+      title: "What Poster Studio does",
+      description: "Poster Studio turns discoveries, Future Simulation forecasts, Scenario Builder results, Well Driller paths and Seismo readouts into cinematic share cards for social growth.",
       next: "Choose a source, generate a card, export SVG or copy the social post text, then share it with a public report link.",
     },
     simreports: {
       title: "What Simulation Dossiers do",
-      description: "Simulation Dossiers combine Time Machine, Scenario Builder, Well Driller Lab and Seismo outputs into one polished research-ready simulation dossier.",
+      description: "Simulation Dossiers combine Future Simulation, Scenario Builder, Resource Discovery Lab and Seismo outputs into one polished research-ready simulation dossier.",
       next: "Choose a simulation source, review the combined intelligence cards, then export the universal report.",
     },
     reports: {
@@ -403,7 +409,7 @@ function guidanceForPage(page) {
     login: {
       title: "What accounts unlock",
       description: "Accounts let users save workspaces, restore research, access subscription features and build a persistent researcher identity.",
-      next: "Create an account, choose Explorer or upgrade, then return to the dashboard.",
+      next: "Create an account, create account, then return to the dashboard.",
     },
   };
   return guide[page] || guide.dashboard;
@@ -554,9 +560,9 @@ const miReports = [
 ];
 
 const miPlans = [
-  { name: "Explorer", price: "$0/mo", features: ["Browse ElementOS", "View discoveries", "View reports", "View Time Machine", "View Matter Intelligence", "View Atlas"], cta: "Start Exploring" },
-  { name: "Pro Researcher", price: "$19/mo", features: ["Reports", "Discovery Vault", "PDF/SVG/JSON exports", "Discovery Media Engine", "AI Copilot", "Scenario Intelligence"], cta: "Upgrade to Pro Researcher", best: true },
-  { name: "Pro Lab", price: "$35/mo", features: ["Everything in Pro Researcher", "Advanced Labs", "Time Machine", "Well Driller", "Seismo Pro", "Future premium features"], cta: "Upgrade to Pro Lab" },
+  { name: "Explorer", price: "$0", features: ["Browse", "View discoveries", "View reports", "View Future Simulation", "View Matter Intelligence"], cta: "Start Exploring" },
+  { name: "Pro Researcher", price: "$19/month", features: ["Reports", "Vault", "Exports", "Poster Studio", "AI Copilot"], cta: "Choose Pro Researcher", best: true },
+  { name: "Pro Lab", price: "$35/month", features: ["Everything unlocked", "Advanced Labs", "Future Simulation", "Well Driller", "Scenario Intelligence"], cta: "Choose Pro Lab" },
 ];
 
 const miOnboardingSteps = [
@@ -781,7 +787,7 @@ function MIDashboardHeader({ active, setActive }) {
       <div className="flex flex-col gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="text-sm font-black text-white">Northern Discovery Lab</div>
-          <div className="text-xs text-slate-500">Pro Trial · 12 days remaining · {active}</div>
+          <div className="text-xs text-slate-500">Pro Researcher · founding pricing active · {active}</div>
         </div>
         <div className="flex flex-wrap gap-2">
           <MIPill>Pro workspace</MIPill>
@@ -1163,7 +1169,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
             {[
               ["Discovery summary", `${pair} ranked as ${current.tier || "RARE"}`],
               ["Primary signal", current.type || "Compatibility signal"],
-              ["Recommended action", "Run Time Machine, generate dossier, create share card"],
+              ["Recommended action", "Run Future Simulation, generate dossier, create share card"],
               ["Public URL", publicUrl],
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
@@ -1189,7 +1195,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
           <Button onClick={() => copyText(publicUrl)} variant="primary">Copy URL</Button>
           <Button onClick={() => copyText(`ElementOS Public Discovery: ${pair} — ${current.score}% score. ${current.reason}`)}>Copy Share Text</Button>
           <Button onClick={savePublicDiscovery}>Save to Workspace</Button>
-          <Button onClick={() => setPage("timemachine")}>Run Time Machine</Button>
+          <Button onClick={() => setPage("timemachine")}>Run Future Simulation</Button>
           <Button onClick={() => setPage("simreports")}>Generate Dossier</Button>
           <Button onClick={() => { setPublicDiscovery?.(null); window.history.replaceState({}, document.title, window.location.pathname); setPage("discover"); }}>Back to Feed</Button>
         </div>
@@ -1202,57 +1208,56 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 const PAGE_LABELS = {
   landing: "Home",
   dashboard: "Dashboard",
-  copilot: "Discovery AI",
-  mission: "Mission Control",
+  copilot: "Ask ElementOS",
+  mission: "Mission Intelligence",
   discover: "Discovery Feed",
-  explorer: "Material Intelligence",
+  explorer: "Explore",
   compare: "Compare Materials",
   periodic: "Periodic Map",
   atlas: "Behaviour Atlas",
   graph: "Relationship Graph",
-  universe: "Discovery Universe",
-  scenario: "Scenario Builder",
-  visualization: "Visual Engine",
+  universe: "Element Relationships",
+  scenario: "Mission Intelligence",
+  visualization: "Advanced Visuals",
   calculations: "Calculation Intelligence",
-  timemachine: "Time Machine",
-  seismo: "Seismo Lab",
-  welldriller: "Well Driller Lab",
+  timemachine: "Future Simulation",
+  seismo: "Wave Intelligence",
+  welldriller: "Resource Discovery Lab",
   isotopes: "Isotope Lab",
-  matterlab: "Matter Intelligence OS",
+  matterlab: "Advanced Material Analysis",
   publicdiscovery: "Public Discovery Page",
-  simreports: "Simulation Dossiers",
-  viralcards: "Discovery Media Engine",
-  reports: "Research Reports",
-  lab: "Discovery Vault",
-  beta: "Pricing",
-  login: "Account",
+  simreports: "Reports",
+  viralcards: "Poster Studio",
+  reports: "Reports",
+  lab: "Saved Discoveries",
+  beta: "Create Account",
+  login: "Login",
 };
 
 const MOBILE_PAGE_ORDER = [
   "landing",
   "dashboard",
+  "explorer",
+  "discover",
+  "compare",
+  "reports",
   "copilot",
   "mission",
-  "discover",
-  "matterlab",
-  "publicdiscovery",
-  "compare",
-  "isotopes",
   "scenario",
   "timemachine",
+  "matterlab",
   "seismo",
   "welldriller",
-  "simreports",
   "viralcards",
   "lab",
-  "explorer",
   "periodic",
   "atlas",
   "graph",
   "universe",
   "visualization",
   "calculations",
-  "reports",
+  "isotopes",
+  "simreports",
   "beta",
 ];
 
@@ -1261,6 +1266,65 @@ function pageLabel(page) {
 }
 
 
+
+
+
+const ELEMENTOS_SUBSCRIPTION_PLANS = [
+  {
+    name: "Explorer",
+    price: "$0",
+    eyebrow: "Free read-only access",
+    description: "Browse ElementOS, view discoveries, read reports, inspect Future Simulation, Matter Intelligence and Atlas without exporting or saving premium assets.",
+    features: ["Browse", "View discoveries", "View reports", "View Future Simulation", "View Matter Intelligence", "View Atlas"],
+    locked: ["Export PDF", "Export SVG", "Export JSON", "Save to Vault", "Generate Reports", "Create Media", "Advanced Labs"],
+  },
+  {
+    name: "Pro Researcher",
+    price: "$19/month",
+    eyebrow: "Founding pricing",
+    description: "Best conversion tier for early users: reports, vault, exports, Poster Studio, AI Copilot and Scenario Intelligence.",
+    features: ["Reports", "Vault", "PDF / SVG / JSON exports", "Poster Studio", "AI Copilot", "Scenario Intelligence"],
+    locked: ["Advanced Labs", "Well Driller premium stack", "Future premium features"],
+    recommended: true,
+  },
+  {
+    name: "Pro Lab",
+    price: "$35/month",
+    eyebrow: "Full laboratory access",
+    description: "Everything unlocked: Advanced Labs, Future Simulation, Well Driller, Matter Intelligence, Seismo, Scenario Intelligence and future premium features.",
+    features: ["Everything in Pro Researcher", "Advanced Labs", "Future Simulation", "Well Driller", "Matter Intelligence", "Wave Intelligence", "Future premium features"],
+    locked: [],
+  },
+];
+
+function getElementOSPlan() {
+  if (typeof window === "undefined") return "Explorer";
+  return localStorage.getItem("elementos_plan") || (localStorage.getItem("elementos_pro") === "true" ? "Pro Lab" : "Explorer");
+}
+
+function setElementOSPlan(plan) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("elementos_plan", plan);
+  localStorage.setItem("elementos_pro", plan === "Explorer" ? "false" : "true");
+  window.dispatchEvent(new CustomEvent("elementos:plan", { detail: plan }));
+}
+
+function hasElementOSProAccess() {
+  const plan = getElementOSPlan();
+  return plan === "Pro Researcher" || plan === "Pro Lab" || (typeof window !== "undefined" && localStorage.getItem("elementos_pro") === "true");
+}
+
+function showUpgradeModal(reason = "This premium action") {
+  if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("elementos:upgrade", { detail: reason }));
+}
+
+function guardProAction(actionName = "This premium action") {
+  if (!hasElementOSProAccess()) {
+    showUpgradeModal(actionName);
+    return false;
+  }
+  return true;
+}
 
 function heatStyle(value, max = 5) {
   const t = Math.max(0, Math.min(1, value / max));
@@ -1424,6 +1488,7 @@ function makeExportSvg({ title = "ElementOS Export", summary = "", payload = {},
 }
 
 function exportAllFormats({ baseName = "elementos-export", title = "ElementOS Export", summary = "", payload = {}, sections = [], customSvg = null }) {
+  if (!guardProAction("Export PDF / SVG / JSON")) return;
   const slug = slugifyExportName(baseName);
   const now = new Date().toLocaleString();
   const normalizedPayload = {
@@ -1967,7 +2032,7 @@ function Sidebar({ page, setPage }) {
     ["landing", "Home", Sparkles],
     ["dashboard", "Dashboard", Home],
     ["copilot", "AI Copilot", Sparkles],
-    ["mission", "Mission Control", CheckCircle2],
+    ["mission", "Mission Intelligence", CheckCircle2],
   ];
 
   const groups = [
@@ -1982,7 +2047,7 @@ function Sidebar({ page, setPage }) {
         ["periodic", "Periodic Map", Layers],
         ["atlas", "Behaviour Atlas", Radar],
         ["graph", "Relationship Graph", Network],
-        ["universe", "Discovery Universe", Orbit],
+        ["universe", "Element Relationships", Orbit],
       ],
     },
     {
@@ -2000,10 +2065,10 @@ function Sidebar({ page, setPage }) {
       label: "Advanced Labs",
       icon: Radar,
       items: [
-        ["matterlab", "★ Matter Intelligence OS", Globe2],
-        ["timemachine", "Time Machine", Clock3],
-        ["seismo", "Seismo Lab", Network],
-        ["welldriller", "Well Driller Lab", Radar],
+        ["matterlab", "★ Advanced Material Analysis", Globe2],
+        ["timemachine", "Future Simulation", Clock3],
+        ["seismo", "Wave Intelligence", Network],
+        ["welldriller", "Resource Discovery Lab", Radar],
       ],
     },
     {
@@ -2013,7 +2078,7 @@ function Sidebar({ page, setPage }) {
       items: [
         ["discover", "Discovery Feed", Sparkles],
         ["simreports", "Simulation Dossiers", BookOpen],
-        ["viralcards", "Discovery Media Engine", Sparkles],
+        ["viralcards", "Poster Studio", Sparkles],
         ["reports", "Research Reports", BookOpen],
       ],
     },
@@ -2023,7 +2088,7 @@ function Sidebar({ page, setPage }) {
       icon: Save,
       items: [
         ["lab", "Workspace", Save],
-        ["beta", "Pricing", UserPlus],
+        ["beta", "Explorer Launch", UserPlus],
       ],
     },
   ];
@@ -2133,7 +2198,7 @@ function Sidebar({ page, setPage }) {
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><SubscriberEaseOfUseTopFive setPage={setPage} saveWorkspace={saveWorkspace} loadWorkspace={loadWorkspace} session={session} isPro={isPro} startCheckout={startCheckout} /><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Run First Simulation", "scenario", FileText], ["Matter Intelligence OS", "matterlab", Globe2], ["AI Copilot", "copilot", Sparkles], ["Mission Control", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Time Machine", "timemachine", Clock3], ["Well Driller Lab", "welldriller", Radar], ["Seismo Lab", "seismo", Network], ["Simulation Dossiers", "simreports", BookOpen], ["Discovery Media Engine", "viralcards", Sparkles], ["Calculation Intelligence", "calculations", Calculator], ["Workspace", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Pricing", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("beta")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> View Pricing</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, Vault, PDF/SVG/JSON exports, AI Copilot and Discovery Media Engine.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Generate Discovery", "compare", FileText], ["Advanced Material Analysis", "matterlab", Globe2], ["Ask ElementOS", "copilot", Sparkles], ["Mission Intelligence", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Future Simulation", "timemachine", Clock3], ["Resource Discovery Lab", "welldriller", Radar], ["Wave Intelligence", "seismo", Network], ["Reports", "simreports", BookOpen], ["Poster Studio", "viralcards", Sparkles], ["Calculation Intelligence", "calculations", Calculator], ["Saved Discoveries", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Explorer Launch", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Create Free Explorer Account</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, vault, PDF/JSON/SVG exports, media tools and AI Copilot through Stripe Checkout.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Access Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
       <DiscoveryNetworkSubscriberEdition setPage={setPage} />
       <SubscriberWorkspaceVault setPage={setPage} />
@@ -2337,8 +2402,6 @@ function Discover({ setPage, setPublicDiscovery }) {
 
   return (
     <>
-      <MobileDiscoverExperience discoveries={discoveries} top={top} today={today} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />
-      <div className="hidden lg:block space-y-6">
       <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
         <div>
           <Pill gold><Sparkles size={12}/> adaptive intelligence</Pill>
@@ -2551,7 +2614,6 @@ function Discover({ setPage, setPublicDiscovery }) {
           ))}
         </div>
       </Panel>
-      </div>
     </>
   );
 }
@@ -2720,8 +2782,8 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
         <Panel>
-          <h2 className="text-3xl font-black">Mission Input Console</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Use the template chips or type your own engineering mission. The model detects material, environment and years automatically.</p>
+          <h2 className="text-3xl font-black">Mission Intelligence Console</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Use the template chips or type your own engineering mission. The AI Copilot detects material, environment and years automatically, then suggests reports, media exports and opportunity scans.</p>
           <textarea
             value={scenarioText}
             onChange={(e) => setScenarioText(e.target.value)}
@@ -2747,7 +2809,7 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <Button onClick={runDetected} variant="primary"><Sparkles size={16} className="inline"/> Run Scenario</Button>
-            <Button onClick={() => setPage("timemachine")}><Clock3 size={16} className="inline"/> Send to Time Machine</Button>
+            <Button onClick={() => setPage("timemachine")}><Clock3 size={16} className="inline"/> Send to Future Simulation</Button>
             <Button onClick={() => safeCopyText(`ElementOS Scenario: ${scenarioText} · Risk ${riskScore}% · Survival ${survivalYears} years`)}>Copy Summary</Button>
           </div>
         </Panel>
@@ -2960,7 +3022,7 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
   const [email, setEmail] = useState("researcher@elementos.ai");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("Paul Roper");
-  const [plan, setPlan] = useState("Pro Lab");
+  const [plan, setPlan] = useState("Explorer");
   const [message, setMessage] = useState("");
 
   const signUp = async () => {
@@ -3003,10 +3065,9 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
   };
 
   const plans = [
-    ["Explorer", "$0", "Browse, compare, explore discoveries and view reports."],
-    ["Pro Researcher", "$19/mo", "Reports, Vault, exports, Discovery Media Engine and AI Copilot."],
-    ["Pro Lab", "$35/mo", "Everything unlocked: Advanced Labs, Time Machine, Well Driller and Seismo Pro."],
-    ["Research Team", "$149", "Shared workspaces, team reporting and enterprise exports."],
+    ["Explorer", "$0", "Free read-only access: browse, explore, compare and view the platform."],
+    ["Pro Researcher", "$19/month", "Founding pricing: reports, vault, exports, media engine and AI Copilot."],
+    ["Pro Lab", "$35/month", "Everything unlocked: advanced labs, Future Simulation, Well Driller and future premium features."],
   ];
 
   return (
@@ -3016,7 +3077,7 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
           <Pill gold><ShieldCheck size={12} /> secure research workspace</Pill>
           <h1 className="mt-4 text-5xl font-black">Account & Workspace</h1>
           <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
-            Real Supabase authentication is now connected. Users can create accounts, create an account, sign out and keep sessions active.
+            Real Supabase authentication is now connected. Users can create accounts, sign in, sign out and keep sessions active.
           </p>
 
           {session && (
@@ -3055,6 +3116,14 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
                 className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
               />
 
+              <div className="grid gap-2 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3">
+                <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Choose starting plan</div>
+                <select value={plan} onChange={(e) => setPlan(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-3 text-sm outline-none">
+                  {plans.map(([name, price]) => <option key={name} value={name}>{name} — {price}</option>)}
+                </select>
+                <p className="text-xs leading-5 text-slate-400">Explorer is free. Pro Researcher unlocks exports, reports, vault, media and AI Copilot. Pro Lab unlocks everything.</p>
+              </div>
+
               <Button variant="primary" onClick={signUp}>Create Account</Button>
               <Button onClick={signIn}>Sign In</Button>
 
@@ -3074,13 +3143,13 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
 
               {!isPro && (
                 <Button onClick={startCheckout} variant="primary" className="mt-3 w-full">
-                  <Sparkles size={16} className="inline" /> Upgrade to Pro Lab
+                  <Sparkles size={16} className="inline" /> Upgrade to Pro Researcher
                 </Button>
               )}
 
               {isPro && (
                 <div className="mt-3 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100">
-                  <CheckCircle2 size={16} className="mr-2 inline" /> Pro Active
+                  <CheckCircle2 size={16} className="mr-2 inline" /> Pro Access Active
                 </div>
               )}
 
@@ -3163,7 +3232,7 @@ function PeriodicTable({ selected, setSelected }) {
               A living 118-element intelligence surface. Switch behaviour layers, isolate categories, reveal top-ranked materials and turn the periodic table into a discovery cockpit.
             </p>
             <Info title="What to do here">
-              Use the map to spot unusual signal clusters, then click any element to send it into Compare, Relationship Graph, Isotope Lab or Discovery Universe.
+              Use the map to spot unusual signal clusters, then click any element to send it into Compare, Relationship Graph, Isotope Lab or Element Relationships.
             </Info>
           </div>
           <Panel>
@@ -3769,8 +3838,8 @@ function SimilarityUniverse({ selected, setSelected }) {
   });
 
   const exportUniverse = () => {
-    const content = `ElementOS Discovery Universe\n\nFocus: ${base.name} (${base.symbol})\nMode: ${modeLabels[mode]}\nTop match: ${top.name || top.symbol} (${top.symbol})\n\nTop relationships:\n${ranked.slice(0, 10).map((r, i) => `${i + 1}. ${r.symbol} — ${r.name}: ${r.similarity}%`).join("\n")}\n\nGenerated by ElementOS Discovery Universe`;
-    exportAllFormats({ baseName: `${base.symbol}-discovery-universe`, title: `Discovery Universe: ${base.name}`, summary: content, payload: { focus: base.symbol, mode, ranked: ranked.slice(0, 10) } });
+    const content = `ElementOS Element Relationships\n\nFocus: ${base.name} (${base.symbol})\nMode: ${modeLabels[mode]}\nTop match: ${top.name || top.symbol} (${top.symbol})\n\nTop relationships:\n${ranked.slice(0, 10).map((r, i) => `${i + 1}. ${r.symbol} — ${r.name}: ${r.similarity}%`).join("\n")}\n\nGenerated by ElementOS Element Relationships`;
+    exportAllFormats({ baseName: `${base.symbol}-discovery-universe`, title: `Element Relationships: ${base.name}`, summary: content, payload: { focus: base.symbol, mode, ranked: ranked.slice(0, 10) } });
   };
 
   return (
@@ -4090,7 +4159,7 @@ function CalculationCore() {
                 Calculation <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Intelligence</span>
               </h1>
               <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-                Turn material choices, environments and time horizons into explainable research calculations. This is the reasoning layer behind reports, simulations, Time Machine runs and Discovery Media exports.
+                Turn material choices, environments and time horizons into explainable research calculations. This is the reasoning layer behind reports, simulations, Future Simulation runs and Discovery Media exports.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Button onClick={exportCalc} variant="primary" className="px-8 py-5"><Download size={16} className="mr-2 inline"/> Export PDF / JSON / SVG</Button>
@@ -4246,7 +4315,7 @@ function CalculationCore() {
           <div>
             <Pill gold><Sparkles size={12}/> recommended next step</Pill>
             <h2 className="mt-3 text-3xl font-black">Turn this calculation into a platform asset.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">This run is ready to become a report, a discovery card, a Time Machine scenario or a Workspace record.</p>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">This run is ready to become a report, a discovery card, a Future Simulation scenario or a Workspace record.</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Button onClick={exportCalc} variant="primary">Export Report Pack</Button>
@@ -4315,7 +4384,7 @@ Status: Presentation-ready platform export.`;
 
   const saveReport = async (title, desc) => {
     if (!session) {
-      alert("Please create an account before saving reports.");
+      alert("Please create account before saving reports.");
       return;
     }
 
@@ -4462,17 +4531,17 @@ Status: Presentation-ready platform export.`;
         </Info>
         {!session && (
           <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
-            Create account to save reports to the cloud. PDF/JSON/SVG export is a Pro Lab feature.
+            Create account to save reports to the cloud. PDF/JSON/SVG export is a Pro Researcher feature.
           </div>
         )}
         {session && !isPro && (
           <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
-            PDF/JSON/SVG exports are locked behind Pro Lab. Save reports to cloud now, then upgrade when you are ready to export polished PDFs.
+            PDF/JSON/SVG exports are locked behind Pro Researcher. Save reports to cloud now, then upgrade when you are ready to export polished PDFs.
           </div>
         )}
         {session && isPro && (
           <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100">
-            <CheckCircle2 size={16} className="mr-2 inline"/> Pro Lab active — PDF/JSON/SVG exports unlocked.
+            <CheckCircle2 size={16} className="mr-2 inline"/> Pro access active — PDF/JSON/SVG exports unlocked.
           </div>
         )}
         {status && <p className="mt-4 text-sm font-bold text-cyan-200">{status}</p>}
@@ -4490,7 +4559,7 @@ Status: Presentation-ready platform export.`;
               </Button>
               <Button variant="primary" onClick={() => {
                 if (!isPro) {
-                  alert("PDF/JSON/SVG exports are a Pro Lab feature.");
+                  alert("PDF/JSON/SVG exports are a Pro Researcher feature.");
                   startCheckout();
                   return;
                 }
@@ -4531,7 +4600,7 @@ Status: Presentation-ready platform export.`;
 
                     <Button onClick={() => {
                       if (!isPro) {
-                        alert("PDF/JSON/SVG exports are a Pro Lab feature.");
+                        alert("PDF/JSON/SVG exports are a Pro Researcher feature.");
                         startCheckout();
                         return;
                       }
@@ -4913,11 +4982,11 @@ function AdvancedVisualization({ selected, compare, setPage }) {
       <Panel>
         <Pill gold><Bot size={12}/> visual copilot</Pill>
         <h2 className="mt-3 text-3xl font-black">Recommended Next Visual Action</h2>
-        <p className="mt-2 text-sm leading-6 text-slate-400">Create a shareable media asset from this visualization, send it into the report engine or compare it against the Discovery Universe.</p>
+        <p className="mt-2 text-sm leading-6 text-slate-400">Create a shareable media asset from this visualization, send it into the report engine or compare it against the Element Relationships.</p>
         <div className="mt-5 flex flex-wrap gap-3">
           <Button onClick={exportVisual} variant="primary">Create Visual Export Pack</Button>
           <Button onClick={() => setPage("viralcards")}>Create Media Card</Button>
-          <Button onClick={() => setPage("universe")}>Open Discovery Universe</Button>
+          <Button onClick={() => setPage("universe")}>Open Element Relationships</Button>
         </div>
       </Panel>
     </>
@@ -5087,12 +5156,12 @@ function MyLab({ session, selected, compare, setPage }) {
 function BetaLaunch({ session, setPage, startCheckout }) {
   const [email, setEmail] = useState(session?.user?.email || "");
   const [role, setRole] = useState("Founder / creator");
-  const [feature, setFeature] = useState("Discovery media assets for Seismo, Time Machine and Well Driller");
+  const [feature, setFeature] = useState("Discovery media assets for Seismo, Future Simulation and Well Driller");
   const [submitted, setSubmitted] = useState(false);
 
   const seed = (email || "founder@elementos.ai").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
   const founderNumber = String(1 + (seed % 999)).padStart(3, "0");
-  const betaStats = [
+  const explorerStats = [
     ["042", "founding researcher slots"],
     ["8", "core growth loops"],
     ["24h", "feedback response target"],
@@ -5102,11 +5171,11 @@ function BetaLaunch({ session, setPage, startCheckout }) {
   const roadmap = [
     ["Now", "Media Engine + Universal Simulation Dossiers", "Turn every discovery into a shareable output."],
     ["Next", "Mobile-first simulator polish", "Make TikTok/X/Reddit traffic feel instant and premium."],
-    ["Soon", "Public discovery URLs", "Every report, Seismo readout and Time Machine forecast becomes indexable."],
+    ["Soon", "Public discovery URLs", "Every report, Seismo readout and Future Simulation forecast becomes indexable."],
     ["Later", "Team labs + API access", "Move from creator tool into enterprise-ready simulation workspace."],
   ];
 
-  const saveBetaApplication = () => {
+  const saveExplorerApplication = () => {
     const application = {
       email: email || "anonymous@elementos.ai",
       role,
@@ -5116,28 +5185,28 @@ function BetaLaunch({ session, setPage, startCheckout }) {
     };
 
     try {
-      const existing = JSON.parse(localStorage.getItem("elementos_beta_applications") || "[]");
-      localStorage.setItem("elementos_beta_applications", JSON.stringify([application, ...existing].slice(0, 50)));
+      const existing = JSON.parse(localStorage.getItem("elementos_explorer_applications") || "[]");
+      localStorage.setItem("elementos_explorer_applications", JSON.stringify([application, ...existing].slice(0, 50)));
     } catch (error) {
-      console.warn("Explorer account request local save skipped", error);
+      console.warn("Explorer application local save skipped", error);
     }
 
     setSubmitted(true);
   };
 
   const copyLaunchPost = () => {
-    const post = `I just joined the ElementOS as Founding Researcher #${founderNumber}.
+    const post = `I just created my free ElementOS Explorer account as Founding Researcher #${founderNumber}.
 
-ElementOS is an AI-native exploratory simulation platform for material intelligence, Time Machine forecasts, Seismo wave modelling, Well Driller simulations, Scenario Builder reports and discovery media assets.
+ElementOS is an AI-native exploratory simulation platform for material intelligence, Future Simulation forecasts, Seismo wave modelling, Well Driller simulations, Scenario Builder reports and discovery media assets.
 
-Early access: ElementOS is opening now.`;
+ElementOS is now open with Explorer $0, Pro Researcher $19/month and Pro Lab $35/month.`;
 
     navigator.clipboard?.writeText(post);
   };
 
-  const exportBetaBrief = () => {
+  const exportExplorerBrief = () => {
     const content = [
-      "ElementOS Beta Launch Brief",
+      "ElementOS Explorer Launch Brief",
       "==========================",
       "",
       `Founding Researcher ID: #${founderNumber}`,
@@ -5145,8 +5214,8 @@ Early access: ElementOS is opening now.`;
       `Role: ${role}`,
       `Requested feature: ${feature}`,
       "",
-      "Beta promise:",
-      "ElementOS turns simulations, discoveries and forecasts into shareable research-ready outputs.",
+      "Explorer promise:",
+      "ElementOS gives users free read-only discovery access, then unlocks reports, exports, vault, media and advanced labs through Pro Researcher and Pro Lab.",
       "",
       "Core launch loops:",
       "- Discovery media assets",
@@ -5159,19 +5228,19 @@ Early access: ElementOS is opening now.`;
       "- Community and leaderboards",
     ].join("\\n");
 
-    exportAllFormats({ baseName: `elementos-beta-brief-${founderNumber}`, title: `ElementOS Pricing Brief ${founderNumber}`, summary: content, payload: { founderNumber, track: "Pricing" } });
+    exportAllFormats({ baseName: `elementos-explorer-brief-${founderNumber}`, title: `ElementOS Explorer Launch Brief ${founderNumber}`, summary: content, payload: { founderNumber, track: "Explorer Launch" } });
   };
 
   return (
     <>
       <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
         <div>
-          <Pill gold><UserPlus size={12}/> beta launch system</Pill>
+          <Pill gold><UserPlus size={12}/> explorer launch system</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">
-            Founding Researcher <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Beta Launch</span>
+            Founding Researcher <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Explorer Launch</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Convert visitors into early members. This page gives ElementOS a waitlist, feedback loop, roadmap, founding badge identity and social launch energy.
+            Convert visitors into free Explorer users, then give them a clear upgrade path into Pro Researcher at $19/month or Pro Lab at $35/month.
           </p>
           <Info title="Why this matters">
             The goal is no longer only adding features. The goal is getting real users to join, test, share, request improvements and feel early ownership in the platform.
@@ -5189,11 +5258,11 @@ Early access: ElementOS is opening now.`;
             <div className="text-sm uppercase tracking-[.22em] text-amber-100">Founding Researcher</div>
             <div className="mt-3 text-7xl font-black text-white">#{founderNumber}</div>
             <p className="mt-4 text-sm leading-7 text-amber-50/90">
-              Early users need identity. This badge makes the beta feel exclusive, screenshot-worthy and worth sharing.
+              New users need identity. This badge makes the Explorer launch feel polished, screenshot-worthy and worth sharing.
             </p>
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {betaStats.map(([value, label]) => (
+            {explorerStats.map(([value, label]) => (
               <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
                 <div className="text-3xl font-black text-cyan-100">{value}</div>
                 <div className="mt-1 text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
@@ -5207,7 +5276,7 @@ Early access: ElementOS is opening now.`;
 
       <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
         <Panel>
-          <Pill gold><Sparkles size={12}/> create an account</Pill>
+          <Pill gold><Sparkles size={12}/> create account</Pill>
           <h2 className="mt-3 text-4xl font-black">Apply for Early Access</h2>
           <p className="mt-2 text-sm leading-7 text-slate-400">
             Capture intent from early users, understand who they are, and learn what feature would make them subscribe.
@@ -5235,14 +5304,14 @@ Early access: ElementOS is opening now.`;
             </label>
 
             <div className="flex flex-wrap gap-3">
-              <Button onClick={saveBetaApplication} variant="primary">Create Account</Button>
-              <Button onClick={exportBetaBrief}>Export Beta PDF/JSON/SVG</Button>
+              <Button onClick={saveExplorerApplication} variant="primary">Create Account</Button>
+              <Button onClick={exportExplorerBrief}>Export Explorer PDF/JSON/SVG</Button>
               <Button onClick={startCheckout}>Upgrade Pro</Button>
             </div>
 
             {submitted && (
               <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100">
-                ✓ Explorer account request saved locally. Founding Researcher #{founderNumber} assigned.
+                ✓ Explorer account path saved locally. Founding Researcher #{founderNumber} assigned.
               </div>
             )}
           </div>
@@ -5281,7 +5350,7 @@ Early access: ElementOS is opening now.`;
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {[
             ["Media Engine", "Can users create a card they would actually post?", "viralcards"],
-            ["Time Machine", "Does the future-state simulation feel understandable and premium?", "timemachine"],
+            ["Future Simulation", "Does the future-state simulation feel understandable and premium?", "timemachine"],
             ["Seismo", "Do P-wave and S-wave visuals feel clear, useful and cool?", "seismo"],
             ["Well Driller", "Does the subsurface simulation feel like a serious demo?", "welldriller"],
             ["Scenario Builder", "Can a user type a situation and understand the result?", "scenario"],
@@ -5300,7 +5369,7 @@ Early access: ElementOS is opening now.`;
       <Panel>
         <div className="grid gap-5 xl:grid-cols-3">
           {[
-            ["Founder update", "ElementOS is opening for early researchers who want to explore AI-native material simulation, temporal forecasts and shareable discovery reports."],
+            ["Founder update", "ElementOS is open with Explorer $0, Pro Researcher $19/month and Pro Lab $35/month for researchers who want AI-native material simulation, temporal forecasts and shareable discovery reports."],
             ["Community promise", "Every Explorer user can influence the roadmap. The best requested features become visible product milestones."],
             ["Conversion hook", "Free users explore. Pro users export, save, publish and build a permanent research workspace."],
           ].map(([title, body]) => (
@@ -5553,7 +5622,7 @@ function WorkspaceVaultPanel({ setPage }) {
   const vault = [
     ["Saved Discoveries", "24", "Public pages, share cards and ranked material pairs.", "discover", Sparkles],
     ["Saved Reports", "12", "Executive briefs, technical reports and simulation dossiers.", "reports", FileText],
-    ["Saved Simulations", "38", "Time Machine, Scenario Builder, Seismo and Well Driller runs.", "simreports", BarChart3],
+    ["Saved Simulations", "38", "Future Simulation, Scenario Builder, Seismo and Well Driller runs.", "simreports", BarChart3],
     ["MIOS Targets", "9", "Matter Intelligence opportunities ready for follow-up.", "matterlab", Globe2],
   ];
   return (
@@ -5608,7 +5677,7 @@ function ScienceCommandElite({ setPage }) {
   ];
   const dailyPath = [
     ["01", "Discover", "Open the live feed and choose a promising material signal.", "discover"],
-    ["02", "Simulate", "Send it into Time Machine, Scenario Builder or Matter Intelligence.", "timemachine"],
+    ["02", "Simulate", "Send it into Future Simulation, Scenario Builder or Matter Intelligence.", "timemachine"],
     ["03", "Publish", "Generate a dossier, public page and share card.", "simreports"],
     ["04", "Return", "Save to Workspace and build tomorrow's discovery streak.", "lab"],
   ];
@@ -5625,7 +5694,7 @@ function ScienceCommandElite({ setPage }) {
           <div className="mt-6 flex flex-wrap gap-3">
             <Button onClick={() => setPage('discover')} variant="primary">Start Today's Discovery</Button>
             <Button onClick={() => setPage('matterlab')}>Open Matter Intelligence</Button>
-            <Button onClick={() => setPage('beta')}>View Pricing</Button>
+            <Button onClick={() => setPage('beta')}>Create Free Explorer Account</Button>
           </div>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
@@ -5711,170 +5780,12 @@ function ConversionProofDeck({ setPage }) {
 }
 
 
-
-function SubscriberEaseOfUseTopFive({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  const [mission, setMission] = useState("Investigate titanium performance in deep-ocean geothermal environments over 50 years.");
-  const [search, setSearch] = useState("");
-  const [autosavedAt, setAutosavedAt] = useState("");
-  const [collection, setCollection] = useState("Ocean Materials");
-
-  const quickRoutes = [
-    ["Discover", "discover", Sparkles],
-    ["Compare", "compare", BarChart3],
-    ["Reports", "reports", FileText],
-    ["Time Machine", "timemachine", Clock3],
-    ["Vault", "lab", Save],
-    ["Seismo", "seismo", Waves],
-  ];
-
-  const searchResults = quickRoutes.filter(([label]) =>
-    !search.trim() || label.toLowerCase().includes(search.toLowerCase())
-  );
-
-  useEffect(() => {
-    const payload = {
-      mission,
-      collection,
-      lastPage: "dashboard",
-      savedAt: new Date().toISOString(),
-    };
-    localStorage.setItem("elementos_autosave_v65", JSON.stringify(payload));
-    const timer = window.setTimeout(() => {
-      setAutosavedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-    }, 300);
-    return () => window.clearTimeout(timer);
-  }, [mission, collection]);
-
-  const restoreAutosave = () => {
-    const raw = localStorage.getItem("elementos_autosave_v65");
-    if (!raw) {
-      alert("No autosaved workspace found yet.");
-      return;
-    }
-    try {
-      const parsed = JSON.parse(raw);
-      setMission(parsed.mission || mission);
-      setCollection(parsed.collection || collection);
-      alert("Autosaved workspace restored.");
-    } catch (error) {
-      alert("Autosave restore failed.");
-    }
-  };
-
-  const launchMission = () => {
-    localStorage.setItem("elementos_last_mission_v65", mission);
-    setPage("scenario");
-  };
-
-  return (
-    <div className="space-y-6">
-      <Panel className="overflow-hidden border-amber-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/35 to-amber-950/20 p-0">
-        <div className="relative p-5 md:p-7">
-          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-amber-300/10 blur-3xl" />
-          <div className="relative grid gap-6 xl:grid-cols-[1.15fr_.85fr] xl:items-center">
-            <div>
-              <div className="flex flex-wrap gap-2">
-                <Pill gold><Bot size={12} /> AI Mission Intelligence</Pill>
-                <Pill><Search size={12} /> global search</Pill>
-                <Pill><Save size={12} /> autosave on</Pill>
-              </div>
-              <h1 className="mt-4 text-4xl font-black leading-[.95] md:text-6xl">
-                What would you like to <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">investigate today?</span>
-              </h1>
-              <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300 md:text-base">
-                A simpler subscriber home: ask a mission, search the whole product, continue your last investigation, save to collections, and trust autosave to protect the workspace.
-              </p>
-              <div className="mt-5 rounded-[1.5rem] border border-cyan-300/20 bg-black/35 p-3">
-                <textarea
-                  value={mission}
-                  onChange={(e) => setMission(e.target.value)}
-                  rows={3}
-                  className="min-h-[108px] w-full resize-none rounded-2xl border border-white/10 bg-slate-950/80 p-4 text-base font-bold leading-7 text-white outline-none placeholder:text-slate-500"
-                  placeholder="Example: Compare titanium, aluminium and nickel for ocean corrosion over 50 years..."
-                />
-                <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                  <Button onClick={launchMission} variant="primary" className="w-full py-4">Generate Mission</Button>
-                  <Button onClick={() => setPage("reports")} className="w-full py-4">Generate Report</Button>
-                  <Button onClick={() => setPage("viralcards")} className="w-full py-4">Create Media</Button>
-                </div>
-              </div>
-            </div>
-
-            <Panel className="bg-black/30">
-              <div className="text-xs uppercase tracking-[.24em] text-emerald-200">Continue where you left off</div>
-              <div className="mt-3 text-3xl font-black text-white">Titanium Deep Ocean Study</div>
-              <p className="mt-3 text-sm leading-6 text-slate-300">Last workspace: Ti + Al + Ni, geothermal ocean pressure, 50-year horizon, report path ready.</p>
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4"><div className="text-3xl font-black text-cyan-100">87%</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">progress</div></div>
-                <div className="rounded-2xl border border-amber-300/15 bg-amber-300/10 p-4"><div className="text-3xl font-black text-amber-100">{autosavedAt || "Live"}</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">autosaved</div></div>
-              </div>
-              <div className="mt-5 grid gap-2 sm:grid-cols-2">
-                <Button onClick={() => setPage("timemachine")} variant="primary" className="py-3">Resume</Button>
-                <Button onClick={restoreAutosave} className="py-3">Restore Autosave</Button>
-              </div>
-            </Panel>
-          </div>
-        </div>
-      </Panel>
-
-      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
-        <Panel>
-          <Pill gold><Search size={12} /> global search</Pill>
-          <h2 className="mt-3 text-3xl font-black">Find anything in ElementOS instantly.</h2>
-          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-cyan-300/20 bg-slate-950/80 px-4 py-3">
-            <Search size={18} className="text-cyan-200" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search Discover, Reports, Seismo, Time Machine..."
-              className="min-w-0 flex-1 bg-transparent text-sm font-bold text-white outline-none placeholder:text-slate-500"
-            />
-          </div>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-            {searchResults.map(([label, target, Icon]) => (
-              <button key={target} onClick={() => setPage(target)} className="rounded-2xl border border-white/10 bg-white/[.04] p-4 text-left transition hover:border-cyan-300/30 hover:bg-cyan-300/10">
-                <Icon size={18} className="text-cyan-200" />
-                <div className="mt-2 text-lg font-black text-white">{label}</div>
-                <div className="text-xs text-slate-500">Open {label}</div>
-              </button>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel>
-          <Pill gold><Database size={12} /> discovery collections</Pill>
-          <h2 className="mt-3 text-3xl font-black">Organize work into subscriber collections.</h2>
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
-            {["Ocean Materials", "Aerospace", "Battery Research"].map((name) => (
-              <button key={name} onClick={() => setCollection(name)} className={`rounded-[1.5rem] border p-4 text-left transition ${collection === name ? "border-amber-300/50 bg-amber-300/15" : "border-white/10 bg-white/[.04] hover:bg-white/[.07]"}`}>
-                <div className="text-lg font-black text-white">{name}</div>
-                <div className="mt-1 text-xs text-slate-400">Saved discoveries, reports and notes</div>
-              </button>
-            ))}
-          </div>
-          <div className="mt-4 rounded-[1.5rem] border border-emerald-300/20 bg-emerald-300/10 p-4">
-            <div className="text-xs uppercase tracking-[.2em] text-emerald-200">workspace autosave</div>
-            <div className="mt-2 text-2xl font-black text-white">Autosave active for {collection}</div>
-            <p className="mt-2 text-sm leading-6 text-emerald-50/80">ElementOS saves the current mission and collection to local browser storage while you work. Supabase Vault can be wired later without changing the experience.</p>
-            <div className="mt-4 grid gap-2 sm:grid-cols-3">
-              <Button onClick={saveWorkspace} variant="primary" className="py-3">Save Workspace</Button>
-              <Button onClick={loadWorkspace} className="py-3">Load Vault</Button>
-              <Button onClick={session && !isPro ? startCheckout : () => setPage("beta")} className="py-3">{isPro ? "Pro Active" : "Upgrade"}</Button>
-            </div>
-          </div>
-        </Panel>
-      </div>
-    </div>
-  );
-}
-
 function FiveUserSimulationAudit({ setPage }) {
   const [hasRun, setHasRun] = useState(false);
   const simulatedUsers = [
     ["User A", "New visitor", "Home → Discovery Feed → Public Discovery → Share Card", "Pass", "Understands the product loop and reaches an export."],
-    ["User B", "Scientist", "Compare → Time Machine → Simulation Dossier → PDF/JSON/SVG", "Pass", "Can generate useful export assets without dead ends."],
-    ["User C", "Marketer", "Discovery Media Engine → Social Pack → SVG Poster → Caption", "Pass", "Viral card flow produces platform-specific assets."],
+    ["User B", "Scientist", "Compare → Future Simulation → Simulation Dossier → PDF/JSON/SVG", "Pass", "Can generate useful export assets without dead ends."],
+    ["User C", "Marketer", "Poster Studio → Social Pack → SVG Poster → Caption", "Pass", "Viral card flow produces platform-specific assets."],
     ["User D", "Investor", "Matter Intelligence → Report → Workspace → Public Page", "Pass", "Opportunity workflow now has visible next steps."],
     ["User E", "Mobile user", "CTRL-K → Search → Navigate → Export", "Pass", "Command engine has a scrollable result area and route actions."],
   ];
@@ -5888,8 +5799,8 @@ function FiveUserSimulationAudit({ setPage }) {
 
   const exportAudit = () => {
     exportAllFormats({
-      baseName: "elementos-subscriber-journey-review",
-      title: "ElementOS Subscriber Journey Review",
+      baseName: "elementos-five-user-qa-simulation",
+      title: "ElementOS Five User QA Simulation",
       summary: "Five simulated users explored ElementOS for one hour across discovery, reports, viral cards, Matter Intelligence, mobile command search and export workflows.",
       payload: {
         simulatedUsers: simulatedUsers.length,
@@ -5906,15 +5817,15 @@ function FiveUserSimulationAudit({ setPage }) {
     <Panel className="poster-card-gold">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <Pill gold><ShieldCheck size={12} /> subscriber journey review</Pill>
-          <h2 className="mt-3 text-4xl font-black">Subscriber journey review. Clear paths. No dead ends.</h2>
+          <Pill gold><ShieldCheck size={12} /> 5-user simulation audit</Pill>
+          <h2 className="mt-3 text-4xl font-black">Five simulated users. One hour. No dead ends.</h2>
           <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-300">
             This panel models how different visitors move through ElementOS: a new user, scientist, marketer, investor and mobile user. The goal is simple: every button should navigate, generate, export, save, share, analyze or monetize.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Button onClick={() => setHasRun(true)} variant="primary">Review Subscriber Journey</Button>
-          <Button onClick={exportAudit}>Export Journey PDF/JSON/SVG</Button>
+          <Button onClick={() => setHasRun(true)} variant="primary">Run 5-User Simulation</Button>
+          <Button onClick={exportAudit}>Export QA PDF/JSON/SVG</Button>
         </div>
       </div>
 
@@ -6067,7 +5978,7 @@ function DiscoveryReputationSystem({ setPage }) {
               </div>
             ))}
           </div>
-          <Button onClick={() => setPage("lab")} variant="primary" className="mt-5 w-full">Open My Discovery Vault</Button>
+          <Button onClick={() => setPage("lab")} variant="primary" className="mt-5 w-full">Open My Saved Discoveries</Button>
         </div>
         <div>
           <Pill><Sparkles size={12} /> achievements</Pill>
@@ -6178,14 +6089,14 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
   const posterFeatures = [
     ["Compare", "Compare any elements across stability, thermal response, pressure, diffusion and rarity.", Atom, "compare"],
     ["AI Discovery", "Find hidden pairings, trending discoveries and report-ready next steps.", Sparkles, "discover"],
-    ["Simulate", "Run Time Machine, Scenario Builder, Seismo, Well Driller and Isotope Lab.", Orbit, "timemachine"],
+    ["Simulate", "Run Future Simulation, Scenario Builder, Seismo, Well Driller and Isotope Lab.", Orbit, "timemachine"],
     ["Reports", "Create dossiers, public pages, share cards and export-ready summaries.", FileText, "simreports"],
     ["Matter Intelligence", "Turn geology, telemetry and opportunity signals into ranked targets and reports.", Globe2, "matterlab"],
   ];
 
   const operatingCards = [
     ["Discovery Feed", "A live stream of material pairings, momentum, AI confidence, saves and public discovery pages.", Sparkles, "discover", "poster-card"],
-    ["Matter Intelligence OS", "Opportunity scanning for diamonds, lithium, gold, geothermal and ground intelligence workflows.", Globe2, "matterlab", "poster-card-gold"],
+    ["Advanced Material Analysis", "Opportunity scanning for diamonds, lithium, gold, geothermal and ground intelligence workflows.", Globe2, "matterlab", "poster-card-gold"],
     ["Simulation Studio", "Forecast ageing, corrosion, environment exposure and future-state behaviour.", Clock3, "timemachine", "poster-card"],
     ["Research Reports", "Turn simulations into executive briefs, dossiers, public URLs and downloadable outputs.", BookOpen, "simreports", "poster-card"],
     ["Workspace", "Save discoveries, reports, simulations and targets so ElementOS becomes a daily research home.", Save, "lab", "poster-card-gold"],
@@ -6195,7 +6106,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
   const whySubscribe = [
     ["Discover hidden relationships", "AI-ranked material pairings and opportunity signals."],
     ["Publish research-grade outputs", "Reports, dossiers, public discovery pages and share cards."],
-    ["Forecast the future", "Time Machine and scenario simulations make behaviour easier to explain."],
+    ["Forecast the future", "Future Simulation and scenario simulations make behaviour easier to explain."],
     ["Build a permanent workspace", "Saved discoveries, reports and simulations become your research archive."],
   ];
 
@@ -6399,6 +6310,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
       </Panel>
 
       <ConversionProofDeck setPage={setPage} />
+      <FiveUserSimulationAudit setPage={setPage} />
 
       <GuidedNextStep
         setPage={setPage}
@@ -6489,7 +6401,7 @@ function ExperimentalWellDriller({ setPage }) {
   ];
 
   const exportWell = () => {
-    const content = `ElementOS Well Driller Lab Report\n\nFormation: ${formation}\nFormation class: ${fp.category}\nDepth: ${depth} m\nInclination: ${inclination} deg\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nPorosity: ${fp.porosity}%\nPermeability: ${fp.permeability}%\nDrillability: ${fp.drillability}%\nReservoir score: ${reservoirScore}%\nGeothermal score: ${geothermalScore}%\nBore stability: ${boreStability}%\nKick risk: ${kickRisk}%\nRate of penetration: ${rateOfPenetration} m/hr\nCasing load: ${casingLoad}%`;
+    const content = `ElementOS Resource Discovery Lab Report\n\nFormation: ${formation}\nFormation class: ${fp.category}\nDepth: ${depth} m\nInclination: ${inclination} deg\nFormation pressure: ${pressure}%\nDrill RPM: ${rpm}\nMud balance: ${mud}%\nPorosity: ${fp.porosity}%\nPermeability: ${fp.permeability}%\nDrillability: ${fp.drillability}%\nReservoir score: ${reservoirScore}%\nGeothermal score: ${geothermalScore}%\nBore stability: ${boreStability}%\nKick risk: ${kickRisk}%\nRate of penetration: ${rateOfPenetration} m/hr\nCasing load: ${casingLoad}%`;
     exportAllFormats({ baseName: "elementos-well-driller-formation-report", title: "Well Driller Formation Report", summary: content, payload: { formation, formationProfile: fp, depth, inclination, pressure, rpm, mud, torque, reservoirScore, geothermalScore, boreStability, kickRisk, rateOfPenetration, casingLoad } });
   };
 
@@ -6750,6 +6662,7 @@ function SeismoSimulator({ setPage }) {
   const [depth, setDepth] = useState(2800);
   const [noise, setNoise] = useState(18);
   const [density, setDensity] = useState(62);
+  const [traceZoom, setTraceZoom] = useState(1.35);
 
   const pArrival = (distance * 1000) / Math.max(1, pVelocity);
   const sArrival = (distance * 1000) / Math.max(1, sVelocity);
@@ -6781,8 +6694,6 @@ function SeismoSimulator({ setPage }) {
 
   return (
     <>
-      <MobileSeismoExperience distance={distance} depth={depth} pVelocity={pVelocity} sVelocity={sVelocity} pArrival={pArrival} sArrival={sArrival} gap={gap} confidence={confidence} setPage={setPage} exportSeismo={exportSeismo} />
-      <div className="hidden lg:block space-y-6">
       <Panel className="grid gap-8 xl:grid-cols-[1fr_.95fr]">
         <div>
           <Pill gold><Network size={12}/> seismic wave simulator</Pill>
@@ -6898,14 +6809,25 @@ function SeismoSimulator({ setPage }) {
             Epicentral estimate: {epicentralEstimate} km
           </div>
         </div>
-        <svg viewBox="0 0 100 100" className="mt-6 h-72 w-full rounded-[2rem] border border-white/10 bg-black/25 p-4">
+        <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
+          <span className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Trace zoom</span>
+          {[1, 1.35, 1.75, 2.2].map((z) => (
+            <button key={z} onClick={() => setTraceZoom(z)} className={`rounded-full px-3 py-2 text-xs font-black ${traceZoom === z ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-slate-300"}`}>{z}x</button>
+          ))}
+          <span className="ml-auto text-xs text-slate-400">P {pVelocity}m/s · S {sVelocity}m/s · Depth {depth}m</span>
+        </div>
+        <svg viewBox="0 0 100 100" className="mt-6 h-[520px] w-full rounded-[2rem] border border-white/10 bg-black/25 p-4 shadow-[0_0_90px_rgba(34,211,238,.16)]">
           {[20,40,60,80].map((y) => <line key={y} x1="4" x2="96" y1={y} y2={y} stroke="rgba(255,255,255,.08)" />)}
-          <polyline points={waveSamples.map((s) => `${s.x},${s.p}`).join(" ")} fill="none" stroke="rgba(34,211,238,.95)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: "5 4", animation: `eosTraceFlow ${pTraceSpeed}s linear infinite` }} />
-          <polyline points={waveSamples.map((s) => `${s.x},${s.s}`).join(" ")} fill="none" stroke="rgba(251,191,36,.92)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: "4 5", animation: `eosTraceFlow ${sTraceSpeed}s linear infinite reverse` }} />
-          <circle cx={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((pVelocity / 9200) * waveSamples.length)))].x} cy={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((pVelocity / 9200) * waveSamples.length)))].p} r="1.9" fill="rgba(103,232,249,.98)" style={{ animation: `eosSvgPulse ${pTraceSpeed}s ease-in-out infinite` }} />
-          <circle cx={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((sVelocity / 6200) * waveSamples.length)))].x} cy={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((sVelocity / 6200) * waveSamples.length)))].s} r="1.8" fill="rgba(253,230,138,.98)" style={{ animation: `eosSvgPulse ${sTraceSpeed}s ease-in-out infinite` }} />
-          <text x="6" y="10" className="fill-cyan-100 text-[4px]">P-wave trace</text>
-          <text x="6" y="18" className="fill-amber-100 text-[4px]">S-wave trace</text>
+          {[12,28,44,60,76,92].map((x, i) => <g key={x}><line x1={x} x2={x} y1="8" y2="94" stroke="rgba(255,255,255,.055)"/><text x={x - 1} y="97" className="fill-slate-500 text-[3px]">{Math.round((i + 1) * depth / 6)}m</text></g>)}
+          <polyline points={waveSamples.map((s) => `${s.x},${50 + (s.p - 50) * traceZoom}`).join(" ")} fill="none" stroke="rgba(34,211,238,.20)" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" />
+          <polyline points={waveSamples.map((s) => `${s.x},${50 + (s.s - 50) * traceZoom}`).join(" ")} fill="none" stroke="rgba(251,191,36,.18)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+          <polyline points={waveSamples.map((s) => `${s.x},${50 + (s.p - 50) * traceZoom}`).join(" ")} fill="none" stroke="rgba(34,211,238,.98)" strokeWidth="4.6" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: "7 5", animation: `eosTraceFlow ${pTraceSpeed}s linear infinite`, filter: "drop-shadow(0 0 10px rgba(34,211,238,.8))" }} />
+          <polyline points={waveSamples.map((s) => `${s.x},${50 + (s.s - 50) * traceZoom}`).join(" ")} fill="none" stroke="rgba(251,191,36,.96)" strokeWidth="4.2" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: "6 6", animation: `eosTraceFlow ${sTraceSpeed}s linear infinite reverse`, filter: "drop-shadow(0 0 10px rgba(251,191,36,.72))" }} />
+          <circle cx={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((pVelocity / 9200) * waveSamples.length)))].x} cy={50 + (waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((pVelocity / 9200) * waveSamples.length)))].p - 50) * traceZoom} r="3.2" fill="rgba(103,232,249,.98)" style={{ animation: `eosSvgPulse ${pTraceSpeed}s ease-in-out infinite` }} />
+          <circle cx={waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((sVelocity / 6200) * waveSamples.length)))].x} cy={50 + (waveSamples[Math.min(waveSamples.length - 1, Math.max(0, Math.floor((sVelocity / 6200) * waveSamples.length)))].s - 50) * traceZoom} r="3" fill="rgba(253,230,138,.98)" style={{ animation: `eosSvgPulse ${sTraceSpeed}s ease-in-out infinite` }} />
+          <text x="6" y="10" className="fill-cyan-100 text-[4px]">P-wave trace · {pVelocity}m/s</text>
+          <text x="6" y="18" className="fill-amber-100 text-[4px]">S-wave trace · {sVelocity}m/s</text>
+          <text x="70" y="10" className="fill-slate-300 text-[3.5px]">Depth markers active</text>
         </svg>
       </Panel>
 
@@ -6923,7 +6845,6 @@ function SeismoSimulator({ setPage }) {
           </Panel>
         ))}
       </div>
-      </div>
     </>
   );
 }
@@ -6932,489 +6853,891 @@ function SeismoSimulator({ setPage }) {
 
 
 function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
-  const [styleMode, setStyleMode] = useState("Classic EOS");
-  const [exportLayout, setExportLayout] = useState("Square 1080");
-  const [sourceId, setSourceId] = useState("compare");
+  const [format, setFormat] = useState("Discovery DNA");
   const [cardIndex, setCardIndex] = useState(0);
   const [founderName, setFounderName] = useState("Paul Roper");
-  const [posterMotion, setPosterMotion] = useState(true);
-  const [showGrid, setShowGrid] = useState(true);
+  const [headlineMode, setHeadlineMode] = useState("AI Headline");
+  const [exportLayout, setExportLayout] = useState("Portrait Poster");
+  const [mediaSourceId, setMediaSourceId] = useState("compare");
+  const [seriesNumber, setSeriesNumber] = useState(36);
   const [exportHistory, setExportHistory] = useState([]);
-
-  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(30)), []);
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(24)), []);
   const activeMaterial = elementMap[selected] || elementMap.Al;
   const compareSet = compare?.length ? compare : ["Al", "Ti", "Hf", "W"];
-  const discovery = discoveries[cardIndex % Math.max(1, discoveries.length)] || discoveries[0];
-
+  const discovery = discoveries[cardIndex % discoveries.length] || discoveries[0];
   const mediaSources = useMemo(() => {
     const primaryPair = compareSet.slice(0, 2);
     const compareTitle = primaryPair.length >= 2 ? `${primaryPair[0]} + ${primaryPair[1]}` : `${activeMaterial.symbol} + Ti`;
     const compareScore = primaryPair.length >= 2 ? compatibilityScore(primaryPair[0], primaryPair[1]) : Math.round(score(activeMaterial.symbol).alignment);
-    const discoveryPair = discovery ? `${discovery.a} + ${discovery.b}` : "Al + Ti";
+    const discoveryPair = discovery ? `${discovery.a} + ${discovery.b}` : "Ti + Hf";
     return [
       {
         id: "compare",
-        label: "Current Compare",
+        label: "Current Compare Set",
+        type: "Compare Materials",
         title: compareTitle,
-        subtitle: "Element pairing converted into a cinematic discovery card",
-        headline: "A DISCOVERY WORTH SHARING",
-        code: `EOS-${materialDNA(primaryPair[0] || activeMaterial.symbol, primaryPair[1] || "Ti")}`,
-        source: "Compare Engine",
-        score: Math.max(82, compareScore),
-        metric: "Discovery Signal Score",
+        code: `COMPARE-${compareSet.join("-") || activeMaterial.symbol}`,
+        headline: "Comparison-Ready Discovery Asset",
+        subtitle: `${compareSet.join(" + ")} comparison converted into media`,
+        score: compareScore,
+        metric: "Compatibility",
         tier: rarityTier(compareScore),
-        left: primaryPair[0] || activeMaterial.symbol,
-        right: primaryPair[1] || "Ti",
-        narrative: `ElementOS converted ${compareTitle} into a premium social discovery asset with ARC connection visuals, animated signal traces and export-ready EOS branding.`,
+        narrative: `This card is generated directly from the current Compare workflow using ${compareSet.join(" + ")}. It turns the user's active material selection into a shareable discovery asset.`,
+        source: "Compare Engine",
+        hook: "A live compare result became a report, poster and social pack.",
+        constellation: `${compareSet.slice(0, 4).join(" → ")} → Media`,
       },
       {
         id: "discovery",
-        label: "Trending Discovery",
+        label: "Discovery Feed Asset",
+        type: "Discovery Feed",
         title: discoveryPair,
-        subtitle: "Network-ranked discovery signal packaged for sharing",
-        headline: "RARE MATERIAL CONNECTION REVEALED",
-        code: discovery?.dna || "EOS-1047",
-        source: "Discovery Feed",
-        score: discovery?.aiConfidence || discovery?.score || 96,
+        code: discovery?.dna || "DISCOVERY-TI-HF",
+        headline: discovery?.type || "Rare Material Signal Detected",
+        subtitle: discovery?.tier || "Network-ranked discovery",
+        score: discovery?.aiConfidence || discovery?.score || 94,
         metric: "AI Confidence",
         tier: discovery?.tier || "ULTRA RARE",
-        left: discovery?.a || "Al",
-        right: discovery?.b || "Ti",
-        narrative: discovery?.reason || "A high-signal material pairing surfaced inside the ElementOS discovery network and is now ready to become a public card.",
+        narrative: discovery?.reason || "A high-signal material pairing surfaced inside the ElementOS discovery network.",
+        source: "Discovery Feed",
+        hook: "A trending network discovery became a public media asset.",
+        constellation: discovery ? `${discovery.a} → ${discovery.b} → Public Discovery` : "Ti → Hf → Public Discovery",
       },
       {
         id: "matter",
-        label: "Matter Intelligence",
-        title: "Diamond Signal",
-        subtitle: "Opportunity intelligence transformed into a premium field poster",
-        headline: "GROUND OPPORTUNITY SIGNAL RISING",
+        label: "Matter Intelligence Opportunity",
+        type: "Matter Intelligence",
+        title: "Diamond Cluster",
         code: "MIOS-DK-27",
-        source: "Matter Intelligence",
-        score: 94,
+        headline: "Ground Opportunity Signal Rising",
+        subtitle: "Matter Intelligence scan converted into an opportunity poster",
+        score: 92,
         metric: "Opportunity Score",
-        tier: "LEGENDARY",
-        left: "C",
-        right: "Ti",
-        narrative: "Multiple signal layers are converging into one report-ready opportunity card with EOS-style target graphics, score architecture and field-intelligence branding.",
+        tier: "RISING",
+        narrative: "Multiple evidence layers are converging around one potential ground opportunity. The signal is strong enough to become a report-ready opportunity card.",
+        source: "Matter Intelligence",
+        hook: "An opportunity scan became a shareable intelligence poster.",
+        constellation: "Signal → Target → Report",
       },
       {
         id: "timemachine",
-        label: "Time Machine",
-        title: `${activeMaterial.symbol} 50Y Forecast`,
-        subtitle: "Long-horizon behaviour converted into a future-state poster",
-        headline: "FUTURE MATERIAL BEHAVIOUR DETECTED",
-        code: `TIME-${activeMaterial.symbol}-50Y`,
-        source: "Time Machine",
-        score: Math.max(82, Math.min(99, Math.round(score(activeMaterial.symbol).stability * 21))),
+        label: "Future Simulation Forecast",
+        type: "Future Simulation",
+        title: `${activeMaterial.symbol} 25-Year Forecast`,
+        code: `TIME-${activeMaterial.symbol}-25Y`,
+        headline: "Future-State Material Forecast",
+        subtitle: "Long-horizon behaviour converted into a forecast poster",
+        score: Math.round(score(activeMaterial.symbol).stability * 19),
         metric: "Survival Signal",
         tier: "FORECAST",
-        left: activeMaterial.symbol,
-        right: "50Y",
-        narrative: `${activeMaterial.name} is projected through long-horizon stress and exposure conditions, then transformed into an export-ready social forecast asset.`,
+        narrative: `${activeMaterial.name} is projected across long-term stress, pressure and exposure conditions, then packaged as a forecast card for reporting and sharing.`,
+        source: "Future Simulation",
+        hook: "A future-state simulation became a visual forecast asset.",
+        constellation: `${activeMaterial.symbol} → 25Y → Forecast`,
       },
       {
         id: "seismo",
-        label: "Seismo Signal",
-        title: "P + S Wave",
-        subtitle: "Subsurface wave intelligence turned into technical share media",
-        headline: "SEISMIC SIGNAL GAP DETECTED",
-        code: "SEISMO-1047",
-        source: "Seismo Lab",
-        score: 91,
+        label: "Seismo / Well Signal",
+        type: "Advanced Labs",
+        title: "Subsurface Wave Signal",
+        code: "SEISMO-P-S-1047",
+        headline: "Seismic Signal Gap Detected",
+        subtitle: "P-wave and S-wave readout packaged for technical sharing",
+        score: 88,
         metric: "Signal Clarity",
         tier: "TECHNICAL",
-        left: "P",
-        right: "S",
-        narrative: "A P-wave and S-wave response has been packaged as a cinematic EOS signal card for technical explanation, reporting and public sharing.",
+        narrative: "A simulated subsurface wave response was converted into a clear poster-style readout for field review, reporting and public explanation.",
+        source: "Wave Intelligence",
+        hook: "A technical lab result became a visual explanation asset.",
+        constellation: "P-Wave → S-Wave → Report",
+      },
+      {
+        id: "report",
+        label: "Research Report",
+        type: "Reports",
+        title: "Research Dossier",
+        code: `REPORT-${compareSet.slice(0, 3).join("-")}`,
+        headline: "Report-Ready Scientific Asset",
+        subtitle: "Executive summary converted into a media pack",
+        score: 90,
+        metric: "Report Strength",
+        tier: "REPORTABLE",
+        narrative: "This export packages an ElementOS result as a polished report, SVG poster, JSON dataset and platform-specific social copy.",
+        source: "Report Engine",
+        hook: "A report became a social-ready discovery pack.",
+        constellation: "Insight → Report → Public Page",
       },
     ];
   }, [compareSet, activeMaterial, discovery]);
+  const selectedMediaSource = mediaSources.find((source) => source.id === mediaSourceId) || mediaSources[0];
+  const globalAverage = 68;
 
-  const cardData = mediaSources.find((source) => source.id === sourceId) || mediaSources[0];
-  const leftElement = elementMap[cardData.left] || { symbol: cardData.left, name: cardData.left === "P" ? "P-Wave" : cardData.left === "C" ? "Carbon" : cardData.left, atomicNumber: cardData.left === "50Y" ? 50 : 13 };
-  const rightElement = elementMap[cardData.right] || { symbol: cardData.right, name: cardData.right === "S" ? "S-Wave" : cardData.right === "50Y" ? "Future" : cardData.right, atomicNumber: cardData.right === "S" ? 2 : 22 };
-  const scoreValue = Math.max(1, Math.min(99.9, Number(cardData.score) || 94));
-  const normalizedScore = scoreValue.toFixed(scoreValue >= 98 ? 1 : 0);
+  const cardStats = useMemo(() => {
+    const seed = String(discovery?.dna || "TI-HF-1047").split("").reduce((sum, c) => sum + c.charCodeAt(0), 0);
+    return {
+      views: 2400 + (seed % 4200),
+      saves: 84 + (seed % 360),
+      reports: 17 + (seed % 92),
+      shares: 22 + (seed % 280),
+      rank: 1 + (seed % 99),
+      percentile: Math.max(0.2, Math.min(9.9, ((100 - (discovery?.score || 92)) / 2.4).toFixed(1))),
+    };
+  }, [discovery]);
 
-  const layoutMeta = {
-    "Square 1080": { label: "Square", aspect: "aspect-square", size: "1080 × 1080", width: 1080, height: 1080 },
-    "Portrait 1350": { label: "Portrait", aspect: "aspect-[4/5]", size: "1080 × 1350", width: 1080, height: 1350 },
-    "Landscape 1600": { label: "Landscape", aspect: "aspect-video", size: "1600 × 900", width: 1600, height: 900 },
-  }[exportLayout] || { label: "Square", aspect: "aspect-square", size: "1080 × 1080", width: 1080, height: 1080 };
+  const storyLines = useMemo(() => {
+    const pair = `${discovery?.a || "Ti"} + ${discovery?.b || "Hf"}`;
+    return [
+      `Rare alignment detected across ${pair}.`,
+      `${discovery?.type || "Hidden compatibility signal"} moved into the public discovery queue.`,
+      `AI confidence sits ${Math.max(1, (discovery?.aiConfidence || 94) - globalAverage)} points above the network average.`,
+      "This is designed to become a discovery, report, share card and public research asset.",
+    ];
+  }, [discovery]);
 
-  const styleMeta = {
-    "Classic EOS": {
-      badge: "EOS CLASSIC",
-      shell: "from-cyan-950/45 via-slate-950 to-amber-950/25",
-      left: "cyan",
-      right: "amber",
-      glow: "shadow-[0_0_100px_rgba(34,211,238,.18)]",
-    },
-    "Deep Lab": {
-      badge: "DEEP LAB",
-      shell: "from-blue-950/50 via-slate-950 to-fuchsia-950/25",
-      left: "blue",
-      right: "fuchsia",
-      glow: "shadow-[0_0_100px_rgba(59,130,246,.18)]",
-    },
-    "Gold Signal": {
-      badge: "GOLD SIGNAL",
-      shell: "from-amber-950/45 via-black to-orange-950/30",
-      left: "amber",
-      right: "yellow",
-      glow: "shadow-[0_0_120px_rgba(251,191,36,.20)]",
-    },
-  }[styleMode] || {
-    badge: "EOS CLASSIC",
-    shell: "from-cyan-950/45 via-slate-950 to-amber-950/25",
-    left: "cyan",
-    right: "amber",
-    glow: "shadow-[0_0_100px_rgba(34,211,238,.18)]",
-  };
+  const cardData = useMemo(() => {
+    const base = {
+      format,
+      badge: format.toUpperCase(),
+      title: selectedMediaSource.title,
+      code: discovery?.dna || "DISCOVERY-TI-HF",
+      headline: headlineMode === "AI Headline" ? selectedMediaSource.headline : `${selectedMediaSource.type} Media Asset`,
+      subtitle: selectedMediaSource.subtitle,
+      score: selectedMediaSource.score,
+      metric: "AI Confidence",
+      tier: discovery?.tier || "ULTRA RARE",
+      rank: `#${cardStats.rank} Global`,
+      top: `Top ${cardStats.percentile}%`,
+      founder: founderName || "ElementOS Researcher",
+      narrative: selectedMediaSource.narrative,
+      statA: `${cardStats.views.toLocaleString()} views`,
+      statB: `${cardStats.saves.toLocaleString()} saves`,
+      statC: `${cardStats.reports.toLocaleString()} reports`,
+      statD: `${cardStats.shares.toLocaleString()} shares`,
+      source: selectedMediaSource.source,
+      cardNumber: `Discovery #${String(seriesNumber).padStart(3, "0")}`,
+      hook: selectedMediaSource.hook,
+      constellation: discovery ? `${discovery.a} → ${discovery.b} → Public Discovery` : "Ti → Hf → Public Discovery",
+    };
 
-  const palette = {
-    cyan: { text: "text-cyan-100", border: "border-cyan-300/35", bg: "bg-cyan-300/10", glow: "shadow-[0_0_70px_rgba(34,211,238,.42)]", stroke: "rgba(34,211,238,.94)", fill: "rgba(103,232,249,.95)" },
-    amber: { text: "text-amber-100", border: "border-amber-300/35", bg: "bg-amber-300/10", glow: "shadow-[0_0_70px_rgba(251,191,36,.42)]", stroke: "rgba(251,191,36,.94)", fill: "rgba(253,230,138,.95)" },
-    blue: { text: "text-blue-100", border: "border-blue-300/35", bg: "bg-blue-300/10", glow: "shadow-[0_0_70px_rgba(59,130,246,.42)]", stroke: "rgba(96,165,250,.94)", fill: "rgba(147,197,253,.95)" },
-    fuchsia: { text: "text-fuchsia-100", border: "border-fuchsia-300/35", bg: "bg-fuchsia-300/10", glow: "shadow-[0_0_70px_rgba(217,70,239,.42)]", stroke: "rgba(217,70,239,.94)", fill: "rgba(240,171,252,.95)" },
-    yellow: { text: "text-yellow-100", border: "border-yellow-300/35", bg: "bg-yellow-300/10", glow: "shadow-[0_0_70px_rgba(234,179,8,.42)]", stroke: "rgba(234,179,8,.94)", fill: "rgba(254,240,138,.95)" },
-  };
+    if (format === "Scientific Trading Card") {
+      return { ...base, badge: "SCIENTIFIC TRADING CARD", headline: "Collectible Material Intelligence", source: "Trading Card", subtitle: "front/back research collectible", tier: "COLLECTIBLE" };
+    }
+    if (format === "Founder Card") {
+      return { ...base, badge: "FOUNDER DISCOVERY", headline: `Found by ${founderName || "Paul Roper"}`, source: "Founder Card", subtitle: "researcher identity + discovery proof", tier: "FOUNDER" };
+    }
+    if (format === "Opportunity Poster") {
+      return { ...base, badge: "OPPORTUNITY SIGNAL", title: "Diamond Cluster", code: "MIOS-DK-27", headline: "Ground Opportunity Signal Rising", subtitle: "Matter Intelligence target card", score: 92, metric: "Opportunity Score", tier: "RISING", source: "Matter Intelligence" };
+    }
+    if (format === "Report Poster") {
+      return { ...base, badge: "DISCOVERY REPORT", headline: "Report-Ready Discovery Asset", source: "Report Poster", subtitle: "executive brief + technical narrative", tier: "REPORTABLE" };
+    }
+    if (format === "League Table") {
+      return { ...base, badge: "TOP DISCOVERIES TODAY", headline: "Discovery Leaderboard", source: "League Table", subtitle: "ranked by momentum, saves and AI confidence", tier: "TRENDING", hook: "The network is ranking today’s strongest material signals." };
+    }
+    if (format === "Discovery Poster") {
+      return { ...base, badge: "DISCOVERY POSTER", headline: "Exceptional Material Signal Detected", source: "Poster Export", subtitle: "premium launch poster for X, LinkedIn and Reddit", tier: "POSTER", hook: "Built to stop the scroll and turn a simulation into a public discovery." };
+    }
+    if (format === "Daily Discovery Series") {
+      return { ...base, badge: "DAILY DISCOVERY", headline: `Daily Discovery Series ${String(seriesNumber).padStart(3, "0")}`, source: "Daily Series", subtitle: "collectible discovery drop", tier: "SERIES", hook: "A new shareable discovery every day keeps ElementOS alive." };
+    }
+    return base;
+  }, [format, discovery, cardStats, founderName, headlineMode, selectedMediaSource]);
 
-  const leftPalette = palette[styleMeta.left] || palette.cyan;
-  const rightPalette = palette[styleMeta.right] || palette.amber;
-  const metricRows = [
-    ["Thermal Stability", `${Math.min(99.9, scoreValue - 1.4).toFixed(1)}%`, Activity],
-    ["Corrosion Resistance", `${Math.min(99.9, scoreValue - 2.6).toFixed(1)}%`, ShieldCheck],
-    ["Pressure Tolerance", `${Math.min(99.9, scoreValue - 0.8).toFixed(1)}%`, Radar],
-    ["Structural Integrity", `${Math.min(99.9, scoreValue - 1.1).toFixed(1)}%`, Network],
+  const formats = ["Discovery DNA", "Discovery Poster", "Daily Discovery Series", "Scientific Trading Card", "Founder Card", "Opportunity Poster", "Report Poster", "League Table"];
+  const exportLayouts = ["Square Card", "Portrait Poster", "Landscape Banner", "X Post", "LinkedIn", "Reddit"];
+  const badges = ["First Discovery", "Top 1%", "Matter Pioneer", "Report Ready", "Public Asset"];
+  const channels = [
+    ["X / Twitter", "One sharp discovery card, one curiosity hook, one public discovery link."],
+    ["LinkedIn", "Frame it as a professional material-intelligence insight with a report preview."],
+    ["Reddit", "Lead with explanation, not hype. Show the card after the useful context."],
+    ["Product Hunt", "Use the founder card plus a clear before/after workflow demo."],
   ];
 
-  const caption = `ELEMENTOS ${cardData.title} — ${normalizedScore}% ${cardData.metric}. ${cardData.headline}. Generated from ${cardData.source}. Explore the discovery at https://theelementos.com`;
+  const performanceScore = Math.min(99, Math.round((cardData.score * 0.42) + (cardStats.shares / 8) + (cardStats.saves / 14) + 18));
+  const viralReadiness = performanceScore >= 92 ? "LAUNCH READY" : performanceScore >= 82 ? "HIGH POTENTIAL" : performanceScore >= 72 ? "NEEDS STRONGER HOOK" : "REFINE BEFORE POSTING";
+  const confidenceMetrics = [
+    ["Signal Agreement", Math.min(99, Math.round(cardData.score * 0.94 + 5))],
+    ["Historical Match", Math.min(99, Math.round(cardData.score * 0.88 + 8))],
+    ["Simulation Consistency", Math.min(99, Math.round(cardData.score * 0.91 + 6))],
+  ];
+  const genomeMetrics = [
+    ["Thermal", Math.min(99, Math.round(cardData.score * 0.96))],
+    ["Pressure", Math.min(99, Math.round(cardData.score * 0.91))],
+    ["Stability", Math.min(99, Math.round(cardData.score * 0.94))],
+    ["Conductivity", Math.min(99, Math.round(cardData.score * 0.78))],
+  ];
+  const genomePair = String(cardData.title || "Ti + Hf").split("+").map((item) => item.trim()).filter(Boolean);
+  const discoveryGenome = `${genomePair[0] || "Ti"}${genomePair[1] || "Hf"}-X${String(cardStats.rank).padStart(2, "0")}-P${Math.round(cardData.score / 10)}`;
+  const ctaVariants = ["Open the discovery", "Generate your own", "View the full report", "Save this signal", "Join the Explorer access"];
+  const abVariants = [
+    ["A", "Rare signal headline", cardData.headline, "Best for X curiosity."],
+    ["B", "Score-first headline", `${cardData.score}% ${cardData.metric}`, "Best for LinkedIn authority."],
+    ["C", "Story-first headline", cardData.hook, "Best for Reddit explanation."],
+  ];
+  const collections = [
+    ["Advanced Thermal Materials", "12 discoveries", "Ti + Hf, W + Ta, Zr + Hf"],
+    ["Aerospace Stability Set", "8 discoveries", "Al + Ti, Mg + Al, Ti + V"],
+    ["Rare Earth Intelligence", "16 discoveries", "Nd + Pr, Dy + Tb, Ce + La"],
+  ];
+  const tournamentPairs = [
+    ["Ti + Hf", "Al + Ti", "Ti + Hf", "+8% thermal · +12% pressure"],
+    ["Ga + In", "Au + Pt", "Ga + In", "+14% conductivity · +6% novelty"],
+  ];
+  const hallOfFame = discoveries.slice(0, 5).map((d, index) => ({ ...d, rank: index + 1 }));
+  const platformRecommendations = [
+    ["X", "Use the square card, short curiosity hook, one number, one public discovery link."],
+    ["LinkedIn", "Use portrait poster, professional narrative, report preview, founder context."],
+    ["Reddit", "Lead with useful explanation, then card. Ask for critique rather than sales."],
+    ["Product Hunt", "Use founder card plus the discovery loop: simulate → report → share."],
+  ];
 
-  const makePosterSvg = () => {
-    const left = leftElement.symbol;
-    const right = rightElement.symbol;
-    const w = layoutMeta.width;
-    const h = layoutMeta.height;
-    const isLandscape = exportLayout === "Landscape 1600";
-    const cx1 = isLandscape ? w * 0.31 : w * 0.30;
-    const cx2 = isLandscape ? w * 0.69 : w * 0.70;
-    const cy = h * 0.47;
-    return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-  <defs>
-    <radialGradient id="bg" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#0b2b3f"/><stop offset="45%" stop-color="#020617"/><stop offset="100%" stop-color="#000"/></radialGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <linearGradient id="arc" x1="0" x2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#fbbf24"/></linearGradient>
-  </defs>
-  <rect width="100%" height="100%" fill="url(#bg)"/>
-  <rect x="28" y="28" width="${w-56}" height="${h-56}" rx="32" fill="none" stroke="#22d3ee" stroke-opacity=".55" stroke-width="3"/>
-  <rect x="44" y="44" width="${w-88}" height="${h-88}" rx="24" fill="none" stroke="#fbbf24" stroke-opacity=".25" stroke-width="2"/>
-  <text x="${w/2}" y="80" text-anchor="middle" fill="#e2e8f0" font-size="42" font-family="Arial" font-weight="900" letter-spacing="18">ELEMENTOS</text>
-  <text x="${w/2}" y="130" text-anchor="middle" fill="#67e8f9" font-size="20" font-family="Arial" font-weight="700" letter-spacing="9">DISCOVERY AT THE SPEED OF MATTER</text>
-  <text x="${w/2}" y="${h*0.22}" text-anchor="middle" fill="#cbd5e1" font-size="36" font-family="Arial" font-weight="900" letter-spacing="12">${cardData.headline}</text>
-  <text x="${w/2}" y="${h*0.34}" text-anchor="middle" fill="#fff" font-size="110" font-family="Arial" font-weight="900">${left} + ${right}</text>
-  <line x1="${cx1+95}" y1="${cy}" x2="${cx2-95}" y2="${cy}" stroke="url(#arc)" stroke-width="12" filter="url(#glow)"/>
-  <circle cx="${cx1}" cy="${cy}" r="120" fill="none" stroke="#22d3ee" stroke-width="8" stroke-opacity=".85" filter="url(#glow)"/>
-  <circle cx="${cx2}" cy="${cy}" r="120" fill="none" stroke="#fbbf24" stroke-width="8" stroke-opacity=".85" filter="url(#glow)"/>
-  <text x="${cx1}" y="${cy-8}" text-anchor="middle" fill="#e0f2fe" font-size="90" font-family="Arial" font-weight="900">${left}</text>
-  <text x="${cx1}" y="${cy+52}" text-anchor="middle" fill="#67e8f9" font-size="24" font-family="Arial" font-weight="700" letter-spacing="5">${leftElement.name}</text>
-  <text x="${cx2}" y="${cy-8}" text-anchor="middle" fill="#fef3c7" font-size="90" font-family="Arial" font-weight="900">${right}</text>
-  <text x="${cx2}" y="${cy+52}" text-anchor="middle" fill="#fbbf24" font-size="24" font-family="Arial" font-weight="700" letter-spacing="5">${rightElement.name}</text>
-  <text x="${w/2}" y="${h*0.69}" text-anchor="middle" fill="#fbbf24" font-size="88" font-family="Arial" font-weight="900">${normalizedScore}%</text>
-  <text x="${w/2}" y="${h*0.74}" text-anchor="middle" fill="#67e8f9" font-size="24" font-family="Arial" font-weight="800" letter-spacing="7">${cardData.metric.toUpperCase()}</text>
-  <text x="${w/2}" y="${h-78}" text-anchor="middle" fill="#e2e8f0" font-size="20" font-family="Arial" font-weight="800" letter-spacing="8">EXPLORE · DISCOVER · UNDERSTAND · CREATE</text>
-  <text x="${w/2}" y="${h-38}" text-anchor="middle" fill="#67e8f9" font-size="18" font-family="Arial" font-weight="700" letter-spacing="6">THEELEMENTOS.COM · ${cardData.code}</text>
-</svg>`;
+  const safeText = (value) => String(value ?? "").replace(/[&<>\"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  const smartTitle = (value = "") => {
+    const text = String(value || "").trim();
+    if (!text) return "Discovery Signal Detected";
+    if (text.length <= 48) return text;
+    return text
+      .replace("Rare Thermal and Pressure Alignment Suitable for Advanced Structural Comparison", "Rare Thermal-Pressure Alignment")
+      .replace("Hidden compatibility signal", "Hidden Compatibility Signal")
+      .slice(0, 64)
+      .replace(/\s+\S*$/, "") + "...";
   };
 
-  const exportPoster = () => {
-    const customSvg = makePosterSvg();
-    exportAllFormats({
-      baseName: `ElementOS-${cardData.title.replace(/\s+/g, "-")}-${exportLayout.replace(/\s+/g, "-")}-viral-poster`,
-      title: `ElementOS Viral Poster: ${cardData.title}`,
-      summary: `${cardData.headline}. ${cardData.narrative}`,
-      payload: {
-        title: cardData.title,
-        source: cardData.source,
-        score: normalizedScore,
-        metric: cardData.metric,
-        tier: cardData.tier,
-        layout: exportLayout,
-        style: styleMode,
-        code: cardData.code,
-      },
-      sections: [
-        { heading: "EOS Poster Style", text: `${styleMode} · ${layoutMeta.size} · animated ARC connection · orbit rings · signal waveform · poster export.` },
-        { heading: "Social Caption", text: caption },
-        { heading: "Discovery Narrative", text: cardData.narrative },
-      ],
-      customSvg,
+  const wrapWords = (value = "", maxChars = 34, maxLines = 3) => {
+    const words = String(value || "").replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
+    const lines = [];
+    let line = "";
+
+    words.forEach((word) => {
+      const next = line ? `${line} ${word}` : word;
+      if (next.length > maxChars && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = next;
+      }
     });
-    setExportHistory((items) => [{ title: cardData.title, score: normalizedScore, layout: exportLayout, style: styleMode, time: new Date().toLocaleTimeString() }, ...items].slice(0, 8));
+
+    if (line) lines.push(line);
+
+    if (lines.length > maxLines) {
+      const clipped = lines.slice(0, maxLines);
+      clipped[maxLines - 1] = clipped[maxLines - 1].replace(/[.,;:]?$/, "") + "...";
+      return clipped;
+    }
+
+    return lines.length ? lines : [""];
   };
 
-  const copyCaption = () => safeCopyText(caption, "EOS viral caption copied.");
+  const svgTextLines = (lines = [], { x = 0, y = 0, lineHeight = 46, fill = "#e0f2fe", size = 34, weight = 700, anchor = "start", family = "Inter, Arial, sans-serif", spacing = 0 } = {}) => {
+    return lines
+      .map((line, index) => `<text x="${x}" y="${y + index * lineHeight}" fill="${fill}" font-family="${family}" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}" letter-spacing="${spacing}">${safeText(line)}</text>`)
+      .join("\n");
+  };
 
-  const particles = useMemo(() => Array.from({ length: 42 }, (_, i) => ({
-    left: `${(i * 17) % 100}%`,
-    top: `${(i * 29) % 100}%`,
-    delay: `${(i % 11) * 0.27}s`,
-    size: `${2 + (i % 4)}px`,
-    opacity: 0.18 + (i % 7) * 0.08,
-  })), []);
+  const splitPair = (title = "Ti + Hf") => {
+    const parts = String(title).split("+").map((item) => item.trim()).filter(Boolean);
+    return [parts[0] || "Ti", parts[1] || "Hf"];
+  };
 
-  const nextCard = () => {
-    setCardIndex((value) => value + 1);
-    setSourceId("discovery");
+
+  const copyCard = () => {
+    const text = `${cardData.headline}
+${cardData.title} · ${cardData.code}
+${cardData.score}% ${cardData.metric}
+${cardData.tier} · ${cardData.rank} · ${cardData.top}
+Found by ${cardData.founder}
+${cardData.narrative}
+${cardData.statA} · ${cardData.statB} · ${cardData.statC}
+${cardData.hook}
+${cardData.cardNumber}
+Generated in ElementOS`;
+    navigator.clipboard?.writeText(text);
+    alert("Viral card copy saved to clipboard.");
+  };
+
+  const copyCaption = (channel = "X") => {
+    const pair = cardData.title;
+    const captions = {
+      X: `${cardData.headline}
+
+${pair}
+${cardData.score}% ${cardData.metric}
+${cardData.tier} · ${cardData.top}
+
+Generated in ElementOS.`,
+      LinkedIn: `I generated a new ElementOS discovery asset: ${pair}. The model returned ${cardData.score}% ${cardData.metric}, classified as ${cardData.tier}. This is the kind of shareable scientific intelligence workflow ElementOS is being built for.`,
+      Reddit: `I am testing a material-discovery prototype called ElementOS. This card shows ${pair} with ${cardData.score}% ${cardData.metric}. I am looking for feedback on whether the explanation and export format make the result understandable.`,
+      ProductHunt: `ElementOS turns material simulations into discoveries, reports and shareable scientific cards. Today's example: ${pair} at ${cardData.score}% ${cardData.metric}.`,
+    };
+    navigator.clipboard?.writeText(captions[channel] || captions.X);
+    alert(`${channel} caption copied.`);
+  };
+
+
+  const createSocialPack = () => {
+    const pair = cardData.title;
+    const socialPack = {
+      product: "ElementOS",
+      asset: "Discovery Social Pack",
+      discovery: {
+        title: pair,
+        code: cardData.code,
+        headline: cardData.headline,
+        score: `${cardData.score}%`,
+        tier: cardData.tier,
+        rank: cardData.rank,
+        founder: cardData.founder,
+      },
+      exportsIncluded: ["PDF report", "JSON data", "SVG poster"],
+      captions: {
+        x: `${cardData.headline}\n\n${pair} · ${cardData.score}% ${cardData.metric}\n${cardData.tier} · ${cardData.top}\n\nBuilt in ElementOS.`,
+        linkedin: `I generated a new ElementOS discovery asset: ${pair}. It scored ${cardData.score}% ${cardData.metric} and is classified as ${cardData.tier}. ElementOS turns simulations into reports, posters and shareable scientific discovery pages.`,
+        reddit: `I am testing ElementOS, a material-discovery prototype. This export shows ${pair} with ${cardData.score}% ${cardData.metric}. I would love feedback on whether the card explains the discovery clearly.`,
+      },
+      ctaVariants,
+      platformRecommendations,
+      generatedAt: new Date().toISOString(),
+    };
+
+    exportAllFormats({
+      baseName: `elementos-social-pack-${slugifyExportName(cardData.code)}`,
+      title: `${cardData.title} Social Pack`,
+      summary: `${cardData.headline}. ${cardData.score}% ${cardData.metric}. ${cardData.tier}.`,
+      payload: socialPack,
+      sections: [
+        { heading: "Discovery", text: `${cardData.title} · ${cardData.code} · ${cardData.score}% ${cardData.metric}` },
+        { heading: "X Post", text: socialPack.captions.x },
+        { heading: "LinkedIn Post", text: socialPack.captions.linkedin },
+        { heading: "Reddit Post", text: socialPack.captions.reddit },
+        { heading: "Call To Action Variants", text: ctaVariants.join(" · ") },
+      ],
+    });
+
+    setExportHistory((history) => [
+      { type: "Social Pack", layout: "PDF + JSON + SVG", time: new Date().toLocaleTimeString() },
+      ...history,
+    ].slice(0, 8));
+  };
+
+  const exportSVG = () => {
+    const layoutMeta = {
+      "Square Card": { w: 1600, h: 1600, name: "square" },
+      "Portrait Poster": { w: 1600, h: 2100, name: "portrait" },
+      "Landscape Banner": { w: 2100, h: 1200, name: "landscape" },
+      "X Post": { w: 1600, h: 900, name: "x-post" },
+      "LinkedIn": { w: 1600, h: 1200, name: "linkedin" },
+      "Reddit": { w: 1600, h: 1200, name: "reddit" },
+    }[exportLayout] || { w: 1600, h: 2100, name: "portrait" };
+    const [leftSymbol, rightSymbol] = splitPair(cardData.title);
+    const exportHeadline = smartTitle(cardData.headline);
+    const exportSubtitle = smartTitle(cardData.subtitle);
+    const narrativeLines = wrapWords(cardData.narrative, 42, 4);
+    const titleLines = wrapWords(cardData.title, 16, 2);
+    const headlineLines = wrapWords(exportHeadline, 34, 2);
+    const subtitleLines = wrapWords(exportSubtitle, 42, 2);
+    const footerLine = `Generated by ${cardData.founder} in ElementOS`;
+    const ringColor = platform === "LinkedIn" ? "#38bdf8" : platform === "Reddit" ? "#f97316" : platform === "X" ? "#67e8f9" : "#fbbf24";
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${layoutMeta.w}" height="${layoutMeta.h}" viewBox="0 0 1600 2100">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#061a31"/>
+      <stop offset="0.34" stop-color="#020617"/>
+      <stop offset="0.67" stop-color="#101336"/>
+      <stop offset="1" stop-color="#34124a"/>
+    </linearGradient>
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="0.42" stop-color="#818cf8"/>
+      <stop offset="0.72" stop-color="#f472b6"/>
+      <stop offset="1" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="#061a31"/></linearGradient>
+    <radialGradient id="pulse" cx="74%" cy="16%" r="70%"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.72"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gold" cx="18%" cy="84%" r="58%"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.38"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>
+    <radialGradient id="pink" cx="82%" cy="78%" r="52%"><stop offset="0" stop-color="#e879f9" stop-opacity="0.26"/><stop offset="1" stop-color="#e879f9" stop-opacity="0"/></radialGradient>
+    <filter id="softGlow"><feGaussianBlur stdDeviation="13" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="blur"><feGaussianBlur stdDeviation="34"/></filter>
+    <style>.tiny{font-family:Inter,Arial,sans-serif;letter-spacing:8px;font-weight:950}.label{font-family:Inter,Arial,sans-serif;letter-spacing:5px;font-weight:950}.mono{font-family:JetBrains Mono,Consolas,monospace}</style>
+  </defs>
+
+  <rect width="1600" height="2100" fill="url(#bg)"/>
+  <rect width="1600" height="2100" fill="url(#pulse)"/>
+  <rect width="1600" height="2100" fill="url(#gold)"/>
+  <rect width="1600" height="2100" fill="url(#pink)"/>
+  ${Array.from({ length: 84 }).map((_, i) => `<circle cx="${(i * 137) % 1600}" cy="${(i * 89) % 2100}" r="${1 + (i % 4)}" fill="${["#67e8f9", "#fbbf24", "#f472b6", "#ffffff"][i % 4]}" opacity="${0.14 + (i % 6) * 0.045}"/>`).join("")}
+  <path d="M0 260 H1600 M0 600 H1600 M0 940 H1600 M0 1280 H1600 M0 1620 H1600 M220 0 V2100 M560 0 V2100 M900 0 V2100 M1240 0 V2100" stroke="#38bdf8" stroke-opacity="0.058" stroke-width="2"/>
+  <circle cx="1270" cy="260" r="270" fill="#22d3ee" opacity=".16" filter="url(#blur)"/>
+  <circle cx="260" cy="1760" r="320" fill="#fbbf24" opacity=".12" filter="url(#blur)"/>
+  <circle cx="1380" cy="1620" r="250" fill="#e879f9" opacity=".12" filter="url(#blur)"/>
+
+  <rect x="78" y="78" width="1444" height="1944" rx="100" fill="rgba(2,6,23,0.58)" stroke="url(#frame)" stroke-opacity="0.86" stroke-width="5"/>
+  <rect x="118" y="118" width="1364" height="1864" rx="76" fill="rgba(255,255,255,0.036)" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
+  <rect x="150" y="150" width="1300" height="212" rx="48" fill="rgba(2,6,23,.58)" stroke="#67e8f9" stroke-opacity=".20"/>
+
+  <text x="170" y="222" fill="#fef3c7" class="tiny" font-size="34">${safeText(cardData.badge)}</text>
+  <text x="1428" y="222" fill="#67e8f9" class="tiny" font-size="28" text-anchor="end">${safeText(platform)} · ${safeText(format)}</text>
+  <text x="170" y="290" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="850">${safeText(cardData.cardNumber)} · ${safeText(cardData.source)} · SVG / PDF / JSON READY</text>
+
+  ${svgTextLines(headlineLines, { x: 160, y: 450, lineHeight: 58, fill: "#67e8f9", size: 48, weight: 950 })}
+  ${svgTextLines(titleLines, { x: 160, y: 662, lineHeight: 122, fill: "#f8fafc", size: titleLines.length > 1 ? 94 : 132, weight: 950 })}
+  ${svgTextLines(subtitleLines, { x: 160, y: titleLines.length > 1 ? 886 : 810, lineHeight: 44, fill: "#cbd5e1", size: 35, weight: 820 })}
+  <text x="160" y="970" fill="#64748b" class="mono" font-size="30" font-weight="850" letter-spacing="3">${safeText(cardData.code)}</text>
+
+  <g transform="translate(800 1190)" filter="url(#softGlow)">
+    <circle r="360" fill="rgba(34,211,238,0.045)" stroke="#22d3ee" stroke-opacity="0.30" stroke-width="30"/>
+    <circle r="276" fill="rgba(251,191,36,0.035)" stroke="#fbbf24" stroke-opacity="0.42" stroke-width="18"/>
+    <circle r="184" fill="rgba(2,6,23,0.78)" stroke="#ffffff" stroke-opacity="0.13" stroke-width="2"/>
+    <circle r="430" fill="none" stroke="${ringColor}" stroke-opacity=".18" stroke-width="3" stroke-dasharray="18 20"/>
+    <line x1="-420" y1="0" x2="420" y2="0" stroke="#67e8f9" stroke-opacity="0.20" stroke-width="4"/>
+    <line x1="0" y1="-420" x2="0" y2="420" stroke="#fbbf24" stroke-opacity="0.18" stroke-width="4"/>
+    <text y="-48" fill="#67e8f9" font-family="Inter, Arial, sans-serif" font-size="196" font-weight="950" text-anchor="middle">${safeText(cardData.score)}%</text>
+    <text y="42" fill="#dbeafe" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="900" text-anchor="middle" letter-spacing="4">${safeText(cardData.metric).toUpperCase()}</text>
+    <text y="124" fill="#fef3c7" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="950" text-anchor="middle">${safeText(cardData.rank)} · ${safeText(cardData.top)}</text>
+    <g transform="translate(-132 -282)"><rect width="112" height="112" rx="26" fill="url(#tile)" stroke="#67e8f9" stroke-opacity=".55"/><text x="56" y="70" text-anchor="middle" fill="#e0f2fe" font-family="Inter,Arial" font-size="46" font-weight="950">${safeText(leftSymbol)}</text></g>
+    <g transform="translate(26 170)"><rect width="112" height="112" rx="26" fill="url(#tile)" stroke="#fbbf24" stroke-opacity=".62"/><text x="56" y="70" text-anchor="middle" fill="#fef3c7" font-family="Inter,Arial" font-size="46" font-weight="950">${safeText(rightSymbol)}</text></g>
+  </g>
+
+  <rect x="150" y="1548" width="1300" height="250" rx="48" fill="rgba(2,6,23,0.70)" stroke="#ffffff" stroke-opacity="0.12"/>
+  <text x="190" y="1622" fill="#fef3c7" class="label" font-size="26">DISCOVERY SUMMARY</text>
+  ${svgTextLines(narrativeLines, { x: 190, y: 1687, lineHeight: 41, fill: "#e2e8f0", size: 31, weight: 760 })}
+
+  <g transform="translate(150 1848)">
+    ${[
+      [0, cardData.statA, "VIEWS", "#67e8f9"],
+      [332, cardData.statB, "SAVES", "#34d399"],
+      [664, cardData.statC, "REPORTS", "#f472b6"],
+      [996, cardData.tier, "CLASS", "#fbbf24"],
+    ].map(([x, value, label, color]) => `<g transform="translate(${x} 0)"><rect width="294" height="142" rx="34" fill="rgba(2,6,23,0.72)" stroke="${color}" stroke-opacity="0.45"/><circle cx="250" cy="33" r="25" fill="${color}" opacity=".16"/><text x="147" y="61" fill="${color}" font-family="Inter,Arial" font-size="29" font-weight="950" text-anchor="middle">${safeText(value)}</text><text x="147" y="101" fill="#94a3b8" font-family="Inter,Arial" font-size="18" font-weight="900" text-anchor="middle" letter-spacing="4">${label}</text></g>`).join("\n")}
+  </g>
+
+  <text x="150" y="2040" fill="#fef3c7" class="label" font-size="24">${safeText(footerLine.toUpperCase())}</text>
+  <text x="1450" y="2040" fill="#67e8f9" class="label" font-size="30" text-anchor="end">ELEMENTOS</text>
+  <text x="150" y="2078" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="850">${safeText(exportLayout)} · DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
+</svg>`;
+;
+    setExportHistory((history) => [
+      { format, layout: exportLayout, title: cardData.title, score: cardData.score, time: new Date().toLocaleTimeString() },
+      ...history,
+    ].slice(0, 8));
+    exportAllFormats({
+      baseName: `ElementOS-${format.replace(/\s+/g, "-")}-${layoutMeta.name}-viral-card`,
+      title: `${cardData.title} ${format}`,
+      summary: `${cardData.headline}. ${cardData.subtitle}. ${cardData.story}`,
+      payload: { ...cardData, format, layout: exportLayout, viralScore, readiness, platform, ctaVariant },
+      customSvg: svg,
+    });
   };
 
   return (
     <>
-      <style>{`
-        @keyframes eosPosterOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes eosPosterOrbitReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-        @keyframes eosPosterPulse { 0%,100% { opacity:.72; filter: brightness(1); transform: scale(1); } 50% { opacity:1; filter: brightness(1.4); transform: scale(1.035); } }
-        @keyframes eosPosterArc { 0%,100% { opacity:.64; filter: brightness(1); } 50% { opacity:1; filter: brightness(1.75); } }
-        @keyframes eosPosterParticle { 0% { transform: translate3d(-20px, 20px, 0); opacity:.08; } 45% { opacity:.8; } 100% { transform: translate3d(30px, -44px, 0); opacity:.05; } }
-        @keyframes eosPosterWave { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -120; } }
-        @keyframes eosPosterShimmer { 0% { transform: translateX(-140%) skewX(-18deg); } 100% { transform: translateX(160%) skewX(-18deg); } }
-      `}</style>
+      <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr]">
+        <div>
+          <Pill gold><Sparkles size={12}/> connected media engine</Pill>
+          <h1 className="mt-4 text-5xl font-black leading-none sm:text-7xl">
+            Discovery <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Media Engine</span>
+          </h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Anything valuable in ElementOS can become media: Compare results, Discovery Feed assets, Matter Intelligence scans, Future Simulation forecasts, Seismo readouts, Well Driller signals, reports and workspace discoveries.
+          </p>
+          <Info title="Media doctrine">
+            The studio is no longer anchored to one fixed pair. Select a source from across the website, then generate a card, poster, report, social pack, SVG, PDF and JSON export from that live context.
+          </Info>
+        </div>
+
+        <Panel>
+          <div className="text-xs uppercase tracking-[.22em] text-slate-500">Media source</div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {mediaSources.map((source) => (
+              <button
+                key={source.id}
+                onClick={() => setMediaSourceId(source.id)}
+                className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition ${mediaSourceId === source.id ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-black/20 text-slate-300 hover:bg-white/[.05]"}`}
+              >
+                <span className="block text-[10px] uppercase tracking-[.18em] text-slate-500">{source.type}</span>
+                {source.label}
+              </button>
+            ))}
+          </div>
+          <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
+            <b>Selected source:</b> {selectedMediaSource.title} · {selectedMediaSource.score}% {selectedMediaSource.metric}. This source controls the exported card, poster, social captions and PDF/JSON/SVG pack.
+          </div>
+
+          <div className="mt-6 text-xs uppercase tracking-[.22em] text-slate-500">Card format</div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {formats.map((m) => (
+              <button
+                key={m}
+                onClick={() => setFormat(m)}
+                className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition ${format === m ? "border-cyan-300/40 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-black/20 text-slate-300 hover:bg-white/[.05]"}`}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+            <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Founder name" />
+            <button onClick={() => setHeadlineMode(headlineMode === "AI Headline" ? "Simple" : "AI Headline")} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-left text-sm font-black text-cyan-100">{headlineMode}</button>
+          </div>
+          <div className="mt-5">
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Export layout</div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-3">
+              {exportLayouts.map((layout) => (
+                <button
+                  key={layout}
+                  onClick={() => setExportLayout(layout)}
+                  className={`rounded-2xl border px-3 py-3 text-left text-xs font-black transition ${exportLayout === layout ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-black/20 text-slate-300 hover:bg-white/[.05]"}`}
+                >
+                  {layout}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-3">
+            <input value={seriesNumber} onChange={(e) => setSeriesNumber(Number(e.target.value) || 1)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Series number" />
+            <Button onClick={() => setCardIndex((v) => v + 1)}>Next Discovery</Button>
+            <Button onClick={copyCard}>Copy Post</Button>
+            <Button onClick={createSocialPack}>Create Social Pack</Button>
+            <Button onClick={exportSVG} variant="primary" className="sm:col-span-3">Export PDF/JSON/SVG</Button>
+          </div>
+        </Panel>
+      </Panel>
 
       <GuidePanel page="viralcards" />
 
-      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/25 via-slate-950 to-amber-950/20 p-0">
-        <div className="relative p-6 md:p-8">
-          <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-amber-400/15 blur-3xl" />
-          <div className="relative z-10 grid gap-8 xl:grid-cols-[.82fr_1.18fr] xl:items-start">
-            <div>
-              <Pill gold><Sparkles size={12}/> V68 viral poster engine</Pill>
-              <h1 className="mt-5 text-5xl font-black leading-[.92] sm:text-7xl">
-                Viral Cards now look like <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">EOS poster art.</span>
-              </h1>
-              <p className="mt-5 text-lg leading-8 text-slate-300">
-                This turns discoveries, reports, Seismo signals and Time Machine forecasts into animated classic ElementOS graphics: orbit rings, ARC beams, energy cores, signal strips and cinematic export layouts.
-              </p>
-
-              <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <Button onClick={exportPoster} variant="primary" className="py-4"><Download size={16} className="inline"/> Export PDF / SVG / JSON</Button>
-                <Button onClick={copyCaption} className="py-4"><Share2 size={16} className="inline"/> Copy Viral Caption</Button>
-                <Button onClick={nextCard} className="py-4"><Radar size={16} className="inline"/> Load Trending Discovery</Button>
-                <Button onClick={() => setPage?.("discover")} className="py-4"><Sparkles size={16} className="inline"/> Open Discover</Button>
-              </div>
-
-              <div className="mt-6 grid gap-4">
-                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                  <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Source</div>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    {mediaSources.map((source) => (
-                      <button key={source.id} onClick={() => setSourceId(source.id)} className={`rounded-2xl border p-3 text-left text-sm transition ${sourceId === source.id ? "border-cyan-300/50 bg-cyan-300/10 text-cyan-50" : "border-white/10 bg-white/[.04] text-slate-300 hover:bg-white/[.07]"}`}>
-                        <div className="font-black">{source.label}</div>
-                        <div className="mt-1 text-xs text-slate-500">{source.title}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {["Classic EOS", "Deep Lab", "Gold Signal"].map((mode) => (
-                    <button key={mode} onClick={() => setStyleMode(mode)} className={`rounded-2xl border px-3 py-3 text-xs font-black uppercase tracking-[.16em] transition ${styleMode === mode ? "border-amber-300/60 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[.04] text-slate-400 hover:text-white"}`}>{mode}</button>
-                  ))}
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {["Square 1080", "Portrait 1350", "Landscape 1600"].map((layout) => (
-                    <button key={layout} onClick={() => setExportLayout(layout)} className={`rounded-2xl border px-3 py-3 text-xs font-black uppercase tracking-[.16em] transition ${exportLayout === layout ? "border-cyan-300/60 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[.04] text-slate-400 hover:text-white"}`}>{layout}</button>
-                  ))}
-                </div>
-
-                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                  <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Founder / publisher stamp</div>
-                  <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-white outline-none focus:border-cyan-300/50" placeholder="Founder name" />
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <button onClick={() => setPosterMotion(!posterMotion)} className="rounded-full border border-white/10 bg-white/[.04] px-3 py-2 text-xs font-bold text-slate-300">{posterMotion ? "Motion On" : "Motion Off"}</button>
-                    <button onClick={() => setShowGrid(!showGrid)} className="rounded-full border border-white/10 bg-white/[.04] px-3 py-2 text-xs font-bold text-slate-300">{showGrid ? "Grid On" : "Grid Off"}</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="xl:sticky xl:top-6">
-              <div className={`relative mx-auto w-full max-w-[760px] ${layoutMeta.aspect}`}>
-                <div className={`absolute inset-0 overflow-hidden rounded-[2.25rem] border border-cyan-300/25 bg-gradient-to-br ${styleMeta.shell} ${styleMeta.glow}`}>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,rgba(34,211,238,.25),transparent_25%),radial-gradient(circle_at_76%_42%,rgba(251,191,36,.23),transparent_24%),radial-gradient(circle_at_center,rgba(255,255,255,.08),transparent_18%)]" />
-                  {showGrid && <div className="absolute inset-0 opacity-25 bg-[linear-gradient(rgba(103,232,249,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,.12)_1px,transparent_1px)] bg-[size:36px_36px]" />}
-                  <div className="absolute inset-0 opacity-25 bg-[radial-gradient(circle,rgba(255,255,255,.13)_1px,transparent_1px)] bg-[size:22px_22px]" />
-
-                  {particles.map((p, index) => (
-                    <span key={index} className="absolute rounded-full bg-cyan-100" style={{ left: p.left, top: p.top, width: p.size, height: p.size, opacity: p.opacity, animation: posterMotion ? `eosPosterParticle ${4 + (index % 7)}s ease-in-out ${p.delay} infinite` : undefined }} />
-                  ))}
-
-                  <div className="absolute left-6 top-5 rounded-2xl border border-cyan-300/30 bg-black/35 px-4 py-3 backdrop-blur-xl">
-                    <div className="text-[10px] font-black uppercase tracking-[.35em] text-cyan-100">ElementOS</div>
-                    <div className="mt-1 text-[9px] uppercase tracking-[.26em] text-slate-400">Viral Card Series</div>
-                    <div className="mt-3 rounded-xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-black text-cyan-100">{cardData.code}</div>
-                  </div>
-
-                  <div className="absolute right-6 top-5 rounded-2xl border border-amber-300/30 bg-black/35 px-4 py-3 text-right backdrop-blur-xl">
-                    <div className="text-2xl font-black text-amber-100">{cardData.tier}</div>
-                    <div className="mt-1 text-[9px] uppercase tracking-[.26em] text-amber-200/80">{styleMeta.badge}</div>
-                    <Gem className="ml-auto mt-3 text-amber-100" size={30} />
-                  </div>
-
-                  <div className="absolute left-1/2 top-6 -translate-x-1/2 text-center">
-                    <div className="text-2xl font-black tracking-[.45em] text-white sm:text-3xl">ELEMENTOS</div>
-                    <div className="mt-2 text-[10px] font-black uppercase tracking-[.55em] text-cyan-100">Discovery at the speed of matter</div>
-                  </div>
-
-                  <div className="absolute left-1/2 top-[18%] w-[92%] -translate-x-1/2 text-center">
-                    <div className="text-xs font-black uppercase tracking-[.65em] text-slate-300 sm:text-sm">{cardData.headline}</div>
-                    <div className="mt-5 bg-gradient-to-r from-cyan-100 via-white to-amber-100 bg-clip-text text-6xl font-black leading-none text-transparent sm:text-8xl xl:text-9xl">
-                      {leftElement.symbol} <span className="text-white">+</span> {rightElement.symbol}
-                    </div>
-                    <div className="mt-3 text-xs font-black uppercase tracking-[.45em] text-cyan-100 sm:text-sm">{cardData.subtitle}</div>
-                  </div>
-
-                  <div className="absolute left-[14%] top-[42%] h-[24%] w-[28%] rounded-full border border-cyan-300/35 bg-black/35 backdrop-blur-xl">
-                    <div className={`absolute inset-0 rounded-full border-4 ${leftPalette.border} ${leftPalette.glow}`} style={{ animation: posterMotion ? "eosPosterPulse 4s ease-in-out infinite" : undefined }} />
-                    {[1,2,3].map((i) => <div key={i} className={`absolute rounded-full border ${leftPalette.border}`} style={{ inset: `${-12 + i * 10}%`, animation: posterMotion ? `eosPosterOrbit ${18 + i * 8}s linear infinite` : undefined }} />)}
-                    <div className="absolute inset-0 grid place-items-center text-center">
-                      <div>
-                        <div className="text-xs text-slate-400">{leftElement.atomicNumber || "13"}</div>
-                        <div className={`text-5xl font-black ${leftPalette.text} sm:text-7xl`}>{leftElement.symbol}</div>
-                        <div className="mt-1 text-[10px] font-black uppercase tracking-[.24em] text-slate-300">{leftElement.name}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute right-[14%] top-[42%] h-[24%] w-[28%] rounded-full border border-amber-300/35 bg-black/35 backdrop-blur-xl">
-                    <div className={`absolute inset-0 rounded-full border-4 ${rightPalette.border} ${rightPalette.glow}`} style={{ animation: posterMotion ? "eosPosterPulse 4.5s ease-in-out infinite" : undefined }} />
-                    {[1,2,3].map((i) => <div key={i} className={`absolute rounded-full border ${rightPalette.border}`} style={{ inset: `${-12 + i * 10}%`, animation: posterMotion ? `eosPosterOrbitReverse ${20 + i * 9}s linear infinite` : undefined }} />)}
-                    <div className="absolute inset-0 grid place-items-center text-center">
-                      <div>
-                        <div className="text-xs text-slate-400">{rightElement.atomicNumber || "22"}</div>
-                        <div className={`text-5xl font-black ${rightPalette.text} sm:text-7xl`}>{rightElement.symbol}</div>
-                        <div className="mt-1 text-[10px] font-black uppercase tracking-[.24em] text-slate-300">{rightElement.name}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute left-[35%] top-[52%] h-3 w-[30%] rounded-full bg-gradient-to-r from-cyan-300 via-white to-amber-300 shadow-[0_0_45px_rgba(255,255,255,.65)]" style={{ animation: posterMotion ? "eosPosterArc 2.4s ease-in-out infinite" : undefined }} />
-                  <div className="absolute left-1/2 top-[50%] -translate-x-1/2 rounded-full border border-white/15 bg-black/50 px-5 py-4 text-center backdrop-blur-xl">
-                    <div className="text-xs font-black uppercase tracking-[.35em] text-cyan-100">ARC</div>
-                    <div className="mt-1 text-[9px] uppercase tracking-[.22em] text-slate-400">Connection</div>
-                  </div>
-
-                  <div className="absolute bottom-[19%] left-1/2 -translate-x-1/2 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[.4em] text-slate-300">{cardData.metric}</div>
-                    <div className="mt-1 bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-6xl font-black text-transparent sm:text-8xl">{normalizedScore}%</div>
-                    <div className="mt-1 text-xl tracking-[.22em] text-amber-100">★★★★★</div>
-                  </div>
-
-                  <div className="absolute bottom-[11%] left-6 right-6 grid gap-2 sm:grid-cols-4">
-                    {metricRows.map(([label, value, Icon]) => (
-                      <div key={label} className="rounded-2xl border border-cyan-300/20 bg-black/45 p-3 text-center backdrop-blur-xl">
-                        <Icon className="mx-auto text-cyan-100" size={20} />
-                        <div className="mt-1 text-lg font-black text-cyan-100">{value}</div>
-                        <div className="text-[8px] font-black uppercase tracking-[.18em] text-slate-400">{label}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <svg viewBox="0 0 100 12" className="absolute bottom-[7%] left-6 right-6 h-10 w-[calc(100%-3rem)] rounded-2xl border border-white/10 bg-black/45 p-1">
-                    <polyline points="0,6 5,5 10,7 15,3 20,8 25,6 30,2 35,7 40,6 45,8 50,3 55,7 60,6 65,2 70,9 75,5 80,7 85,3 90,6 95,4 100,7" fill="none" stroke="rgba(34,211,238,.95)" strokeWidth=".7" strokeDasharray="3 2" style={{ animation: posterMotion ? "eosPosterWave 5s linear infinite" : undefined }} />
-                    <polyline points="0,7 5,8 10,5 15,9 20,4 25,6 30,8 35,4 40,7 45,5 50,9 55,4 60,7 65,8 70,3 75,6 80,4 85,8 90,5 95,7 100,4" fill="none" stroke="rgba(251,191,36,.9)" strokeWidth=".7" strokeDasharray="3 2" style={{ animation: posterMotion ? "eosPosterWave 6s linear infinite reverse" : undefined }} />
-                  </svg>
-
-                  <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between gap-4 text-[9px] uppercase tracking-[.24em] text-slate-400">
-                    <div><span className="text-cyan-100">Discovered by</span><br />{founderName || "ElementOS AI"}</div>
-                    <div className="hidden max-w-[42%] text-center leading-4 sm:block">{cardData.narrative}</div>
-                    <div className="text-right"><span className="text-amber-100">Share · Inspire · Discover</span><br />theelementos.com</div>
-                  </div>
-
-                  <div className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent" style={{ animation: posterMotion ? "eosPosterShimmer 6s ease-in-out infinite" : undefined }} />
-                </div>
-              </div>
-              <div className="mt-3 text-center text-xs text-slate-500">Preview mode: {layoutMeta.label} · export target {layoutMeta.size}</div>
-            </div>
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><ShieldCheck size={12}/> button value audit</Pill>
+            <h2 className="mt-3 text-3xl font-black">Every major card action now creates value.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Use this engine to choose a live source from anywhere in ElementOS, export PDF/JSON/SVG, copy platform captions, create a full social pack, save the asset path and move users toward reports, workspace and public discovery pages.</p>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {["Export", "Save", "Share"].map((label) => (
+              <div key={label} className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-center text-sm font-black text-cyan-100">{label}</div>
+            ))}
           </div>
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_.8fr]">
+      <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
+        <div className="relative min-h-[780px] overflow-hidden rounded-[2.5rem] border border-cyan-300/25 bg-gradient-to-br from-cyan-400/15 via-slate-950 to-fuchsia-500/20 p-6 shadow-[0_0_120px_rgba(34,211,238,.20)]">
+          <div className="absolute -right-28 top-10 h-80 w-80 rounded-full bg-cyan-300/20 blur-3xl" />
+          <div className="absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-amber-300/10 blur-3xl" />
+          <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:42px_42px]" />
+
+          <div className="relative z-10 flex h-full flex-col justify-between rounded-[2rem] border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <Pill gold>{cardData.badge}</Pill>
+                <div className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.2em] text-cyan-100">{cardData.source}</div>
+              </div>
+              <div className="mt-6 text-sm font-black uppercase tracking-[.25em] text-amber-100">{cardData.headline}</div>
+              <h2 className="mt-4 text-6xl font-black leading-none text-cyan-100 sm:text-7xl">{cardData.title}</h2>
+              <p className="mt-4 text-xl font-bold text-slate-300">{cardData.subtitle}</p>
+              <div className="mt-4 font-mono text-sm text-slate-500">{cardData.code}</div>
+            </div>
+
+            <div className="my-10 grid place-items-center">
+              <div className="relative grid h-76 w-76 place-items-center rounded-full border-[18px] border-cyan-300/20 bg-cyan-300/5 shadow-[0_0_90px_rgba(34,211,238,.28)]">
+                <div className="absolute h-56 w-56 rounded-full border-[14px] border-amber-300/25" />
+                <div className="absolute h-40 w-40 rounded-full border border-white/15" />
+                <div className="text-center">
+                  <div className="text-7xl font-black text-cyan-100">{cardData.score}%</div>
+                  <div className="mt-2 text-xs uppercase tracking-[.24em] text-slate-400">{cardData.metric}</div>
+                  <div className="mt-4 text-sm font-black text-amber-100">{cardData.rank} · {cardData.top}</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <p className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-5 text-sm leading-7 text-slate-200">{cardData.narrative}</p>
+              <div className="mt-3 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50"><b>{cardData.cardNumber}</b> · {cardData.hook}<br/><span className="text-amber-100">Constellation:</span> {cardData.constellation}</div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-4">
+                {[cardData.statA, cardData.statB, cardData.statC, cardData.tier].map((stat) => (
+                  <div key={stat} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-center text-sm font-black text-cyan-100">{stat}</div>
+                ))}
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {badges.map((badge) => <span key={badge} className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-amber-100">{badge}</span>)}
+              </div>
+              <div className="mt-6 flex items-center justify-between gap-4 text-xs uppercase tracking-[.24em] text-slate-500">
+                <span>FOUND BY {cardData.founder}</span>
+                <span>ELEMENTOS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <Panel>
+            <Pill gold><Database size={12}/> connected sources</Pill>
+            <h2 className="mt-3 text-3xl font-black">Create media from any ElementOS result.</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Pick the source that matches what the user just did. Compare should feel connected to cards; Matter Intelligence, Future Simulation and Reports should feel connected too.</p>
+            <div className="mt-5 grid gap-3">
+              {mediaSources.map((source) => (
+                <button key={`source-card-${source.id}`} onClick={() => setMediaSourceId(source.id)} className={`rounded-2xl border p-4 text-left transition ${mediaSourceId === source.id ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25 hover:bg-white/[.05]"}`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-xs uppercase tracking-[.22em] text-slate-500">{source.type}</div>
+                      <div className="mt-1 text-lg font-black text-cyan-100">{source.title}</div>
+                      <div className="mt-1 text-xs text-slate-400">{source.headline}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-black text-emerald-200">{source.score}%</div>
+                      <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">{source.metric}</div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel>
+            <Pill><Network size={12}/> viral ranking</Pill>
+            <h2 className="mt-3 text-4xl font-black">Trending Discovery Queue</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-400">Use these as your daily content calendar. Each row can become a card, poster, report or public discovery page.</p>
+            <div className="mt-6 space-y-3">
+              {discoveries.slice(0, 7).map((d, index) => {
+                const activeQueueItem = mediaSourceId === "discovery" && cardIndex === index;
+                return (
+                <button
+                  key={`${d.dna}-viral`}
+                  onClick={() => {
+                    setCardIndex(index);
+                    setMediaSourceId("discovery");
+                  }}
+                  className={`flex w-full items-center justify-between gap-4 rounded-2xl border p-4 text-left transition ${activeQueueItem ? "border-cyan-300/50 bg-cyan-300/15 shadow-[0_0_34px_rgba(34,211,238,.16)]" : "border-white/10 bg-black/25 hover:border-cyan-300/30 hover:bg-cyan-300/10"}`}
+                >
+                  <div>
+                    <div className="text-lg font-black text-cyan-100">#{index + 1} · {d.a} + {d.b}</div>
+                    <div className="mt-1 text-sm text-slate-400">{d.type} · {d.tier} · {d.dna}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-black text-emerald-200">{d.aiConfidence}%</div>
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">AI</div>
+                  </div>
+                </button>
+              );
+              })}
+            </div>
+          </Panel>
+
+          <Panel>
+            <Pill gold><Sparkles size={12}/> story engine</Pill>
+            <h2 className="mt-3 text-3xl font-black">Post Hook Generator</h2>
+            <div className="mt-5 space-y-3">
+              {storyLines.map((line) => <div key={line} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm leading-6 text-slate-300">{line}</div>)}
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <Button onClick={copyCard} className="w-full">Copy Hook</Button>
+              <Button onClick={() => setPage("publicdiscovery")} variant="primary" className="w-full">Open Public Discovery</Button>
+            </div>
+          </Panel>
+        </div>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Activity size={12}/> measurable media engine</Pill>
+            <h2 className="mt-3 text-4xl font-black">Viral readiness, performance score and post intelligence.</h2>
+            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">This turns Media Engine from a design export into a growth system: score the asset, pick the right platform, test caption variants and track what you exported.</p>
+          </div>
+          <div className="rounded-[2rem] border border-emerald-300/25 bg-emerald-300/10 px-5 py-4 text-right">
+            <div className="text-5xl font-black text-emerald-100">{performanceScore}</div>
+            <div className="text-[10px] uppercase tracking-[.22em] text-emerald-200">performance score</div>
+            <div className="mt-1 text-xs font-black text-white">{viralReadiness}</div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 xl:grid-cols-4">
+          {platformRecommendations.map(([platform, recommendation]) => (
+            <div key={platform} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5">
+              <div className="text-2xl font-black text-cyan-100">{platform}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{recommendation}</p>
+              <Button onClick={() => copyCaption(platform)} className="mt-4 w-full">Copy {platform} Caption</Button>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          {abVariants.map(([label, title, text, bestFor]) => (
+            <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-amber-100">Variant {label}</div>
+              <div className="mt-2 text-lg font-black text-white">{title}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-300">{text}</p>
+              <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-xs font-bold text-cyan-100">{bestFor}</div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
         <Panel>
-          <Pill gold><Gem size={12}/> viral quality system</Pill>
-          <h2 className="mt-3 text-4xl font-black">Make every export feel collectible.</h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {[
-              ["Poster DNA", "Classic EOS graphics: dark space, cyan/amber energy, ARC beam, orbit rings and discovery score."],
-              ["Share Modes", "Square for Instagram, portrait for LinkedIn, landscape for X, decks and landing page hero graphics."],
-              ["Premium Export", "PDF, JSON and SVG generated together so the card becomes both media and research asset."],
-              ["Subscriber Value", "Explorer can view. Pro Researcher generates cards. Pro Lab gets animated premium poster modes."],
-            ].map(([title, text]) => (
-              <div key={title} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
-                <div className="text-xl font-black text-cyan-100">{title}</div>
-                <p className="mt-3 text-sm leading-6 text-slate-400">{text}</p>
+          <Pill gold><ShieldCheck size={12}/> discovery confidence</Pill>
+          <h2 className="mt-3 text-3xl font-black">Confidence Meter</h2>
+          <div className="mt-5 rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6 text-center">
+            <div className="text-7xl font-black text-cyan-100">{Math.min(99, cardData.score + 2)}%</div>
+            <div className="mt-2 text-xs uppercase tracking-[.25em] text-slate-400">discovery confidence</div>
+          </div>
+          <div className="mt-5 space-y-3">
+            {confidenceMetrics.map(([label, value]) => (
+              <div key={label}>
+                <div className="mb-1 flex justify-between text-xs text-slate-400"><span>{label}</span><span>{value}%</span></div>
+                <div className="h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${value}%` }} /></div>
               </div>
             ))}
           </div>
         </Panel>
 
         <Panel>
-          <Pill><Share2 size={12}/> viral caption</Pill>
-          <h2 className="mt-3 text-3xl font-black">Ready-to-post copy</h2>
-          <div className="mt-5 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/10 p-5 text-sm leading-7 text-cyan-50">{caption}</div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Button onClick={copyCaption}>Copy Caption</Button>
-            <Button onClick={exportPoster} variant="primary">Export Pack</Button>
+          <Pill gold><Dna size={12}/> discovery genome</Pill>
+          <h2 className="mt-3 text-3xl font-black">Discovery Genome™</h2>
+          <div className="mt-4 rounded-[2rem] border border-white/10 bg-black/30 p-5">
+            <div className="font-mono text-4xl font-black text-amber-100">{discoveryGenome}</div>
+            <div className="mt-2 text-xs uppercase tracking-[.22em] text-slate-500">unique discovery fingerprint</div>
           </div>
-          <Info title="Export note">The visual preview is animated in-app. The SVG/PDF export captures the same EOS poster style as a static share asset.</Info>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {genomeMetrics.map(([label, value]) => (
+              <div key={label} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-4">
+                <div className="flex justify-between text-sm font-black text-cyan-100"><span>{label}</span><span>{value}%</span></div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        <Panel>
+          <Pill gold><Clock3 size={12}/> discovery evolution</Pill>
+          <h2 className="mt-3 text-3xl font-black">Evolution Timeline</h2>
+          <div className="mt-5 space-y-3">
+            {["Generated", "Validated", "Reported", "Published", "Trending"].map((step, index) => (
+              <div key={step} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{index + 1}</div>
+                <div><div className="font-black text-white">{step}</div><div className="text-xs text-slate-400">Day {index === 0 ? 1 : index * 2 + 1} · discovery asset progressed</div></div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><BarChart3 size={12}/> discovery forecast</Pill>
+          <h2 className="mt-3 text-3xl font-black">Forecast Engine</h2>
+          <div className="mt-5 grid gap-3">
+            {[ ["30 Days", "▲", "Rising interest"], ["90 Days", "▲▲", "Increasing similarity"], ["1 Year", "▲▲▲", "Network candidate"] ].map(([range, trend, note]) => (
+              <div key={range} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="flex items-center justify-between"><b className="text-white">{range}</b><span className="text-2xl font-black text-emerald-200">{trend}</span></div>
+                <div className="mt-1 text-sm text-slate-400">{note}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><Orbit size={12}/> constellation universe</Pill>
+          <h2 className="mt-3 text-3xl font-black">Discovery Constellation</h2>
+          <div className="relative mt-5 h-72 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_35%),#020617]">
+            {[ [22,24,splitPair(cardData.title)[0]], [66,34,splitPair(cardData.title)[1]], [48,66,"Report"], [82,72,"Share"], [28,78,"Save"] ].map(([left, top, label], index) => (
+              <div key={label} className="absolute grid h-16 w-16 place-items-center rounded-2xl border border-cyan-300/30 bg-cyan-300/10 text-sm font-black text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,.18)]" style={{ left: `${left}%`, top: `${top}%`, transform: 'translate(-50%,-50%)' }}>{label}</div>
+            ))}
+            <div className="absolute left-[22%] top-[24%] h-px w-[45%] origin-left rotate-[12deg] bg-cyan-300/40" />
+            <div className="absolute left-[48%] top-[66%] h-px w-[35%] origin-left rotate-[10deg] bg-amber-300/40" />
+          </div>
         </Panel>
       </div>
 
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <Pill gold><Network size={12}/> trending discoveries</Pill>
-            <h2 className="mt-3 text-4xl font-black">One tap turns any discovery into a poster.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Pick a ranked discovery below and the poster engine rebuilds the graphics, caption and export bundle instantly.</p>
+            <Pill gold><Gem size={12}/> scientific discovery network</Pill>
+            <h2 className="mt-3 text-4xl font-black">Collections, Battles, Hall of Fame and Discovery TV.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">These systems give ElementOS network effects: people collect discoveries, compare them, watch them trend and build reputation around them.</p>
           </div>
-          <Button onClick={() => setPage?.("discover")} variant="primary">Open Discover</Button>
+          <div className="rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 px-4 py-3 text-sm font-black text-fuchsia-100">LIVE DISCOVERY CHANNEL</div>
         </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {discoveries.slice(0, 8).map((item, index) => (
-            <button key={item.dna} onClick={() => { setCardIndex(index); setSourceId("discovery"); }} className="group rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-300/10">
-              <div className="flex items-center justify-between">
-                <div className="text-xl font-black text-white">{item.a} + {item.b}</div>
-                <div className="rounded-full border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-[10px] font-black text-amber-100">{item.tier}</div>
-              </div>
-              <div className="mt-3 text-4xl font-black text-cyan-100">{item.aiConfidence || item.score}%</div>
-              <p className="mt-3 text-xs leading-5 text-slate-400">{item.type}</p>
-              <div className="mt-4 text-xs font-black text-cyan-200 opacity-0 transition group-hover:opacity-100">Create EOS poster →</div>
-            </button>
-          ))}
+
+        <div className="mt-6 grid gap-5 xl:grid-cols-4">
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xl font-black text-cyan-100">Discovery Collections</div>
+            <div className="mt-4 space-y-3">{collections.map(([name, count, examples]) => <div key={name} className="rounded-2xl bg-white/[.04] p-3"><b>{name}</b><div className="text-xs text-slate-400">{count} · {examples}</div></div>)}</div>
+          </div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xl font-black text-cyan-100">Discovery Battles</div>
+            <div className="mt-4 space-y-3">{tournamentPairs.map(([a,b,winner,reason]) => <div key={a} className="rounded-2xl bg-white/[.04] p-3"><b>{a} VS {b}</b><div className="text-xs text-emerald-200">Winner: {winner}</div><div className="text-xs text-slate-400">{reason}</div></div>)}</div>
+          </div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xl font-black text-cyan-100">Hall of Fame</div>
+            <div className="mt-4 space-y-3">{hallOfFame.slice(0,3).map((d) => <div key={d.dna} className="rounded-2xl bg-white/[.04] p-3"><b>#{d.rank} {d.a} + {d.b}</b><div className="text-xs text-slate-400">{d.aiConfidence}% · {d.saves} saves · {d.shares} shares</div></div>)}</div>
+          </div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-xl font-black text-cyan-100">Discovery Passport</div>
+            <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">
+              <div className="text-2xl font-black text-white">{founderName || "Paul Roper"}</div>
+              <div className="mt-1 text-sm text-amber-100">Discovery Architect</div>
+              <div className="mt-4 grid grid-cols-2 gap-2 text-center text-xs"><div className="rounded-xl bg-black/25 p-2"><b>184</b><br/>Discoveries</div><div className="rounded-xl bg-black/25 p-2"><b>42</b><br/>Reports</div><div className="rounded-xl bg-black/25 p-2"><b>4210</b><br/>Score</div><div className="rounded-xl bg-black/25 p-2"><b>Top 1%</b><br/>Rank</div></div>
+            </div>
+          </div>
         </div>
       </Panel>
 
       {exportHistory.length > 0 && (
         <Panel>
           <Pill gold><Download size={12}/> export history</Pill>
-          <h2 className="mt-3 text-3xl font-black">Recent EOS Poster Exports</h2>
+          <h2 className="mt-3 text-3xl font-black">Recent Exports</h2>
           <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {exportHistory.map((item, index) => (
               <div key={`${item.time}-${index}`} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="font-black text-cyan-100">{item.title}</div>
-                <div className="mt-1 text-xs text-slate-400">{item.style} · {item.layout}</div>
+                <div className="font-black text-cyan-100">{item.format}</div>
+                <div className="mt-1 text-xs text-slate-400">{item.layout} · {item.title}</div>
                 <div className="mt-2 text-sm font-black text-emerald-200">{item.score}% · {item.time}</div>
               </div>
             ))}
           </div>
         </Panel>
       )}
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Share2 size={12}/> channel playbook</Pill>
+            <h2 className="mt-3 text-4xl font-black">Make every discovery travel further.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">The same asset should be framed differently on each channel. Curiosity for X, credibility for LinkedIn, explanation for Reddit, launch proof for Product Hunt.</p>
+          </div>
+          <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
+        </div>
+        <div className="mt-6 grid gap-4 xl:grid-cols-4">
+          {channels.map(([title, desc]) => (
+            <div key={title} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5">
+              <div className="text-xl font-black text-cyan-100">{title}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
+              <button onClick={copyCard} className="mt-4 rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-sm font-black text-white transition hover:bg-cyan-300/10">Copy tailored post</button>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <Pill gold><Target size={12}/> next growth step</Pill>
+            <h2 className="mt-3 text-4xl font-black">Turn this card into the viral loop.</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Export the card, post it, link to the public discovery page, then invite viewers to generate their own discovery. That is the loop: discover → card → share → click → create.</p>
+          </div>
+          <div className="grid gap-3">
+            <Button onClick={exportSVG} variant="primary">Export Poster PDF/JSON/SVG</Button>
+            <Button onClick={() => setPage("reports")}>Generate Report</Button>
+            <Button onClick={() => setPage("lab")}>Save to Workspace</Button>
+          </div>
+        </div>
+      </Panel>
     </>
   );
 }
+
 
 function UniversalSimulationReports({ selected = "Al", compare = [], session, isPro, startCheckout, setPage }) {
   const [source, setSource] = useState("Complete Simulation Dossier");
@@ -7429,9 +7752,9 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
   const universalScore = Math.max(1, Math.min(99, Math.round((compatibility + scenarioConfidence + seismoClarity + (100 - timeRisk)) / 4)));
 
   const reportRows = [
-    ["Time Machine", `${100 - timeRisk}%`, "Long-horizon stability signal across environmental exposure and fatigue."],
+    ["Future Simulation", `${100 - timeRisk}%`, "Long-horizon stability signal across environmental exposure and fatigue."],
     ["Scenario Builder", `${scenarioConfidence}%`, "Plain-English scenario confidence based on material durability and inferred stress."],
-    ["Well Driller Lab", `${100 - drillingRisk}%`, "Subsurface drilling readiness from pressure, depth and formation response."],
+    ["Resource Discovery Lab", `${100 - drillingRisk}%`, "Subsurface drilling readiness from pressure, depth and formation response."],
     ["Seismo", `${seismoClarity}%`, "P-wave/S-wave clarity estimate for subsurface response interpretation."],
   ];
 
@@ -7443,7 +7766,7 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
   });
 
   const exportUniversalReport = () => {
-    const content = `ElementOS Universal Simulation Report\n\nSource: ${source}\nMaterial focus: ${active.name} (${active.symbol})\nCompare set: ${compareSet.join(" + ")}\nUniversal simulation score: ${universalScore}%\n\nModules:\n${reportRows.map(([name, value, desc]) => `${name}: ${value} — ${desc}`).join("\n")}\n\nTimeline:\n${timeline.map((t) => `Year ${t.year}: stability ${t.stability}%, drilling pressure ${t.pressure}%, seismic signal ${t.signal}%`).join("\n")}\n\nRecommended next step: validate the strongest module in Time Machine, Well Driller or Seismo, then export a focused report.\n\nGenerated by ElementOS.`;
+    const content = `ElementOS Universal Simulation Report\n\nSource: ${source}\nMaterial focus: ${active.name} (${active.symbol})\nCompare set: ${compareSet.join(" + ")}\nUniversal simulation score: ${universalScore}%\n\nModules:\n${reportRows.map(([name, value, desc]) => `${name}: ${value} — ${desc}`).join("\n")}\n\nTimeline:\n${timeline.map((t) => `Year ${t.year}: stability ${t.stability}%, drilling pressure ${t.pressure}%, seismic signal ${t.signal}%`).join("\n")}\n\nRecommended next step: validate the strongest module in Future Simulation, Well Driller or Seismo, then export a focused report.\n\nGenerated by ElementOS.`;
     exportAllFormats({ baseName: `ElementOS-universal-simulation-report-${active.symbol}`, title: `Universal Simulation Report: ${active.name}`, summary: content, payload: { source, material: active.symbol, universalScore, compareSet } });
   };
 
@@ -7456,7 +7779,7 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
             Simulation <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Report Engine</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Combine Time Machine, Scenario Builder, Well Driller Lab and Seismo into one polished research-ready dossier. This turns ElementOS simulations into outputs users can save, share and present.
+            Combine Future Simulation, Scenario Builder, Resource Discovery Lab and Seismo into one polished research-ready dossier. This turns ElementOS simulations into outputs users can save, share and present.
           </p>
           <Info title="Why this matters">
             A simulator is interesting. A simulator that generates a professional report becomes a product. This page connects all major intelligence modules into a single exportable simulation narrative.
@@ -7468,11 +7791,11 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
           <div className="mt-3 text-7xl font-black text-cyan-100">{universalScore}%</div>
           <p className="mt-3 text-sm leading-6 text-slate-400">Combined confidence across material compatibility, future-state stability, drilling readiness and seismic clarity.</p>
           <select value={source} onChange={(e) => setSource(e.target.value)} className="mt-5 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
-            {["Complete Simulation Dossier", "Time Machine Focus", "Scenario Builder Focus", "Well Driller Focus", "Seismo Focus"].map((x) => <option key={x}>{x}</option>)}
+            {["Complete Simulation Dossier", "Future Simulation Focus", "Scenario Builder Focus", "Well Driller Focus", "Seismo Focus"].map((x) => <option key={x}>{x}</option>)}
           </select>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <Button onClick={exportUniversalReport} variant="primary"><Download size={16} className="inline"/> Export PDF/JSON/SVG</Button>
-            {!isPro ? <Button onClick={session ? startCheckout : () => setPage("beta")}>Unlock Pro PDF</Button> : <Button onClick={() => setPage("reports")}>Open Reports</Button>}
+            {!isPro ? <Button onClick={session ? startCheckout : () => setPage("login")}>Unlock Pro PDF</Button> : <Button onClick={() => setPage("reports")}>Open Reports</Button>}
           </div>
         </Panel>
       </Panel>
@@ -7513,9 +7836,9 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
 
       <div className="grid gap-6 xl:grid-cols-3">
         {[
-          ["Open Time Machine", "timemachine", "Validate long-horizon ageing and degradation."],
+          ["Open Future Simulation", "timemachine", "Validate long-horizon ageing and degradation."],
           ["Open Well Driller", "welldriller", "Inspect subsurface path, depth and reservoir targeting."],
-          ["Open Seismo Lab", "seismo", "Compare P-wave and S-wave response."],
+          ["Open Wave Intelligence", "seismo", "Compare P-wave and S-wave response."],
         ].map(([title, target, desc]) => (
           <Panel key={title}>
             <h3 className="text-2xl font-black text-cyan-100">{title}</h3>
@@ -7571,9 +7894,9 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
 
   const confidence = Math.max(82, Math.min(99, Math.round(88 + recommended[0]?.aiScore % 11)));
   const actionPlan = [
-    ["Simulate", "Open Time Machine", "timemachine", "Project how the strongest material changes over long time horizons."],
+    ["Simulate", "Open Future Simulation", "timemachine", "Project how the strongest material changes over long time horizons."],
     ["Scenario", "Open Scenario Builder", "scenario", "Turn the prompt into a risk score, lifespan estimate and substitute recommendation."],
-    ["Report", "Create Simulation Dossier", "simreports", "Bundle Time Machine, Scenario, Well Driller and Seismo outputs into a dossier."],
+    ["Report", "Create Simulation Dossier", "simreports", "Bundle Future Simulation, Scenario, Well Driller and Seismo outputs into a dossier."],
     ["Share", "Create Media", "viralcards", "Turn this insight into a cinematic social asset for growth."],
   ];
 
@@ -7733,11 +8056,11 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
 function MissionControl({ setPage, session, isPro, startCheckout }) {
   const missionSteps = [
     ["01", "Run your first comparison", "Compare two or more materials and understand the compatibility signal.", "compare", "2 min", "Start analysis"],
-    ["02", "Generate a Time Machine forecast", "Simulate future material behaviour across long-term environments.", "timemachine", "3 min", "Forecast future"],
+    ["02", "Generate a Future Simulation forecast", "Simulate future material behaviour across long-term environments.", "timemachine", "3 min", "Forecast future"],
     ["03", "Build a real scenario", "Turn a plain-English use case into risk, lifespan and substitute suggestions.", "scenario", "4 min", "Build scenario"],
     ["04", "Create a viral discovery card", "Turn the strongest result into a cinematic social asset for sharing.", "viralcards", "1 min", "Create card"],
     ["05", "Export a simulation report", "Generate a polished research-style dossier from the active simulation ecosystem.", "simreports", "2 min", "Export report"],
-    ["06", "Create account or upgrade", "Claim the Founding Researcher path and unlock stronger workspace value.", "beta", "1 min", "Open beta"],
+    ["06", "Create account or upgrade", "Start with Explorer $0, then unlock reports, exports, vault and advanced labs through Pro Researcher or Pro Lab.", "beta", "1 min", "Open Explorer"],
   ];
 
   const proofSignals = [
@@ -7753,13 +8076,13 @@ function MissionControl({ setPage, session, isPro, startCheckout }) {
         <div>
           <Pill gold><CheckCircle2 size={12}/> onboarding engine</Pill>
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">
-            ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Mission Control</span>
+            ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Mission Intelligence</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
             A guided first-run pathway that helps users understand the platform, complete meaningful simulations, generate shareable outputs and reach the subscription moment without feeling lost.
           </p>
           <Info title="Why this matters">
-            Mission Control turns ElementOS from a huge interface into a guided research journey. Users are shown exactly where to start, what to do next and why each step has value.
+            Mission Intelligence turns ElementOS from a huge interface into a guided research journey. Users are shown exactly where to start, what to do next and why each step has value.
           </Info>
         </div>
 
@@ -7771,7 +8094,7 @@ function MissionControl({ setPage, session, isPro, startCheckout }) {
             <div className="h-full w-[42%] rounded-full bg-cyan-300" />
           </div>
           <p className="mt-4 text-sm leading-7 text-slate-300">
-            Complete missions to move from curious visitor to active researcher. The path is designed to end in a report, a viral card or a Pro Lab upgrade decision.
+            Complete missions to move from curious visitor to active researcher. The path is designed to end in a report, a viral card or a Pro Researcher upgrade decision.
           </p>
           {!isPro && (
             <Button onClick={startCheckout} variant="primary" className="mt-5 w-full">
@@ -7802,7 +8125,7 @@ function MissionControl({ setPage, session, isPro, startCheckout }) {
                 {index === 2 && "User creates a personal use case."}
                 {index === 3 && "User has something worth sharing."}
                 {index === 4 && "User reaches export/report value."}
-                {index === 5 && "User enters the beta or account funnel."}
+                {index === 5 && "User enters the Explorer account or upgrade funnel."}
               </div>
             </div>
             <Button onClick={() => setPage(target)} variant={index === 0 ? "primary" : "ghost"} className="mt-5 w-full">
@@ -7838,466 +8161,122 @@ function MissionControl({ setPage, session, isPro, startCheckout }) {
 }
 
 
+function MobileBottomNav({ page, setPage }) {
+  const [moreOpen, setMoreOpen] = useState(false);
 
-function MobileSearchStrip({ setPage }) {
-  const [query, setQuery] = useState("");
-  const quick = ["Titanium", "Aluminium", "Gold", "Lithium", "Seismo"];
-  const submit = () => {
-    const q = query.toLowerCase();
-    if (q.includes("seismo") || q.includes("wave")) return setPage("seismo");
-    if (q.includes("report")) return setPage("reports");
-    if (q.includes("discover")) return setPage("discover");
-    if (q.includes("time")) return setPage("timemachine");
-    return setPage("compare");
-  };
-
-  return (
-    <div className="lg:hidden rounded-[1.6rem] border border-cyan-300/15 bg-slate-950/80 p-3 shadow-[0_0_45px_rgba(34,211,238,.12)] backdrop-blur-2xl">
-      <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/35 px-3 py-3">
-        <Search size={16} className="text-cyan-200" />
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && submit()}
-          placeholder="Search ElementOS..."
-          className="min-w-0 flex-1 bg-transparent text-sm font-bold text-white outline-none placeholder:text-slate-500"
-        />
-        <button onClick={submit} className="rounded-xl bg-cyan-300 px-3 py-2 text-xs font-black text-slate-950">Go</button>
-      </div>
-      <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-        {quick.map((item) => (
-          <button key={item} onClick={() => { setQuery(item); setPage(item === "Seismo" ? "seismo" : item === "Lithium" ? "matterlab" : "compare"); }} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-3 py-2 text-xs font-bold text-slate-300">
-            {item}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function MobileMissionIntelligenceHome({ page, setPage, isPro, startCheckout }) {
-  if (!["landing", "dashboard", "mission"].includes(page)) return null;
-  return (
-    <section className="lg:hidden space-y-4">
-      <div className="overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-950/45 via-slate-950 to-amber-950/20 p-5 shadow-[0_0_70px_rgba(34,211,238,.16)]">
-        <div className="flex flex-wrap gap-2">
-          <Pill gold><Bot size={12}/> mobile mission intelligence</Pill>
-          <Pill><Sparkles size={12}/> subscriber-ready</Pill>
-        </div>
-        <h1 className="mt-4 text-4xl font-black leading-[.95] text-white">What do you want to investigate?</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-300">Start with a question, then jump into discovery, compare, reports, Time Machine, Seismo or Matter Intelligence without hunting through desktop menus.</p>
-        <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-black/35 p-3">
-          <div className="text-sm leading-6 text-cyan-50">Investigate titanium performance in deep-ocean geothermal environments over 50 years.</div>
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <Button onClick={() => setPage("discover")} variant="primary" className="py-3 text-xs">Start Exploring</Button>
-          <Button onClick={() => setPage("scenario")} className="py-3 text-xs">Scenario</Button>
-          <Button onClick={() => setPage("reports")} className="py-3 text-xs">Reports</Button>
-          <Button onClick={() => (isPro ? setPage("lab") : startCheckout?.())} className="py-3 text-xs">{isPro ? "Vault" : "Upgrade"}</Button>
-        </div>
-      </div>
-      <MobileSearchStrip setPage={setPage} />
-      <MobileLabSwipeRail setPage={setPage} />
-    </section>
-  );
-}
-
-function MobileLabSwipeRail({ setPage }) {
-  const labs = [
-    ["discover", "Trending", "AI-ranked material discoveries", Sparkles],
-    ["compare", "Compare", "Fast element pairing", BarChart3],
-    ["timemachine", "Time", "Future material states", Clock3],
-    ["matterlab", "MIOS", "Opportunity intelligence", Globe2],
-    ["seismo", "Seismo", "Full-screen P/S waves", Waves],
-    ["reports", "Reports", "Mobile dossier viewer", FileText],
+  const coreItems = [
+    ["landing", "Home", Home],
+    ["explorer", "Explore", Search],
+    ["discover", "Discover", Sparkles],
+    ["reports", "Reports", FileText],
   ];
-  return (
-    <div className="lg:hidden -mx-1 overflow-x-auto pb-2">
-      <div className="flex gap-3 px-1">
-        {labs.map(([id, title, body, Icon]) => (
-          <button key={id} onClick={() => setPage(id)} className="min-w-[185px] rounded-[1.5rem] border border-white/10 bg-white/[.045] p-4 text-left shadow-xl shadow-black/20">
-            <Icon size={20} className="text-cyan-200" />
-            <div className="mt-3 text-lg font-black text-white">{title}</div>
-            <div className="mt-1 text-xs leading-5 text-slate-400">{body}</div>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
-function MobileDiscoverExperience({ discoveries = [], top, today, setPage, setPublicDiscovery }) {
-  const [tab, setTab] = useState("Trending");
-  const [query, setQuery] = useState("");
-  const [refreshing, setRefreshing] = useState(false);
-  const [saved, setSaved] = useState({});
-  const [copied, setCopied] = useState("");
-
-  const fallbackDiscoveries = useMemo(
-    () => adaptiveDiscoveryRank(generateDiscoveryEngine(18)).map((d, i) => ({
-      ...d,
-      publicId: `${d.a}-${d.b}-${d.dna?.split("-").pop() || "OS"}-${1047 + i}`.toUpperCase(),
-    })),
-    []
-  );
-
-  const safe = (discoveries && discoveries.length ? discoveries : fallbackDiscoveries).map((d, i) => ({
-    ...d,
-    publicId: d.publicId || `${d.a}-${d.b}-${d.dna?.split("-").pop() || "OS"}-${1047 + i}`.toUpperCase(),
-    aiConfidence: d.aiConfidence || Math.min(99, (d.score || 80) + 4),
-    velocity: d.velocity || 12 + i * 3,
-    saves: d.saves || 18 + i * 9,
-    views: d.views || 440 + i * 137,
-    momentum: d.momentum || d.score || 82,
-  }));
-
-  const filtered = safe.filter((d) => {
-    const haystack = `${d.a} ${d.b} ${d.aName || ""} ${d.bName || ""} ${d.type || ""} ${d.tier || ""}`.toLowerCase();
-    return !query.trim() || haystack.includes(query.toLowerCase());
-  });
-
-  const sorted =
-    tab === "Saved"
-      ? filtered.filter((d) => saved[d.publicId]).concat(filtered.slice(0, 4))
-      : tab === "Rare"
-      ? [...filtered].sort((a, b) => (b.score || 0) - (a.score || 0))
-      : tab === "Reports"
-      ? [...filtered].sort((a, b) => (b.aiConfidence || 0) - (a.aiConfidence || 0))
-      : tab === "Rising"
-      ? [...filtered].sort((a, b) => (b.velocity || 0) - (a.velocity || 0))
-      : filtered;
-
-  const hero = top || today || sorted[0] || fallbackDiscoveries[0];
-  const tabs = ["Trending", "Rising", "Rare", "Saved", "Reports"];
-
-  const openDiscovery = (d) => {
-    const payload = d || hero || fallbackDiscoveries[0];
-    setPublicDiscovery?.(payload);
-    setPage?.("publicdiscovery");
-  };
-
-  const copyDiscovery = async (d) => {
-    const payload = d || hero || fallbackDiscoveries[0];
-    const url = `${window.location.origin}${window.location.pathname}?discovery=${payload.publicId}`;
-    try {
-      await navigator.clipboard?.writeText(url);
-      setCopied(payload.publicId);
-      window.setTimeout(() => setCopied(""), 1300);
-    } catch (error) {
-      setCopied("Copy failed");
-    }
-  };
-
-  const runRefresh = () => {
-    setRefreshing(true);
-    window.setTimeout(() => setRefreshing(false), 700);
-  };
-
-  const demoSteps = [
-    ["Explore", "Find a live signal"],
-    ["Simulate", "Run pair logic"],
-    ["Save", "Vault the result"],
-    ["Export", "Create a report"],
+  const moreItems = [
+    ["compare", "Compare Materials", "Main workflow"],
+    ["copilot", "Ask ElementOS", "AI assistant"],
+    ["mission", "Mission Intelligence", "Guided path"],
+    ["scenario", "Scenario Builder", "Plain-English scenarios"],
+    ["viralcards", "Poster Studio", "Shareable exports"],
+    ["lab", "Saved Discoveries", "Vault"],
+    ["timemachine", "Future Simulation", "Long-term forecasts"],
+    ["matterlab", "Advanced Material Analysis", "Advanced lab"],
+    ["seismo", "Wave Intelligence", "P/S wave lab"],
+    ["welldriller", "Resource Discovery Lab", "Subsurface lab"],
+    ["periodic", "Periodic Map", "Element table"],
+    ["atlas", "Behaviour Atlas", "Heat maps"],
+    ["universe", "Element Relationships", "Similar materials"],
+    ["calculations", "Calculations", "Math tools"],
+    ["beta", "Create Account", "Explorer $0"],
   ];
 
   return (
-    <div className="lg:hidden space-y-4">
-      <div className="overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-950/45 via-slate-950 to-fuchsia-950/20 p-5 shadow-[0_0_70px_rgba(34,211,238,.14)]">
-        <div className="flex flex-wrap gap-2">
-          <Pill gold><Sparkles size={12}/> V63 mobile discover</Pill>
-          <Pill><Radar size={12}/> never blank</Pill>
-        </div>
-        <h1 className="mt-4 text-4xl font-black leading-[.95]">Discoveries that feel alive.</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-300">Mobile Discover now has a guaranteed feed, search, filters, pull refresh, saved cards, report previews, pricing prompts and one-tap share actions.</p>
-
-        <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-black/35 p-3">
-          <div className="flex items-center gap-2 rounded-2xl border border-cyan-300/15 bg-slate-950/85 px-3 py-3">
-            <Search size={16} className="text-cyan-200" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search discoveries, elements, reports..."
-              className="min-w-0 flex-1 bg-transparent text-sm font-bold text-white outline-none placeholder:text-slate-500"
-            />
-            {query && <button onClick={() => setQuery("")} className="rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-slate-300">Clear</button>}
+    <>
+      {moreOpen && (
+        <div className="fixed inset-x-3 bottom-[92px] z-50 rounded-[1.5rem] border border-cyan-300/20 bg-slate-950/97 p-3 shadow-[0_0_60px_rgba(34,211,238,.22)] backdrop-blur-2xl lg:hidden">
+          <div className="mb-3 flex items-center justify-between px-1">
+            <div>
+              <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">More tools</div>
+              <div className="text-[11px] text-slate-500">Advanced features are tucked away to keep mobile clean.</div>
+            </div>
+            <button onClick={() => setMoreOpen(false)} className="rounded-xl border border-white/10 bg-white/[.06] px-3 py-2 text-xs font-black text-slate-200">Close</button>
           </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-4 gap-2 text-center">
-          {demoSteps.map(([title, body], index) => (
-            <button key={title} onClick={() => setPage(index === 0 ? "discover" : index === 1 ? "compare" : index === 2 ? "lab" : "reports")} className="rounded-2xl border border-white/10 bg-white/[.045] p-3 active:scale-95">
-              <div className="text-lg font-black text-cyan-100">{index + 1}</div>
-              <div className="mt-1 text-[10px] font-black uppercase tracking-[.12em] text-white">{title}</div>
-              <div className="mt-1 text-[10px] leading-4 text-slate-500">{body}</div>
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-          <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3"><div className="text-2xl font-black text-cyan-100">{safe.length}</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">signals</div></div>
-          <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/10 p-3"><div className="text-2xl font-black text-emerald-100">{hero?.aiConfidence || 91}%</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">AI</div></div>
-          <div className="rounded-2xl border border-amber-300/15 bg-amber-300/10 p-3"><div className="text-2xl font-black text-amber-100">+{hero?.velocity || 34}%</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">velocity</div></div>
-        </div>
-      </div>
-
-      <div className="rounded-[1.75rem] border border-emerald-300/20 bg-emerald-300/10 p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="text-xs uppercase tracking-[.2em] text-emerald-200">Continue where you left off</div>
-            <div className="mt-1 text-2xl font-black text-white">{hero?.a} + {hero?.b}</div>
-            <div className="mt-1 text-sm text-emerald-50/80">Ready for compare, report preview or share card.</div>
-          </div>
-          <button onClick={() => openDiscovery(hero)} className="rounded-2xl bg-emerald-300 px-4 py-3 text-xs font-black text-slate-950">Open</button>
-        </div>
-      </div>
-
-      <div className="sticky top-2 z-30 -mx-1 overflow-x-auto pb-2 backdrop-blur-xl">
-        <div className="flex gap-2 px-1">
-          <button onClick={runRefresh} className="shrink-0 rounded-full border border-emerald-300/25 bg-emerald-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.14em] text-emerald-100">
-            {refreshing ? "Refreshing..." : "Pull Refresh"}
-          </button>
-          {tabs.map((item) => (
-            <button key={item} onClick={() => setTab(item)} className={`shrink-0 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[.14em] ${tab === item ? "border-cyan-300/40 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-slate-950/80 text-slate-400"}`}>{item}</button>
-          ))}
-        </div>
-      </div>
-
-      {refreshing && (
-        <div className="space-y-3">
-          {[1,2,3].map((i) => <div key={i} className="h-28 animate-pulse rounded-[1.75rem] border border-white/10 bg-white/[.045]" />)}
-        </div>
-      )}
-
-      {!refreshing && sorted.length === 0 && (
-        <div className="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-5 text-center">
-          <div className="text-3xl font-black text-amber-100">No blank pages.</div>
-          <p className="mt-2 text-sm leading-6 text-amber-50/80">No result matched your search, so ElementOS can still launch a demo simulation or return to trending discoveries.</p>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <Button onClick={() => setQuery("")} variant="primary" className="py-3 text-xs">Show Trending</Button>
-            <Button onClick={() => setPage("compare")} className="py-3 text-xs">Run Demo</Button>
-          </div>
-        </div>
-      )}
-
-      {!refreshing && sorted.length > 0 && (
-        <div className="-mx-1 overflow-x-auto pb-2">
-          <div className="flex gap-3 px-1">
-            {sorted.slice(0, 5).map((d, index) => (
-              <button key={`${d.publicId}-swipe-${index}`} onClick={() => openDiscovery(d)} className="min-w-[86vw] rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,.16),transparent_35%),rgba(255,255,255,.045)] p-5 text-left shadow-xl shadow-black/30 active:scale-[.99]">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Swipe discovery #{index + 1}</div>
-                    <div className="mt-2 text-4xl font-black text-white">{d.a} + {d.b}</div>
-                    <div className="mt-2 text-sm leading-6 text-slate-300">{d.reason || d.type || "AI-ranked material intelligence signal."}</div>
-                  </div>
-                  <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-right">
-                    <div className="text-3xl font-black text-emerald-100">{d.momentum}</div>
-                    <div className="text-[9px] uppercase tracking-[.16em] text-slate-500">score</div>
-                  </div>
-                </div>
-                <div className="mt-5 grid grid-cols-3 gap-2 text-center">
-                  <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{d.aiConfidence}%</b><br/><span className="text-[10px] text-slate-500">AI</span></div>
-                  <div className="rounded-xl bg-black/25 p-2"><b className="text-amber-100">+{d.velocity}%</b><br/><span className="text-[10px] text-slate-500">Rising</span></div>
-                  <div className="rounded-xl bg-black/25 p-2"><b className="text-fuchsia-100">{d.saves}</b><br/><span className="text-[10px] text-slate-500">Saved</span></div>
-                </div>
+          <div className="grid max-h-[50vh] grid-cols-1 gap-2 overflow-y-auto pr-1">
+            {moreItems.map(([id, label, hint]) => (
+              <button
+                key={id}
+                onClick={() => { setPage(id); setMoreOpen(false); }}
+                className={`rounded-2xl border px-4 py-3 text-left transition ${page === id ? "border-cyan-300/40 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[.04] text-slate-300"}`}
+              >
+                <div className="text-sm font-black">{label}</div>
+                <div className="mt-1 text-[11px] text-slate-500">{hint}</div>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {!refreshing && sorted.length > 0 && (
-        <div className="space-y-3">
-          {sorted.slice(0, 12).map((d, index) => (
-            <div key={`${d.publicId}-${index}`} className="rounded-[1.75rem] border border-white/10 bg-white/[.045] p-4 shadow-xl shadow-black/20">
-              <button onClick={() => openDiscovery(d)} className="w-full text-left active:scale-[.99]">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="text-xs uppercase tracking-[.2em] text-cyan-200">{d.tier || "AI discovery"}</div>
-                    <div className="mt-1 text-3xl font-black text-white">{d.a} + {d.b}</div>
-                    <div className="mt-1 text-sm text-slate-400">{d.type || "Material intelligence signal"}</div>
-                  </div>
-                  <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-right">
-                    <div className="text-2xl font-black text-emerald-100">{d.momentum}</div>
-                    <div className="text-[9px] uppercase tracking-[.16em] text-slate-500">score</div>
-                  </div>
-                </div>
-              </button>
-
-              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-xl bg-black/25 p-2"><b className="text-cyan-100">{d.aiConfidence}%</b><br/><span className="text-[10px] text-slate-500">AI</span></div>
-                <div className="rounded-xl bg-black/25 p-2"><b className="text-amber-100">+{d.velocity}%</b><br/><span className="text-[10px] text-slate-500">Rising</span></div>
-                <div className="rounded-xl bg-black/25 p-2"><b className="text-fuchsia-100">{d.saves}</b><br/><span className="text-[10px] text-slate-500">Saved</span></div>
-              </div>
-
-              <div className="mt-4 grid grid-cols-4 gap-2">
-                <button onClick={() => openDiscovery(d)} className="rounded-xl bg-cyan-300 px-3 py-3 text-xs font-black text-slate-950">Open</button>
-                <button onClick={() => setPage("reports")} className="rounded-xl border border-white/10 px-3 py-3 text-xs font-black text-slate-300">Report</button>
-                <button onClick={() => copyDiscovery(d)} className="rounded-xl border border-white/10 px-3 py-3 text-xs font-black text-slate-300">{copied === d.publicId ? "Copied" : "Share"}</button>
-                <button onClick={() => setSaved((prev) => ({ ...prev, [d.publicId]: !prev[d.publicId] }))} className={`rounded-xl border px-3 py-3 text-xs font-black ${saved[d.publicId] ? "border-fuchsia-300/40 bg-fuchsia-300/15 text-fuchsia-100" : "border-white/10 text-slate-300"}`}>{saved[d.publicId] ? "Saved" : "Save"}</button>
-              </div>
-            </div>
+      <nav className="fixed inset-x-3 bottom-3 z-50 rounded-[1.45rem] border border-cyan-300/20 bg-[#030712]/96 p-2 shadow-[0_0_55px_rgba(34,211,238,.22)] backdrop-blur-2xl lg:hidden">
+        <div className="grid grid-cols-5 gap-1">
+          {coreItems.map(([id, label, Icon]) => (
+            <button
+              key={id}
+              onClick={() => { setPage(id); setMoreOpen(false); }}
+              className={`rounded-2xl px-1 py-2.5 text-center text-[11px] font-black transition ${page === id ? "bg-cyan-300 text-slate-950" : "text-slate-400"}`}
+            >
+              <Icon size={18} className="mx-auto mb-1" />
+              <span className="block truncate">{label}</span>
+            </button>
           ))}
-        </div>
-      )}
-
-      <div className="grid gap-3">
-        <div className="rounded-[1.75rem] border border-cyan-300/15 bg-cyan-300/10 p-4">
-          <div className="text-xs uppercase tracking-[.2em] text-cyan-200">Mobile report preview</div>
-          <div className="mt-2 text-2xl font-black text-white">Discovery dossier ready</div>
-          <p className="mt-2 text-sm leading-6 text-slate-300">Preview summary cards first. Export PDF, SVG and JSON only after upgrade.</p>
-          <Button onClick={() => setPage("reports")} variant="primary" className="mt-4 w-full py-3 text-xs">Open Reports</Button>
-        </div>
-
-        <div className="rounded-[1.75rem] border border-amber-300/20 bg-amber-300/10 p-4">
-          <div className="text-xs uppercase tracking-[.2em] text-amber-200">Founding Researcher</div>
-          <div className="mt-2 text-3xl font-black text-white">$19/month</div>
-          <p className="mt-2 text-sm leading-6 text-amber-50/80">Unlock reports, vault, exports, media cards and AI Copilot. Future Pro Lab price remains $35/month.</p>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <Button onClick={() => setPage("login")} variant="primary" className="py-3 text-xs">Create Account</Button>
-            <Button onClick={() => setPage("reports")} className="py-3 text-xs">See Value</Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <button onClick={() => setPage("periodic")} className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-4 text-left">
-            <Atom size={20} className="text-cyan-200" />
-            <div className="mt-2 text-lg font-black text-white">Compact Table</div>
-            <div className="text-xs leading-5 text-slate-400">Mobile periodic mode</div>
-          </button>
-          <button onClick={() => setPage("timemachine")} className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-4 text-left">
-            <Clock3 size={20} className="text-cyan-200" />
-            <div className="mt-2 text-lg font-black text-white">Timeline</div>
-            <div className="text-xs leading-5 text-slate-400">1, 10, 50, 100 years</div>
-          </button>
-          <button onClick={() => setPage("welldriller")} className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-4 text-left">
-            <Target size={20} className="text-cyan-200" />
-            <div className="mt-2 text-lg font-black text-white">Depth View</div>
-            <div className="text-xs leading-5 text-slate-400">Vertical well path</div>
-          </button>
-          <button onClick={() => setPage("seismo")} className="rounded-[1.5rem] border border-white/10 bg-white/[.045] p-4 text-left">
-            <Waves size={20} className="text-cyan-200" />
-            <div className="mt-2 text-lg font-black text-white">Landscape Seismo</div>
-            <div className="text-xs leading-5 text-slate-400">Best viewed wide</div>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MobileSeismoExperience({ distance, depth, pVelocity, sVelocity, pArrival, sArrival, gap, confidence, setPage, exportSeismo }) {
-  const [zoom, setZoom] = useState(1);
-  const pWidth = Math.max(22, Math.min(96, 88 - gap * 0.7));
-  const sWidth = Math.max(18, Math.min(90, 68 - gap * 0.45));
-  return (
-    <div className="lg:hidden space-y-4">
-      <div className="rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-950/50 via-slate-950 to-amber-950/20 p-5 shadow-[0_0_80px_rgba(34,211,238,.16)]">
-        <Pill gold><Waves size={12}/> full-screen mobile seismo</Pill>
-        <h1 className="mt-4 text-4xl font-black leading-[.95]">P/S Wave Trace</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-300">Large 500px mobile wave tunnel with glow trails, moving wavefronts, zoom controls, velocity labels and depth markers.</p>
-      </div>
-      <div className="rounded-[2rem] border border-cyan-300/15 bg-slate-950/95 p-4 shadow-[0_0_70px_rgba(34,211,238,.16)]">
-        <div className="flex items-center justify-between gap-3">
-          <div><div className="text-xs uppercase tracking-[.2em] text-slate-500">zoom</div><div className="text-lg font-black text-cyan-100">{zoom.toFixed(1)}x</div></div>
-          <div className="flex gap-2">
-            <button onClick={() => setZoom((z) => Math.max(.8, +(z - .2).toFixed(1)))} className="rounded-xl border border-white/10 px-4 py-2 font-black">−</button>
-            <button onClick={() => setZoom((z) => Math.min(2.2, +(z + .2).toFixed(1)))} className="rounded-xl border border-white/10 px-4 py-2 font-black">+</button>
-          </div>
-        </div>
-        <div className="relative mt-4 h-[500px] overflow-hidden rounded-[1.7rem] border border-white/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.14),transparent_35%),linear-gradient(180deg,#020617,#08111f)] p-4">
-          {[0,1,2,3,4].map((i) => <div key={i} className="absolute left-0 right-0 border-t border-white/10 text-[10px] text-slate-500" style={{ top: `${16 + i * 18}%` }}><span className="ml-3 rounded-full bg-black/45 px-2">{Math.round(depth * (i + 1) / 5)}m</span></div>)}
-          <div className="absolute left-5 right-5 top-[28%] h-12 rounded-full bg-cyan-300/15 shadow-[0_0_55px_rgba(34,211,238,.45)]" style={{ transform: `scaleX(${zoom})`, transformOrigin: 'left center' }}>
-            <div className="absolute inset-y-0 left-0 rounded-full bg-cyan-200/80 shadow-[0_0_45px_rgba(103,232,249,.95)]" style={{ width: `${pWidth}%`, animation: 'eosWaveTravel 2.2s linear infinite' }} />
-          </div>
-          <div className="absolute left-5 right-5 top-[52%] h-12 rounded-full bg-amber-300/15 shadow-[0_0_55px_rgba(251,191,36,.45)]" style={{ transform: `scaleX(${zoom})`, transformOrigin: 'left center' }}>
-            <div className="absolute inset-y-0 left-0 rounded-full bg-amber-200/80 shadow-[0_0_45px_rgba(253,230,138,.95)]" style={{ width: `${sWidth}%`, animation: 'eosWaveTravel 3.4s linear infinite' }} />
-          </div>
-          <div className="absolute bottom-5 left-5 right-5 grid grid-cols-2 gap-2">
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-3"><div className="text-2xl font-black text-cyan-100">{pArrival.toFixed(2)}s</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">P arrival · {pVelocity}m/s</div></div>
-            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-3"><div className="text-2xl font-black text-amber-100">{sArrival.toFixed(2)}s</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">S arrival · {sVelocity}m/s</div></div>
-            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-3"><div className="text-2xl font-black text-emerald-100">{gap.toFixed(2)}s</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">arrival gap</div></div>
-            <div className="rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-3"><div className="text-2xl font-black text-fuchsia-100">{confidence}%</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">confidence</div></div>
-          </div>
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <Button onClick={exportSeismo} variant="primary" className="py-3 text-xs">Export</Button>
-          <Button onClick={() => setPage("welldriller")} className="py-3 text-xs">Well Driller</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MobileAIFloatingButton({ page, setPage }) {
-  if (page === "copilot") return null;
-  return (
-    <button onClick={() => setPage("copilot")} className="fixed bottom-[154px] right-4 z-50 grid h-14 w-14 place-items-center rounded-full border border-cyan-300/30 bg-cyan-300 text-slate-950 shadow-[0_0_50px_rgba(34,211,238,.45)] lg:hidden">
-      <Bot size={22} />
-    </button>
-  );
-}
-
-function MobileBottomNav({ page, setPage }) {
-  const items = [
-    ["landing", "Home", Home],
-    ["discover", "Discover", Sparkles],
-    ["compare", "Compare", BarChart3],
-    ["reports", "Reports", BookOpen],
-    ["login", "Account", UserPlus],
-  ];
-
-  return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-cyan-300/15 bg-[#030712]/95 px-3 pb-3 pt-2 shadow-[0_-20px_60px_rgba(0,0,0,.45)] backdrop-blur-2xl lg:hidden">
-      <div className="grid grid-cols-5 gap-2">
-        {items.map(([id, label, Icon]) => (
           <button
-            key={id}
-            onClick={() => setPage(id)}
-            className={`rounded-2xl px-2 py-2.5 text-center text-[10px] font-black uppercase tracking-[.08em] transition active:scale-95 ${
-              page === id
-                ? "border border-cyan-300/40 bg-cyan-300/15 text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,.16)]"
-                : "text-slate-400 hover:bg-white/[.05]"
-            }`}
+            onClick={() => setMoreOpen((value) => !value)}
+            className={`rounded-2xl px-1 py-2.5 text-center text-[11px] font-black transition ${moreOpen ? "bg-amber-300 text-slate-950" : "text-slate-400"}`}
           >
-            <Icon size={18} className="mx-auto mb-1 text-cyan-300" />
-            {label}
+            <Layers size={18} className="mx-auto mb-1" />
+            More
           </button>
-        ))}
-      </div>
-    </nav>
+        </div>
+      </nav>
+    </>
   );
 }
-
 
 function MobileActionBar({ page, setPage, compare, session, isPro, startCheckout }) {
   if (page === "landing") return null;
 
-  const primaryLabel = page === "compare" ? "Report" : page === "reports" ? "Export" : "Compare";
-  const primaryTarget = page === "compare" ? "reports" : page === "reports" ? "simreports" : "compare";
+  const primaryLabel = page === "compare" ? "Generate Report" : "Generate Discovery";
+  const primaryTarget = page === "compare" ? "reports" : "compare";
 
   return (
-    <div className="fixed inset-x-3 bottom-[88px] z-40 lg:hidden">
-      <div className="rounded-[1.65rem] border border-cyan-300/20 bg-slate-950/92 p-3 shadow-[0_0_50px_rgba(34,211,238,.22)] backdrop-blur-2xl">
-        <div className="mb-2 grid grid-cols-4 gap-2 text-center">
-          <button onClick={() => setPage("lab")} className="rounded-xl border border-white/10 bg-white/[.04] px-2 py-2 text-[10px] font-black uppercase text-slate-300">Save</button>
-          <button onClick={() => setPage("viralcards")} className="rounded-xl border border-white/10 bg-white/[.04] px-2 py-2 text-[10px] font-black uppercase text-slate-300">Share</button>
-          <button onClick={() => setPage("reports")} className="rounded-xl border border-white/10 bg-white/[.04] px-2 py-2 text-[10px] font-black uppercase text-slate-300">Report</button>
-          <button onClick={() => (isPro ? setPage("lab") : startCheckout?.())} className="rounded-xl border border-amber-300/20 bg-amber-300/10 px-2 py-2 text-[10px] font-black uppercase text-amber-100">{isPro ? "Pro" : "Upgrade"}</button>
+    <div className="fixed inset-x-3 bottom-[96px] z-40 lg:hidden">
+      <div className="rounded-[1.35rem] border border-cyan-300/20 bg-slate-950/92 p-2.5 shadow-[0_0_45px_rgba(34,211,238,.20)] backdrop-blur-2xl">
+        <div className="grid grid-cols-[1fr_auto] items-center gap-2">
+          <button
+            onClick={() => setPage(primaryTarget)}
+            className="rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 transition hover:bg-white"
+          >
+            {primaryLabel}
+          </button>
+          {!session ? (
+            <button onClick={() => setPage("login")} className="rounded-2xl border border-white/10 bg-white/[.06] px-3 py-3 text-xs font-black text-slate-100">
+              Account
+            </button>
+          ) : !isPro ? (
+            <button onClick={startCheckout} className="rounded-2xl border border-amber-300/30 bg-amber-300/15 px-3 py-3 text-xs font-black text-amber-100">
+              Upgrade
+            </button>
+          ) : (
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-3 text-xs font-black text-emerald-100">
+              Pro
+            </div>
+          )}
         </div>
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <div className="truncate text-xs uppercase tracking-[.2em] text-slate-500">Mobile Session</div>
-            <div className="mt-1 truncate text-sm font-black text-cyan-100">{(compare || []).slice(0, 4).join(" + ") || pageLabel(page)}</div>
-          </div>
-          <Button onClick={() => setPage(primaryTarget)} variant="primary" className="shrink-0 px-4 py-3 text-xs">{primaryLabel}</Button>
+        <div className="mt-2 truncate px-2 text-[11px] text-slate-500">
+          {(compare || []).slice(0, 4).join(" + ") || "Pick elements → generate discovery → export result"}
         </div>
       </div>
     </div>
   );
 }
-
-
 
 function CommandPalette({ open, onClose, page, setPage, selected, setSelected, compare, setCompare, session, isPro, startCheckout }) {
   const [query, setQuery] = useState("");
@@ -8316,17 +8295,17 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const pageActions = [
     ["dashboard", "Open Dashboard", "Command centre, live network, researcher identity and launch workspace.", "Navigation", "Dashboard"],
     ["copilot", "Ask AI Copilot", "Turn a plain-English research goal into simulations, reports and cards.", "AI", "Copilot"],
-    ["mission", "Open Mission Control", "Guided onboarding missions for comparison, Time Machine, Scenario Builder, Media Engine and reports.", "Onboarding", "Mission"],
+    ["mission", "Open Mission Intelligence", "Guided onboarding missions for comparison, Future Simulation, Scenario Builder, Media Engine and reports.", "Onboarding", "Mission"],
     ["discover", "Open Discovery Feed", "Trending pairings, momentum scores and AI-ranked material discoveries.", "Discovery", "Discover"],
-    ["matterlab", "Open Matter Intelligence OS", "Opportunity intelligence for ranked targets, ground signals, AI explanations and reports.", "Advanced Lab", "MIOS"],
+    ["matterlab", "Open Advanced Material Analysis", "Opportunity intelligence for ranked targets, ground signals, AI explanations and reports.", "Advanced Lab", "MIOS"],
     ["isotopes", "Open Isotope Lab", "Advanced material variants and isotope-style scenario exploration.", "Research", "Isotope"],
-    ["timemachine", "Run Time Machine", "Forecast ageing, corrosion, degradation and future material states.", "Simulation", "Time"],
+    ["timemachine", "Run Future Simulation", "Forecast ageing, corrosion, degradation and future material states.", "Simulation", "Time"],
     ["scenario", "Build Scenario", "Convert a real-world material situation into risk, lifespan and substitute outputs.", "Simulation", "Scenario"],
-    ["welldriller", "Open Well Driller Lab", "Model a deep bore path, reservoir target and pressure profile.", "Simulation", "Well"],
-    ["seismo", "Open Seismo Lab", "Compare P-wave and S-wave travel, arrival gaps and wave response.", "Simulation", "Seismo"],
-    ["simreports", "Create Simulation Dossier", "Create a universal dossier across Time Machine, Seismo, Scenario and Well Driller.", "Reports", "Report"],
+    ["welldriller", "Open Resource Discovery Lab", "Model a deep bore path, reservoir target and pressure profile.", "Simulation", "Well"],
+    ["seismo", "Open Wave Intelligence", "Compare P-wave and S-wave travel, arrival gaps and wave response.", "Simulation", "Seismo"],
+    ["simreports", "Create Simulation Dossier", "Create a universal dossier across Future Simulation, Seismo, Scenario and Well Driller.", "Reports", "Report"],
     ["viralcards", "Create Media", "Generate a cinematic share card for discoveries, simulations and reports.", "Growth", "Share"],
-    ["beta", "Open Pricing", "Explorer, Pro Researcher and Pro Lab subscription plans.", "Growth", "Plans"],
+    ["beta", "Open Explorer Launch", "Explorer $0, Founding Researcher pricing, roadmap, feedback and upgrade conversion.", "Growth", "Explorer"],
     ["calculations", "Open Calculation Intelligence", "Use premium calculation blocks to support report narratives.", "Tools", "Calc"],
     ["lab", "Open Workspace", "Return to saved scenarios, reports, discoveries and research assets.", "Workspace", "Lab"],
     ["visualization", "Open Visual Engine", "Survival curves, telemetry cards, pulse graphs and cinematic visuals.", "Visuals", "Visual"],
@@ -8334,7 +8313,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["explorer", "Search Elements", "Inspect an element profile before adding it to a comparison.", "Elements", "Search"],
     ["periodic", "Open Periodic Map", "Browse all 118 elements with behaviour heat-map logic.", "Elements", "Periodic"],
     ["reports", "Open Research Reports", "Create public reports, premium PDFs and shareable outputs.", "Reports", "PDF"],
-    ["beta", "View Plans", "Explorer, Pro Researcher and Pro Lab subscription plans.", "Growth", "Plans"],
+    ["beta", "Create Free Explorer Account", "Roadmap, feedback and early-access conversion.", "Growth", "Explorer"],
   ];
 
   const elementActions = elements.slice(0, 118).map((e) => [
@@ -8350,19 +8329,19 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["pair:Ti-Hf", "Compare Titanium + Hafnium", "High-value advanced pairing for futuristic structural simulation cards.", "Pair", "Ti Hf"],
     ["pair:Cu-Ag", "Compare Copper + Silver", "Conductivity corridor comparison for electrical/material exploration.", "Pair", "Cu Ag"],
     ["pair:Si-Ge", "Compare Silicon + Germanium", "Semiconductor-adjacent behaviour pairing for advanced reports.", "Pair", "Si Ge"],
-    ["pair:W-Ta", "Compare Tungsten + Tantalum", "Heavy high-pressure thermal candidate pair for Time Machine testing.", "Pair", "W Ta"],
+    ["pair:W-Ta", "Compare Tungsten + Tantalum", "Heavy high-pressure thermal candidate pair for Future Simulation testing.", "Pair", "W Ta"],
   ];
 
   const smartActions = [
     ["smart:ocean", "Simulate deep ocean pressure for 40 years", "Sets Titanium, Hafnium, Tungsten and Aluminium then opens Scenario Builder.", "Smart Action", "Ocean"],
     ["smart:heat", "Find strongest high-heat material pair", "Loads Tungsten, Tantalum, Hafnium and Titanium into Compare.", "Smart Action", "Heat"],
     ["smart:seismic", "Compare P-wave / S-wave arrival gap", "Opens Seismo for seismic travel and arrival-gap response.", "Smart Action", "Seismic"],
-    ["smart:well", "Model a deep Well Driller Lab path", "Opens Well Driller Lab with drilling simulation focus.", "Smart Action", "Well"],
-    ["smart:time", "Forecast material decay across 100 years", "Opens Time Machine for long-horizon material survivability.", "Smart Action", "Time"],
-    ["smart:viral", "Turn current work into a share card", "Opens Discovery Media Engine with social-growth workflow.", "Smart Action", "Share"],
+    ["smart:well", "Model a deep Resource Discovery Lab path", "Opens Resource Discovery Lab with drilling simulation focus.", "Smart Action", "Well"],
+    ["smart:time", "Forecast material decay across 100 years", "Opens Future Simulation for long-horizon material survivability.", "Smart Action", "Time"],
+    ["smart:viral", "Turn current work into a share card", "Opens Poster Studio with social-growth workflow.", "Smart Action", "Share"],
     ["smart:report", "Generate a simulation dossier", "Opens Simulation Dossiers for a polished export dossier.", "Smart Action", "Report"],
-    ["smart:mission", "Start the user onboarding mission path", "Opens Pricing as the current conversion and early-user pathway.", "Smart Action", "Mission"],
-    ["smart:checkout", isPro ? "Pro Lab is active" : "Upgrade to Pro Lab", "Unlock premium export and workspace features.", "Billing", "Pro"],
+    ["smart:mission", "Start the user onboarding mission path", "Opens Explorer Launch as the free account and upgrade pathway.", "Smart Action", "Mission"],
+    ["smart:checkout", isPro ? "Pro access is active" : "Upgrade to Pro Researcher", "Unlock reports, exports, vault, media and AI Copilot.", "Billing", "Pro"],
   ];
 
   const allActions = [...smartActions, ...pageActions, ...pairActions, ...elementActions];
@@ -8458,7 +8437,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     }
 
     if (id === "smart:mission") {
-      setPage("beta");
+      setPage("login");
       onClose();
       return;
     }
@@ -8629,7 +8608,7 @@ function ToastCenter() {
   );
 }
 
-function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startCheckout }) {
+function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startCheckout, setSupportOpen, plan = "Explorer" }) {
   return (
     <div className="eos-topbar sticky top-4 z-20 mb-6 hidden items-center justify-between gap-4 rounded-2xl px-4 py-3 backdrop-blur-2xl lg:flex">
       <div className="flex min-w-0 items-center gap-3">
@@ -8648,11 +8627,13 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
       </button>
 
       <div className="flex items-center gap-2">
-        <button onClick={() => setPage("mission")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">?</button>
+        <button onClick={() => setSupportOpen?.(true)} className="rounded-xl border border-[#17365f] bg-[#06101d]/80 px-3 py-2 text-xs font-black text-cyan-100">Need Help?</button>
         <button onClick={() => setPage("discover")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">🌐</button>
-        <Button onClick={session && !isPro ? startCheckout : () => setPage("beta")} variant={isPro ? "ghost" : "primary"} className="py-2">
-          {isPro ? "Pro Active" : session ? "Subscribe" : "Create Account"}
-        </Button>
+        {!session && <Button onClick={() => setPage("login")} className="py-2">Login</Button>}
+        {!session && <Button onClick={() => setPage("login")} variant="primary" className="py-2">Create Account</Button>}
+        {session && <Button onClick={!isPro ? startCheckout : () => showUpgradeModal("Manage your ElementOS subscription plan.")} variant={isPro ? "ghost" : "primary"} className="py-2">
+          {isPro ? plan : "Upgrade"}
+        </Button>}
       </div>
     </div>
   );
@@ -8849,14 +8830,14 @@ function DiscoveryVaultV57({ session, selected, compare, setPage }) {
   ];
   const timeline = [
     ["Today", "Generated discovery poster", `${selected} + ${(compare || ["Ti"])[1] || "Ti"}`],
-    ["Today", "Saved to Discovery Vault", "Material genome and report path stored"],
+    ["Today", "Saved to Saved Discoveries", "Material genome and report path stored"],
     ["Yesterday", "Created executive report", "Simulation dossier exported as PDF/SVG/JSON"],
     ["2 days ago", "Opened Matter Intelligence", "Opportunity scan converted to watchlist"],
   ];
   const exportVault = () => exportAllFormats({
     baseName: "elementos-discovery-vault",
-    title: "ElementOS Discovery Vault",
-    summary: `Discovery Vault for ${user}. ${vaultStats.map(([a,b]) => `${a}: ${b}`).join(". ")}`,
+    title: "ElementOS Saved Discoveries",
+    summary: `Saved Discoveries for ${user}. ${vaultStats.map(([a,b]) => `${a}: ${b}`).join(". ")}`,
     payload: { user, profile, vaultStats, collections, timeline, selected, compare },
     sections: [
       { title: "Vault Metrics", lines: vaultStats.map(([a,b,c]) => `${a}: ${b} — ${c}`) },
@@ -9040,11 +9021,11 @@ function MissionControlV57({ setPage, session, isPro, startCheckout }) {
     ["Generate Report", "Turn a result into a PDF, SVG and JSON research asset.", "reports", "Report engine proven"],
     ["Create Media", "Package the result into a poster, card or social pack.", "viralcards", "Marketing asset created"],
     ["Open Matter Intelligence", "Scan a real opportunity field and save a target.", "matterlab", "Opportunity engine activated"],
-    ["Save to Vault", "Move the strongest work into your Discovery Vault.", "lab", "Subscriber value captured"],
+    ["Save to Vault", "Move the strongest work into your Saved Discoveries.", "lab", "Subscriber value captured"],
   ];
   const health = [["Matter Intelligence", 98], ["Exports", 100], ["Media Engine", 96], ["Telemetry", 93], ["Workspace", 95]];
   const progress = Math.round(((activeMission + 1) / missions.length) * 100);
-  const exportMission = () => exportAllFormats({ baseName: "elementos-mission-control", title: "ElementOS Mission Control", summary: `Mission progress ${progress}%. Active mission: ${missions[activeMission][0]}.`, payload: { missions, activeMission, health, progress } });
+  const exportMission = () => exportAllFormats({ baseName: "elementos-mission-control", title: "ElementOS Mission Intelligence", summary: `Mission progress ${progress}%. Active mission: ${missions[activeMission][0]}.`, payload: { missions, activeMission, health, progress } });
 
   return (
     <>
@@ -9117,119 +9098,97 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
 }
 
 
-function SubscriberPricingPage({ session, setPage, startCheckout, isPro }) {
-  const tiers = [
-    {
-      name: "Explorer",
-      price: "$0",
-      badge: "Free forever",
-      tone: "border-white/10 bg-white/[0.035]",
-      description: "Browse the ElementOS universe and understand the value before paying.",
-      can: ["Browse", "View discoveries", "View reports", "View Time Machine", "View Matter Intelligence", "View Atlas"],
-      locked: ["PDF/SVG/JSON exports", "Save to Vault", "Generate Reports", "Create Media", "Advanced Labs"],
-      cta: "Start Exploring",
-      action: () => setPage("dashboard"),
-    },
-    {
-      name: "Pro Researcher",
-      price: "$19/month",
-      badge: "Best conversion tier",
-      tone: "border-cyan-300/35 bg-cyan-300/10 shadow-[0_0_70px_rgba(34,211,238,.12)]",
-      description: "The subscriber tier for reports, exports, AI Copilot and saved research.",
-      can: ["Reports", "Vault", "PDF/SVG/JSON exports", "Discovery Media Engine", "AI Copilot", "Scenario Intelligence"],
-      locked: ["Full Advanced Labs", "Future Pro Lab features"],
-      cta: session ? "Upgrade to Pro Researcher" : "Create Account First",
-      action: () => (session ? startCheckout?.() : setPage("login")),
-    },
-    {
-      name: "Pro Lab",
-      price: "$35/month",
-      badge: "Everything unlocked",
-      tone: "border-amber-300/35 bg-amber-300/10 shadow-[0_0_70px_rgba(251,191,36,.12)]",
-      description: "For users who want the full ElementOS lab stack and future premium features.",
-      can: ["Everything in Pro Researcher", "Advanced Labs", "Time Machine", "Matter Intelligence", "Well Driller", "Seismo Pro", "Future premium features"],
-      locked: [],
-      cta: session ? "Upgrade to Pro Lab" : "Create Account First",
-      action: () => (session ? startCheckout?.() : setPage("login")),
-    },
-  ];
 
+function SubscriptionUpgradeModal({ open, reason, plan, setPlan, onClose, startCheckout }) {
+  if (!open) return null;
+  const choosePlan = (name) => {
+    setPlan(name);
+    setElementOSPlan(name);
+    if (name !== "Explorer") {
+      window.dispatchEvent(new CustomEvent("elementos:toast", { detail: `${name} selected. Premium actions unlocked in preview.` }));
+      if (typeof startCheckout === "function") startCheckout();
+    }
+    onClose?.();
+  };
   return (
-    <div className="space-y-6">
-      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-amber-950/20 p-0">
-        <div className="relative p-6 md:p-8">
-          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-amber-400/10 blur-3xl" />
-          <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <div className="flex flex-wrap gap-2">
-                <Pill gold><Sparkles size={12}/> subscriber conversion</Pill>
-                <Pill><UserPlus size={12}/> Explorer / Pro Researcher / Pro Lab</Pill>
-              </div>
-              <h1 className="mt-5 max-w-5xl text-5xl font-black leading-[.92] tracking-tight md:text-7xl">
-                ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Plans</span>
-              </h1>
-              <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-                Start free as Explorer. Upgrade to Pro Researcher at $19/month for the strongest early conversion path, or unlock the full Pro Lab stack at $35/month.
-              </p>
-            </div>
-            <div className="rounded-[2rem] border border-amber-300/25 bg-amber-300/10 p-5 text-amber-50">
-              <div className="text-xs font-black uppercase tracking-[.22em] text-amber-200">Founding pricing</div>
-              <div className="mt-2 text-2xl font-black">$19/month today</div>
-              <p className="mt-2 max-w-sm text-sm leading-6 text-amber-50/80">Future Pro Lab price remains $35/month. Early subscribers understand the platform before paying more.</p>
-            </div>
+    <div className="fixed inset-0 z-[120] grid place-items-center bg-black/70 p-4 backdrop-blur-xl">
+      <div className="max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-[2rem] border border-cyan-300/25 bg-slate-950 p-6 shadow-[0_0_120px_rgba(34,211,238,.22)]">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Lock size={12}/> subscriber conversion</Pill>
+            <h2 className="mt-3 text-4xl font-black">Upgrade required</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">{reason || "Explorer users can view the platform, but exports, vault saves, reports, posters and publishing are Pro features."}</p>
           </div>
+          <Button onClick={onClose}>Close</Button>
         </div>
-      </Panel>
-
-      <div className="grid gap-5 lg:grid-cols-3">
-        {tiers.map((tier) => (
-          <Panel key={tier.name} className={tier.tone}>
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">{tier.badge}</div>
-                <h2 className="mt-2 text-3xl font-black text-white">{tier.name}</h2>
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          {ELEMENTOS_SUBSCRIPTION_PLANS.map((p) => (
+            <div key={p.name} className={`rounded-[2rem] border p-5 ${p.name === plan ? "border-cyan-300/60 bg-cyan-300/10" : p.recommended ? "border-amber-300/40 bg-amber-300/10" : "border-white/10 bg-white/[0.035]"}`}>
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-2xl font-black text-white">{p.name}</div>
+                <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] text-cyan-100">{p.eyebrow}</span>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-right">
-                <div className="text-2xl font-black text-cyan-100">{tier.price}</div>
-              </div>
-            </div>
-            <p className="mt-4 text-sm leading-6 text-slate-300">{tier.description}</p>
-            <div className="mt-5 space-y-2">
-              {tier.can.map((item) => (
-                <div key={item} className="flex gap-2 rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-slate-200">
-                  <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-emerald-300" /> {item}
-                </div>
-              ))}
-              {tier.locked.map((item) => (
-                <div key={item} className="flex gap-2 rounded-2xl border border-white/10 bg-black/10 p-3 text-sm text-slate-500">
-                  <Lock size={16} className="mt-0.5 shrink-0" /> {item}
-                </div>
-              ))}
-            </div>
-            <Button onClick={tier.action} variant={tier.name === "Explorer" ? "ghost" : "primary"} className="mt-5 w-full py-4">
-              {tier.cta}
-            </Button>
-          </Panel>
-        ))}
-      </div>
-
-      <Panel>
-        <div className="grid gap-4 md:grid-cols-4">
-          {[
-            ["Explorer", "$0", "view and explore"],
-            ["Pro Researcher", "$19", "reports, vault, exports"],
-            ["Pro Lab", "$35", "everything unlocked"],
-            [isPro ? "Active" : "Ready", isPro ? "Pro" : "Upgrade", "subscription state"],
-          ].map(([a,b,c]) => (
-            <div key={a} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <div className="text-xs uppercase tracking-[.22em] text-slate-500">{a}</div>
-              <div className="mt-2 text-3xl font-black text-cyan-100">{b}</div>
-              <div className="mt-1 text-xs text-slate-400">{c}</div>
+              <div className="mt-3 text-4xl font-black text-cyan-100">{p.price}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{p.description}</p>
+              <div className="mt-4 space-y-2 text-sm text-slate-200">{p.features.map((f) => <div key={f}>✓ {f}</div>)}</div>
+              {!!p.locked.length && <div className="mt-4 space-y-1 text-xs text-slate-500">{p.locked.map((f) => <div key={f}>✗ {f}</div>)}</div>}
+              <Button onClick={() => choosePlan(p.name)} variant={p.recommended ? "primary" : "ghost"} className="mt-5 w-full">{p.name === "Explorer" ? "Continue as Explorer" : `Choose ${p.name}`}</Button>
             </div>
           ))}
         </div>
-      </Panel>
+      </div>
+    </div>
+  );
+}
+
+function SupportCenterModal({ open, onClose }) {
+  const [created, setCreated] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", category: "Technical Support", message: "" });
+  if (!open) return null;
+  const submitSupport = async () => {
+    try {
+      await fetch("/api/support-ticket", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, reference: "EOS-1047" }) });
+    } catch (error) {
+      console.warn("Support endpoint not connected yet.", error);
+    }
+    setCreated(true);
+  };
+  return (
+    <div className="fixed inset-0 z-[125] grid place-items-center bg-black/70 p-4 backdrop-blur-xl">
+      <div className="w-full max-w-3xl rounded-[2rem] border border-cyan-300/25 bg-slate-950 p-6 shadow-[0_0_120px_rgba(34,211,238,.22)]">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <Pill gold><ClipboardList size={12}/> support center</Pill>
+            <h2 className="mt-3 text-4xl font-black">Need Help?</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Create a support ticket. Frontend → API route → email service → support inbox.</p>
+          </div>
+          <Button onClick={onClose}>Close</Button>
+        </div>
+        {created ? (
+          <div className="mt-6 rounded-[2rem] border border-emerald-300/25 bg-emerald-300/10 p-8 text-center">
+            <CheckCircle2 className="mx-auto text-emerald-200" size={42} />
+            <h3 className="mt-4 text-3xl font-black text-emerald-100">Ticket Created</h3>
+            <p className="mt-2 text-lg font-black text-white">Reference: EOS-1047</p>
+            <p className="mt-2 text-sm text-slate-300">We'll respond shortly.</p>
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none" />
+              <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none" />
+            </div>
+            <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
+              {["Technical Support", "Billing", "Account", "Bug Report", "Feature Request", "Export Problem"].map((x) => <option key={x}>{x}</option>)}
+            </select>
+            <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Message" className="min-h-[160px] rounded-2xl border border-white/10 bg-black/30 p-4 outline-none" />
+            <label className="rounded-2xl border border-dashed border-cyan-300/25 bg-cyan-300/10 p-5 text-sm text-cyan-100">
+              Attach images, screenshots or PDFs
+              <input type="file" multiple accept="image/*,.pdf" className="mt-3 block w-full text-xs text-slate-300" />
+            </label>
+            <Button onClick={submitSupport} variant="primary" className="w-full">Submit Support Ticket</Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -9245,6 +9204,10 @@ export default function App() {
   const [publicReportStatus, setPublicReportStatus] = useState("");
   const [commandOpen, setCommandOpen] = useState(false);
   const [publicDiscovery, setPublicDiscovery] = useState(null);
+  const [plan, setPlan] = useState(() => getElementOSPlan());
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [upgradeReason, setUpgradeReason] = useState("");
+  const [supportOpen, setSupportOpen] = useState(false);
 
 useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -9298,6 +9261,7 @@ useEffect(() => {
 
   if (params.get("checkout") === "success") {
     setIsPro(true);
+    setPlan(getElementOSPlan() === "Explorer" ? "Pro Researcher" : getElementOSPlan());
     localStorage.setItem("elementos_pro", "true");
     alert("ElementOS Pro activated.");
     window.history.replaceState({}, document.title, window.location.pathname);
@@ -9332,10 +9296,31 @@ useEffect(() => {
     return () => window.removeEventListener("keydown", handleCommandShortcut);
   }, []);
 
+
+  useEffect(() => {
+    const handleUpgrade = (event) => {
+      setUpgradeReason(String(event.detail || "This is a Pro feature."));
+      setUpgradeModalOpen(true);
+    };
+    const handlePlan = (event) => {
+      const nextPlan = String(event.detail || getElementOSPlan());
+      setPlan(nextPlan);
+      setIsPro(nextPlan !== "Explorer");
+    };
+    window.addEventListener("elementos:upgrade", handleUpgrade);
+    window.addEventListener("elementos:plan", handlePlan);
+    setIsPro(hasElementOSProAccess());
+    return () => {
+      window.removeEventListener("elementos:upgrade", handleUpgrade);
+      window.removeEventListener("elementos:plan", handlePlan);
+    };
+  }, []);
+
   const saveWorkspace = async () => {
+    if (!guardProAction("Save to Vault")) return;
     if (!session) {
       alert("Create a free Explorer account to activate saved workspaces.");
-      setPage("beta");
+      setPage("login");
       return;
     }
 
@@ -9357,7 +9342,7 @@ useEffect(() => {
   const loadWorkspace = async () => {
     if (!session) {
       alert("Create a free Explorer account to restore saved workspaces.");
-      setPage("beta");
+      setPage("login");
       return;
     }
 
@@ -9384,8 +9369,8 @@ useEffect(() => {
 
 const startCheckout = async () => {
   if (!session) {
-    alert("Create an account before upgrading.");
-    setPage("beta");
+    alert("Create a free Explorer account before upgrading.");
+    setPage("login");
     return;
   }
 
@@ -9421,7 +9406,7 @@ const startCheckout = async () => {
   const pages = useMemo(
     () => ({
       landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
-      beta: <SubscriberPricingPage session={session} setPage={setPage} startCheckout={startCheckout} isPro={isPro} />,
+      beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
       copilot: <DiscoveryAIV57 selected={selected} compare={compare} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
       mission: <MissionControlV57 setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       dashboard: (
@@ -9526,12 +9511,12 @@ const startCheckout = async () => {
 
       <button
         onClick={() => setCommandOpen(true)}
-        className="fixed bottom-24 right-4 z-50 rounded-2xl border border-cyan-300/25 bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(34,211,238,.35)] lg:bottom-6"
+        className="fixed bottom-[156px] right-4 z-50 rounded-2xl border border-cyan-300/25 bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(34,211,238,.35)] lg:bottom-6"
       >
-        CTRL K · Command
+        Ask ElementOS
       </button>
 
-      <main className="relative z-10 space-y-6 p-4 pb-40 lg:ml-[306px] lg:p-4 lg:pb-8 xl:p-5">
+      <main className="relative z-10 space-y-5 p-3 pb-44 lg:ml-[306px] lg:p-4 lg:pb-8 xl:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3 lg:hidden">
           <div>
             <div className="text-2xl font-black tracking-[.18em] text-cyan-100">
@@ -9555,23 +9540,30 @@ const startCheckout = async () => {
           </select>
         </div>
 
-        <MobileMissionIntelligenceHome page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />
-        <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} />
-        <UltimateScienceCommandLayer
-          page={page}
-          setPage={setPage}
-          selected={selected}
-          compare={compare}
-          session={session}
-          isPro={isPro}
-          startCheckout={startCheckout}
-        />
-        <PageHelpStrip page={page} />
-        <CopilotEverywhereBar page={page} setPage={setPage} />
+        <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
+        <div className="hidden lg:block">
+          <UltimateScienceCommandLayer
+            page={page}
+            setPage={setPage}
+            selected={selected}
+            compare={compare}
+            session={session}
+            isPro={isPro}
+            startCheckout={startCheckout}
+          />
+        </div>
+        <div className="hidden lg:block">
+          <PageHelpStrip page={page} />
+        </div>
+        <div className="hidden lg:block">
+          <CopilotEverywhereBar page={page} setPage={setPage} />
+        </div>
         <div className="animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
       </main>
 
-      <MobileAIFloatingButton page={page} setPage={setPage} />
+      <SubscriptionUpgradeModal open={upgradeModalOpen} reason={upgradeReason} plan={plan} setPlan={setPlan} onClose={() => setUpgradeModalOpen(false)} startCheckout={startCheckout} />
+      <SupportCenterModal open={supportOpen} onClose={() => setSupportOpen(false)} />
+
       <MobileActionBar
         page={page}
         setPage={setPage}
