@@ -9436,17 +9436,66 @@ function SubscriptionUpgradeModal({ open, reason, plan, setPlan, onClose, startC
 }
 
 function SupportCenterModal({ open, onClose }) {
+  const SUPPORT_INBOX =
+    import.meta?.env?.VITE_SUPPORT_EMAIL ||
+    import.meta?.env?.SUPPORT_EMAIL ||
+    "elementoscrypto@gmail.com";
+
   const [created, setCreated] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [supportError, setSupportError] = useState("");
   const [form, setForm] = useState({ name: "", email: "", category: "Technical Support", message: "" });
   if (!open) return null;
+
+  const updateSupportField = (key, value) => {
+    setSupportError("");
+    setForm((previous) => ({ ...previous, [key]: value }));
+  };
+
+  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+  const ticketReference = "EOS-1047";
+
+  const openEmailFallback = () => {
+    const subject = encodeURIComponent(`ElementOS Support Request ${ticketReference}: ${form.category}`);
+    const body = encodeURIComponent(
+      `Name: ${form.name || "Not provided"}\nEmail: ${form.email || "Not provided"}\nCategory: ${form.category}\nReference: ${ticketReference}\n\nMessage:\n${form.message || ""}`
+    );
+    window.location.href = `mailto:${SUPPORT_INBOX}?subject=${subject}&body=${body}`;
+  };
+
   const submitSupport = async () => {
+    if (!form.name.trim()) {
+      setSupportError("Please add your name so we know who to reply to.");
+      return;
+    }
+    if (!isValidEmail(form.email)) {
+      setSupportError("Please add a valid email address so support can reply.");
+      return;
+    }
+    if (!form.message.trim() || form.message.trim().length < 10) {
+      setSupportError("Please add a short message explaining what you need help with.");
+      return;
+    }
+
+    setSending(true);
+    setSupportError("");
     try {
-      await fetch("/api/support-ticket", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, reference: "EOS-1047" }) });
+      const response = await fetch("/api/support-ticket", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, reference: ticketReference, supportEmail: SUPPORT_INBOX }),
+      });
+
+      if (!response.ok) throw new Error(`Support endpoint returned ${response.status}`);
+      setCreated(true);
     } catch (error) {
       console.warn("Support endpoint not connected yet.", error);
+      setSupportError(`The ticket backend is not connected yet. For launch, email us directly at ${SUPPORT_INBOX}.`);
+    } finally {
+      setSending(false);
     }
-    setCreated(true);
   };
+
   return (
     <div className="fixed inset-0 z-[125] grid place-items-center bg-black/70 p-4 backdrop-blur-xl">
       <div className="w-full max-w-3xl rounded-[2rem] border border-cyan-300/25 bg-slate-950 p-6 shadow-[0_0_120px_rgba(34,211,238,.22)]">
@@ -9454,7 +9503,12 @@ function SupportCenterModal({ open, onClose }) {
           <div>
             <Pill gold><ClipboardList size={12}/> support center</Pill>
             <h2 className="mt-3 text-4xl font-black">Need Help?</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Create a support ticket. Frontend → API route → email service → support inbox.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              Send a support request for account help, billing, exports, bugs or feature questions. We reply by email.
+            </p>
+            <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
+              Support inbox: <span className="font-black text-white">{SUPPORT_INBOX}</span>
+            </div>
           </div>
           <Button onClick={onClose}>Close</Button>
         </div>
@@ -9462,24 +9516,48 @@ function SupportCenterModal({ open, onClose }) {
           <div className="mt-6 rounded-[2rem] border border-emerald-300/25 bg-emerald-300/10 p-8 text-center">
             <CheckCircle2 className="mx-auto text-emerald-200" size={42} />
             <h3 className="mt-4 text-3xl font-black text-emerald-100">Ticket Created</h3>
-            <p className="mt-2 text-lg font-black text-white">Reference: EOS-1047</p>
-            <p className="mt-2 text-sm text-slate-300">We'll respond shortly.</p>
+            <p className="mt-2 text-lg font-black text-white">Reference: {ticketReference}</p>
+            <p className="mt-2 text-sm text-slate-300">We'll reply to <span className="font-bold text-white">{form.email}</span>.</p>
+            <p className="mt-1 text-xs text-slate-500">Support inbox: {SUPPORT_INBOX}</p>
           </div>
         ) : (
           <div className="mt-6 grid gap-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none" />
-              <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none" />
+            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-slate-300">
+              <div className="font-black text-white">What the email field is for</div>
+              <div className="mt-1">This is the customer/user email address. ElementOS uses it so support can reply. Your support inbox is {SUPPORT_INBOX}.</div>
             </div>
-            <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
-              {["Technical Support", "Billing", "Account", "Bug Report", "Feature Request", "Export Problem"].map((x) => <option key={x}>{x}</option>)}
-            </select>
-            <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Message" className="min-h-[160px] rounded-2xl border border-white/10 bg-black/30 p-4 outline-none" />
-            <label className="rounded-2xl border border-dashed border-cyan-300/25 bg-cyan-300/10 p-5 text-sm text-cyan-100">
-              Attach images, screenshots or PDFs
-              <input type="file" multiple accept="image/*,.pdf" className="mt-3 block w-full text-xs text-slate-300" />
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
+                Your name
+                <input value={form.name} onChange={(e) => updateSupportField("name", e.target.value)} placeholder="Paul Roper" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+              </label>
+              <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
+                Reply email
+                <input value={form.email} onChange={(e) => updateSupportField("email", e.target.value)} placeholder="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+              </label>
+            </div>
+            <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
+              Support category
+              <select value={form.category} onChange={(e) => updateSupportField("category", e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none">
+                {["Technical Support", "Billing", "Account", "Bug Report", "Feature Request", "Export Problem", "Calculation Studio", "Subscription Question"].map((x) => <option key={x}>{x}</option>)}
+              </select>
             </label>
-            <Button onClick={submitSupport} variant="primary" className="w-full">Submit Support Ticket</Button>
+            <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
+              Message
+              <textarea value={form.message} onChange={(e) => updateSupportField("message", e.target.value)} placeholder="Tell us what happened, what page you were on, and what you expected to happen." className="min-h-[160px] rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+            </label>
+            <div className="rounded-2xl border border-dashed border-cyan-300/25 bg-cyan-300/10 p-5 text-sm text-cyan-100">
+              Attachments: screenshots and PDFs are planned for the backend support route. For now, use the direct email button below if you need to attach files.
+            </div>
+            {supportError && (
+              <div className="rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">
+                {supportError}
+              </div>
+            )}
+            <div className="grid gap-3 md:grid-cols-2">
+              <Button onClick={submitSupport} variant="primary" className="w-full" disabled={sending}>{sending ? "Sending..." : "Submit Support Ticket"}</Button>
+              <Button onClick={openEmailFallback} className="w-full">Email Support Directly</Button>
+            </div>
           </div>
         )}
       </div>
