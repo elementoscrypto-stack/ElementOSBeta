@@ -6065,147 +6065,6 @@ function ScienceCommandElite({ setPage }) {
   );
 }
 
-function LiveScienceHeartbeat({ setPage }) {
-  const rows = [
-    ["Trending now", "Gallium + Indium", "Liquid-metal pathway moving across Discovery Feed", "discover"],
-    ["Today's opportunity", "North Craton Field", "Advanced Material Analysis target confidence rising", "matterlab"],
-    ["Report engine", "Executive Brief", "One-click publishable summary ready", "simreports"],
-    ["Public asset", "TI-HF-1047", "Shareable discovery page prepared", "publicdiscovery"],
-  ];
-  return (
-    <Panel>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <Pill><Activity size={12}/> live science heartbeat</Pill>
-          <h2 className="mt-3 text-4xl font-black">Make the site feel alive before users click anything.</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">A visitor should instantly understand: discoveries are happening, reports are being created, and ElementOS is a place worth returning to tomorrow.</p>
-        </div>
-        <Button onClick={() => setPage('dashboard')} variant="primary">Open Discovery Command</Button>
-      </div>
-      <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {rows.map(([label, title, body, target]) => (
-          <button key={title} onClick={() => setPage(target)} className="poster-card rounded-[1.6rem] p-5 text-left transition hover:-translate-y-1">
-            <div className="text-[10px] uppercase tracking-[.25em] text-slate-500">{label}</div>
-            <div className="mt-3 text-2xl font-black text-white">{title}</div>
-            <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
-          </button>
-        ))}
-      </div>
-    </Panel>
-  );
-}
-
-function ConversionProofDeck({ setPage }) {
-  const proof = [
-    ["Why I need this", "It turns confusing scientific options into a guided discovery path."],
-    ["What I do first", "Start Discovery Scan, then open the strongest signal."],
-    ["Why I come back", "Daily discoveries, saved workspace, public pages and reports."],
-    ["Why I pay", "Exports, dossiers, saved research and advanced intelligence workflows."],
-  ];
-  return (
-    <Panel className="poster-card-gold">
-      <div className="grid gap-6 xl:grid-cols-[.75fr_1.25fr] xl:items-center">
-        <div>
-          <Pill gold><ShieldCheck size={12}/> conversion clarity</Pill>
-          <h2 className="mt-3 text-4xl font-black">The first 30 seconds should sell the whole idea.</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">ElementOS is no longer just a dashboard. It is a discovery operating system with a clear user journey, daily return loop and report output.</p>
-          <Button onClick={() => setPage('mission')} variant="primary" className="mt-5">Begin Guided Mission</Button>
-        </div>
-        <div className="grid gap-3 md:grid-cols-2">
-          {proof.map(([title, body]) => (
-            <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-5">
-              <div className="text-lg font-black text-amber-100">{title}</div>
-              <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Panel>
-  );
-}
-
-
-function FiveUserSimulationAudit({ setPage }) {
-  const [hasRun, setHasRun] = useState(false);
-  const simulatedUsers = [
-    ["User A", "New visitor", "Home → Discovery Feed → Public Discovery → Share Card", "Pass", "Understands the product loop and reaches an export."],
-    ["User B", "Scientist", "Compare → Future Simulation → Simulation Dossier → PDF/JSON/SVG", "Pass", "Can generate useful export assets without dead ends."],
-    ["User C", "Marketer", "Poster Studio → Social Pack → SVG Poster → Caption", "Pass", "Viral card flow produces platform-specific assets."],
-    ["User D", "Investor", "Advanced Material Analysis → Report → Workspace → Public Page", "Pass", "Opportunity workflow now has visible next steps."],
-    ["User E", "Mobile user", "CTRL-K → Search → Navigate → Export", "Pass", "Command engine has a scrollable result area and route actions."],
-  ];
-  const bugsFixed = [
-    "Fixed clipboard copy recursion that could break copy buttons in secure browsers.",
-    "Upgraded universal SVG exports to premium poster-style layouts.",
-    "Added text wrapping and headline shortening to prevent SVG clipping.",
-    "Standardized export intent: every major export now produces PDF, JSON and SVG.",
-    "Added a visible QA simulation panel so button coverage can be checked like a product system.",
-  ];
-
-  const exportAudit = () => {
-    exportAllFormats({
-      baseName: "elementos-five-user-qa-simulation",
-      title: "ElementOS Five User QA Simulation",
-      summary: "Five simulated users explored ElementOS for one hour across discovery, reports, viral cards, Advanced Material Analysis, mobile command search and export workflows.",
-      payload: {
-        simulatedUsers: simulatedUsers.length,
-        duration: "1 hour",
-        result: "All core routes have value actions",
-        fixedItems: bugsFixed.length,
-        exportModes: "PDF, JSON, SVG",
-      },
-      sections: simulatedUsers.map(([user, persona, journey, status, note]) => ({ label: `${user} · ${persona} · ${status}`, value: `${journey} · ${note}` })),
-    });
-  };
-
-  return (
-    <Panel className="poster-card-gold">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <Pill gold><ShieldCheck size={12} /> 5-user simulation audit</Pill>
-          <h2 className="mt-3 text-4xl font-black">Five simulated users. One hour. No dead ends.</h2>
-          <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-300">
-            This panel models how different visitors move through ElementOS: a new user, scientist, marketer, investor and mobile user. The goal is simple: every button should navigate, generate, export, save, share, analyze or monetize.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Button onClick={() => setHasRun(true)} variant="primary">Run 5-User Simulation</Button>
-          <Button onClick={exportAudit}>Export QA PDF/JSON/SVG</Button>
-        </div>
-      </div>
-
-      <div className="mt-6 grid gap-3 xl:grid-cols-5">
-        {simulatedUsers.map(([user, persona, journey, status, note]) => (
-          <div key={user} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-            <div className="text-xs uppercase tracking-[.2em] text-amber-100">{user}</div>
-            <div className="mt-2 text-lg font-black text-white">{persona}</div>
-            <p className="mt-2 text-xs leading-5 text-slate-400">{journey}</p>
-            <div className="mt-3 rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-xs font-black text-emerald-100">{hasRun ? status : "Ready"}</div>
-            <p className="mt-2 text-xs leading-5 text-slate-500">{note}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5 grid gap-3 md:grid-cols-2">
-        {bugsFixed.map((bug) => (
-          <div key={bug} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
-            <CheckCircle2 size={15} className="mr-2 inline text-emerald-300" />{bug}
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5 flex flex-wrap gap-3">
-        <Button onClick={() => setPage("viralcards")} variant="primary">Test Media Engine</Button>
-        <Button onClick={() => setPage("simreports")}>Test Reports</Button>
-        <Button onClick={() => setPage("matterlab")}>Test Advanced Material Analysis</Button>
-        <Button onClick={() => setPage("lab")}>Test Workspace</Button>
-      </div>
-    </Panel>
-  );
-}
-
-
-
 function SubscriberWorkspaceVault({ setPage }) {
   const vaultItems = [
     ["184", "My Discoveries", "Saved discoveries, media cards and public pages.", "discover", Sparkles],
@@ -6582,7 +6441,6 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
       <DiscoveryReputationSystem setPage={setPage} />
       <SubscriberRecommendedNextStep setPage={setPage} context={discoveryTitle} />
       <ScienceCommandElite setPage={setPage} />
-      <LiveScienceHeartbeat setPage={setPage} />
       <MissionProgressPanel setPage={setPage} />
 
       <div className="grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
@@ -6654,8 +6512,6 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
         </div>
       </Panel>
 
-      <ConversionProofDeck setPage={setPage} />
-      <FiveUserSimulationAudit setPage={setPage} />
 
       <GuidedNextStep
         setPage={setPage}
