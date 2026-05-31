@@ -409,10 +409,155 @@ function guidanceForPage(page) {
     login: {
       title: "What accounts unlock",
       description: "Accounts let users save workspaces, restore research, access subscription features and build a persistent researcher identity.",
-      next: "Create an account, create account, then return to the dashboard.",
+      next: "Create an Explorer account, then return to the dashboard.",
     },
   };
   return guide[page] || guide.dashboard;
+}
+
+const PAGE_DATA_INTELLIGENCE = {
+  default: {
+    example: "Al + Ti · Stability 96.4 · Thermal 91.7 · Pressure 94.3 · Discovery class: Legendary",
+    metrics: ["118 elements indexed", "6 behaviour metrics", "3 export formats", "Explorer $0", "Pro Researcher $19", "Pro Lab $35"],
+    scoreMeaning: [
+      ["Stability", "How consistent the material pairing appears under simulated stress."],
+      ["Thermal", "How the pairing behaves when heat becomes a design pressure."],
+      ["Pressure", "How the pairing responds to compression, depth or load."],
+      ["Diffusion", "Resistance to unwanted material spread or boundary drift."],
+    ],
+    why: "This helps users move from raw element data to a clear discovery they can compare, save, report or export.",
+    trust: "Simulation output, not laboratory certification. Use for exploration, comparison and early-stage research direction."
+  },
+  landing: {
+    example: "Mission: Titanium in deep-ocean geothermal exposure over 50 years → suggested materials, risk profile, report and poster.",
+    metrics: ["Start with a mission", "Generate a discovery", "Review scores", "Export result"],
+    why: "A first-time visitor understands the core loop in seconds: ask, generate, understand, export.",
+  },
+  dashboard: {
+    example: "Today’s example: Aluminium + Titanium · 96.4 stability · recommended for aerospace, marine and high-heat assemblies.",
+    metrics: ["118 elements", "18 ranked discoveries", "6 advanced labs", "4 report paths"],
+    why: "The dashboard should make ElementOS feel active, useful and simple before the user opens any advanced tool.",
+  },
+  discover: {
+    example: "Discovery #1047 · Al + Ti · Legendary · AI confidence 99.1% · public report ready.",
+    metrics: ["Compatibility", "AI confidence", "Rarity", "Momentum", "Shareability"],
+    why: "Discovery cards turn the platform into something users can understand and share immediately.",
+  },
+  compare: {
+    example: "Compare: Al, Ti, Fe, Cu → best pair: Al + Ti · 96 compatibility · strongest in stability and pressure response.",
+    metrics: ["Stability", "Conductivity", "Thermal", "Diffusion", "Pressure", "Rarity"],
+    why: "Comparison is the main value engine: it converts element selection into a ranked material insight.",
+  },
+  explorer: {
+    example: "Element profile: Titanium · transition metal · high pressure response · strong thermal behaviour · add to Compare.",
+    metrics: ["Atomic number", "Category", "Behaviour radar", "Compare action"],
+    why: "Explorer teaches users what each element does before they build a pairing.",
+  },
+  periodic: {
+    example: "Heat layer: pressure response → click Titanium or Aluminium to move directly into Compare.",
+    metrics: ["118 elements", "Category filter", "Heat layer", "Click to compare"],
+    why: "The periodic map should be a launchpad, not just a reference table.",
+  },
+  atlas: {
+    example: "Environment: deep ocean · strongest signals: Ti, Al, Ni · pressure and diffusion layers elevated.",
+    metrics: ["Environment", "Behaviour layer", "Top materials", "Anomaly signals"],
+    why: "Atlas helps users see patterns before choosing specific pairings.",
+  },
+  graph: {
+    example: "Selected: Aluminium → neighbouring relationships: Magnesium, Titanium, Copper, Silicon.",
+    metrics: ["Selected node", "Nearby materials", "Similarity strength", "Suggested next click"],
+    why: "Relationship views are useful when they recommend where to explore next.",
+  },
+  universe: {
+    example: "Element Relationships: Al cluster shows thermal-adjacent and conductive-adjacent candidates.",
+    metrics: ["Cluster", "Distance", "Similarity", "Substitute potential"],
+    why: "This turns abstract similarity into a practical substitute-discovery workflow.",
+  },
+  scenario: {
+    example: "Investigate titanium performance in deep-ocean geothermal environments over 50 years.",
+    metrics: ["Suggested materials", "Environment", "Time horizon", "Report", "Poster"],
+    why: "Mission Intelligence is the front door: users type a real question and ElementOS builds the workflow.",
+  },
+  timemachine: {
+    example: "Titanium · deep-ocean geothermal · 50 years → projected stability retention 82%, corrosion risk moderate.",
+    metrics: ["1 year", "10 years", "50 years", "100 years", "Risk trend"],
+    why: "Future Simulation makes material behaviour feel practical and time-aware.",
+  },
+  welldriller: {
+    example: "4.2km bore path · formation pressure elevated · wave-readiness linked to Seismo output.",
+    metrics: ["Depth", "Formation pressure", "Load", "Signal confidence"],
+    why: "Resource Discovery Lab connects subsurface modelling with visible decision data.",
+  },
+  matterlab: {
+    example: "Gold corridor opportunity · signal agreement 86% · historical match strong · report ready.",
+    metrics: ["Target score", "Signal agreement", "Historical match", "Geometry index"],
+    why: "Advanced Material Analysis should rank opportunities clearly, not just show complex visuals.",
+  },
+  seismo: {
+    example: "P-wave 6.2 km/s · S-wave 3.6 km/s · arrival gap visible across a 4.2km subsurface model.",
+    metrics: ["P-wave speed", "S-wave speed", "Depth", "Arrival gap", "Wavefront"],
+    why: "Wave Intelligence becomes more valuable when the wave trace explains what the user is seeing.",
+  },
+  viralcards: {
+    example: "Poster: Al + Ti · Legendary · ZDAR detected · stability 96.4 · exported for LinkedIn/X.",
+    metrics: ["1200×1200", "Poster", "SVG", "PDF", "Social copy"],
+    why: "Shareable exports are one of the clearest reasons to upgrade to Pro Researcher.",
+  },
+  reports: {
+    example: "Report: Al + Ti · executive summary, score table, applications, export PDF/JSON/SVG.",
+    metrics: ["Summary", "Metrics", "Recommendations", "Exports"],
+    why: "Reports convert simulations into something users can send, present or archive.",
+  },
+  lab: {
+    example: "Saved Discoveries: Al + Ti poster, Titanium 50-year scenario, Seismo readout.",
+    metrics: ["Saved items", "Reports", "Posters", "Recent missions"],
+    why: "Saved Discoveries gives subscribers a reason to return and keep building a research vault.",
+  },
+  beta: {
+    example: "Explorer $0 → Pro Researcher $19/month → Pro Lab $35/month.",
+    metrics: ["Free browsing", "Reports + exports", "Advanced labs", "Support"],
+    why: "Pricing needs to explain the upgrade path without making the free experience feel useless.",
+  },
+};
+
+function pageDataFor(page) {
+  return { ...PAGE_DATA_INTELLIGENCE.default, ...(PAGE_DATA_INTELLIGENCE[page] || {}) };
+}
+
+function MetricChip({ children }) {
+  return <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-200">{children}</span>;
+}
+
+function PageDataPanel({ page = "dashboard", compact = false }) {
+  const d = pageDataFor(page);
+  return (
+    <div className={`${compact ? "mt-4" : "mt-6"} grid gap-4 xl:grid-cols-[1fr_.85fr]`}>
+      <div className="rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.06] p-4">
+        <div className="text-xs font-black uppercase tracking-[.22em] text-emerald-200">Example output</div>
+        <div className="mt-2 text-sm leading-6 text-emerald-50">{d.example}</div>
+        <div className="mt-4 flex flex-wrap gap-2">{d.metrics.map((m) => <MetricChip key={m}>{m}</MetricChip>)}</div>
+      </div>
+      <div className="rounded-[1.5rem] border border-amber-300/15 bg-amber-300/[0.06] p-4">
+        <div className="text-xs font-black uppercase tracking-[.22em] text-amber-200">Why it matters</div>
+        <div className="mt-2 text-sm leading-6 text-amber-50">{d.why}</div>
+        <div className="mt-3 rounded-2xl border border-white/10 bg-black/20 p-3 text-xs leading-5 text-slate-300">{d.trust}</div>
+      </div>
+    </div>
+  );
+}
+
+function ScoreMeaningPanel({ page = "dashboard" }) {
+  const d = pageDataFor(page);
+  return (
+    <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      {d.scoreMeaning.slice(0, 4).map(([label, meaning]) => (
+        <div key={label} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+          <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{label}</div>
+          <div className="mt-2 text-xs leading-5 text-slate-400">{meaning}</div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function GuidePanel({ page = "dashboard", compact = false }) {
@@ -426,10 +571,12 @@ function GuidePanel({ page = "dashboard", compact = false }) {
           <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">{g.description}</p>
         </div>
         <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
-          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">What to do next</div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Recommended next action</div>
           <div className="mt-2">{g.next}</div>
         </div>
       </div>
+      <PageDataPanel page={page} compact={compact} />
+      <ScoreMeaningPanel page={page} />
     </Panel>
   );
 }
@@ -487,9 +634,13 @@ function RealTimeNetworkPanel({ discoveries = [], setPage }) {
 
 function PageHelpStrip({ page = "dashboard" }) {
   const g = guidanceForPage(page);
+  const d = pageDataFor(page);
   return (
     <div className="rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
-      <b>{g.title}:</b> {g.description} <span className="text-amber-100">Next: {g.next}</span>
+      <b>{g.title}:</b> {g.description}
+      <div className="mt-2 text-amber-100"><b>Next:</b> {g.next}</div>
+      <div className="mt-2 text-emerald-100"><b>Example:</b> {d.example}</div>
+      <div className="mt-2 text-xs leading-5 text-slate-300"><b>Trust note:</b> {d.trust}</div>
     </div>
   );
 }
