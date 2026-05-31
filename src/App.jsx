@@ -4242,9 +4242,9 @@ function CalculationCore() {
   const lowercase = "abcdefghijklmnopqrstuvwxyz".split("");
   const greekLetters = ["α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω"];
   const [mode, setMode] = useState("calculate");
-  const [expression, setExpression] = useState("(A^2 + B) / C");
-  const [equationTitle, setEquationTitle] = useState("Simple Equation");
-  const [result, setResult] = useState("64");
+  const [expression, setExpression] = useState("A + B");
+  const [equationTitle, setEquationTitle] = useState("Simple Live Equation");
+  const [result, setResult] = useState("—");
   const [error, setError] = useState("");
   const [activeVariable, setActiveVariable] = useState("A");
   const [variableSearch, setVariableSearch] = useState("");
@@ -4283,12 +4283,23 @@ function CalculationCore() {
       lambda: 0.2,
       phi: 3,
       mu: 2,
+      α: 1,
+      β: 2,
+      γ: 1.09,
+      δ: 0.5,
+      ε: 0.01,
+      θ: 45,
+      λ: 0.2,
+      μ: 2,
+      π: Math.PI,
+      φ: 3,
+      Ω: 1,
     };
   });
   const [blocks, setBlocks] = useState([
-    { id: "eq-main", type: "Equation", title: "Equation", formula: "Y = (A^2 + B) / C", note: "A clear equation block with alphabet values.", accent: "cyan" },
-    { id: "eq-values", type: "Values", title: "Values", formula: "A = 12, B = 48, C = 3", note: "Every letter can become a variable.", accent: "amber" },
-    { id: "eq-result", type: "Result", title: "Result", formula: "Y = 64", note: "This is ready for a report, poster or export card.", accent: "emerald" },
+    { id: "eq-main", type: "Equation", title: "Equation", formula: "Y = A + B", note: "Type or select variables. The result updates live as the equation changes.", accent: "cyan" },
+    { id: "eq-values", type: "Values", title: "Values", formula: "A = 12, B = 48, C = 3", note: "Every letter can become a variable. Change a value and the live result recalculates.", accent: "amber" },
+    { id: "eq-result", type: "Result", title: "Live Result", formula: "Live result appears here", note: "No stuck values: this block mirrors the current equation and values.", accent: "emerald" },
   ]);
 
   const studioModes = [
@@ -4371,6 +4382,10 @@ function CalculationCore() {
   const filteredVariables = variableKeys.filter((key) => key.toLowerCase().includes(variableSearch.toLowerCase()));
   const selectedBlock = blocks.find((block) => block.id === selectedBlockId) || blocks[0];
   const conversionUnits = conversionTables[converterCategory] || {};
+  const valuesSummary = ["A", "B", "C", "X", "Y", "a", "b", "c", "r", "t", "I", "I0", "K"]
+    .filter((key) => variables[key] !== undefined)
+    .map((key) => `${key}=${variables[key]}`)
+    .join(", ");
 
   const normalizeExpression = (value) => value
     .replace(/π/g, "pi")
@@ -4447,6 +4462,14 @@ function CalculationCore() {
     setConverterTo("J");
   };
 
+  const changeConverterCategory = (category) => {
+    const units = Object.keys(conversionTables[category] || {});
+    setConverterCategory(category);
+    setConverterFrom(units[0] || "");
+    setConverterTo(units[1] || units[0] || "");
+    setConverterValue("1");
+  };
+
   const resetBoard = () => {
     const starterBlocks = [
       { id: "eq-main", type: "Equation", title: "Equation", formula: expression || "No equation yet", note: "A clear equation block with alphabet values.", accent: "cyan" },
@@ -4482,6 +4505,7 @@ function CalculationCore() {
       { id: "eq-values", type: "Values", title: "Preset Values", formula: Object.entries(preset.vars).map(([k, v]) => `${k}=${v}`).join(", "), note: "These values were loaded from the selected framework preset.", accent: "amber" },
       ...prev.filter((block) => !["eq-main", "eq-values"].includes(block.id)),
     ]);
+    setSelectedBlockId("eq-main");
     setMode("calculate");
   };
 
@@ -4505,7 +4529,8 @@ function CalculationCore() {
 
   const duplicateBlock = () => {
     if (!selectedBlock) return;
-    addBlock({ ...selectedBlock, id: undefined, title: `${selectedBlock.title} Copy` });
+    const { id, ...clone } = selectedBlock;
+    addBlock({ ...clone, title: `${selectedBlock.title} Copy` });
   };
 
   const convertTemperature = () => {
@@ -4554,6 +4579,47 @@ function CalculationCore() {
     });
   };
 
+  const formatResult = (raw) => {
+    if (typeof raw === "number") {
+      if (!Number.isFinite(raw)) return "Not finite";
+      return Number(raw).toPrecision(8).replace(/\.0+$/, "");
+    }
+    return String(raw);
+  };
+
+  useEffect(() => {
+    const trimmed = expression.trim();
+    if (!trimmed) {
+      setResult("—");
+      setError("");
+      setBlocks((prev) => prev.map((block) => block.id === "eq-result" ? { ...block, formula: "No equation yet", note: "Start typing, choose letters, or load a preset. The value will update live." } : block));
+      return;
+    }
+
+    try {
+      const pretty = formatResult(evaluateExpression(trimmed));
+      setResult(pretty);
+      setError("");
+      setBlocks((prev) => prev.map((block) => {
+        if (block.id === "eq-main") return { ...block, formula: `Y = ${trimmed}`, note: "Active equation. Edit it directly, use the alphabet picker, or load a framework preset." };
+        if (block.id === "eq-values") return { ...block, formula: valuesSummary || "No variables set", note: "Current variable table. Reset Values restores a safe starter set." };
+        if (block.id === "eq-result") return { ...block, formula: `${trimmed} = ${pretty}`, note: "Live calculation result. This updates automatically as values or symbols change." };
+        return block;
+      }));
+    } catch (err) {
+      setResult("Needs input");
+      setError("Live check: finish the equation or check variable names. Use * multiply, / divide, ^ powers, sqrt(), log10(), ln().");
+      setBlocks((prev) => prev.map((block) => block.id === "eq-result" ? { ...block, formula: "Equation needs input", note: "The live engine is waiting for a valid equation." } : block));
+    }
+  }, [expression, variables]);
+
+  const MiniGuide = ({ title, children }) => (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-slate-300">
+      <div className="mb-1 text-xs font-black uppercase tracking-[.2em] text-cyan-200">{title}</div>
+      {children}
+    </div>
+  );
+
   const quality = Math.min(99, 60 + Math.min(20, expression.length / 3) + Math.min(10, blocks.length * 2) + (history.length ? 8 : 0));
 
   return (
@@ -4578,10 +4644,14 @@ function CalculationCore() {
             </div>
             <div className="rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 shadow-[0_0_90px_rgba(34,211,238,.12)]">
               <div className="text-xs uppercase tracking-[.25em] text-cyan-200">live calculation</div>
-              <input value={equationTitle} onChange={(event) => setEquationTitle(event.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-xl font-black text-white" />
-              <textarea value={expression} onChange={(event) => setExpression(event.target.value)} rows={3} className="mt-3 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-4 font-mono text-2xl text-cyan-100" />
+              <MiniGuide title="Does it work live?">Yes. Edit the equation or any variable value and the result below recalculates automatically. Press Solve only when you want to save it into history.</MiniGuide>
+              <label className="mt-3 block text-xs font-black uppercase tracking-[.2em] text-slate-500">Equation name</label>
+              <input value={equationTitle} onChange={(event) => setEquationTitle(event.target.value)} placeholder="Name this calculation" className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-xl font-black text-white" />
+              <label className="mt-3 block text-xs font-black uppercase tracking-[.2em] text-slate-500">Equation input</label>
+              <textarea value={expression} onChange={(event) => setExpression(event.target.value)} rows={3} placeholder="Example: A + B or sqrt(a^2 + b^2)" className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-4 font-mono text-2xl text-cyan-100" />
+              <p className="mt-2 text-xs leading-5 text-slate-400">Use letters from the alphabet picker, normal numbers, + - * /, ^ for powers, and functions like sqrt(), log10(), ln(), sin(), cos().</p>
               <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
-                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-emerald-200">result</div><div className="mt-1 break-all text-4xl font-black text-emerald-100">{result}</div></div>
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-emerald-200">live result</div><div className="mt-1 break-all text-4xl font-black text-emerald-100">{result}</div><div className="mt-2 text-xs leading-5 text-emerald-100/80">This value is generated from the current equation and variable table, not a fixed placeholder.</div></div>
                 <Button onClick={runCalculation} variant="primary" className="h-full px-8"><Calculator size={16} className="mr-2 inline" /> Solve</Button>
               </div>
               {error && <div className="mt-3 rounded-2xl border border-red-300/20 bg-red-300/10 p-4 text-sm text-red-100">{error}</div>}
@@ -4661,6 +4731,11 @@ function CalculationCore() {
         <Panel>
           <Pill gold><Zap size={12} /> converter</Pill>
           <h2 className="mt-3 text-4xl font-black">Convert units and add them to the board.</h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <MiniGuide title="Choose category">Pick Energy, Length, Pressure, Force, Temperature, Decibels and more.</MiniGuide>
+            <MiniGuide title="Enter value">Type the number you want converted. The result updates instantly.</MiniGuide>
+            <MiniGuide title="Add to board">Click Add to save the conversion as a whiteboard block.</MiniGuide>
+          </div>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <select value={converterCategory} onChange={(event) => { const next = event.target.value; const keys = Object.keys(conversionTables[next]); setConverterCategory(next); setConverterFrom(keys[0]); setConverterTo(keys[1] || keys[0]); }} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white">{Object.keys(conversionTables).map((cat) => <option key={cat}>{cat}</option>)}</select>
             <input value={converterValue} onChange={(event) => setConverterValue(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
@@ -4678,6 +4753,7 @@ function CalculationCore() {
           <Panel>
             <Pill gold><BookOpen size={12} /> frameworks</Pill>
             <h2 className="mt-3 text-3xl font-black">Choose a science area.</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-400">Every framework button below loads real equation presets into the live calculator. Nothing is a dead link.</p>
             <div className="mt-5 grid gap-2">
               {Object.keys(frameworks).map((name) => <button key={name} onClick={() => setSelectedFramework(name)} className={`rounded-2xl border px-4 py-3 text-left font-black ${selectedFramework === name ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-50" : "border-white/10 bg-black/25 text-slate-300 hover:bg-white/[0.05]"}`}>{name}</button>)}
             </div>
@@ -4685,6 +4761,7 @@ function CalculationCore() {
           <Panel>
             <Pill gold><Sparkles size={12} /> ready-made equations</Pill>
             <h2 className="mt-3 text-4xl font-black">{selectedFramework} presets.</h2>
+            <MiniGuide title="How presets work">Press Use This Equation and Calculation Studio loads the formula, fills the needed variables, switches back to Calculate, and updates the live result.</MiniGuide>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               {frameworks[selectedFramework].map((preset) => (
                 <div key={preset.name} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
@@ -4704,6 +4781,11 @@ function CalculationCore() {
           <Panel>
             <Pill gold><Layers size={12} /> whiteboard</Pill>
             <h2 className="mt-3 text-4xl font-black">Build the calculation story.</h2>
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              <MiniGuide title="Board title">Name the calculation pack users will export.</MiniGuide>
+              <MiniGuide title="Board purpose">Explain what the equation is proving or comparing.</MiniGuide>
+              <MiniGuide title="Blocks">Click any block to edit it in the inspector on the right.</MiniGuide>
+            </div>
             <div className="mt-5 grid gap-3 md:grid-cols-2">
               <input value={boardTitle} onChange={(event) => setBoardTitle(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
               <input value={boardPurpose} onChange={(event) => setBoardPurpose(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
@@ -4725,6 +4807,7 @@ function CalculationCore() {
           <Panel>
             <Pill gold><Settings size={12} /> inspector</Pill>
             <h2 className="mt-3 text-3xl font-black">Edit selected block.</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-400">Every input below changes the selected whiteboard block immediately. Duplicate and Delete now visibly affect the board.</p>
             {selectedBlock && <div className="mt-5 space-y-3">
               <input value={selectedBlock.title} onChange={(event) => updateBlock("title", event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
               <input value={selectedBlock.type} onChange={(event) => updateBlock("type", event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
@@ -4743,6 +4826,7 @@ function CalculationCore() {
           <div>
             <Pill gold><Clock3 size={12} /> session record</Pill>
             <h2 className="mt-3 text-3xl font-black">Recent calculations.</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Press Solve to save the current live calculation here. Click a history card to reload it into the calculator.</p>
           </div>
           <Button onClick={() => setHistory([])}>Clear History</Button>
         </div>
