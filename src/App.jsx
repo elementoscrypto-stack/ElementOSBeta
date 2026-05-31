@@ -3474,7 +3474,18 @@ function PeriodicTable({ selected, setSelected }) {
             <Pill gold>{cat}</Pill>
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
-            {metrics.map((l) => <Button key={l} onClick={() => setLayer(l)} variant={layer === l ? "primary" : "ghost"}>{l === "alignment" ? "Alignment" : l}</Button>)}
+            {metrics.map((l) => {
+              const layerLabel = ({
+                stability: "Stability",
+                conductivity: "Conductivity",
+                thermal: "Thermal",
+                diffusion: "Diffusion",
+                pressure: "Pressure",
+                rarity: "Rarity",
+                alignment: "ZDAR Alignment",
+              })[l] || l;
+              return <Button key={l} onClick={() => setLayer(l)} variant={layer === l ? "primary" : "ghost"}>{layerLabel}</Button>;
+            })}
             <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">{categories.map((c) => <option key={c}>{c}</option>)}</select>
             <select value={signal} onChange={(e) => setSignal(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">
               {['intelligence','rarity scan','thermal sweep','pressure scan','conductive search','substitute hunt'].map(x => <option key={x}>{x}</option>)}
