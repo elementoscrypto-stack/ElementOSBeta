@@ -4238,48 +4238,65 @@ function IsotopeLab() {
 }
 
 function CalculationCore() {
-  const [activeStudio, setActiveStudio] = useState("builder");
-  const [expression, setExpression] = useState("(12^2 + 48) / 6");
-  const [calcResult, setCalcResult] = useState("32");
-  const [calcError, setCalcError] = useState("");
-  const [equationName, setEquationName] = useState("Signal intensity model");
-  const [equationTemplate, setEquationTemplate] = useState("L = 10 log10(I / I0)");
-  const [selectedFramework, setSelectedFramework] = useState("Telemetry");
-  const [activeVariable, setActiveVariable] = useState("I");
-  const [conversionCategory, setConversionCategory] = useState("Energy");
-  const [conversionValue, setConversionValue] = useState(1);
-  const [conversionFrom, setConversionFrom] = useState("kWh");
-  const [conversionTo, setConversionTo] = useState("J");
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const lowercase = "abcdefghijklmnopqrstuvwxyz".split("");
+  const greekLetters = ["α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω"];
+  const [mode, setMode] = useState("calculate");
+  const [expression, setExpression] = useState("(A^2 + B) / C");
+  const [equationTitle, setEquationTitle] = useState("Simple Equation");
+  const [result, setResult] = useState("64");
+  const [error, setError] = useState("");
+  const [activeVariable, setActiveVariable] = useState("A");
+  const [variableSearch, setVariableSearch] = useState("");
+  const [symbolSearch, setSymbolSearch] = useState("");
+  const [selectedFramework, setSelectedFramework] = useState("Algebra");
+  const [converterCategory, setConverterCategory] = useState("Energy");
+  const [converterValue, setConverterValue] = useState("1");
+  const [converterFrom, setConverterFrom] = useState("kWh");
+  const [converterTo, setConverterTo] = useState("J");
   const [boardTitle, setBoardTitle] = useState("ElementOS Calculation Board");
-  const [boardNote, setBoardNote] = useState("Build equations, test values, convert units and export a clean calculation board.");
-  const [selectedBlockId, setSelectedBlockId] = useState("block-main");
-  const [boardBlocks, setBoardBlocks] = useState([
-    { id: "block-main", type: "Equation", title: "Main Equation", formula: "L = 10 log10(I / I0)", note: "Build a clean signal-ratio calculation.", accent: "cyan", size: "large" },
-    { id: "block-vars", type: "Variables", title: "Known Values", formula: "I = 100, I0 = 10", note: "Variables can be edited and reused in the board.", accent: "amber", size: "medium" },
-    { id: "block-result", type: "Result", title: "Output", formula: "L = 20 dB", note: "A readable result card for reports and posters.", accent: "emerald", size: "wide" },
-  ]);
+  const [boardPurpose, setBoardPurpose] = useState("Build a clean calculation story: equation, values, result, explanation and export-ready notes.");
+  const [selectedBlockId, setSelectedBlockId] = useState("eq-main");
   const [history, setHistory] = useState([]);
-  const [variables, setVariables] = useState({
-    A: 12,
-    B: 6,
-    C: 3,
-    I: 100,
-    I0: 10,
-    K: 1,
-    m: 2,
-    v: 14,
-    r: 5,
-    t: 50,
-    c: 299792458,
-    h: 6.626e-34,
+  const [variables, setVariables] = useState(() => {
+    const values = {};
+    alphabet.forEach((letter, index) => { values[letter] = [12, 48, 3, 9.81, 2.5, 50, 96, 22, 100, 10][index] ?? 0; });
+    lowercase.forEach((letter, index) => { values[letter] = [3, 4, 299792458, 10, 2.718281828, 5e14, 9.81, 6.626e-34, 100, 0.03][index] ?? 0; });
+    return {
+      ...values,
+      pi: Math.PI,
+      e: Math.E,
+      I: 100,
+      I0: 10,
+      K: 1,
+      S: 96,
+      P: 22,
+      D: 9,
+      C: 3,
+      DeltaX: 5,
+      DeltaY: 20,
+      DeltaR: 144,
+      DeltaO: 12,
+      signal: 88,
+      confidence: 0.91,
+      gamma: 1.09,
+      lambda: 0.2,
+      phi: 3,
+      mu: 2,
+    };
   });
+  const [blocks, setBlocks] = useState([
+    { id: "eq-main", type: "Equation", title: "Equation", formula: "Y = (A^2 + B) / C", note: "A clear equation block with alphabet values.", accent: "cyan" },
+    { id: "eq-values", type: "Values", title: "Values", formula: "A = 12, B = 48, C = 3", note: "Every letter can become a variable.", accent: "amber" },
+    { id: "eq-result", type: "Result", title: "Result", formula: "Y = 64", note: "This is ready for a report, poster or export card.", accent: "emerald" },
+  ]);
 
-  const tabs = [
-    ["builder", "Builder"],
-    ["whiteboard", "Whiteboard"],
-    ["converter", "Converter"],
-    ["frameworks", "Frameworks"],
-    ["history", "History"],
+  const studioModes = [
+    ["calculate", "Calculate", Calculator, "Enter values and solve"],
+    ["build", "Build", ClipboardList, "Create equations"],
+    ["convert", "Convert", Zap, "Units and values"],
+    ["board", "Whiteboard", Layers, "Arrange blocks"],
+    ["library", "Library", BookOpen, "Frameworks and symbols"],
   ];
 
   const conversionTables = {
@@ -4287,473 +4304,410 @@ function CalculationCore() {
     Length: { m: 1, cm: 0.01, mm: 0.001, km: 1000, inch: 0.0254, ft: 0.3048, mile: 1609.344 },
     Pressure: { Pa: 1, kPa: 1000, MPa: 1000000, bar: 100000, atm: 101325, psi: 6894.757 },
     Force: { N: 1, kN: 1000, lbf: 4.44822, kgf: 9.80665 },
-    Temperature: { C: 1, F: 1, K: 1 },
     Frequency: { Hz: 1, kHz: 1000, MHz: 1000000, GHz: 1000000000, THz: 1000000000000 },
     Time: { s: 1, min: 60, hr: 3600, day: 86400, year: 31557600 },
     Angle: { deg: 1, rad: 57.295779513, turn: 360 },
+    Mass: { g: 0.001, kg: 1, tonne: 1000, lb: 0.45359237, oz: 0.0283495 },
+    Area: { m2: 1, cm2: 0.0001, km2: 1000000, ft2: 0.092903, acre: 4046.856, hectare: 10000 },
+    Volume: { m3: 1, L: 0.001, mL: 0.000001, ft3: 0.0283168, gal: 0.00378541 },
+    Temperature: { C: "C", F: "F", K: "K" },
+    Decibels: { ratio: 1, dB: 1 },
   };
 
   const frameworks = {
     Algebra: [
-      { name: "Linear model", formula: "y = m x + b", use: "Create simple relationships, forecasts and trend lines.", variables: { m: 2, x: 10, b: 4 } },
-      { name: "Quadratic response", formula: "y = a x^2 + b x + c", use: "Model curves, peaks, turning points and thresholds.", variables: { a: 1, x: 4, b: 2, c: 1 } },
-      { name: "Ratio model", formula: "R = A / B", use: "Compare two values such as load, signal, cost or pressure.", variables: { A: 120, B: 30 } },
+      { name: "Linear equation", formula: "Y = M * X + B", expression: "M * X + B", use: "Trend lines, pricing, simple projections and scoring.", vars: { M: 2, X: 10, B: 4 } },
+      { name: "Quadratic curve", formula: "Y = A * X^2 + B * X + C", expression: "A * X^2 + B * X + C", use: "Curves, thresholds, peaks and response modelling.", vars: { A: 1, X: 4, B: 2, C: 1 } },
+      { name: "Weighted score", formula: "Score = A*0.4 + B*0.35 + C*0.25", expression: "A*0.4 + B*0.35 + C*0.25", use: "Blend metrics into a clean decision score.", vars: { A: 96, B: 88, C: 74 } },
     ],
     Geometry: [
-      { name: "Circle area", formula: "A = pi r^2", use: "Area of radial fields, circular surfaces and coverage zones.", variables: { r: 5 } },
-      { name: "Triangle area", formula: "A = 0.5 b h", use: "Simple structural faces, wedges and pressure triangles.", variables: { b: 12, h: 8 } },
-      { name: "Sphere volume", formula: "V = 4/3 pi r^3", use: "Volumes for particles, cores, shells and spherical fields.", variables: { r: 3 } },
+      { name: "Circle area", formula: "A = πr^2", expression: "pi * r^2", use: "Fields, circular coverage, sections and surfaces.", vars: { r: 5 } },
+      { name: "Sphere volume", formula: "V = 4/3πr^3", expression: "4/3 * pi * r^3", use: "Particles, cores, volume estimates and spherical systems.", vars: { r: 3 } },
+      { name: "Pythagorean distance", formula: "c = sqrt(a^2 + b^2)", expression: "sqrt(a^2 + b^2)", use: "Distance, vector magnitude and geometry checks.", vars: { a: 3, b: 4 } },
     ],
     Calculus: [
-      { name: "Rate of change", formula: "dy/dx", use: "Think about slope, sensitivity, drift and change.", variables: { dy: 20, dx: 5 } },
-      { name: "Accumulation", formula: "S = f t", use: "Total exposure, total signal or total output over time.", variables: { f: 6, t: 50 } },
-      { name: "Exponential change", formula: "X = X0 e^(k t)", use: "Growth, decay and long horizon change.", variables: { X0: 100, k: 0.03, t: 50 } },
+      { name: "Rate of change", formula: "R = ΔY / ΔX", expression: "DeltaY / DeltaX", use: "Slope, drift, sensitivity and change per interval.", vars: { DeltaY: 20, DeltaX: 5 } },
+      { name: "Accumulation", formula: "S = f * t", expression: "f * t", use: "Simple integral-style total over time.", vars: { f: 6, t: 50 } },
+      { name: "Exponential change", formula: "X = X0 * e^(k*t)", expression: "X0 * e^(k*t)", use: "Growth, decay and long-horizon simulation.", vars: { X0: 100, k: 0.03, t: 50 } },
     ],
     Telemetry: [
-      { name: "Decibel intensity", formula: "L = 10 log10(I / I0)", use: "Convert an intensity ratio into a decibel-style signal score.", variables: { I: 100, I0: 10 } },
-      { name: "Temporal ratio", formula: "T = K ln(I / I0)", use: "A simple Roper-style telemetry ratio using natural log.", variables: { K: 1, I: 100, I0: 10 } },
-      { name: "Event pressure", formula: "Ep = signal confidence t", use: "Combine signal, confidence and time into one readable event value.", variables: { signal: 88, confidence: 0.91, t: 50 } },
+      { name: "Decibel intensity", formula: "L = 10log10(I/I0)", expression: "10 * log10(I / I0)", use: "Signal ratio converted into a decibel-style value.", vars: { I: 100, I0: 10 } },
+      { name: "Temporal ratio", formula: "T = K ln(I/I0)", expression: "K * ln(I / I0)", use: "Natural-log telemetry ratio for signal comparison.", vars: { K: 1, I: 100, I0: 10 } },
+      { name: "Event pressure", formula: "EP = signal * confidence * t", expression: "signal * confidence * t", use: "Combine signal strength, confidence and time.", vars: { signal: 88, confidence: 0.91, t: 50 } },
     ],
     Mechanics: [
-      { name: "Newton force", formula: "F = m a", use: "Classical force from mass and acceleration.", variables: { m: 12, a: 9.81 } },
-      { name: "Kinetic energy", formula: "KE = 0.5 m v^2", use: "Energy of moving systems and impact scenarios.", variables: { m: 2, v: 14 } },
-      { name: "Lagrangian", formula: "L = T - V", use: "Simple system behaviour from kinetic minus potential energy.", variables: { T: 120, V: 45 } },
+      { name: "Force", formula: "F = m * a", expression: "m * a", use: "Classical force from mass and acceleration.", vars: { m: 12, a: 9.81 } },
+      { name: "Kinetic energy", formula: "KE = 0.5mv^2", expression: "0.5 * m * v^2", use: "Energy of moving systems.", vars: { m: 2, v: 14 } },
+      { name: "Lagrangian", formula: "L = T - V", expression: "T - V", use: "System behaviour from kinetic minus potential energy.", vars: { T: 120, V: 45 } },
     ],
     Relativity: [
-      { name: "Mass energy", formula: "E = m c^2", use: "Mass-energy equivalence for conceptual physics boards.", variables: { m: 1, c: 299792458 } },
-      { name: "Lorentz factor", formula: "gamma = 1 / sqrt(1 - v^2 / c^2)", use: "Special relativity scaling as velocity approaches light speed.", variables: { v: 120000000, c: 299792458 } },
-      { name: "Time dilation", formula: "dt2 = gamma dt", use: "Relative time comparison using a chosen Lorentz factor.", variables: { gamma: 1.09, dt: 10 } },
+      { name: "Mass energy", formula: "E = mc^2", expression: "m * c^2", use: "Mass-energy equivalence.", vars: { m: 1, c: 299792458 } },
+      { name: "Lorentz factor", formula: "γ = 1/sqrt(1-v^2/c^2)", expression: "1 / sqrt(1 - v^2 / c^2)", use: "Special relativity scaling.", vars: { v: 120000000, c: 299792458 } },
     ],
     Quantum: [
-      { name: "Planck relation", formula: "E = h f", use: "Photon energy from frequency.", variables: { h: 6.626e-34, f: 5e14 } },
-      { name: "de Broglie", formula: "lambda = h / p", use: "Matter wavelength from momentum.", variables: { h: 6.626e-34, p: 2.2e-24 } },
-      { name: "Field potential", formula: "V = mu^2 phi^2 + lambda phi^4", use: "Conceptual quantum field potential shape.", variables: { mu: 2, phi: 3, lambda: 0.2 } },
+      { name: "Planck relation", formula: "E = h * f", expression: "h * f", use: "Photon energy from frequency.", vars: { h: 6.626e-34, f: 5e14 } },
+      { name: "de Broglie", formula: "λ = h / p", expression: "h / p", use: "Matter wavelength from momentum.", vars: { h: 6.626e-34, p: 2.2e-24 } },
+      { name: "Field potential", formula: "V = μ^2φ^2 + λφ^4", expression: "mu^2 * phi^2 + lambda * phi^4", use: "Conceptual quantum field potential shape.", vars: { mu: 2, phi: 3, lambda: 0.2 } },
     ],
     Temporal: [
-      { name: "Stability horizon", formula: "H = S / (P + C + D)", use: "Simple material lifetime reasoning from stability and risk loads.", variables: { S: 96, P: 22, C: 14, D: 9 } },
-      { name: "Future exposure", formula: "X = X0 e^(k t)", use: "Future-state exposure across time.", variables: { X0: 40, k: 0.025, t: 50 } },
-      { name: "Observation gradient", formula: "Tg = DeltaR / DeltaO", use: "Conceptual temporal observation gradient.", variables: { DeltaR: 144, DeltaO: 12 } },
+      { name: "Stability horizon", formula: "H = S/(P+C+D)", expression: "S / (P + C + D)", use: "Simple material lifetime reasoning.", vars: { S: 96, P: 22, C: 14, D: 9 } },
+      { name: "Observation gradient", formula: "Tg = ΔR / ΔO", expression: "DeltaR / DeltaO", use: "Conceptual temporal observation gradient.", vars: { DeltaR: 144, DeltaO: 12 } },
     ],
   };
 
   const symbolGroups = {
-    Numbers: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."],
-    Operators: ["+", "-", "*", "/", "^", "(", ")", "=", "sqrt(", "log10(", "ln(", "e^(", "pi"],
-    Variables: ["A", "B", "C", "x", "y", "m", "a", "b", "r", "t", "I", "I0", "K", "v", "c", "h", "f"],
-    Greek: ["alpha", "beta", "gamma", "delta", "theta", "lambda", "mu", "phi", "omega"],
-    Shapes: ["Circle", "Triangle", "Square", "Sphere", "Vector", "Arrow", "Axis", "Grid"],
-    Symbols: ["π", "√", "∫", "∂", "Σ", "∞", "≈", "≤", "≥", "Δ", "λ", "γ", "φ", "Ω"],
+    Essentials: ["+", "-", "*", "/", "^", "(", ")", "=", "."],
+    Functions: ["sqrt(", "log10(", "ln(", "sin(", "cos(", "tan(", "abs(", "round(", "min(", "max(", "pi", "e"],
+    Uppercase: alphabet,
+    Lowercase: lowercase,
+    Greek: greekLetters,
+    Shapes: ["Circle", "Triangle", "Square", "Rectangle", "Sphere", "Cube", "Vector", "Axis", "Grid", "Arrow"],
+    Advanced: ["π", "√", "∫", "∂", "Σ", "∞", "≈", "≤", "≥", "Δ", "λ", "γ", "φ", "Ω"],
   };
 
-  const quickTemplates = [
-    { title: "Basic arithmetic", expression: "(12^2 + 48) / 6", framework: "Algebra" },
-    { title: "Decibel ratio", expression: "10 * log10(I / I0)", framework: "Telemetry" },
-    { title: "Circle area", expression: "pi * r^2", framework: "Geometry" },
-    { title: "Kinetic energy", expression: "0.5 * m * v^2", framework: "Mechanics" },
-    { title: "Energy mass", expression: "m * c^2", framework: "Relativity" },
-    { title: "Stability horizon", expression: "S / (P + C + D)", framework: "Temporal" },
-  ];
+  const allSymbols = Object.entries(symbolGroups).flatMap(([group, items]) => items.map((symbol) => ({ group, symbol })));
+  const filteredSymbols = allSymbols.filter(({ group, symbol }) => `${group} ${symbol}`.toLowerCase().includes(symbolSearch.toLowerCase()));
+  const variableKeys = Object.keys(variables).sort((a, b) => a.localeCompare(b));
+  const filteredVariables = variableKeys.filter((key) => key.toLowerCase().includes(variableSearch.toLowerCase()));
+  const selectedBlock = blocks.find((block) => block.id === selectedBlockId) || blocks[0];
+  const conversionUnits = conversionTables[converterCategory] || {};
 
-  const sanitizeMathExpression = (raw) => {
-    let next = String(raw || "")
-      .replace(/π/g, "pi")
-      .replace(/×/g, "*")
-      .replace(/÷/g, "/")
-      .replace(/−/g, "-")
-      .replace(/√\s*\(/g, "sqrt(")
-      .replace(/ln\s*\(/g, "log(")
-      .replace(/log₁₀\s*\(/g, "log10(")
-      .replace(/log10\s*\(/g, "log10(")
-      .replace(/e\^\s*\(/g, "exp(")
-      .replace(/([A-Za-z0-9_\.\)])\s*\^\s*([A-Za-z0-9_\.\(])/g, "$1**$2");
+  const normalizeExpression = (value) => value
+    .replace(/π/g, "pi")
+    .replace(/√/g, "sqrt")
+    .replace(/\^/g, "**")
+    .replace(/\bln\s*\(/g, "log(")
+    .replace(/\blog10\s*\(/g, "log10(")
+    .replace(/\be\s*\^\s*\(/g, "exp(");
 
-    Object.entries(variables).forEach(([key, value]) => {
-      next = next.replace(new RegExp(`\\b${key}\\b`, "g"), `(${Number(value) || 0})`);
-    });
-
-    next = next
-      .replace(/\bpi\b/g, "Math.PI")
-      .replace(/\be\b/g, "Math.E")
-      .replace(/\bsqrt\(/g, "Math.sqrt(")
-      .replace(/\blog\(/g, "Math.log(")
-      .replace(/\blog10\(/g, "Math.log10(")
-      .replace(/\bexp\(/g, "Math.exp(")
-      .replace(/\bsin\(/g, "Math.sin(")
-      .replace(/\bcos\(/g, "Math.cos(")
-      .replace(/\btan\(/g, "Math.tan(")
-      .replace(/\babs\(/g, "Math.abs(")
-      .replace(/\bpow\(/g, "Math.pow(");
-
-    if (/[^0-9+\-*/().,\sMathPIEabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_]/.test(next)) {
-      throw new Error("Unsupported character in expression.");
-    }
-
-    return next;
+  const evaluateExpression = (expr) => {
+    const prepared = normalizeExpression(expr);
+    const mathScope = {
+      sqrt: Math.sqrt,
+      log10: Math.log10,
+      log: Math.log,
+      ln: Math.log,
+      exp: Math.exp,
+      sin: Math.sin,
+      cos: Math.cos,
+      tan: Math.tan,
+      abs: Math.abs,
+      round: Math.round,
+      min: Math.min,
+      max: Math.max,
+      pow: Math.pow,
+      pi: Math.PI,
+      e: Math.E,
+    };
+    return Function("scope", `with (scope) { return (${prepared}); }`)({ ...mathScope, ...variables });
   };
 
-  const runExpression = (raw = expression) => {
+  const runCalculation = () => {
     try {
-      const prepared = sanitizeMathExpression(raw);
-      const result = Function(`"use strict"; return (${prepared});`)();
-      if (!Number.isFinite(Number(result))) throw new Error("Result is not finite.");
-      const display = Number(result).toPrecision(8).replace(/\.0+$/, "");
-      setCalcResult(display);
-      setCalcError("");
-      return display;
-    } catch (error) {
-      setCalcError(error.message || "Could not calculate expression.");
-      return null;
+      const raw = evaluateExpression(expression);
+      const pretty = Number.isFinite(raw) ? Number(raw).toPrecision(8).replace(/\.0+$/, "") : String(raw);
+      setResult(pretty);
+      setError("");
+      setHistory((prev) => [{ expression, result: pretty, at: new Date().toLocaleTimeString(), title: equationTitle }, ...prev].slice(0, 12));
+      setBlocks((prev) => prev.map((block) => block.id === "eq-result" ? { ...block, formula: `${expression} = ${pretty}`, note: "Latest solved result from Calculation Studio." } : block));
+    } catch (err) {
+      setError("Check the equation: use * for multiply, / for divide, ^ for powers, and variables that have values.");
     }
   };
 
-  const conversionUnits = conversionTables[conversionCategory] || conversionTables.Energy;
-  const conversionResult = useMemo(() => {
-    const value = Number(conversionValue) || 0;
-    if (conversionCategory === "Temperature") {
-      const toC = conversionFrom === "C" ? value : conversionFrom === "F" ? (value - 32) * 5 / 9 : value - 273.15;
-      const out = conversionTo === "C" ? toC : conversionTo === "F" ? (toC * 9 / 5) + 32 : toC + 273.15;
-      return Number(out.toPrecision(8));
-    }
-    const base = value * (conversionUnits[conversionFrom] || 1);
-    const out = base / (conversionUnits[conversionTo] || 1);
-    return Number(out.toPrecision(8));
-  }, [conversionValue, conversionFrom, conversionTo, conversionCategory]);
-
-  const frameworkCards = frameworks[selectedFramework] || frameworks.Telemetry;
-  const selectedBlock = boardBlocks.find((block) => block.id === selectedBlockId) || boardBlocks[0];
-  const formulaQuality = Math.min(100, Math.max(42, equationTemplate.length * 2 + Object.keys(variables).length * 3));
-  const clarityScore = Math.min(99, 68 + boardBlocks.length * 6 + (calcError ? -18 : 8));
-  const exportScore = Math.min(99, 52 + boardBlocks.length * 8 + (boardTitle.length > 8 ? 10 : 0));
-
-  const appendToExpression = (token) => {
-    if (["Circle", "Triangle", "Square", "Sphere", "Vector", "Arrow", "Axis", "Grid"].includes(token)) {
-      addBoardBlock({ type: "Shape", title: token, formula: token === "Circle" ? "A = pi r^2" : token === "Triangle" ? "A = 0.5 b h" : token, note: `${token} diagram block added to the whiteboard.`, accent: "fuchsia", size: "medium" });
-      setActiveStudio("whiteboard");
+  const insertSymbol = (symbol) => {
+    const mapped = symbol === "π" ? "pi" : symbol === "√" ? "sqrt(" : symbol;
+    if (["Circle", "Triangle", "Square", "Rectangle", "Sphere", "Cube", "Vector", "Axis", "Grid", "Arrow"].includes(symbol)) {
+      addBlock({ type: "Shape", title: symbol, formula: symbol, note: `${symbol} added as a visual reasoning block.`, accent: "fuchsia" });
+      setMode("board");
       return;
     }
-    setExpression((current) => `${current}${current.endsWith(" ") || current.length === 0 ? "" : " "}${token}`);
+    setExpression((prev) => `${prev}${mapped}`);
   };
 
   const updateVariable = (key, value) => {
-    setVariables((current) => ({ ...current, [key]: value }));
+    const num = Number(value);
+    setVariables((prev) => ({ ...prev, [key]: Number.isNaN(num) ? value : num }));
   };
 
-  const addVariable = () => {
-    const key = activeVariable.trim() || "X";
-    setVariables((current) => ({ ...current, [key]: current[key] ?? 1 }));
+  const applyPreset = (preset) => {
+    setEquationTitle(preset.name);
+    setExpression(preset.expression);
+    setSelectedFramework(selectedFramework);
+    setVariables((prev) => ({ ...prev, ...preset.vars }));
+    setBlocks((prev) => [
+      { id: "eq-main", type: "Equation", title: preset.name, formula: preset.formula, note: preset.use, accent: "cyan" },
+      { id: "eq-values", type: "Values", title: "Preset Values", formula: Object.entries(preset.vars).map(([k, v]) => `${k}=${v}`).join(", "), note: "These values were loaded from the selected framework preset.", accent: "amber" },
+      ...prev.filter((block) => !["eq-main", "eq-values"].includes(block.id)),
+    ]);
+    setMode("calculate");
   };
 
-  const addBoardBlock = (block) => {
-    const id = `block-${Date.now()}-${Math.round(Math.random() * 999)}`;
-    const next = { id, type: "Equation", title: "New Block", formula: equationTemplate, note: "Editable calculation block.", accent: "cyan", size: "medium", ...block };
-    setBoardBlocks((current) => [...current, next]);
-    setSelectedBlockId(id);
+  const addBlock = (block) => {
+    const next = { id: `block-${Date.now()}`, type: "Note", title: "New Block", formula: expression, note: "Edit this block in the inspector.", accent: "cyan", ...block };
+    setBlocks((prev) => [next, ...prev]);
+    setSelectedBlockId(next.id);
   };
 
-  const updateSelectedBlock = (field, value) => {
-    setBoardBlocks((current) => current.map((block) => block.id === selectedBlock?.id ? { ...block, [field]: value } : block));
+  const updateBlock = (field, value) => {
+    setBlocks((prev) => prev.map((block) => block.id === selectedBlockId ? { ...block, [field]: value } : block));
   };
 
-  const duplicateSelectedBlock = () => {
-    if (!selectedBlock) return;
-    addBoardBlock({ ...selectedBlock, id: undefined, title: `${selectedBlock.title} Copy` });
-  };
-
-  const deleteSelectedBlock = () => {
-    setBoardBlocks((current) => {
-      if (current.length <= 1) return current;
-      const next = current.filter((block) => block.id !== selectedBlockId);
-      setSelectedBlockId(next[0]?.id || "");
-      return next;
+  const deleteBlock = () => {
+    setBlocks((prev) => {
+      const remaining = prev.filter((block) => block.id !== selectedBlockId);
+      setSelectedBlockId(remaining[0]?.id || "");
+      return remaining.length ? remaining : prev;
     });
   };
 
-  const applyFrameworkPreset = (item) => {
-    setEquationName(item.name);
-    setEquationTemplate(item.formula);
-    setExpression(item.formula.includes("=") ? item.formula.split("=").slice(1).join("=").trim() : item.formula);
-    setVariables((current) => ({ ...current, ...item.variables }));
-    addBoardBlock({ type: "Equation", title: item.name, formula: item.formula, note: item.use, accent: "cyan", size: "large" });
-    setActiveStudio("builder");
+  const duplicateBlock = () => {
+    if (!selectedBlock) return;
+    addBlock({ ...selectedBlock, id: undefined, title: `${selectedBlock.title} Copy` });
   };
 
-  const saveCalculation = () => {
-    const result = runExpression();
-    const snapshot = {
-      id: `CALC-${String(history.length + 1).padStart(3, "0")}`,
-      title: equationName,
-      expression,
-      result: result || calcResult,
-      framework: selectedFramework,
-      blocks: boardBlocks.length,
-      created: new Date().toLocaleString(),
+  const convertTemperature = () => {
+    const value = Number(converterValue);
+    if (Number.isNaN(value)) return "Invalid";
+    let c = value;
+    if (converterFrom === "F") c = (value - 32) * 5 / 9;
+    if (converterFrom === "K") c = value - 273.15;
+    let out = c;
+    if (converterTo === "F") out = c * 9 / 5 + 32;
+    if (converterTo === "K") out = c + 273.15;
+    return Number(out.toPrecision(8));
+  };
+
+  const conversionResult = useMemo(() => {
+    if (converterCategory === "Temperature") return convertTemperature();
+    if (converterCategory === "Decibels") {
+      const value = Number(converterValue);
+      if (Number.isNaN(value) || value <= 0) return "Invalid";
+      return converterFrom === "ratio" && converterTo === "dB" ? Number((10 * Math.log10(value)).toPrecision(8)) : converterFrom === "dB" && converterTo === "ratio" ? Number((10 ** (value / 10)).toPrecision(8)) : value;
+    }
+    const units = conversionTables[converterCategory] || {};
+    const from = Number(units[converterFrom]);
+    const to = Number(units[converterTo]);
+    const value = Number(converterValue);
+    if (!from || !to || Number.isNaN(value)) return "Invalid";
+    return Number(((value * from) / to).toPrecision(8));
+  }, [converterCategory, converterValue, converterFrom, converterTo]);
+
+  const blockStyle = (accent) => {
+    const map = {
+      cyan: "border-cyan-300/25 bg-cyan-300/10",
+      amber: "border-amber-300/25 bg-amber-300/10",
+      emerald: "border-emerald-300/25 bg-emerald-300/10",
+      fuchsia: "border-fuchsia-300/25 bg-fuchsia-300/10",
     };
-    setHistory((current) => [snapshot, ...current].slice(0, 12));
-    addBoardBlock({ type: "Result", title: "Saved Result", formula: `${expression} = ${result || calcResult}`, note: `Saved to calculation history as ${snapshot.id}.`, accent: "emerald", size: "wide" });
+    return map[accent] || map.cyan;
   };
 
-  const exportCalculationPack = () => {
-    const result = runExpression() || calcResult;
+  const exportBoard = () => {
     exportAllFormats({
       baseName: "elementos-calculation-studio",
-      title: `Calculation Studio: ${boardTitle}`,
-      summary: `${equationName}. Expression: ${expression}. Result: ${result}. Conversion: ${conversionValue} ${conversionFrom} = ${conversionResult} ${conversionTo}. Framework: ${selectedFramework}.`,
-      payload: {
-        boardTitle,
-        boardNote,
-        equationName,
-        equationTemplate,
-        expression,
-        result,
-        variables,
-        conversionCategory,
-        conversionValue,
-        conversionFrom,
-        conversionTo,
-        conversionResult,
-        selectedFramework,
-        boardBlocks,
-      },
+      title: boardTitle,
+      summary: `${equationTitle}: ${expression} = ${result}. ${boardPurpose}`,
+      payload: { expression, result, variables, blocks, boardTitle, boardPurpose },
     });
   };
 
-  const resetBuilder = () => {
-    setExpression("");
-    setCalcResult("0");
-    setCalcError("");
-  };
-
-  const blockClass = (block) => {
-    const accents = {
-      cyan: "border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_42px_rgba(34,211,238,.08)]",
-      amber: "border-amber-300/30 bg-amber-300/10 shadow-[0_0_42px_rgba(251,191,36,.08)]",
-      emerald: "border-emerald-300/30 bg-emerald-300/10 shadow-[0_0_42px_rgba(52,211,153,.08)]",
-      fuchsia: "border-fuchsia-300/30 bg-fuchsia-300/10 shadow-[0_0_42px_rgba(217,70,239,.08)]",
-    };
-    const sizes = {
-      large: "md:col-span-2 min-h-[220px]",
-      wide: "md:col-span-2 min-h-[150px]",
-      medium: "min-h-[170px]",
-    };
-    return `${accents[block.accent] || accents.cyan} ${sizes[block.size] || sizes.medium}`;
-  };
+  const quality = Math.min(99, 60 + Math.min(20, expression.length / 3) + Math.min(10, blocks.length * 2) + (history.length ? 8 : 0));
 
   return (
-    <>
-      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/40 via-slate-950 to-blue-950/30 p-0">
+    <div className="space-y-6">
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-blue-950/25 p-0">
         <div className="relative p-6 md:p-8">
-          <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
+          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 left-1/4 h-60 w-60 rounded-full bg-amber-400/10 blur-3xl" />
           <div className="relative grid gap-8 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
             <div>
               <div className="flex flex-wrap gap-2">
-                <Pill gold><Calculator size={12} /> Calculation Studio</Pill>
-                <Pill><Dna size={12} /> equation builder</Pill>
-                <Pill><BookOpen size={12} /> framework library</Pill>
+                <Pill gold><Calculator size={12} /> calculation engine</Pill>
+                <Pill><ClipboardList size={12} /> build equations</Pill>
+                <Pill><Zap size={12} /> convert units</Pill>
+                <Pill><BookOpen size={12} /> science frameworks</Pill>
               </div>
-              <h1 className="mt-5 max-w-5xl text-5xl font-black leading-[.92] tracking-tight md:text-7xl">
-                Simple maths first. <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Billion-dollar boards after.</span>
-              </h1>
-              <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-                Enter values, build equations, convert units and assemble a clean whiteboard. Frameworks like algebra, geometry, telemetry, calculus, mechanics, relativity and quantum sit underneath the simple equation flow.
-              </p>
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Button onClick={() => { setActiveStudio("builder"); runExpression(); }} variant="primary" className="px-8 py-5 text-base"><Calculator size={17} className="mr-2 inline" /> Calculate</Button>
-                <Button onClick={() => setActiveStudio("whiteboard")} className="px-8 py-5 text-base"><ClipboardList size={17} className="mr-2 inline" /> Open Whiteboard</Button>
-                <Button onClick={exportCalculationPack} className="px-8 py-5 text-base"><Download size={17} className="mr-2 inline" /> Export Pack</Button>
+              <h1 className="mt-5 text-5xl font-black leading-[.94] md:text-7xl">Calculation Studio <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">made simple</span></h1>
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">A powerful science calculator that still feels easy: choose values, build an equation, solve it, explain it, then turn it into a clean whiteboard or export-ready report block.</p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                {["1. Enter values", "2. Build equation", "3. Solve + export"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm font-black text-cyan-100">{item}</div>)}
               </div>
             </div>
             <div className="rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 shadow-[0_0_90px_rgba(34,211,238,.12)]">
-              <div className="text-xs uppercase tracking-[.25em] text-cyan-200">live equation</div>
-              <div className="mt-3 rounded-2xl border border-white/10 bg-slate-950/80 p-5 font-mono text-2xl font-black text-cyan-100 md:text-4xl">{expression || "0"}</div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-[10px] uppercase tracking-[.2em] text-emerald-200">result</div><div className="mt-2 text-3xl font-black text-emerald-100">{calcResult}</div></div>
-                <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4"><div className="text-[10px] uppercase tracking-[.2em] text-amber-200">framework</div><div className="mt-2 text-lg font-black text-amber-100">{selectedFramework}</div></div>
-                <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-[10px] uppercase tracking-[.2em] text-cyan-200">blocks</div><div className="mt-2 text-3xl font-black text-cyan-100">{boardBlocks.length}</div></div>
+              <div className="text-xs uppercase tracking-[.25em] text-cyan-200">live calculation</div>
+              <input value={equationTitle} onChange={(event) => setEquationTitle(event.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-xl font-black text-white" />
+              <textarea value={expression} onChange={(event) => setExpression(event.target.value)} rows={3} className="mt-3 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-4 font-mono text-2xl text-cyan-100" />
+              <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-emerald-200">result</div><div className="mt-1 break-all text-4xl font-black text-emerald-100">{result}</div></div>
+                <Button onClick={runCalculation} variant="primary" className="h-full px-8"><Calculator size={16} className="mr-2 inline" /> Solve</Button>
               </div>
-              {calcError && <div className="mt-4 rounded-2xl border border-rose-300/20 bg-rose-300/10 p-4 text-sm text-rose-100">{calcError}</div>}
+              {error && <div className="mt-3 rounded-2xl border border-red-300/20 bg-red-300/10 p-4 text-sm text-red-100">{error}</div>}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button onClick={() => addBlock({ type: "Equation", title: equationTitle, formula: expression, note: `Solved result: ${result}`, accent: "cyan" })}>Add to Board</Button>
+                <Button onClick={exportBoard}>Export Pack</Button>
+              </div>
             </div>
           </div>
         </div>
       </Panel>
 
-      <div className="sticky top-2 z-20 rounded-[1.5rem] border border-white/10 bg-slate-950/85 p-2 backdrop-blur-xl">
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-          {tabs.map(([id, label]) => (
-            <button key={id} onClick={() => setActiveStudio(id)} className={`rounded-2xl px-4 py-3 text-sm font-black transition ${activeStudio === id ? "bg-cyan-300 text-slate-950" : "bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]"}`}>{label}</button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
-        <Panel>
-          <Pill gold><Calculator size={12} /> simple equation builder</Pill>
-          <h2 className="mt-3 text-4xl font-black">Type maths. Click symbols. Get a result.</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">This is the core of the page: a clean calculator that accepts values, variables and framework formulas without forcing users to understand the whole platform first.</p>
-          <div className="mt-6 space-y-4">
-            <label className="block text-sm text-slate-300">Equation name
-              <input value={equationName} onChange={(event) => setEquationName(event.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
-            </label>
-            <label className="block text-sm text-slate-300">Expression to calculate
-              <textarea value={expression} onChange={(event) => setExpression(event.target.value)} rows={3} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-4 font-mono text-lg text-white" />
-            </label>
-            <div className="grid gap-3 sm:grid-cols-4">
-              <Button onClick={() => runExpression()} variant="primary">Calculate</Button>
-              <Button onClick={saveCalculation}><Save size={15} className="mr-2 inline" /> Save</Button>
-              <Button onClick={() => addBoardBlock({ type: "Equation", title: equationName, formula: expression, note: `Result: ${calcResult}`, accent: "cyan", size: "large" })}>Add to Board</Button>
-              <Button onClick={resetBuilder} variant="danger">Clear</Button>
-            </div>
-          </div>
-        </Panel>
-
-        <Panel>
-          <Pill gold><Database size={12} /> variables</Pill>
-          <h2 className="mt-3 text-4xl font-black">Reusable values.</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            {Object.entries(variables).slice(0, 15).map(([key, value]) => (
-              <label key={key} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-xs font-black uppercase tracking-[.18em] text-slate-500">{key}
-                <input type="number" value={value} onChange={(event) => updateVariable(key, event.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950 p-3 text-base text-white" />
-              </label>
-            ))}
-          </div>
-          <div className="mt-4 flex gap-3">
-            <input value={activeVariable} onChange={(event) => setActiveVariable(event.target.value)} className="flex-1 rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" placeholder="New variable name" />
-            <Button onClick={addVariable}>Add Variable</Button>
-          </div>
-        </Panel>
+      <div className="grid gap-3 md:grid-cols-5">
+        {studioModes.map(([id, label, Icon, desc]) => (
+          <button key={id} onClick={() => setMode(id)} className={`rounded-[1.5rem] border p-4 text-left transition ${mode === id ? "border-cyan-300/50 bg-cyan-300/15 text-white shadow-2xl shadow-cyan-950/30" : "border-white/10 bg-white/[0.035] text-slate-300 hover:bg-white/[0.06]"}`}>
+            <Icon size={18} className="text-cyan-200" />
+            <div className="mt-3 text-lg font-black">{label}</div>
+            <div className="mt-1 text-xs leading-5 text-slate-500">{desc}</div>
+          </button>
+        ))}
       </div>
 
       <Panel>
-        <Pill gold><Sparkles size={12} /> symbol pad</Pill>
-        <h2 className="mt-3 text-4xl font-black">Build equations without hunting your keyboard.</h2>
-        <div className="mt-6 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
-          {Object.entries(symbolGroups).map(([group, symbols]) => (
-            <div key={group} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">{group}</div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {symbols.map((symbol) => <button key={`${group}-${symbol}`} onClick={() => appendToExpression(symbol)} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-black text-slate-200 hover:bg-cyan-300 hover:text-slate-950">{symbol}</button>)}
-              </div>
-            </div>
-          ))}
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Sparkles size={12} /> simplicity layer</Pill>
+            <h2 className="mt-3 text-3xl font-black">Use every option without getting lost.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">The interface is now organised around one job: build a useful equation. Everything else — alphabet values, symbols, frameworks, shapes, conversions and exports — supports that one flow.</p>
+          </div>
+          <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-5 py-4 text-right"><div className="text-3xl font-black text-emerald-100">{Math.round(quality)}%</div><div className="text-[10px] uppercase tracking-[.2em] text-emerald-200">board quality</div></div>
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
-        <Panel>
-          <Pill gold><BookOpen size={12} /> framework library</Pill>
-          <h2 className="mt-3 text-4xl font-black">Choose a maths framework.</h2>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {Object.keys(frameworks).map((name) => <button key={name} onClick={() => setSelectedFramework(name)} className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[.15em] ${selectedFramework === name ? "border-amber-300/60 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>{name}</button>)}
-          </div>
-          <div className="mt-6 grid gap-3">
-            {frameworkCards.map((item) => (
-              <button key={item.name} onClick={() => applyFrameworkPreset(item)} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10">
-                <div className="flex flex-wrap items-center justify-between gap-3"><div className="text-lg font-black text-white">{item.name}</div><div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-bold text-cyan-100">Use preset</div></div>
-                <div className="mt-3 rounded-xl bg-slate-950 p-3 font-mono text-sm text-cyan-100">{item.formula}</div>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{item.use}</p>
-              </button>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel>
-          <Pill gold><ClipboardList size={12} /> equation whiteboard</Pill>
-          <h2 className="mt-3 text-4xl font-black">Turn calculations into a board.</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <label className="block text-sm text-slate-300">Board title
-              <input value={boardTitle} onChange={(event) => setBoardTitle(event.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
-            </label>
-            <label className="block text-sm text-slate-300">Board note
-              <input value={boardNote} onChange={(event) => setBoardNote(event.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
-            </label>
-          </div>
-          <div className="mt-6 rounded-[2.5rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_top,rgba(34,211,238,.16),transparent_35%),linear-gradient(135deg,#020617,#081225)] p-5">
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-              <div><div className="text-xs uppercase tracking-[.25em] text-cyan-200">{boardTitle}</div><div className="mt-1 text-sm text-slate-400">{boardNote}</div></div>
-              <Button onClick={() => addBoardBlock({ type: "Result", title: "Result", formula: `${expression} = ${calcResult}`, note: "Auto-added from the calculator.", accent: "emerald", size: "wide" })}>Add Result</Button>
+      {(mode === "calculate" || mode === "build") && (
+        <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+          <Panel>
+            <Pill gold><Database size={12} /> values</Pill>
+            <h2 className="mt-3 text-3xl font-black">Alphabet variables.</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Pick any letter, assign a value, then use it in your equation.</p>
+            <input value={variableSearch} onChange={(event) => setVariableSearch(event.target.value)} placeholder="Search A, b, gamma, I0..." className="mt-4 w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
+            <div className="mt-4 max-h-[430px] overflow-y-auto pr-2">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-4">
+                {filteredVariables.slice(0, 80).map((key) => (
+                  <button key={key} onClick={() => setActiveVariable(key)} className={`rounded-2xl border p-3 text-left ${activeVariable === key ? "border-amber-300/50 bg-amber-300/15" : "border-white/10 bg-black/25 hover:bg-white/[0.05]"}`}>
+                    <div className="text-xl font-black text-white">{key}</div>
+                    <input value={variables[key]} onChange={(event) => updateVariable(key, event.target.value)} onClick={(event) => event.stopPropagation()} className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950 px-2 py-2 text-xs text-cyan-100" />
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              {boardBlocks.map((block) => (
-                <button key={block.id} onClick={() => setSelectedBlockId(block.id)} className={`rounded-[2rem] border p-5 text-left transition ${blockClass(block)} ${selectedBlockId === block.id ? "ring-2 ring-cyan-200/60" : ""}`}>
-                  <div className="flex items-center justify-between gap-3"><span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-slate-300">{block.type}</span><span className="text-xs text-slate-500">{block.size}</span></div>
-                  <div className="mt-4 text-2xl font-black text-white">{block.title}</div>
-                  <div className="mt-3 rounded-2xl border border-white/10 bg-slate-950/80 p-4 font-mono text-lg text-cyan-100">{block.formula}</div>
-                  <p className="mt-3 text-sm leading-6 text-slate-300">{block.note}</p>
-                </button>
+          </Panel>
+
+          <Panel>
+            <Pill gold><ClipboardList size={12} /> equation builder</Pill>
+            <h2 className="mt-3 text-3xl font-black">Build with buttons or type directly.</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <Button onClick={() => setExpression((prev) => `${prev}${activeVariable}`)} variant="primary">Insert {activeVariable}</Button>
+              <Button onClick={() => setExpression("")}>Clear Equation</Button>
+            </div>
+            <div className="mt-5 rounded-[2rem] border border-white/10 bg-black/25 p-4">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div className="text-xs uppercase tracking-[.2em] text-slate-500">symbol command deck</div><input value={symbolSearch} onChange={(event) => setSymbolSearch(event.target.value)} placeholder="Search symbols" className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" /></div>
+              <div className="grid max-h-[380px] grid-cols-4 gap-2 overflow-y-auto pr-2 sm:grid-cols-6 lg:grid-cols-8">
+                {filteredSymbols.slice(0, 120).map(({ group, symbol }) => (
+                  <button key={`${group}-${symbol}`} onClick={() => insertSymbol(symbol)} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-3 text-sm font-black text-slate-100 hover:border-cyan-300/50 hover:bg-cyan-300/10">
+                    {symbol}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Info title="Beginner rule">Use * for multiply, / for divide, ^ for powers. Example: <b>(A^2 + B) / C</b>. Functions include sqrt(), log10(), ln(), sin(), cos(), tan(), min(), max().</Info>
+          </Panel>
+        </div>
+      )}
+
+      {mode === "convert" && (
+        <Panel>
+          <Pill gold><Zap size={12} /> converter</Pill>
+          <h2 className="mt-3 text-4xl font-black">Convert units and add them to the board.</h2>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            <select value={converterCategory} onChange={(event) => { const next = event.target.value; const keys = Object.keys(conversionTables[next]); setConverterCategory(next); setConverterFrom(keys[0]); setConverterTo(keys[1] || keys[0]); }} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white">{Object.keys(conversionTables).map((cat) => <option key={cat}>{cat}</option>)}</select>
+            <input value={converterValue} onChange={(event) => setConverterValue(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
+            <select value={converterFrom} onChange={(event) => setConverterFrom(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white">{Object.keys(conversionUnits).map((unit) => <option key={unit}>{unit}</option>)}</select>
+            <select value={converterTo} onChange={(event) => setConverterTo(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white">{Object.keys(conversionUnits).map((unit) => <option key={unit}>{unit}</option>)}</select>
+            <Button onClick={() => addBlock({ type: "Conversion", title: `${converterCategory} Conversion`, formula: `${converterValue} ${converterFrom} = ${conversionResult} ${converterTo}`, note: "Converted inside Calculation Studio.", accent: "amber" })} variant="primary">Add</Button>
+          </div>
+          <div className="mt-6 rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6"><div className="text-xs uppercase tracking-[.25em] text-emerald-200">converted result</div><div className="mt-2 break-all text-5xl font-black text-emerald-100">{conversionResult} {converterTo}</div></div>
+        </Panel>
+      )}
+
+      {mode === "library" && (
+        <div className="grid gap-6 xl:grid-cols-[.35fr_.65fr]">
+          <Panel>
+            <Pill gold><BookOpen size={12} /> frameworks</Pill>
+            <h2 className="mt-3 text-3xl font-black">Choose a science area.</h2>
+            <div className="mt-5 grid gap-2">
+              {Object.keys(frameworks).map((name) => <button key={name} onClick={() => setSelectedFramework(name)} className={`rounded-2xl border px-4 py-3 text-left font-black ${selectedFramework === name ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-50" : "border-white/10 bg-black/25 text-slate-300 hover:bg-white/[0.05]"}`}>{name}</button>)}
+            </div>
+          </Panel>
+          <Panel>
+            <Pill gold><Sparkles size={12} /> ready-made equations</Pill>
+            <h2 className="mt-3 text-4xl font-black">{selectedFramework} presets.</h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {frameworks[selectedFramework].map((preset) => (
+                <div key={preset.name} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+                  <div className="text-xl font-black text-white">{preset.name}</div>
+                  <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 font-mono text-cyan-100">{preset.formula}</div>
+                  <p className="mt-3 text-sm leading-6 text-slate-400">{preset.use}</p>
+                  <Button onClick={() => applyPreset(preset)} variant="primary" className="mt-4 w-full">Use This Equation</Button>
+                </div>
               ))}
             </div>
-          </div>
-        </Panel>
-      </div>
+          </Panel>
+        </div>
+      )}
 
-      <div className="grid gap-6 xl:grid-cols-[.85fr_1.15fr]">
-        <Panel>
-          <Pill gold><Settings size={12} /> block inspector</Pill>
-          <h2 className="mt-3 text-3xl font-black">Edit selected block.</h2>
-          {selectedBlock && <div className="mt-5 space-y-3">
-            <input value={selectedBlock.title} onChange={(event) => updateSelectedBlock("title", event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
-            <input value={selectedBlock.type} onChange={(event) => updateSelectedBlock("type", event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
-            <textarea value={selectedBlock.formula} onChange={(event) => updateSelectedBlock("formula", event.target.value)} rows={3} className="w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-4 font-mono text-white" />
-            <textarea value={selectedBlock.note} onChange={(event) => updateSelectedBlock("note", event.target.value)} rows={3} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
-            <div className="grid gap-3 sm:grid-cols-3">
-              <select value={selectedBlock.accent} onChange={(event) => updateSelectedBlock("accent", event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white"><option>cyan</option><option>amber</option><option>emerald</option><option>fuchsia</option></select>
-              <select value={selectedBlock.size} onChange={(event) => updateSelectedBlock("size", event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white"><option>medium</option><option>wide</option><option>large</option></select>
-              <Button onClick={duplicateSelectedBlock}>Duplicate</Button>
+      {mode === "board" && (
+        <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
+          <Panel>
+            <Pill gold><Layers size={12} /> whiteboard</Pill>
+            <h2 className="mt-3 text-4xl font-black">Build the calculation story.</h2>
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              <input value={boardTitle} onChange={(event) => setBoardTitle(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
+              <input value={boardPurpose} onChange={(event) => setBoardPurpose(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
             </div>
-            <Button onClick={deleteSelectedBlock} variant="danger" className="w-full">Delete Block</Button>
-          </div>}
-        </Panel>
-
-        <Panel>
-          <Pill gold><BarChart3 size={12} /> board quality</Pill>
-          <h2 className="mt-3 text-3xl font-black">Readability and paid-subscriber polish.</h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {[["Formula quality", formulaQuality], ["Clarity", clarityScore], ["Export readiness", exportScore]].map(([label, value]) => (
-              <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4"><div className="text-sm text-slate-400">{label}</div><div className="mt-2 text-4xl font-black text-cyan-100">{value}%</div><div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-amber-300" style={{ width: `${value}%` }} /></div></div>
-            ))}
-          </div>
-          <Info title="Why this makes more sense">The page now starts with simple maths, values and conversions. Advanced frameworks are available, but they no longer overwhelm the user before they have calculated something useful.</Info>
-        </Panel>
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
-        <Panel>
-          <Pill gold><Zap size={12} /> unit converter</Pill>
-          <h2 className="mt-3 text-4xl font-black">Convert values without leaving the board.</h2>
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <select value={conversionCategory} onChange={(event) => { const next = event.target.value; const keys = Object.keys(conversionTables[next]); setConversionCategory(next); setConversionFrom(keys[0]); setConversionTo(keys[1] || keys[0]); }} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white">{Object.keys(conversionTables).map((item) => <option key={item}>{item}</option>)}</select>
-            <input type="number" value={conversionValue} onChange={(event) => setConversionValue(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
-            <select value={conversionFrom} onChange={(event) => setConversionFrom(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white">{Object.keys(conversionUnits).map((item) => <option key={item}>{item}</option>)}</select>
-            <select value={conversionTo} onChange={(event) => setConversionTo(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white">{Object.keys(conversionUnits).map((item) => <option key={item}>{item}</option>)}</select>
-          </div>
-          <div className="mt-5 rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5"><div className="text-xs uppercase tracking-[.22em] text-emerald-200">converted value</div><div className="mt-2 text-4xl font-black text-emerald-100">{conversionResult} {conversionTo}</div></div>
-        </Panel>
-
-        <Panel>
-          <Pill gold><Clock3 size={12} /> saved calculations</Pill>
-          <h2 className="mt-3 text-4xl font-black">History.</h2>
-          <div className="mt-6 grid gap-3">
-            {(history.length ? history : [{ id: "No saved calculations yet", title: "Run a calculation", expression: "Save your first board", result: "—", framework: "—", blocks: 0, created: "—" }]).map((item) => (
-              <button key={`${item.id}-${item.created}`} onClick={() => { if (item.expression && item.expression !== "Save your first board") { setExpression(item.expression); setCalcResult(item.result); setSelectedFramework(item.framework); } }} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left hover:border-cyan-300/40">
-                <div className="flex flex-wrap items-center justify-between gap-3"><div><b className="text-cyan-100">{item.id}</b><div className="text-sm text-slate-400">{item.title} · {item.framework} · {item.blocks} blocks</div></div><div className="font-mono text-lg font-black text-emerald-100">{item.result}</div></div>
-                <div className="mt-2 text-xs text-slate-500">{item.created}</div>
-              </button>
-            ))}
-          </div>
-        </Panel>
-      </div>
+            <div className="mt-6 rounded-[2.5rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_top,rgba(34,211,238,.16),transparent_35%),linear-gradient(135deg,#020617,#081225)] p-5">
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div><div className="text-xs uppercase tracking-[.25em] text-cyan-200">{boardTitle}</div><div className="mt-1 text-sm text-slate-400">{boardPurpose}</div></div><Button onClick={exportBoard}>Export Board</Button></div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {blocks.map((block) => (
+                  <button key={block.id} onClick={() => setSelectedBlockId(block.id)} className={`rounded-[2rem] border p-5 text-left transition ${blockStyle(block.accent)} ${selectedBlockId === block.id ? "ring-2 ring-cyan-200/70" : ""}`}>
+                    <div className="flex items-center justify-between gap-3"><span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-slate-300">{block.type}</span><span className="text-xs text-slate-500">ElementOS</span></div>
+                    <div className="mt-4 text-2xl font-black text-white">{block.title}</div>
+                    <div className="mt-3 rounded-2xl border border-white/10 bg-slate-950/80 p-4 font-mono text-lg text-cyan-100">{block.formula}</div>
+                    <p className="mt-3 text-sm leading-6 text-slate-300">{block.note}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </Panel>
+          <Panel>
+            <Pill gold><Settings size={12} /> inspector</Pill>
+            <h2 className="mt-3 text-3xl font-black">Edit selected block.</h2>
+            {selectedBlock && <div className="mt-5 space-y-3">
+              <input value={selectedBlock.title} onChange={(event) => updateBlock("title", event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
+              <input value={selectedBlock.type} onChange={(event) => updateBlock("type", event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
+              <textarea value={selectedBlock.formula} onChange={(event) => updateBlock("formula", event.target.value)} rows={3} className="w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-4 font-mono text-white" />
+              <textarea value={selectedBlock.note} onChange={(event) => updateBlock("note", event.target.value)} rows={3} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white" />
+              <select value={selectedBlock.accent} onChange={(event) => updateBlock("accent", event.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-white"><option>cyan</option><option>amber</option><option>emerald</option><option>fuchsia</option></select>
+              <div className="grid gap-3 sm:grid-cols-2"><Button onClick={duplicateBlock}>Duplicate</Button><Button onClick={deleteBlock}>Delete</Button></div>
+              <Button onClick={() => addBlock({ type: "Result", title: "Solved Result", formula: `${expression} = ${result}`, note: "Added from the active calculation.", accent: "emerald" })} variant="primary" className="w-full">Add Current Result</Button>
+            </div>}
+          </Panel>
+        </div>
+      )}
 
       <Panel>
-        <Pill gold><Crown size={12} /> subscriber-ready calculation studio</Pill>
-        <h2 className="mt-3 text-4xl font-black">What Pro Researcher unlocks here.</h2>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {["Save unlimited boards", "Export PNG/SVG/PDF packs", "Use advanced frameworks", "Create equation posters", "Attach calculations to reports", "Convert units instantly", "Build geometry diagrams", "Explain results clearly"].map((item) => (
-            <div key={item} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm font-bold text-cyan-50"><CheckCircle2 size={15} className="mr-2 inline" />{item}</div>
-          ))}
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Clock3 size={12} /> session record</Pill>
+            <h2 className="mt-3 text-3xl font-black">Recent calculations.</h2>
+          </div>
+          <Button onClick={() => setHistory([])}>Clear History</Button>
         </div>
-        <Info title="Design principle">The user should understand this page in five seconds: type a calculation, get a result, add it to a board, export it. The advanced science is there when they need it.</Info>
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          {history.length === 0 && <div className="rounded-2xl border border-white/10 bg-black/25 p-5 text-slate-400 md:col-span-3">No history yet. Run a calculation and it will appear here.</div>}
+          {history.slice(0, 6).map((item, index) => <button key={`${item.at}-${index}`} onClick={() => { setExpression(item.expression); setResult(item.result); setMode("calculate"); }} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left hover:border-cyan-300/40"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">{item.title}</div><div className="mt-2 font-mono text-cyan-100">{item.expression}</div><div className="mt-2 text-2xl font-black text-white">{item.result}</div><div className="mt-1 text-xs text-slate-500">{item.at}</div></button>)}
+        </div>
       </Panel>
-    </>
+    </div>
   );
 }
 
