@@ -499,7 +499,7 @@ const PAGE_DATA_INTELLIGENCE = {
     why: "Wave Intelligence becomes more valuable when the wave trace explains what the user is seeing.",
   },
   viralcards: {
-    example: "Poster: Al + Ti · Legendary · ZDAR detected · stability 96.4 · exported for LinkedIn/X.",
+    example: "Poster: Al + Ti · Legendary · Perfect Alignment Event detected · stability 96.4 · exported for LinkedIn/X.",
     metrics: ["1200×1200", "Poster", "SVG", "PDF", "Social copy"],
     why: "Shareable exports are one of the clearest reasons to upgrade to Pro Researcher.",
   },
@@ -767,7 +767,7 @@ const miReports = [
 ];
 
 const miPlans = [
-  { name: "Explorer", price: "$0", features: ["Browse", "View discoveries", "View reports", "View Future Simulation", "View Matter Intelligence"], cta: "Start Exploring" },
+  { name: "Explorer", price: "$0", features: ["Browse", "View discoveries", "View reports", "View Future Simulation", "View Advanced Material Analysis"], cta: "Start Exploring" },
   { name: "Pro Researcher", price: "$19/month", features: ["Reports", "Vault", "Exports", "Poster Studio", "AI Copilot"], cta: "Choose Pro Researcher", best: true },
   { name: "Pro Lab", price: "$35/month", features: ["Everything unlocked", "Advanced Labs", "Future Simulation", "Well Driller", "Scenario Intelligence"], cta: "Choose Pro Lab" },
 ];
@@ -1076,7 +1076,7 @@ function MatterIntelligenceLab() {
   const exportMatter = () => {
     exportAllFormats({
       baseName: `${targetCode}-matter-intelligence`,
-      title: `Matter Intelligence Report: ${selectedResource}`,
+      title: `Advanced Material Analysis Report: ${selectedResource}`,
       summary: `${selectedResource} opportunity scan. Score ${opportunityScore}%. Signal agreement ${signalAgreement}%. Historical match ${historicalMatch}%. Telemetry strength ${telemetryStrength}%. Geometry index ${geometryIndex}%.`,
       payload: { selectedResource, category, opportunityScore, signalAgreement, historicalMatch, telemetryStrength, geometryIndex, activeTarget },
     });
@@ -1115,10 +1115,10 @@ function MatterIntelligenceLab() {
                 <Pill><Radar size={12} /> live geometry + telemetry</Pill>
               </div>
               <h1 className="mt-5 max-w-5xl text-5xl font-black leading-[.92] tracking-tight md:text-7xl">
-                Matter Intelligence <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Opportunity Galaxy</span>
+                Advanced Material Analysis <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Opportunity Galaxy</span>
               </h1>
               <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-                Select any resource, element, formation or opportunity type. Matter Intelligence now rebuilds the radar, target queue, telemetry streams and report narrative around what you are actually hunting.
+                Select any resource, element, formation or opportunity type. Advanced Material Analysis now rebuilds the radar, target queue, telemetry streams and report narrative around what you are actually hunting.
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Button onClick={runScan} variant="primary" className="px-8 py-5 text-base">
@@ -1163,7 +1163,7 @@ function MatterIntelligenceLab() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <Pill gold><Target size={12} /> material opportunity universe</Pill>
-            <h2 className="mt-3 text-4xl font-black">Choose what Matter Intelligence should hunt.</h2>
+            <h2 className="mt-3 text-4xl font-black">Choose what Advanced Material Analysis should hunt.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">This replaces the old hard-coded diamond view. The whole OS now updates around precious metals, battery materials, rare earths, energy, water, formations and custom signals.</p>
           </div>
           <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">{flatResources.length}+ resources available</div>
@@ -1371,7 +1371,12 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 
         <Panel>
           <Pill gold><FileText size={12}/> report preview</Pill>
-          <h2 className="mt-3 text-3xl font-black">Research-ready output</h2>
+          <div className="mt-5 rounded-[2rem] border border-amber-300/25 bg-amber-300/10 p-5">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-amber-100">Legendary Discovery</div>
+            <div className="mt-2 text-2xl font-black text-white">ZDAR Event Detected</div>
+            <p className="mt-2 text-sm leading-6 text-amber-100/85">Exceptional multi-metric alignment across stability, thermal behaviour, pressure response and compatibility.</p>
+          </div>
+          <h2 className="mt-6 text-3xl font-black">Research-ready output</h2>
           <div className="mt-5 space-y-3">
             {[
               ["Discovery summary", `${pair} ranked as ${current.tier || "RARE"}`],
@@ -1421,7 +1426,7 @@ const PAGE_LABELS = {
   explorer: "Explore",
   compare: "Compare Materials",
   periodic: "Periodic Map",
-  atlas: "Behaviour Atlas",
+  atlas: "Material Interaction Atlas",
   graph: "Relationship Graph",
   universe: "Element Relationships",
   scenario: "Mission Intelligence",
@@ -1481,8 +1486,8 @@ const ELEMENTOS_SUBSCRIPTION_PLANS = [
     name: "Explorer",
     price: "$0",
     eyebrow: "Free read-only access",
-    description: "Browse ElementOS, view discoveries, read reports, inspect Future Simulation, Matter Intelligence and Atlas without exporting or saving premium assets.",
-    features: ["Browse", "View discoveries", "View reports", "View Future Simulation", "View Matter Intelligence", "View Atlas"],
+    description: "Browse ElementOS, view discoveries, read reports, inspect Future Simulation, Advanced Material Analysis and Atlas without exporting or saving premium assets.",
+    features: ["Browse", "View discoveries", "View reports", "View Future Simulation", "View Advanced Material Analysis", "View Atlas"],
     locked: ["Export PDF", "Export SVG", "Export JSON", "Save to Vault", "Generate Reports", "Create Media", "Advanced Labs"],
   },
   {
@@ -1498,8 +1503,8 @@ const ELEMENTOS_SUBSCRIPTION_PLANS = [
     name: "Pro Lab",
     price: "$35/month",
     eyebrow: "Full laboratory access",
-    description: "Everything unlocked: Advanced Labs, Future Simulation, Well Driller, Matter Intelligence, Seismo, Scenario Intelligence and future premium features.",
-    features: ["Everything in Pro Researcher", "Advanced Labs", "Future Simulation", "Well Driller", "Matter Intelligence", "Wave Intelligence", "Future premium features"],
+    description: "Everything unlocked: Advanced Labs, Future Simulation, Well Driller, Advanced Material Analysis, Seismo, Scenario Intelligence and future premium features.",
+    features: ["Everything in Pro Researcher", "Advanced Labs", "Future Simulation", "Well Driller", "Advanced Material Analysis", "Wave Intelligence", "Future premium features"],
     locked: [],
   },
 ];
@@ -1609,7 +1614,7 @@ function makeExportSvg({ title = "ElementOS Export", summary = "", payload = {},
   const safeMetrics = metricEntries.length ? metricEntries : [["Discovery", "ElementOS"], ["Format", "PDF/JSON/SVG"], ["Status", "Exported"], ["Style", "Premium"]];
   const palettes = {
     "Luxury Scientific": { a: "#67e8f9", b: "#fbbf24", c: "#a78bfa", d: "#10b981" },
-    "Matter Intelligence": { a: "#22d3ee", b: "#34d399", c: "#f59e0b", d: "#818cf8" },
+    "Advanced Material Analysis": { a: "#22d3ee", b: "#34d399", c: "#f59e0b", d: "#818cf8" },
     "Neon": { a: "#38bdf8", b: "#e879f9", c: "#facc15", d: "#22c55e" },
   };
   const palette = palettes[variant] || palettes["Luxury Scientific"];
@@ -2252,7 +2257,7 @@ function Sidebar({ page, setPage }) {
         ["compare", "Compare Materials", BarChart3],
         ["isotopes", "Isotope Lab", Atom],
         ["periodic", "Periodic Map", Layers],
-        ["atlas", "Behaviour Atlas", Radar],
+        ["atlas", "Material Interaction Atlas", Radar],
         ["graph", "Relationship Graph", Network],
         ["universe", "Element Relationships", Orbit],
       ],
@@ -2405,7 +2410,7 @@ function Sidebar({ page, setPage }) {
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Generate Discovery", "compare", FileText], ["Advanced Material Analysis", "matterlab", Globe2], ["Ask ElementOS", "copilot", Sparkles], ["Mission Intelligence", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Future Simulation", "timemachine", Clock3], ["Resource Discovery Lab", "welldriller", Radar], ["Wave Intelligence", "seismo", Network], ["Reports", "simreports", BookOpen], ["Poster Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Saved Discoveries", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Explorer Launch", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Create Free Explorer Account</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, vault, PDF/JSON/SVG exports, media tools and AI Copilot through Stripe Checkout.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Access Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Generate Discovery", "compare", FileText], ["Advanced Material Analysis", "matterlab", Globe2], ["Ask ElementOS", "copilot", Sparkles], ["Mission Intelligence", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Future Simulation", "timemachine", Clock3], ["Resource Discovery Lab", "welldriller", Radar], ["Wave Intelligence", "seismo", Network], ["Reports", "simreports", BookOpen], ["Poster Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Saved Discoveries", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Material Interaction Atlas", "atlas", Radar], ["Explorer Launch", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Create Free Explorer Account</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, vault, PDF/JSON/SVG exports, media tools and AI Copilot through Stripe Checkout.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Access Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["6", "clear behaviour layers"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
       <DiscoveryNetworkSubscriberEdition setPage={setPage} />
       <SubscriberWorkspaceVault setPage={setPage} />
@@ -3167,7 +3172,7 @@ function TimeMachine({ selected, setSelected, setPage }) {
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">Temporal <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Simulation Engine</span></h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A cinematic future-state lab for forecasting material behaviour across time, stress, pressure, corrosion, radiation and 50+ environment profiles.</p>
           <Info title="Blank-page safety rebuild">This version avoids the previous fragile render path and uses a self-contained temporal graph, environment library, telemetry controls and export system.</Info>
-          <div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Time PDF/JSON/SVG</Button><Button onClick={() => setPage("scenario")}>Send to Scenario Builder</Button><Button onClick={() => setPage("matterlab")}>Open Matter Intelligence</Button></div>
+          <div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Time PDF/JSON/SVG</Button><Button onClick={() => setPage("scenario")}>Send to Scenario Builder</Button><Button onClick={() => setPage("matterlab")}>Open Advanced Material Analysis</Button></div>
         </div>
         <Panel>
           <div className="text-xs uppercase tracking-[.22em] text-slate-500">future-state verdict</div>
@@ -3407,6 +3412,16 @@ function PeriodicTable({ selected, setSelected }) {
   const [view, setView] = useState("periodic");
   const [signal, setSignal] = useState("intelligence");
 
+  const layerLabels = {
+    stability: "Stability",
+    conductivity: "Conductivity",
+    thermal: "Thermal",
+    diffusion: "Diffusion",
+    pressure: "Pressure",
+    rarity: "Rarity",
+  };
+  const activeLayerLabel = layerLabels[layer] || "Conductivity";
+
   const activeElement = elementMap[selected] || elementMap.Al;
   const activeScore = score(activeElement.symbol);
   const visibleElements = elements.filter((e) => cat === "All" || e.category === cat);
@@ -3474,7 +3489,7 @@ function PeriodicTable({ selected, setSelected }) {
             <Pill gold>{cat}</Pill>
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
-            {metrics.map((l) => {
+            {metrics.filter((l) => l !== "alignment").map((l) => {
               const layerLabel = ({
                 stability: "Stability",
                 conductivity: "Conductivity",
@@ -3482,7 +3497,6 @@ function PeriodicTable({ selected, setSelected }) {
                 diffusion: "Diffusion",
                 pressure: "Pressure",
                 rarity: "Rarity",
-                alignment: "ZDAR Alignment",
               })[l] || l;
               return <Button key={l} onClick={() => setLayer(l)} variant={layer === l ? "primary" : "ghost"}>{layerLabel}</Button>;
             })}
@@ -3530,7 +3544,7 @@ function PeriodicTable({ selected, setSelected }) {
 
         <Panel>
           <Pill gold><Sparkles size={12}/> top signals</Pill>
-          <h2 className="mt-3 text-3xl font-black">Best Materials for {layer}</h2>
+          <h2 className="mt-3 text-3xl font-black">Best Materials for {activeLayerLabel}</h2>
           <div className="mt-5 space-y-3">
             {top.slice(0, 8).map((e, i) => (
               <button key={e.symbol} onClick={() => setSelected(e.symbol)} className="w-full rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10">
@@ -3556,7 +3570,7 @@ function Compare({ compare, setCompare, setPage }) {
         </Pill>
         <h1 className="mt-4 text-5xl font-black">Compare Engine</h1>
         <Info title="Cleaned terminology">
-          ZDAR has been renamed public-facing as <b>Alignment</b>. It remains a branded experimental score, but the table now reads like a serious material decision engine.
+          Perfect Alignment is now treated as a discovery achievement instead of a confusing map filter. Users compare clear metrics first, then see <b>Perfect Alignment Event</b> when a pairing earns it.
         </Info>
       </Panel>
 
@@ -3888,8 +3902,8 @@ function BehaviourAtlas({ selected, setSelected }) {
   const top = elements.map(e => ({ ...e, metrics: score(e.symbol), value: score(e.symbol)[layer] })).sort((a, b) => b.value - a.value).slice(0, 10);
   const resilience = Math.max(1, Math.min(99, Math.round((selectedScore.stability / 5) * 48 + (selectedScore.pressure / 5) * 22 + (selectedScore.thermal / 5) * 18 - envInfluence * 32 + 26)));
   const exportAtlas = () => {
-    const content = `ElementOS Behaviour Atlas\n\nElement: ${selectedElement.name} (${selectedElement.symbol})\nEnvironment: ${environment}\nLayer: ${layer}\nResilience: ${resilience}%\nContext: ${env.label}\n\nTop materials:\n${top.slice(0, 8).map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${Number(e.value).toFixed(layer === "alignment" ? 0 : 2)}`).join("\n")}`;
-    exportAllFormats({ baseName: `behaviour-atlas-${selectedElement.symbol}-${layer}`, title: `Behaviour Atlas: ${selectedElement.symbol}`, summary: content, payload: { selected: selectedElement.symbol, layer, environment, resilience, top } });
+    const content = `ElementOS Material Interaction Atlas\n\nElement: ${selectedElement.name} (${selectedElement.symbol})\nEnvironment: ${environment}\nLayer: ${layer}\nResilience: ${resilience}%\nContext: ${env.label}\n\nTop materials:\n${top.slice(0, 8).map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${Number(e.value).toFixed(layer === "alignment" ? 0 : 2)}`).join("\n")}`;
+    exportAllFormats({ baseName: `behaviour-atlas-${selectedElement.symbol}-${layer}`, title: `Material Interaction Atlas: ${selectedElement.symbol}`, summary: content, payload: { selected: selectedElement.symbol, layer, environment, resilience, top } });
   };
 
   return (
@@ -4664,7 +4678,7 @@ function Reports({ compare, session, isPro, startCheckout }) {
 
   const cards = [
     ["Material Comparison Brief", "A polished report for selected compare materials, chart notes and ranked metrics."],
-    ["Behaviour Atlas Snapshot", "A visual summary of active behaviour fields and top material signals."],
+    ["Material Interaction Atlas Snapshot", "A visual summary of active behaviour fields and top material signals."],
     ["Research Workspace Summary", "Saved simulations, selected elements, calculations and export history."],
   ];
 
@@ -5745,7 +5759,7 @@ function DiscoveryCommandCenter({ setPage, compare = ["Al", "Ti", "Hf"] }) {
 
   const commandCards = [
     ["Today's Discovery", `${today.a} + ${today.b}`, `${today.aiConfidence || today.score}% AI confidence`, "Open the strongest material signal", "discover", Sparkles],
-    ["Today's Opportunity", "Matter Intelligence", "Run an opportunity scan", "Find hidden ground and material signals", "matterlab", Globe2],
+    ["Today's Opportunity", "Advanced Material Analysis", "Run an opportunity scan", "Find hidden ground and material signals", "matterlab", Globe2],
     ["Recommended Next Step", "Generate Report", "Turn signal into an asset", "Create a dossier users can save and share", "simreports", FileText],
     ["Discovery Streak", "7 days", "+420 XP this week", "Return tomorrow to unlock a new signal", "lab", CheckCircle2],
   ];
@@ -5760,7 +5774,7 @@ function DiscoveryCommandCenter({ setPage, compare = ["Al", "Ti", "Hf"] }) {
   const badges = [
     ["First Discovery", "unlocked"],
     ["100 Simulations", "72%"],
-    ["Matter Intelligence Pioneer", "active"],
+    ["Advanced Material Analysis Pioneer", "active"],
     ["Discovery Architect", "next"],
   ];
 
@@ -5836,7 +5850,7 @@ function DiscoveryCommandCenter({ setPage, compare = ["Al", "Ti", "Hf"] }) {
 
         <div className="relative z-10 mt-7 flex flex-wrap gap-3">
           <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
-          <Button onClick={() => setPage("matterlab")}>Run Matter Intelligence</Button>
+          <Button onClick={() => setPage("matterlab")}>Run Advanced Material Analysis</Button>
           <Button onClick={() => setPage("simreports")}>Create Dossier</Button>
           <Button onClick={() => setPage("lab")}>Open Workspace</Button>
         </div>
@@ -5880,7 +5894,7 @@ function MissionProgressPanel({ setPage }) {
   const missions = [
     ["01", "Compare Aluminium + Titanium", "Build your first material signal.", "compare", "Unlock Discovery Feed"],
     ["02", "Generate a Research Report", "Turn the signal into a useful asset.", "reports", "Unlock Public Discovery"],
-    ["03", "Run Matter Intelligence", "Find a ranked opportunity target.", "matterlab", "Unlock Discovery OS"],
+    ["03", "Run Advanced Material Analysis", "Find a ranked opportunity target.", "matterlab", "Unlock Discovery OS"],
     ["04", "Save to Workspace", "Make ElementOS your permanent research home.", "lab", "Unlock Profile Score"],
   ];
   return (
@@ -5954,7 +5968,7 @@ function WorkspaceVaultPanel({ setPage }) {
     ["Saved Discoveries", "24", "Public pages, share cards and ranked material pairs.", "discover", Sparkles],
     ["Saved Reports", "12", "Executive briefs, technical reports and simulation dossiers.", "reports", FileText],
     ["Saved Simulations", "38", "Future Simulation, Scenario Builder, Seismo and Well Driller runs.", "simreports", BarChart3],
-    ["MIOS Targets", "9", "Matter Intelligence opportunities ready for follow-up.", "matterlab", Globe2],
+    ["MIOS Targets", "9", "Advanced Material Analysis opportunities ready for follow-up.", "matterlab", Globe2],
   ];
   return (
     <Panel>
@@ -5962,7 +5976,7 @@ function WorkspaceVaultPanel({ setPage }) {
         <div>
           <Pill gold><Save size={12} /> workspace 2.0</Pill>
           <h2 className="mt-3 text-4xl font-black">This is where your discoveries live.</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Workspace now reads like a permanent research vault: discoveries, reports, simulations, Matter Intelligence targets and shareable pages.</p>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Workspace now reads like a permanent research vault: discoveries, reports, simulations, Advanced Material Analysis targets and shareable pages.</p>
         </div>
         <Button onClick={() => setPage("discover")} variant="primary">Add New Discovery</Button>
       </div>
@@ -6008,7 +6022,7 @@ function ScienceCommandElite({ setPage }) {
   ];
   const dailyPath = [
     ["01", "Discover", "Open the live feed and choose a promising material signal.", "discover"],
-    ["02", "Simulate", "Send it into Future Simulation, Scenario Builder or Matter Intelligence.", "timemachine"],
+    ["02", "Simulate", "Send it into Future Simulation, Scenario Builder or Advanced Material Analysis.", "timemachine"],
     ["03", "Publish", "Generate a dossier, public page and share card.", "simreports"],
     ["04", "Return", "Save to Workspace and build tomorrow's discovery streak.", "lab"],
   ];
@@ -6024,7 +6038,7 @@ function ScienceCommandElite({ setPage }) {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button onClick={() => setPage('discover')} variant="primary">Start Today's Discovery</Button>
-            <Button onClick={() => setPage('matterlab')}>Open Matter Intelligence</Button>
+            <Button onClick={() => setPage('matterlab')}>Open Advanced Material Analysis</Button>
             <Button onClick={() => setPage('beta')}>Create Free Explorer Account</Button>
           </div>
         </div>
@@ -6054,7 +6068,7 @@ function ScienceCommandElite({ setPage }) {
 function LiveScienceHeartbeat({ setPage }) {
   const rows = [
     ["Trending now", "Gallium + Indium", "Liquid-metal pathway moving across Discovery Feed", "discover"],
-    ["Today's opportunity", "North Craton Field", "Matter Intelligence target confidence rising", "matterlab"],
+    ["Today's opportunity", "North Craton Field", "Advanced Material Analysis target confidence rising", "matterlab"],
     ["Report engine", "Executive Brief", "One-click publishable summary ready", "simreports"],
     ["Public asset", "TI-HF-1047", "Shareable discovery page prepared", "publicdiscovery"],
   ];
@@ -6117,7 +6131,7 @@ function FiveUserSimulationAudit({ setPage }) {
     ["User A", "New visitor", "Home → Discovery Feed → Public Discovery → Share Card", "Pass", "Understands the product loop and reaches an export."],
     ["User B", "Scientist", "Compare → Future Simulation → Simulation Dossier → PDF/JSON/SVG", "Pass", "Can generate useful export assets without dead ends."],
     ["User C", "Marketer", "Poster Studio → Social Pack → SVG Poster → Caption", "Pass", "Viral card flow produces platform-specific assets."],
-    ["User D", "Investor", "Matter Intelligence → Report → Workspace → Public Page", "Pass", "Opportunity workflow now has visible next steps."],
+    ["User D", "Investor", "Advanced Material Analysis → Report → Workspace → Public Page", "Pass", "Opportunity workflow now has visible next steps."],
     ["User E", "Mobile user", "CTRL-K → Search → Navigate → Export", "Pass", "Command engine has a scrollable result area and route actions."],
   ];
   const bugsFixed = [
@@ -6132,7 +6146,7 @@ function FiveUserSimulationAudit({ setPage }) {
     exportAllFormats({
       baseName: "elementos-five-user-qa-simulation",
       title: "ElementOS Five User QA Simulation",
-      summary: "Five simulated users explored ElementOS for one hour across discovery, reports, viral cards, Matter Intelligence, mobile command search and export workflows.",
+      summary: "Five simulated users explored ElementOS for one hour across discovery, reports, viral cards, Advanced Material Analysis, mobile command search and export workflows.",
       payload: {
         simulatedUsers: simulatedUsers.length,
         duration: "1 hour",
@@ -6183,7 +6197,7 @@ function FiveUserSimulationAudit({ setPage }) {
       <div className="mt-5 flex flex-wrap gap-3">
         <Button onClick={() => setPage("viralcards")} variant="primary">Test Media Engine</Button>
         <Button onClick={() => setPage("simreports")}>Test Reports</Button>
-        <Button onClick={() => setPage("matterlab")}>Test Matter Intelligence</Button>
+        <Button onClick={() => setPage("matterlab")}>Test Advanced Material Analysis</Button>
         <Button onClick={() => setPage("lab")}>Test Workspace</Button>
       </div>
     </Panel>
@@ -6232,7 +6246,7 @@ function ExecutiveReportGeneratorPro({ setPage, compare = ["Al", "Ti", "Hf"] }) 
     ["Executive Brief", "Board-ready summary with discovery score, key risks and recommendation.", "PDF"],
     ["Research Report", "Technical material behaviour, metrics and comparison narrative.", "PDF + JSON"],
     ["Investor Report", "Commercial explanation, opportunity framing and shareable visual appendix.", "PDF"],
-    ["Field Survey", "Ground-intelligence layout for Matter Intelligence and well/seismic scenarios.", "PDF + SVG"],
+    ["Field Survey", "Ground-intelligence layout for Advanced Material Analysis and well/seismic scenarios.", "PDF + SVG"],
     ["Discovery Dossier", "Complete discovery media pack with card, story, rank and export bundle.", "PDF + SVG + JSON"],
   ];
 
@@ -6290,7 +6304,7 @@ function DiscoveryReputationSystem({ setPage }) {
   const badges = [
     ["First Discovery", "Unlocked"],
     ["100 Simulations", "Unlocked"],
-    ["Matter Intelligence Pioneer", "Active"],
+    ["Advanced Material Analysis Pioneer", "Active"],
     ["Discovery Architect", "Rank"],
     ["Public Publisher", "Next"],
   ];
@@ -6341,7 +6355,7 @@ function DiscoveryNetworkSubscriberEdition({ setPage }) {
   const feed = [
     ["Researcher_204", "generated a Discovery Dossier", "Ti + Hf"],
     ["Nova Alloy", "published a public page", "Ga + In"],
-    ["Paul Roper", "saved a Matter Intelligence target", "DK-27"],
+    ["Paul Roper", "saved a Advanced Material Analysis target", "DK-27"],
     ["Cu Corridor", "exported a social pack", "Al + Cu"],
   ];
   return (
@@ -6384,7 +6398,7 @@ function SubscriberRecommendedNextStep({ setPage, context = "Titanium + Hafnium"
     ["Generate Executive Report", "simreports", FileText],
     ["Create Viral Poster", "viralcards", Download],
     ["Save to Workspace", "lab", Save],
-    ["Open Matter Intelligence", "matterlab", Globe2],
+    ["Open Advanced Material Analysis", "matterlab", Globe2],
   ];
   return (
     <Panel className="border-emerald-300/20 bg-emerald-300/5">
@@ -6422,7 +6436,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
     ["AI Discovery", "Find hidden pairings, trending discoveries and report-ready next steps.", Sparkles, "discover"],
     ["Simulate", "Run Future Simulation, Scenario Builder, Seismo, Well Driller and Isotope Lab.", Orbit, "timemachine"],
     ["Reports", "Create dossiers, public pages, share cards and export-ready summaries.", FileText, "simreports"],
-    ["Matter Intelligence", "Turn geology, telemetry and opportunity signals into ranked targets and reports.", Globe2, "matterlab"],
+    ["Advanced Material Analysis", "Turn geology, telemetry and opportunity signals into ranked targets and reports.", Globe2, "matterlab"],
   ];
 
   const operatingCards = [
@@ -6521,7 +6535,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
 
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Button onClick={() => setPage('discover')} variant="primary" className="px-7 py-4"><Sparkles size={16} className="mr-2 inline" /> Start Discovery Scan</Button>
-                <Button onClick={() => setPage('matterlab')} className="px-7 py-4"><Globe2 size={16} className="mr-2 inline" /> Matter Intelligence</Button>
+                <Button onClick={() => setPage('matterlab')} className="px-7 py-4"><Globe2 size={16} className="mr-2 inline" /> Advanced Material Analysis</Button>
                 <Button onClick={() => setPage('simreports')} className="px-7 py-4"><FileText size={16} className="mr-2 inline" /> Generate First Report</Button>
               </div>
             </div>
@@ -7236,17 +7250,17 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
       },
       {
         id: "matter",
-        label: "Matter Intelligence Opportunity",
-        type: "Matter Intelligence",
+        label: "Advanced Material Analysis Opportunity",
+        type: "Advanced Material Analysis",
         title: "Diamond Cluster",
         code: "MIOS-DK-27",
         headline: "Ground Opportunity Signal Rising",
-        subtitle: "Matter Intelligence scan converted into an opportunity poster",
+        subtitle: "Advanced Material Analysis scan converted into an opportunity poster",
         score: 92,
         metric: "Opportunity Score",
         tier: "RISING",
         narrative: "Multiple evidence layers are converging around one potential ground opportunity. The signal is strong enough to become a report-ready opportunity card.",
-        source: "Matter Intelligence",
+        source: "Advanced Material Analysis",
         hook: "An opportunity scan became a shareable intelligence poster.",
         constellation: "Signal → Target → Report",
       },
@@ -7357,7 +7371,7 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
       return { ...base, badge: "FOUNDER DISCOVERY", headline: `Found by ${founderName || "Paul Roper"}`, source: "Founder Card", subtitle: "researcher identity + discovery proof", tier: "FOUNDER" };
     }
     if (format === "Opportunity Poster") {
-      return { ...base, badge: "OPPORTUNITY SIGNAL", title: "Diamond Cluster", code: "MIOS-DK-27", headline: "Ground Opportunity Signal Rising", subtitle: "Matter Intelligence target card", score: 92, metric: "Opportunity Score", tier: "RISING", source: "Matter Intelligence" };
+      return { ...base, badge: "OPPORTUNITY SIGNAL", title: "Diamond Cluster", code: "MIOS-DK-27", headline: "Ground Opportunity Signal Rising", subtitle: "Advanced Material Analysis target card", score: 92, metric: "Opportunity Score", tier: "RISING", source: "Advanced Material Analysis" };
     }
     if (format === "Report Poster") {
       return { ...base, badge: "DISCOVERY REPORT", headline: "Report-Ready Discovery Asset", source: "Report Poster", subtitle: "executive brief + technical narrative", tier: "REPORTABLE" };
@@ -7670,7 +7684,7 @@ Generated in ElementOS.`,
             Discovery <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Media Engine</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Anything valuable in ElementOS can become media: Compare results, Discovery Feed assets, Matter Intelligence scans, Future Simulation forecasts, Seismo readouts, Well Driller signals, reports and workspace discoveries.
+            Anything valuable in ElementOS can become media: Compare results, Discovery Feed assets, Advanced Material Analysis scans, Future Simulation forecasts, Seismo readouts, Well Driller signals, reports and workspace discoveries.
           </p>
           <Info title="Media doctrine">
             The studio is no longer anchored to one fixed pair. Select a source from across the website, then generate a card, poster, report, social pack, SVG, PDF and JSON export from that live context.
@@ -7805,7 +7819,7 @@ Generated in ElementOS.`,
           <Panel>
             <Pill gold><Database size={12}/> connected sources</Pill>
             <h2 className="mt-3 text-3xl font-black">Create media from any ElementOS result.</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Pick the source that matches what the user just did. Compare should feel connected to cards; Matter Intelligence, Future Simulation and Reports should feel connected too.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Pick the source that matches what the user just did. Compare should feel connected to cards; Advanced Material Analysis, Future Simulation and Reports should feel connected too.</p>
             <div className="mt-5 grid gap-3">
               {mediaSources.map((source) => (
                 <button key={`source-card-${source.id}`} onClick={() => setMediaSourceId(source.id)} className={`rounded-2xl border p-4 text-left transition ${mediaSourceId === source.id ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25 hover:bg-white/[.05]"}`}>
@@ -8514,7 +8528,7 @@ function MobileBottomNav({ page, setPage }) {
     ["seismo", "Wave Intelligence", "P/S wave lab"],
     ["welldriller", "Resource Discovery Lab", "Subsurface lab"],
     ["periodic", "Periodic Map", "Element table"],
-    ["atlas", "Behaviour Atlas", "Heat maps"],
+    ["atlas", "Material Interaction Atlas", "Heat maps"],
     ["universe", "Element Relationships", "Similar materials"],
     ["calculations", "Calculations", "Math tools"],
     ["beta", "Create Account", "Explorer $0"],
@@ -9008,7 +9022,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
         ["Current Page", pageLabel(page)],
         ["Discovery Focus", `${primaryDiscovery.a} + ${primaryDiscovery.b}`],
         ["Discovery Score", `${primaryDiscovery.score}%`],
-        ["Rarity", primaryDiscovery.tier],
+        ["Discovery Class", primaryDiscovery.tier],
         ["Recommended Action", "Generate report, export SVG, publish discovery, save to Workspace."],
       ],
     });
@@ -9032,7 +9046,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
       summary: `A share-ready growth pack for ${primaryDiscovery.a} + ${primaryDiscovery.b}.`,
       payload: {
         xPost: `Today's ElementOS discovery: ${primaryDiscovery.a} + ${primaryDiscovery.b} scored ${primaryDiscovery.score}%. ${primaryDiscovery.type}.`,
-        linkedInPost: `ElementOS generated a new material discovery: ${primaryDiscovery.a} + ${primaryDiscovery.b}. Discovery score: ${primaryDiscovery.score}%. Rarity: ${primaryDiscovery.tier}.`,
+        linkedInPost: `ElementOS generated a new material discovery: ${primaryDiscovery.a} + ${primaryDiscovery.b}. Discovery score: ${primaryDiscovery.score}%. Discovery class: ${primaryDiscovery.tier}.`,
         redditPost: `I built a material discovery card for ${primaryDiscovery.a} + ${primaryDiscovery.b}. Score: ${primaryDiscovery.score}%. Would love feedback from science/engineering builders.`,
         discovery: primaryDiscovery,
       },
@@ -9103,7 +9117,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
 
             <div className="mt-5 flex flex-wrap gap-2">
               <Button onClick={() => setPage("discover")} variant="primary" className="px-4 py-3 text-xs">Open Discovery Feed</Button>
-              <Button onClick={() => setPage("matterlab")} className="px-4 py-3 text-xs">Matter Intelligence</Button>
+              <Button onClick={() => setPage("matterlab")} className="px-4 py-3 text-xs">Advanced Material Analysis</Button>
               <Button onClick={() => setPage("viralcards")} className="px-4 py-3 text-xs">Media Engine</Button>
               <Button onClick={exportExecutivePack} className="px-4 py-3 text-xs">Export Pack</Button>
               <Button onClick={launchSocialPack} className="px-4 py-3 text-xs">Create Social Pack</Button>
@@ -9164,7 +9178,7 @@ function DiscoveryVaultV57({ session, selected, compare, setPage }) {
     ["Today", "Generated discovery poster", `${selected} + ${(compare || ["Ti"])[1] || "Ti"}`],
     ["Today", "Saved to Saved Discoveries", "Material genome and report path stored"],
     ["Yesterday", "Created executive report", "Simulation dossier exported as PDF/SVG/JSON"],
-    ["2 days ago", "Opened Matter Intelligence", "Opportunity scan converted to watchlist"],
+    ["2 days ago", "Opened Advanced Material Analysis", "Opportunity scan converted to watchlist"],
   ];
   const exportVault = () => exportAllFormats({
     baseName: "elementos-discovery-vault",
@@ -9352,10 +9366,10 @@ function MissionControlV57({ setPage, session, isPro, startCheckout }) {
     ["Run First Discovery", "Compare Hydrogen with a stronger material and create a discovery signal.", "compare", "Discovery unlocked"],
     ["Generate Report", "Turn a result into a PDF, SVG and JSON research asset.", "reports", "Report engine proven"],
     ["Create Media", "Package the result into a poster, card or social pack.", "viralcards", "Marketing asset created"],
-    ["Open Matter Intelligence", "Scan a real opportunity field and save a target.", "matterlab", "Opportunity engine activated"],
+    ["Open Advanced Material Analysis", "Scan a real opportunity field and save a target.", "matterlab", "Opportunity engine activated"],
     ["Save to Vault", "Move the strongest work into your Saved Discoveries.", "lab", "Subscriber value captured"],
   ];
-  const health = [["Matter Intelligence", 98], ["Exports", 100], ["Media Engine", 96], ["Telemetry", 93], ["Workspace", 95]];
+  const health = [["Advanced Material Analysis", 98], ["Exports", 100], ["Media Engine", 96], ["Telemetry", 93], ["Workspace", 95]];
   const progress = Math.round(((activeMission + 1) / missions.length) * 100);
   const exportMission = () => exportAllFormats({ baseName: "elementos-mission-control", title: "ElementOS Mission Intelligence", summary: `Mission progress ${progress}%. Active mission: ${missions[activeMission][0]}.`, payload: { missions, activeMission, health, progress } });
 
