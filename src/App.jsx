@@ -4415,6 +4415,48 @@ function CalculationCore() {
     }
   };
 
+  const resetEquation = () => {
+    setEquationTitle("Untitled Equation");
+    setExpression("");
+    setResult("—");
+    setError("");
+    setSymbolSearch("");
+    setSelectedBlockId("eq-main");
+    setBlocks((prev) => prev.map((block) => {
+      if (block.id === "eq-main") return { ...block, title: "Equation", formula: "No equation yet", note: "Start typing or insert variables and symbols to build a new equation." };
+      if (block.id === "eq-result") return { ...block, formula: "No result yet", note: "Press Solve after building an equation." };
+      return block;
+    }));
+  };
+
+  const resetValues = () => {
+    setVariableSearch("");
+    setActiveVariable("A");
+    setVariables((prev) => ({
+      ...prev,
+      A: 12, B: 48, C: 3, X: 10, Y: 0,
+      a: 3, b: 4, c: 299792458, r: 5, t: 50,
+      pi: Math.PI, e: Math.E, I: 100, I0: 10, K: 1,
+    }));
+  };
+
+  const resetConverter = () => {
+    setConverterCategory("Energy");
+    setConverterValue("1");
+    setConverterFrom("kWh");
+    setConverterTo("J");
+  };
+
+  const resetBoard = () => {
+    const starterBlocks = [
+      { id: "eq-main", type: "Equation", title: "Equation", formula: expression || "No equation yet", note: "A clear equation block with alphabet values.", accent: "cyan" },
+      { id: "eq-values", type: "Values", title: "Values", formula: "A = 12, B = 48, C = 3", note: "Every letter can become a variable.", accent: "amber" },
+      { id: "eq-result", type: "Result", title: "Result", formula: result && result !== "—" ? `${expression} = ${result}` : "No result yet", note: "Press Solve to create a result.", accent: "emerald" },
+    ];
+    setBlocks(starterBlocks);
+    setSelectedBlockId("eq-main");
+  };
+
   const insertSymbol = (symbol) => {
     const mapped = symbol === "π" ? "pi" : symbol === "√" ? "sqrt(" : symbol;
     if (["Circle", "Triangle", "Square", "Rectangle", "Sphere", "Cube", "Vector", "Axis", "Grid", "Arrow"].includes(symbol)) {
@@ -4597,7 +4639,8 @@ function CalculationCore() {
             <h2 className="mt-3 text-3xl font-black">Build with buttons or type directly.</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <Button onClick={() => setExpression((prev) => `${prev}${activeVariable}`)} variant="primary">Insert {activeVariable}</Button>
-              <Button onClick={() => setExpression("")}>Clear Equation</Button>
+              <Button onClick={resetEquation}>Clear Equation</Button>
+              <Button onClick={resetValues}>Reset Values</Button>
             </div>
             <div className="mt-5 rounded-[2rem] border border-white/10 bg-black/25 p-4">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div className="text-xs uppercase tracking-[.2em] text-slate-500">symbol command deck</div><input value={symbolSearch} onChange={(event) => setSymbolSearch(event.target.value)} placeholder="Search symbols" className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" /></div>
@@ -4624,6 +4667,7 @@ function CalculationCore() {
             <select value={converterFrom} onChange={(event) => setConverterFrom(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white">{Object.keys(conversionUnits).map((unit) => <option key={unit}>{unit}</option>)}</select>
             <select value={converterTo} onChange={(event) => setConverterTo(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-white">{Object.keys(conversionUnits).map((unit) => <option key={unit}>{unit}</option>)}</select>
             <Button onClick={() => addBlock({ type: "Conversion", title: `${converterCategory} Conversion`, formula: `${converterValue} ${converterFrom} = ${conversionResult} ${converterTo}`, note: "Converted inside Calculation Studio.", accent: "amber" })} variant="primary">Add</Button>
+            <Button onClick={resetConverter}>Reset Converter</Button>
           </div>
           <div className="mt-6 rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6"><div className="text-xs uppercase tracking-[.25em] text-emerald-200">converted result</div><div className="mt-2 break-all text-5xl font-black text-emerald-100">{conversionResult} {converterTo}</div></div>
         </Panel>
