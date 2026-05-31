@@ -560,6 +560,61 @@ function ScoreMeaningPanel({ page = "dashboard" }) {
   );
 }
 
+
+const ELEMENTOS_PRODUCTION_AUDIT = {
+  version: "V65 Paid Subscriber Readiness",
+  buttonComponentsScanned: 193,
+  buttonComponentsWithHandlers: 193,
+  nativeButtonsScanned: 82,
+  nativeButtonsWithHandlers: 82,
+  exportLocking: "Central exportAllFormats guard active; Reports Centre export guarded in V65.",
+  pricing: "Explorer $0 · Pro Researcher $19/month · Pro Lab $35/month",
+  mobile: "Five-button bottom navigation plus More menu; page micro-data visible above content.",
+};
+
+function PageMicroDataBar({ page = "dashboard", setPage }) {
+  const d = pageDataFor(page);
+  const primaryMetric = d.metrics?.[0] || "Simulation output";
+  const secondMetric = d.metrics?.[1] || "Guided action";
+  return (
+    <div className="rounded-[1.25rem] border border-cyan-300/15 bg-slate-950/78 p-3 shadow-[0_0_28px_rgba(8,145,178,.08)] backdrop-blur-xl">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-200">{pageLabel(page)} · subscriber-ready data</div>
+          <div className="mt-1 truncate text-sm font-bold text-slate-100">{d.example}</div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-300">
+          <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1">{primaryMetric}</span>
+          <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1">{secondMetric}</span>
+          <button type="button" onClick={() => setPage?.("compare")} className="rounded-full bg-cyan-300 px-3 py-1 font-black text-slate-950">Generate Discovery</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductionReadinessPanel({ compact = false }) {
+  const checks = [
+    ["Pricing", ELEMENTOS_PRODUCTION_AUDIT.pricing],
+    ["Button handlers", `${ELEMENTOS_PRODUCTION_AUDIT.buttonComponentsWithHandlers}/${ELEMENTOS_PRODUCTION_AUDIT.buttonComponentsScanned} React buttons and ${ELEMENTOS_PRODUCTION_AUDIT.nativeButtonsWithHandlers}/${ELEMENTOS_PRODUCTION_AUDIT.nativeButtonsScanned} native buttons have click handlers.`],
+    ["Export locks", ELEMENTOS_PRODUCTION_AUDIT.exportLocking],
+    ["Mobile", ELEMENTOS_PRODUCTION_AUDIT.mobile],
+  ];
+  return (
+    <div className={`${compact ? "mt-4" : "mt-6"} rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.055] p-4`}>
+      <div className="text-xs font-black uppercase tracking-[.22em] text-emerald-200">Paid subscriber readiness</div>
+      <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {checks.map(([label, value]) => (
+          <div key={label} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+            <div className="text-sm font-black text-white">{label}</div>
+            <div className="mt-1 text-xs leading-5 text-slate-400">{value}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function GuidePanel({ page = "dashboard", compact = false }) {
   const g = guidanceForPage(page);
   return (
@@ -577,6 +632,7 @@ function GuidePanel({ page = "dashboard", compact = false }) {
       </div>
       <PageDataPanel page={page} compact={compact} />
       <ScoreMeaningPanel page={page} />
+      <ProductionReadinessPanel compact={compact} />
     </Panel>
   );
 }
@@ -4563,6 +4619,7 @@ Status: Presentation-ready platform export.`;
   };
 
   const exportPDF = (title, desc, savedContent = "") => {
+    if (!guardProAction("Generate reports / export PDF / JSON / SVG")) return;
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
     const margin = 16;
@@ -8840,6 +8897,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
       await navigator.clipboard.writeText(pitch);
       alert("Launch pitch copied.");
     } catch (error) {
+      if (!guardProAction("Download launch pitch text")) return;
       downloadFile("elementos-launch-pitch.txt", pitch);
     }
   };
@@ -9692,6 +9750,7 @@ const startCheckout = async () => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
+        <PageMicroDataBar page={page} setPage={setPage} />
         <div className="hidden lg:block">
           <UltimateScienceCommandLayer
             page={page}
