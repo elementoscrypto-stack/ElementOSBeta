@@ -4275,6 +4275,8 @@ function CalculationCore() {
       v: 3,
       r: 5,
       F: 20,
+      n: 8,
+      Gv: 12,
     };
   });
 
@@ -4294,10 +4296,19 @@ function CalculationCore() {
 
   const presets = [
     { group: "Simple maths", name: "Add", expr: "A + B", desc: "Fast two-value addition." },
+    { group: "Simple maths", name: "Subtract", expr: "A - B", desc: "Take one value away from another." },
     { group: "Simple maths", name: "Multiply", expr: "A * B", desc: "Multiply two values." },
+    { group: "Simple maths", name: "Divide", expr: "A / B", desc: "Divide one value by another." },
+    { group: "Subdivision", name: "Half", expr: "A / 2", desc: "Split a value into two equal parts." },
+    { group: "Subdivision", name: "Thirds", expr: "A / 3", desc: "Split a value into three equal parts." },
+    { group: "Subdivision", name: "Quarter", expr: "A / 4", desc: "Split a value into four equal parts." },
+    { group: "Subdivision", name: "Ratio", expr: "A / (A + B)", desc: "Find A as a share of A plus B." },
+    { group: "Subdivision", name: "Percentage Share", expr: "(A / B) * 100", desc: "Turn a part-over-whole relationship into a percentage." },
+    { group: "Subdivision", name: "Step Split", expr: "A / n", desc: "Divide a value into n equal steps. Set n in the variable panel." },
     { group: "Geometry", name: "Circle Area", expr: "pi * r^2", desc: "Area from radius." },
     { group: "Geometry", name: "Pythagoras", expr: "sqrt(A^2 + B^2)", desc: "Right-triangle hypotenuse." },
     { group: "Calculus", name: "Linear Gradient", expr: "DeltaY / DeltaX", desc: "Simple rate of change." },
+    { group: "Calculus", name: "Difference Quotient", expr: "(F - Gv) / DeltaX", desc: "Simple discrete rate of change between two values." },
     { group: "Telemetry", name: "Decibel Ratio", expr: "10 * log(I / I0)", desc: "Signal ratio in dB." },
     { group: "Mechanics", name: "Kinetic Energy", expr: "0.5 * m * v^2", desc: "Energy of motion." },
     { group: "Mechanics", name: "Force", expr: "m * A", desc: "Mass times acceleration." },
@@ -4308,7 +4319,9 @@ function CalculationCore() {
 
   const symbolGroups = [
     ["Numbers", ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."]],
-    ["Operators", [" + ", " - ", " * ", " / ", " ^ ", "(", ")"]],
+    ["Core operators", [" + ", " - ", " * ", " / ", " ^ ", "(", ")"]],
+    ["Subtract + divide", ["A - B", "A / B", "A / 2", "A / 3", "A / 4", "A / n", "(A / B) * 100", "A / (A + B)"]],
+    ["Subdivision tools", ["/ 2", "/ 3", "/ 4", "/ n", "(A - B)", "(A + B) / 2", "DeltaY / DeltaX", "(F - Gv) / DeltaX"]],
     ["Functions", ["sqrt(", "log(", "sin(", "cos(", "tan(", "abs(", "pow("]],
     ["Constants", ["pi", "e", "c", "G", "h"]],
     ["Greek", greekLetters],
@@ -4556,7 +4569,7 @@ function CalculationCore() {
           <Panel>
             <Pill gold><Sparkles size={12}/> symbol builder</Pill>
             <h2 className="mt-3 text-3xl font-black">Build with symbols</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Search and click symbols to add them to the equation. This keeps advanced maths available without crowding the main calculator.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Search and click symbols to add them to the equation. Includes simple maths, subtract, divide, fractions, ratios, subdivision, functions, constants, Greek symbols and shapes without crowding the main calculator.</p>
             <input value={symbolSearch} onChange={(e) => setSymbolSearch(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="Search numbers, operators, functions, Greek or shapes..." />
             <div className="mt-4 space-y-4">
               {visibleSymbolGroups.map(([group, items]) => <div key={group}><div className="mb-2 text-xs font-black uppercase tracking-[.18em] text-slate-500">{group}</div><div className="flex flex-wrap gap-2">{items.map((s) => <button key={`${group}-${s}`} onClick={() => addToExpression(s)} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 font-mono text-sm text-slate-200 hover:border-cyan-300/40 hover:text-white">{s}</button>)}</div></div>)}
@@ -4595,7 +4608,21 @@ function CalculationCore() {
         <Panel>
           <Pill gold><BookOpen size={12}/> framework library</Pill>
           <h2 className="mt-3 text-3xl font-black">All science options, simplified</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Pick a framework equation and it loads into the calculator. This keeps algebra, geometry, telemetry, mechanics, relativity, quantum and temporal calculations available without making the main page confusing.</p>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Pick a framework equation and it loads into the calculator. This now includes the missing everyday maths actions: subtract, divide, fractions, ratios, percentages, halves, thirds, quarters and step-by-step subdivision.</p>
+          <div className="mt-5 grid gap-3 md:grid-cols-4">
+            {[
+              ["Subtract", "A - B", "Remove B from A."],
+              ["Divide", "A / B", "Split A by B."],
+              ["Fraction", "A / 2", "Create halves, thirds, quarters or n parts."],
+              ["Ratio", "A / (A + B)", "Compare one part against the total."],
+            ].map(([label, expr, desc]) => (
+              <button key={label} onClick={() => { setExpression(expr); setMode("calculate"); }} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4 text-left hover:border-cyan-300/50">
+                <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{label}</div>
+                <div className="mt-2 font-mono text-lg font-black text-white">{expr}</div>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{desc}</p>
+              </button>
+            ))}
+          </div>
           <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {presets.map((preset) => <button key={preset.name} onClick={() => usePreset(preset)} className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{preset.group}</div><div className="mt-2 text-xl font-black text-white">{preset.name}</div><div className="mt-2 font-mono text-sm text-amber-100">{preset.expr}</div><p className="mt-3 text-sm leading-6 text-slate-400">{preset.desc}</p><div className="mt-4 text-xs font-black uppercase tracking-[.18em] text-white">Use this equation →</div></button>)}
           </div>
