@@ -1426,7 +1426,7 @@ const PAGE_LABELS = {
   universe: "Element Relationships",
   scenario: "Mission Intelligence",
   visualization: "Advanced Visuals",
-  calculations: "Calculation Intelligence",
+  calculations: "Calculation Studio",
   timemachine: "Future Simulation",
   seismo: "Wave Intelligence",
   welldriller: "Resource Discovery Lab",
@@ -2264,7 +2264,7 @@ function Sidebar({ page, setPage }) {
       items: [
         ["scenario", "Scenario Builder", FileText],
         ["visualization", "Visual Engine", BarChart3],
-        ["calculations", "Calculation Intelligence", Calculator],
+        ["calculations", "Calculation Studio", Calculator],
       ],
     },
     {
@@ -2405,7 +2405,7 @@ function Sidebar({ page, setPage }) {
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Generate Discovery", "compare", FileText], ["Advanced Material Analysis", "matterlab", Globe2], ["Ask ElementOS", "copilot", Sparkles], ["Mission Intelligence", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Future Simulation", "timemachine", Clock3], ["Resource Discovery Lab", "welldriller", Radar], ["Wave Intelligence", "seismo", Network], ["Reports", "simreports", BookOpen], ["Poster Studio", "viralcards", Sparkles], ["Calculation Intelligence", "calculations", Calculator], ["Saved Discoveries", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Explorer Launch", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Create Free Explorer Account</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, vault, PDF/JSON/SVG exports, media tools and AI Copilot through Stripe Checkout.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Access Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Generate Discovery", "compare", FileText], ["Advanced Material Analysis", "matterlab", Globe2], ["Ask ElementOS", "copilot", Sparkles], ["Mission Intelligence", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Future Simulation", "timemachine", Clock3], ["Resource Discovery Lab", "welldriller", Radar], ["Wave Intelligence", "seismo", Network], ["Reports", "simreports", BookOpen], ["Poster Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Saved Discoveries", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Behaviour Atlas", "atlas", Radar], ["Explorer Launch", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Create Free Explorer Account</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, vault, PDF/JSON/SVG exports, media tools and AI Copilot through Stripe Checkout.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Access Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["7", "behaviour metrics"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
       <DiscoveryNetworkSubscriberEdition setPage={setPage} />
       <SubscriberWorkspaceVault setPage={setPage} />
@@ -4238,17 +4238,35 @@ function IsotopeLab() {
 }
 
 function CalculationCore() {
-  const [mode, setMode] = useState("scenario");
+  const [activeStudio, setActiveStudio] = useState("calculator");
   const [primary, setPrimary] = useState("Al");
   const [secondary, setSecondary] = useState("Ti");
   const [environment, setEnvironment] = useState("Deep Ocean");
-  const [timeHorizon, setTimeHorizon] = useState(25);
+  const [timeHorizon, setTimeHorizon] = useState(50);
   const [stress, setStress] = useState(68);
   const [temperature, setTemperature] = useState(240);
   const [pressureLoad, setPressureLoad] = useState(72);
   const [humidity, setHumidity] = useState(82);
   const [radiation, setRadiation] = useState(16);
-  const [explainMode, setExplainMode] = useState("Research-grade");
+  const [expression, setExpression] = useState("sqrt(144) + 10^2 / 4");
+  const [calcResult, setCalcResult] = useState("37");
+  const [calcError, setCalcError] = useState("");
+  const [conversionCategory, setConversionCategory] = useState("Energy");
+  const [conversionValue, setConversionValue] = useState(1);
+  const [conversionFrom, setConversionFrom] = useState("kWh");
+  const [conversionTo, setConversionTo] = useState("J");
+  const [framework, setFramework] = useState("Telemetry");
+  const [equationTemplate, setEquationTemplate] = useState("T = K ln(I / I0)");
+  const [variableA, setVariableA] = useState(10);
+  const [variableB, setVariableB] = useState(2);
+  const [variableC, setVariableC] = useState(4);
+  const [whiteboardTitle, setWhiteboardTitle] = useState("Deep-ocean titanium calculation board");
+  const [whiteboardNote, setWhiteboardNote] = useState("Investigate Ti + Al behaviour under geothermal pressure for 50 years.");
+  const [whiteboardBlocks, setWhiteboardBlocks] = useState([
+    { id: "wb-1", type: "Equation", title: "Telemetry ratio", body: "T = K ln(I / I0)", x: 8, y: 12 },
+    { id: "wb-2", type: "Geometry", title: "Pressure triangle", body: "Area = 1/2bh · depth vector", x: 58, y: 18 },
+    { id: "wb-3", type: "Result", title: "Material output", body: "Al + Ti · Strong resilience band", x: 24, y: 62 },
+  ]);
   const [history, setHistory] = useState([]);
 
   const primaryElement = elementMap[primary] || elementMap.Al;
@@ -4268,11 +4286,108 @@ function CalculationCore() {
     "Nuclear Containment": { corrosion: 48, thermal: 91, pressure: 82, volatility: 96, label: "radiation + thermal load" },
   };
 
+  const unitGroups = {
+    Energy: {
+      J: 1,
+      kJ: 1000,
+      Wh: 3600,
+      kWh: 3600000,
+      BTU: 1055.06,
+      eV: 1.602176634e-19,
+    },
+    Length: {
+      mm: 0.001,
+      cm: 0.01,
+      m: 1,
+      km: 1000,
+      inch: 0.0254,
+      ft: 0.3048,
+      mile: 1609.344,
+      nautical_mile: 1852,
+    },
+    Pressure: {
+      Pa: 1,
+      kPa: 1000,
+      MPa: 1000000,
+      bar: 100000,
+      psi: 6894.757,
+      atm: 101325,
+    },
+    Temperature: {
+      Celsius: "C",
+      Fahrenheit: "F",
+      Kelvin: "K",
+    },
+    Frequency: {
+      Hz: 1,
+      kHz: 1000,
+      MHz: 1000000,
+      GHz: 1000000000,
+      THz: 1000000000000,
+    },
+    Force: {
+      N: 1,
+      kN: 1000,
+      lbf: 4.4482216153,
+    },
+  };
+
+  const frameworkLibrary = {
+    Algebra: [
+      { name: "Linear relation", formula: "y = mx + b", use: "Model simple material trends and score movement." },
+      { name: "Quadratic response", formula: "y = ax² + bx + c", use: "Model stress curves and threshold behaviour." },
+      { name: "Log relation", formula: "T = K ln(I / I0)", use: "Model telemetry intensity ratios and decibel-style response." },
+    ],
+    Geometry: [
+      { name: "Circle field", formula: "A = πr²", use: "Estimate detection fields, radial influence and target zones." },
+      { name: "Triangle force map", formula: "A = 1/2bh", use: "Build pressure wedges, load diagrams and vector sketches." },
+      { name: "Sphere volume", formula: "V = 4/3πr³", use: "Estimate cores, particles, spheres and material volumes." },
+    ],
+    Calculus: [
+      { name: "Rate of change", formula: "dy/dx", use: "Track drift, degradation, thermal growth and acceleration." },
+      { name: "Accumulation", formula: "∫ f(x) dx", use: "Estimate total exposure, cumulative load and signal energy." },
+      { name: "Gradient", formula: "∇f", use: "Map field direction, pressure slopes and telemetry surfaces." },
+    ],
+    Telemetry: [
+      { name: "Signal ratio", formula: "T = K ln(I / I0)", use: "Convert signal intensity into a readable telemetry score." },
+      { name: "Decibel relation", formula: "L = 10 log10(I / I0)", use: "Compare relative intensity, pressure, sound or signal change." },
+      { name: "Confidence band", formula: "C = S + R − N", use: "Combine signal, resilience and noise into one confidence value." },
+    ],
+    Mechanics: [
+      { name: "Kinetic energy", formula: "E = 1/2mv²", use: "Model movement, particles, vibration and impact energy." },
+      { name: "Stress", formula: "σ = F / A", use: "Calculate structural pressure over area." },
+      { name: "Lagrangian", formula: "L = T − V", use: "Compare kinetic and potential energy behaviour." },
+    ],
+    Relativity: [
+      { name: "Mass energy", formula: "E = mc²", use: "Reference energy equivalence and high-energy scenarios." },
+      { name: "Lorentz factor", formula: "γ = 1 / √(1 − v²/c²)", use: "Show relativistic scaling and high-speed correction." },
+      { name: "Time dilation", formula: "t′ = γt", use: "Compare observed time under extreme velocity." },
+    ],
+    Quantum: [
+      { name: "Planck relation", formula: "E = hf", use: "Link frequency and energy at particle/light scale." },
+      { name: "Wave relation", formula: "λ = h / p", use: "Estimate matter-wave behaviour." },
+      { name: "Field energy", formula: "E² = p²c² + m²c⁴", use: "Relate momentum, mass and energy." },
+    ],
+    Temporal: [
+      { name: "Temporal gradient", formula: "τ = ΔR / Δt", use: "Compare how reality-state values change over time." },
+      { name: "Exposure time", formula: "X = load × years", use: "Model long-horizon exposure in Future Simulation." },
+      { name: "Phase drift", formula: "φ(t) = φ0 + ωt", use: "Track repeating cycles, waves and rotational timing." },
+    ],
+  };
+
+  const symbolGroups = {
+    Core: ["+", "−", "×", "÷", "=", "≈", "≠", "<", ">", "≤", "≥"],
+    Powers: ["x²", "x³", "√", "∛", "^", "log", "ln", "e", "π"],
+    Calculus: ["d/dx", "∂", "∫", "∑", "∏", "∇", "lim", "∞"],
+    Greek: ["α", "β", "γ", "δ", "Δ", "θ", "λ", "μ", "π", "ρ", "σ", "τ", "φ", "ω", "Ω"],
+    Physics: ["c", "h", "ℏ", "G", "F", "E", "m", "v", "a", "p", "ψ", "Φ"],
+    Shapes: ["○", "□", "△", "◇", "⬡", "→", "↔", "⟂", "∥", "⊕", "⊗"],
+  };
+
   const env = envProfiles[environment] || envProfiles["Deep Ocean"];
   const avgStability = ((primaryScore.stability + secondaryScore.stability) / 10) * 100;
   const avgThermal = ((primaryScore.thermal + secondaryScore.thermal) / 10) * 100;
   const avgPressure = ((primaryScore.pressure + secondaryScore.pressure) / 10) * 100;
-  const avgConductivity = ((primaryScore.conductivity + secondaryScore.conductivity) / 10) * 100;
   const exposure = Math.min(100, timeHorizon * 0.9 + stress * 0.28 + humidity * 0.22 + radiation * 0.24 + pressureLoad * 0.26);
   const thermalDrift = Math.max(1, Math.min(99, env.thermal * 0.36 + temperature / 8 + timeHorizon * 0.18 - avgThermal * 0.18));
   const pressureRisk = Math.max(1, Math.min(99, env.pressure * 0.42 + pressureLoad * 0.38 + stress * 0.18 - avgPressure * 0.24));
@@ -4283,25 +4398,81 @@ function CalculationCore() {
   const researchGrade = confidence >= 84 ? "Strong" : confidence >= 70 ? "Promising" : confidence >= 55 ? "Experimental" : "High risk";
   const discoveryId = `${primary}-${secondary}-${Math.abs(primary.charCodeAt(0) * 17 + secondary.charCodeAt(0) * 31 + timeHorizon).toString(16).toUpperCase()}`;
 
-  const formulaCards = [
-    { title: "Compatibility Index", formula: "C = 100 − Σ|metricA − metricB|", value: `${compatibility}%`, meaning: "How naturally the selected materials behave together across the ElementOS metrics." },
-    { title: "Exposure Load", formula: "E = t + stress + humidity + radiation", value: `${Math.round(exposure)}%`, meaning: "How hostile the selected environment becomes over the chosen time horizon." },
-    { title: "Resilience Score", formula: "R = stability + thermal + pressure − exposure", value: `${Math.round(resilience)}%`, meaning: "How well the pair is expected to keep useful behaviour under pressure." },
-    { title: "Confidence Band", formula: "K = compatibility + resilience + agreement", value: `${confidence}%`, meaning: "How confident the platform is in this calculation scenario." },
-  ];
+  const convertTemperature = (value, from, to) => {
+    let celsius = value;
+    if (from === "Fahrenheit") celsius = (value - 32) * 5 / 9;
+    if (from === "Kelvin") celsius = value - 273.15;
+    if (to === "Fahrenheit") return celsius * 9 / 5 + 32;
+    if (to === "Kelvin") return celsius + 273.15;
+    return celsius;
+  };
+
+  const conversionResult = useMemo(() => {
+    const group = unitGroups[conversionCategory];
+    if (!group) return 0;
+    if (conversionCategory === "Temperature") return convertTemperature(Number(conversionValue || 0), conversionFrom, conversionTo);
+    return Number(conversionValue || 0) * group[conversionFrom] / group[conversionTo];
+  }, [conversionCategory, conversionValue, conversionFrom, conversionTo]);
+
+  const calculateExpression = () => {
+    try {
+      const safe = expression
+        .replace(/π/g, "Math.PI")
+        .replace(/\be\b/g, "Math.E")
+        .replace(/\^/g, "**")
+        .replace(/sqrt\(/g, "Math.sqrt(")
+        .replace(/sin\(/g, "Math.sin(")
+        .replace(/cos\(/g, "Math.cos(")
+        .replace(/tan\(/g, "Math.tan(")
+        .replace(/log\(/g, "Math.log10(")
+        .replace(/ln\(/g, "Math.log(");
+      if (!/^[0-9+\-*/().,\sA-Za-z_**]+$/.test(safe) || /(?:window|document|global|process|Function|eval|import)/i.test(safe)) {
+        throw new Error("Only calculator expressions are allowed.");
+      }
+      const result = Function(`"use strict"; return (${safe});`)();
+      if (!Number.isFinite(result)) throw new Error("Result is not finite.");
+      setCalcResult(String(Math.round(result * 1000000) / 1000000));
+      setCalcError("");
+    } catch (error) {
+      setCalcError(error.message || "Could not calculate this expression.");
+    }
+  };
+
+  const currentFrameworkCards = frameworkLibrary[framework] || frameworkLibrary.Telemetry;
+  const equationOutput = useMemo(() => {
+    const a = Number(variableA || 0);
+    const b = Number(variableB || 1);
+    const c = Number(variableC || 0);
+    if (equationTemplate.includes("ln")) return Math.round((c * Math.log(Math.max(0.000001, a / Math.max(0.000001, b)))) * 10000) / 10000;
+    if (equationTemplate.includes("10 log10")) return Math.round((10 * Math.log10(Math.max(0.000001, a / Math.max(0.000001, b)))) * 10000) / 10000;
+    if (equationTemplate.includes("1/2mv")) return Math.round((0.5 * a * b * b) * 10000) / 10000;
+    if (equationTemplate.includes("F / A")) return Math.round((a / Math.max(0.000001, b)) * 10000) / 10000;
+    if (equationTemplate.includes("πr²")) return Math.round((Math.PI * a * a) * 10000) / 10000;
+    return Math.round((a + b + c) * 10000) / 10000;
+  }, [equationTemplate, variableA, variableB, variableC]);
 
   const telemetry = [
-    ["Compatibility", compatibility, "cyan"],
-    ["Resilience", Math.round(resilience), "emerald"],
-    ["Thermal drift", Math.round(thermalDrift), "amber"],
-    ["Pressure risk", Math.round(pressureRisk), "fuchsia"],
-    ["Corrosion risk", Math.round(corrosionRisk), "rose"],
-    ["Confidence", confidence, "sky"],
+    ["Compatibility", compatibility],
+    ["Resilience", Math.round(resilience)],
+    ["Thermal drift", Math.round(thermalDrift)],
+    ["Pressure risk", Math.round(pressureRisk)],
+    ["Corrosion risk", Math.round(corrosionRisk)],
+    ["Confidence", confidence],
   ];
 
-  const explanation = explainMode === "Explain like I'm 12"
-    ? `${primaryElement.name} and ${secondaryElement.name} are being tested like a team. The environment adds heat, pressure and damage over time. A high score means the team should survive better. Here, the result is ${researchGrade.toLowerCase()} because compatibility is ${compatibility}% and the main risk is ${risk}%.`
-    : `Calculation Intelligence models ${primaryElement.name} + ${secondaryElement.name} inside ${environment}. The current run produces a ${confidence}% confidence band with ${Math.round(resilience)}% resilience. The dominant load is ${risk >= 75 ? "severe" : risk >= 55 ? "moderate" : "controlled"}, driven by ${env.label}. This makes the scenario ${researchGrade.toLowerCase()} for report-level review.`;
+  const explanation = `Calculation Studio combines ${primaryElement.name} + ${secondaryElement.name}, ${environment}, and a ${timeHorizon}-year horizon into a report-ready reasoning model. Current confidence is ${confidence}%, resilience is ${Math.round(resilience)}%, and the dominant load is ${risk >= 75 ? "severe" : risk >= 55 ? "moderate" : "controlled"}. The main environmental driver is ${env.label}.`;
+
+  const addWhiteboardBlock = (type = "Equation") => {
+    const next = {
+      id: `wb-${Date.now()}`,
+      type,
+      title: type === "Equation" ? framework : type,
+      body: type === "Equation" ? equationTemplate : type === "Shape" ? "○ → △ → ◇" : whiteboardNote,
+      x: 8 + ((whiteboardBlocks.length * 17) % 70),
+      y: 12 + ((whiteboardBlocks.length * 19) % 62),
+    };
+    setWhiteboardBlocks((current) => [...current, next].slice(-12));
+  };
 
   const addToHistory = () => {
     const item = {
@@ -4309,20 +4480,22 @@ function CalculationCore() {
       primary,
       secondary,
       environment,
+      framework,
+      equation: equationTemplate,
       timeHorizon,
       confidence,
       risk,
       resilience: Math.round(resilience),
       created: new Date().toLocaleTimeString(),
     };
-    setHistory((current) => [item, ...current].slice(0, 6));
+    setHistory((current) => [item, ...current].slice(0, 8));
   };
 
   const exportCalc = () => {
-    const content = `ElementOS Calculation Intelligence Report\n\nScenario: ${primaryElement.name} + ${secondaryElement.name}\nDiscovery ID: ${discoveryId}\nEnvironment: ${environment}\nTime Horizon: ${timeHorizon} years\n\nCompatibility: ${compatibility}%\nResilience: ${Math.round(resilience)}%\nConfidence: ${confidence}%\nThermal Drift: ${Math.round(thermalDrift)}%\nPressure Risk: ${Math.round(pressureRisk)}%\nCorrosion Risk: ${Math.round(corrosionRisk)}%\n\nInterpretation:\n${explanation}`;
+    const content = `ElementOS Calculation Studio Report\n\nBoard: ${whiteboardTitle}\nScenario: ${primaryElement.name} + ${secondaryElement.name}\nDiscovery ID: ${discoveryId}\nEnvironment: ${environment}\nTime Horizon: ${timeHorizon} years\n\nFramework: ${framework}\nEquation: ${equationTemplate}\nEquation Output: ${equationOutput}\nExpression: ${expression}\nExpression Result: ${calcResult}\nConversion: ${conversionValue} ${conversionFrom} = ${conversionResult} ${conversionTo}\n\nCompatibility: ${compatibility}%\nResilience: ${Math.round(resilience)}%\nConfidence: ${confidence}%\nThermal Drift: ${Math.round(thermalDrift)}%\nPressure Risk: ${Math.round(pressureRisk)}%\nCorrosion Risk: ${Math.round(corrosionRisk)}%\n\nWhiteboard Notes:\n${whiteboardBlocks.map((block) => `${block.type}: ${block.title} — ${block.body}`).join("\n")}\n\nInterpretation:\n${explanation}`;
     exportAllFormats({
-      baseName: `elementos-calculation-intelligence-${discoveryId}`,
-      title: "Calculation Intelligence Report",
+      baseName: `elementos-calculation-studio-${discoveryId}`,
+      title: "Calculation Studio Report",
       summary: content,
       payload: {
         discoveryId,
@@ -4330,24 +4503,35 @@ function CalculationCore() {
         secondary,
         environment,
         timeHorizon,
-        stress,
-        temperature,
-        pressureLoad,
-        humidity,
-        radiation,
+        framework,
+        equationTemplate,
+        equationOutput,
+        expression,
+        calcResult,
+        conversionCategory,
+        conversionValue,
+        conversionFrom,
+        conversionTo,
+        conversionResult,
+        whiteboardTitle,
+        whiteboardBlocks,
         compatibility,
         resilience: Math.round(resilience),
         confidence,
-        thermalDrift: Math.round(thermalDrift),
-        pressureRisk: Math.round(pressureRisk),
-        corrosionRisk: Math.round(corrosionRisk),
         explanation,
       },
     });
     addToHistory();
   };
 
+  const resetBoard = () => {
+    setWhiteboardBlocks([]);
+    setWhiteboardTitle("New Calculation Board");
+    setWhiteboardNote("Create a fresh equation, framework or shape block.");
+  };
+
   const elementOptions = elements.slice(0, 118);
+  const currentUnits = Object.keys(unitGroups[conversionCategory] || {});
 
   return (
     <>
@@ -4358,43 +4542,40 @@ function CalculationCore() {
           <div className="relative grid gap-8 xl:grid-cols-[1.1fr_.9fr] xl:items-center">
             <div>
               <div className="flex flex-wrap gap-2">
-                <Pill gold><Calculator size={12}/> calculation intelligence</Pill>
-                <Pill><BarChart3 size={12}/> live confidence model</Pill>
-                <Pill><Sparkles size={12}/> formula-to-report engine</Pill>
+                <Pill gold><Calculator size={12}/> calculation studio</Pill>
+                <Pill><BookOpen size={12}/> frameworks</Pill>
+                <Pill><Sparkles size={12}/> equation whiteboard</Pill>
               </div>
               <h1 className="mt-5 max-w-5xl text-5xl font-black leading-[.92] tracking-tight md:text-7xl">
-                Calculation <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Intelligence</span>
+                Calculation <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Studio</span>
               </h1>
               <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-                Turn material choices, environments and time horizons into explainable research calculations. This is the reasoning layer behind reports, simulations, Future Simulation runs and Discovery Media exports.
+                A subscriber-grade mathematical workspace for quick calculations, unit conversion, equation building, symbols, geometry, telemetry, calculus, mechanics, relativity, quantum frameworks and reusable whiteboard boards.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <Button onClick={exportCalc} variant="primary" className="px-8 py-5"><Download size={16} className="mr-2 inline"/> Export PDF / JSON / SVG</Button>
-                <Button onClick={addToHistory} className="px-8 py-5"><Save size={16} className="mr-2 inline"/> Save Calculation Run</Button>
-                <Button onClick={() => setExplainMode(explainMode === "Research-grade" ? "Explain like I'm 12" : "Research-grade")} className="px-8 py-5"><Sparkles size={16} className="mr-2 inline"/> {explainMode}</Button>
+                <Button onClick={exportCalc} variant="primary" className="px-8 py-5"><Download size={16} className="mr-2 inline"/> Export Board / Report</Button>
+                <Button onClick={() => addWhiteboardBlock("Equation")} className="px-8 py-5"><Save size={16} className="mr-2 inline"/> Add Equation Block</Button>
+                <Button onClick={addToHistory} className="px-8 py-5"><Clock3 size={16} className="mr-2 inline"/> Save Run</Button>
               </div>
             </div>
 
             <div className="rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 shadow-[0_0_90px_rgba(34,211,238,.14)]">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-xs uppercase tracking-[.25em] text-cyan-200">Current calculation</div>
-                  <div className="mt-3 text-4xl font-black text-white">{primary} + {secondary}</div>
-                  <div className="mt-1 text-sm text-slate-400">{environment} · {timeHorizon} year horizon</div>
+                  <div className="text-xs uppercase tracking-[.25em] text-cyan-200">Current board</div>
+                  <div className="mt-3 text-4xl font-black text-white">{whiteboardTitle}</div>
+                  <div className="mt-1 text-sm text-slate-400">{framework} · {equationTemplate}</div>
                 </div>
                 <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-right">
                   <div className="text-5xl font-black text-emerald-100">{confidence}%</div>
                   <div className="text-[10px] uppercase tracking-[.2em] text-emerald-200">confidence</div>
                 </div>
               </div>
-              <div className="mt-5 h-3 overflow-hidden rounded-full bg-slate-950">
-                <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-amber-300" style={{ width: `${confidence}%` }} />
-              </div>
               <div className="mt-5 grid grid-cols-3 gap-3">
-                {[['Grade', researchGrade], ['Risk', `${risk}%`], ['ID', discoveryId]].map(([label, value]) => (
+                {[["Result", calcResult], ["Convert", Number(conversionResult).toPrecision(5)], ["Equation", String(equationOutput)]].map(([label, value]) => (
                   <div key={label} className="rounded-2xl border border-white/10 bg-white/[.04] p-4">
                     <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
-                    <div className="mt-2 text-lg font-black text-cyan-100">{value}</div>
+                    <div className="mt-2 truncate text-lg font-black text-cyan-100">{value}</div>
                   </div>
                 ))}
               </div>
@@ -4403,137 +4584,171 @@ function CalculationCore() {
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[.85fr_1.15fr]">
+      <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+        {[
+          ["calculator", "Calculator", "Arithmetic + functions"],
+          ["converter", "Converter", "Units + science"],
+          ["builder", "Equation Builder", "Symbols + variables"],
+          ["frameworks", "Frameworks", "Physics + maths"],
+          ["whiteboard", "Whiteboard", "Blocks + shapes"],
+          ["scenario", "Material Model", "ElementOS data"],
+        ].map(([id, label, detail]) => (
+          <button key={id} onClick={() => setActiveStudio(id)} className={`rounded-[1.3rem] border p-4 text-left transition ${activeStudio === id ? "border-cyan-300/50 bg-cyan-300/15 text-white" : "border-white/10 bg-white/[0.035] text-slate-400 hover:bg-white/[0.06]"}`}>
+            <div className="text-sm font-black">{label}</div>
+            <div className="mt-1 text-xs">{detail}</div>
+          </button>
+        ))}
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
         <Panel>
-          <Pill gold><Settings size={12}/> scenario controls</Pill>
-          <h2 className="mt-3 text-4xl font-black">Build the calculation.</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Select materials, environment and exposure conditions. Every value updates the confidence model instantly.</p>
+          <Pill gold><Calculator size={12}/> active workspace</Pill>
+          <h2 className="mt-3 text-4xl font-black">Enter values, symbols and frameworks.</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">This page should feel like a scientific whiteboard, calculator, unit converter and equation creator in one place.</p>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <label className="block text-sm text-slate-300">
-              Primary material
-              <select value={primary} onChange={(e) => setPrimary(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white">
-                {elementOptions.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
-              </select>
-            </label>
-            <label className="block text-sm text-slate-300">
-              Secondary material
-              <select value={secondary} onChange={(e) => setSecondary(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white">
-                {elementOptions.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
-              </select>
-            </label>
-            <label className="block text-sm text-slate-300 md:col-span-2">
-              Environment profile
-              <select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white">
-                {Object.keys(envProfiles).map((name) => <option key={name} value={name}>{name} — {envProfiles[name].label}</option>)}
-              </select>
-            </label>
-          </div>
-
-          <div className="mt-6 grid gap-4">
-            {[
-              ["Time Horizon", timeHorizon, setTimeHorizon, 1, 250, "years"],
-              ["Mechanical Stress", stress, setStress, 0, 100, "%"],
-              ["Temperature", temperature, setTemperature, -180, 1200, "°C"],
-              ["Pressure Load", pressureLoad, setPressureLoad, 0, 100, "%"],
-              ["Humidity / Corrosion", humidity, setHumidity, 0, 100, "%"],
-              ["Radiation / Signal Noise", radiation, setRadiation, 0, 100, "%"],
-            ].map(([label, value, setter, min, max, unit]) => (
-              <label key={label} className="block text-sm text-slate-300">
-                <div className="flex justify-between"><span>{label}</span><b className="text-cyan-100">{value} {unit}</b></div>
-                <input type="range" min={min} max={max} step="1" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" />
+          {activeStudio === "calculator" && (
+            <div className="mt-6 space-y-4">
+              <label className="block text-sm text-slate-300">Expression
+                <input value={expression} onChange={(e) => setExpression(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-4 font-mono text-white" placeholder="sqrt(144) + 10^2 / 4" />
               </label>
-            ))}
-          </div>
+              <div className="flex flex-wrap gap-2">
+                {["+", "-", "*", "/", "^", "sqrt(", "ln(", "log(", "sin(", "cos(", "π"].map((sym) => <Button key={sym} onClick={() => setExpression((current) => `${current}${sym}`)}>{sym}</Button>)}
+              </div>
+              <Button onClick={calculateExpression} variant="primary" className="w-full">Calculate</Button>
+              {calcError ? <Info title="Calculator note">{calcError}</Info> : <div className="rounded-[1.5rem] border border-emerald-300/20 bg-emerald-300/10 p-5"><div className="text-xs uppercase tracking-[.2em] text-emerald-200">Result</div><div className="mt-2 text-5xl font-black text-emerald-100">{calcResult}</div></div>}
+            </div>
+          )}
+
+          {activeStudio === "converter" && (
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              <label className="block text-sm text-slate-300 md:col-span-2">Conversion type
+                <select value={conversionCategory} onChange={(e) => { const next = e.target.value; const units = Object.keys(unitGroups[next]); setConversionCategory(next); setConversionFrom(units[0]); setConversionTo(units[1] || units[0]); }} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white">
+                  {Object.keys(unitGroups).map((name) => <option key={name} value={name}>{name}</option>)}
+                </select>
+              </label>
+              <label className="block text-sm text-slate-300">Value
+                <input type="number" value={conversionValue} onChange={(e) => setConversionValue(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white" />
+              </label>
+              <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm text-cyan-50">{conversionValue} {conversionFrom} = <b>{Number(conversionResult).toPrecision(8)}</b> {conversionTo}</div>
+              <label className="block text-sm text-slate-300">From
+                <select value={conversionFrom} onChange={(e) => setConversionFrom(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white">{currentUnits.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select>
+              </label>
+              <label className="block text-sm text-slate-300">To
+                <select value={conversionTo} onChange={(e) => setConversionTo(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white">{currentUnits.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select>
+              </label>
+            </div>
+          )}
+
+          {activeStudio === "builder" && (
+            <div className="mt-6 space-y-4">
+              <label className="block text-sm text-slate-300">Equation template
+                <input value={equationTemplate} onChange={(e) => setEquationTemplate(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-4 font-mono text-white" />
+              </label>
+              <div className="grid gap-3 md:grid-cols-3">
+                {[['A', variableA, setVariableA], ['B', variableB, setVariableB], ['C / K', variableC, setVariableC]].map(([label, value, setter]) => (
+                  <label key={label} className="block text-sm text-slate-300">{label}
+                    <input type="number" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white" />
+                  </label>
+                ))}
+              </div>
+              <div className="rounded-[1.5rem] border border-cyan-300/20 bg-cyan-300/10 p-5"><div className="font-mono text-xl text-cyan-100">{equationTemplate}</div><div className="mt-3 text-sm text-slate-300">Live output: <b>{equationOutput}</b></div></div>
+              {Object.entries(symbolGroups).map(([group, symbols]) => (
+                <div key={group}>
+                  <div className="mb-2 text-xs uppercase tracking-[.2em] text-slate-500">{group}</div>
+                  <div className="flex flex-wrap gap-2">{symbols.map((symbol) => <button key={`${group}-${symbol}`} onClick={() => setEquationTemplate((current) => `${current} ${symbol}`)} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-black text-slate-200 hover:bg-cyan-300 hover:text-slate-950">{symbol}</button>)}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeStudio === "frameworks" && (
+            <div className="mt-6 space-y-4">
+              <div className="flex flex-wrap gap-2">{Object.keys(frameworkLibrary).map((name) => <button key={name} onClick={() => { setFramework(name); setEquationTemplate(frameworkLibrary[name][0].formula); }} className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[.15em] ${framework === name ? "border-amber-300/60 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>{name}</button>)}</div>
+              <div className="grid gap-3">{currentFrameworkCards.map((item) => <button key={item.name} onClick={() => setEquationTemplate(item.formula)} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left hover:border-cyan-300/40"><div className="font-black text-white">{item.name}</div><div className="mt-2 rounded-xl bg-slate-950 p-3 font-mono text-sm text-cyan-100">{item.formula}</div><p className="mt-2 text-sm leading-6 text-slate-400">{item.use}</p></button>)}</div>
+            </div>
+          )}
+
+          {activeStudio === "whiteboard" && (
+            <div className="mt-6 space-y-4">
+              <label className="block text-sm text-slate-300">Board title
+                <input value={whiteboardTitle} onChange={(e) => setWhiteboardTitle(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white" />
+              </label>
+              <label className="block text-sm text-slate-300">New note / block text
+                <textarea value={whiteboardNote} onChange={(e) => setWhiteboardNote(e.target.value)} className="mt-2 min-h-28 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white" />
+              </label>
+              <div className="grid gap-3 md:grid-cols-3"><Button onClick={() => addWhiteboardBlock("Equation")} variant="primary">Add Equation</Button><Button onClick={() => addWhiteboardBlock("Shape")}>Add Shape</Button><Button onClick={() => addWhiteboardBlock("Note")}>Add Note</Button></div>
+              <Button onClick={resetBoard} className="w-full">Clear Board</Button>
+            </div>
+          )}
+
+          {activeStudio === "scenario" && (
+            <div className="mt-6 space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <label className="block text-sm text-slate-300">Primary material<select value={primary} onChange={(e) => setPrimary(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white">{elementOptions.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select></label>
+                <label className="block text-sm text-slate-300">Secondary material<select value={secondary} onChange={(e) => setSecondary(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white">{elementOptions.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select></label>
+              </div>
+              <label className="block text-sm text-slate-300">Environment profile<select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-2 w-full rounded-2xl border border-cyan-300/20 bg-slate-950 p-3 text-white">{Object.keys(envProfiles).map((name) => <option key={name} value={name}>{name} — {envProfiles[name].label}</option>)}</select></label>
+              {[["Time Horizon", timeHorizon, setTimeHorizon, 1, 250, "years"], ["Mechanical Stress", stress, setStress, 0, 100, "%"], ["Temperature", temperature, setTemperature, -180, 1200, "°C"], ["Pressure Load", pressureLoad, setPressureLoad, 0, 100, "%"], ["Humidity / Corrosion", humidity, setHumidity, 0, 100, "%"], ["Radiation / Signal Noise", radiation, setRadiation, 0, 100, "%"]].map(([label, value, setter, min, max, unit]) => <label key={label} className="block text-sm text-slate-300"><div className="flex justify-between"><span>{label}</span><b className="text-cyan-100">{value} {unit}</b></div><input type="range" min={min} max={max} step="1" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full" /></label>)}
+            </div>
+          )}
         </Panel>
 
         <Panel>
-          <Pill gold><BarChart3 size={12}/> intelligence surface</Pill>
-          <h2 className="mt-3 text-4xl font-black">Live calculation telemetry.</h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {telemetry.map(([label, value]) => (
-              <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                <div className="flex items-center justify-between text-sm"><span className="text-slate-400">{label}</span><b className="text-cyan-100">{value}%</b></div>
-                <div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-amber-300" style={{ width: `${Math.max(4, value)}%` }} /></div>
+          <Pill gold><ClipboardList size={12}/> whiteboard preview</Pill>
+          <h2 className="mt-3 text-4xl font-black">Build a reusable calculation board.</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Blocks are intentionally visual and export-friendly, so subscribers can create posters, report diagrams and whiteboard-style calculation layouts.</p>
+          <div className="mt-6 min-h-[560px] overflow-hidden rounded-[2.5rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_28%),linear-gradient(135deg,#020617,#081a2f_55%,#100b22)] p-5 relative">
+            <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px)", backgroundSize: "38px 38px" }} />
+            <div className="relative z-10 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-amber-50"><div className="text-xs uppercase tracking-[.2em] text-amber-200">{framework} calculation board</div><div className="mt-1 text-2xl font-black">{whiteboardTitle}</div></div>
+            {whiteboardBlocks.map((block, index) => (
+              <div key={block.id} className="absolute z-20 w-[220px] rounded-[1.5rem] border border-cyan-300/20 bg-black/55 p-4 shadow-[0_0_40px_rgba(34,211,238,.12)] backdrop-blur" style={{ left: `${block.x}%`, top: `${block.y}%` }}>
+                <div className="flex items-center justify-between gap-2"><span className="rounded-full bg-cyan-300/10 px-2 py-1 text-[10px] font-black uppercase tracking-[.16em] text-cyan-100">{block.type}</span><span className="text-xs text-slate-500">#{index + 1}</span></div>
+                <div className="mt-3 font-black text-white">{block.title}</div>
+                <div className="mt-2 font-mono text-sm leading-6 text-cyan-100">{block.body}</div>
               </div>
             ))}
+            <div className="absolute bottom-5 left-5 right-5 z-10 rounded-2xl border border-white/10 bg-black/45 p-4 text-sm leading-6 text-slate-300">{explanation}</div>
           </div>
+        </Panel>
+      </div>
 
-          <div className="mt-6 rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-300/10 to-black/30 p-5">
-            <div className="text-xs uppercase tracking-[.25em] text-cyan-200">AI interpretation</div>
-            <p className="mt-3 text-sm leading-7 text-slate-200">{explanation}</p>
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
+        <Panel>
+          <Pill gold><BarChart3 size={12}/> live material telemetry</Pill>
+          <h2 className="mt-3 text-4xl font-black">ElementOS calculation output.</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {telemetry.map(([label, value]) => <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4"><div className="flex items-center justify-between text-sm"><span className="text-slate-400">{label}</span><b className="text-cyan-100">{value}%</b></div><div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-amber-300" style={{ width: `${Math.max(4, value)}%` }} /></div></div>)}
           </div>
+          <Info title="Trust note">Calculation Studio is an exploratory modelling and communication layer, not laboratory certification. Use it to compare ideas, create explainable boards and support early-stage reports.</Info>
+        </Panel>
 
-          <div className="mt-6 h-64 rounded-[2rem] border border-white/10 bg-black/25 p-5">
-            <div className="relative h-full overflow-hidden rounded-[1.5rem] bg-[radial-gradient(circle_at_center,rgba(34,211,238,.18),transparent_35%),linear-gradient(135deg,#020617,#081426)]">
-              <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px)", backgroundSize: "34px 34px" }} />
-              {Array.from({ length: 10 }).map((_, i) => {
-                const h = Math.max(12, Math.min(92, confidence + Math.sin(i * 0.85 + timeHorizon / 10) * 18 - risk * 0.12));
-                return <div key={i} className="absolute bottom-5 rounded-t-2xl bg-cyan-300/80 shadow-[0_0_30px_rgba(34,211,238,.4)]" style={{ left: `${6 + i * 9}%`, width: "5%", height: `${h}%` }} />;
-              })}
-              <div className="absolute left-6 top-6 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-black text-emerald-100">Signal surface · {confidence}%</div>
-            </div>
+        <Panel>
+          <Pill gold><Clock3 size={12}/> saved runs</Pill>
+          <h2 className="mt-3 text-4xl font-black">Calculation history.</h2>
+          <div className="mt-6 grid gap-3">
+            {(history.length ? history : [{ id: "No saved calculations yet", primary: "Run", secondary: "Export", environment: "Save a board to build history", framework: "—", confidence: 0, created: "—" }]).map((item) => <div key={`${item.id}-${item.created}`} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="flex flex-wrap items-center justify-between gap-3"><div><b className="text-cyan-100">{item.id}</b><div className="text-sm text-slate-400">{item.primary} + {item.secondary} · {item.environment} · {item.framework}</div></div><div className="text-sm text-slate-400">{item.created}</div><div className="text-xl font-black text-emerald-100">{item.confidence}%</div></div></div>)}
           </div>
         </Panel>
       </div>
 
       <Panel>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <Pill gold><BookOpen size={12}/> formula library</Pill>
-            <h2 className="mt-3 text-4xl font-black">Equations that explain the run.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each formula card shows the calculation idea, the live result and what it means in plain English.</p>
-          </div>
-          <div className="flex rounded-2xl border border-white/10 bg-black/25 p-1">
-            {[["scenario", "Scenario"], ["formula", "Formula"], ["history", "History"]].map(([id, label]) => (
-              <button key={id} onClick={() => setMode(id)} className={`rounded-xl px-4 py-2 text-sm font-black ${mode === id ? "bg-cyan-300 text-slate-950" : "text-slate-300"}`}>{label}</button>
-            ))}
-          </div>
-        </div>
-
-        {mode !== "history" ? (
-          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {formulaCards.map((card) => (
-              <div key={card.title} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5">
-                <div className="text-xs uppercase tracking-[.2em] text-slate-500">{card.title}</div>
-                <div className="mt-3 rounded-2xl border border-white/10 bg-black/30 p-3 font-mono text-xs text-cyan-100">{card.formula}</div>
-                <div className="mt-4 text-4xl font-black text-white">{card.value}</div>
-                <p className="mt-3 text-sm leading-6 text-slate-400">{card.meaning}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-6 grid gap-3">
-            {(history.length ? history : [{ id: "No saved calculations yet", primary: "Run", secondary: "Export", environment: "Save a calculation to build history", timeHorizon: 0, confidence: 0, risk: 0, resilience: 0, created: "—" }]).map((item) => (
-              <div key={`${item.id}-${item.created}`} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div><b className="text-cyan-100">{item.id}</b><div className="text-sm text-slate-400">{item.primary} + {item.secondary} · {item.environment}</div></div>
-                  <div className="text-sm text-slate-400">{item.created}</div>
-                  <div className="text-xl font-black text-emerald-100">{item.confidence}%</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Panel>
-
-      <Panel>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <Pill gold><Sparkles size={12}/> recommended next step</Pill>
-            <h2 className="mt-3 text-3xl font-black">Turn this calculation into a platform asset.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">This run is ready to become a report, a discovery card, a Future Simulation scenario or a Workspace record.</p>
+            <Pill gold><Sparkles size={12}/> paid subscriber value</Pill>
+            <h2 className="mt-3 text-3xl font-black">Calculation Studio becomes a Pro Researcher feature.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Explorer users can view examples. Pro Researcher unlocks exports, saved boards and report packs. Pro Lab unlocks advanced frameworks, future saved workspaces and premium simulation links.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button onClick={exportCalc} variant="primary">Export Report Pack</Button>
-            <Button onClick={addToHistory}>Save to History</Button>
-            <Button onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true }))}>Open Command Engine</Button>
+            <Button onClick={exportCalc} variant="primary">Export Calculation Pack</Button>
+            <Button onClick={() => setActiveStudio("whiteboard")}>Open Whiteboard</Button>
+            <Button onClick={() => setActiveStudio("frameworks")}>Browse Frameworks</Button>
           </div>
         </div>
       </Panel>
     </>
   );
 }
+
 
 function Reports({ compare, session, isPro, startCheckout }) {
   const [saved, setSaved] = useState([]);
@@ -6638,7 +6853,7 @@ function ExperimentalWellDriller({ setPage }) {
           <div className="mt-5 flex flex-wrap gap-3">
             <Button onClick={exportWell} variant="primary"><Download size={16} className="inline"/> Export Formation PDF/JSON/SVG</Button>
             <Button onClick={() => setPage("seismo")}>Open Seismo</Button>
-            <Button onClick={() => setPage("calculations")}>Open Calculation Intelligence</Button>
+            <Button onClick={() => setPage("calculations")}>Open Calculation Studio</Button>
           </div>
         </div>
 
@@ -8514,7 +8729,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     ["simreports", "Create Simulation Dossier", "Create a universal dossier across Future Simulation, Seismo, Scenario and Well Driller.", "Reports", "Report"],
     ["viralcards", "Create Media", "Generate a cinematic share card for discoveries, simulations and reports.", "Growth", "Share"],
     ["beta", "Open Explorer Launch", "Explorer $0, Founding Researcher pricing, roadmap, feedback and upgrade conversion.", "Growth", "Explorer"],
-    ["calculations", "Open Calculation Intelligence", "Use premium calculation blocks to support report narratives.", "Tools", "Calc"],
+    ["calculations", "Open Calculation Studio", "Use premium calculation blocks to support report narratives.", "Tools", "Calc"],
     ["lab", "Open Workspace", "Return to saved scenarios, reports, discoveries and research assets.", "Workspace", "Lab"],
     ["visualization", "Open Visual Engine", "Survival curves, telemetry cards, pulse graphs and cinematic visuals.", "Visuals", "Visual"],
     ["compare", "Open Compare Materials", "Compare stability, thermal, pressure, diffusion, rarity and alignment.", "Analysis", "Compare"],
