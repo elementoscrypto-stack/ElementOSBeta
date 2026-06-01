@@ -7337,8 +7337,12 @@ ${cardData.statA} · ${cardData.statB} · ${cardData.statC}
 ${cardData.hook}
 ${cardData.cardNumber}
 Generated in ElementOS`;
-    navigator.clipboard?.writeText(text);
-    alert("Viral card copy saved to clipboard.");
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text);
+      alert("Discovery card copy saved to clipboard.");
+    } else {
+      alert(text);
+    }
   };
 
   const copyCaption = (channel = "X") => {
@@ -7355,8 +7359,13 @@ Generated in ElementOS.`,
       Reddit: `I am testing a material-discovery prototype called ElementOS. This card shows ${pair} with ${cardData.score}% ${cardData.metric}. I am looking for feedback on whether the explanation and export format make the result understandable.`,
       ProductHunt: `ElementOS turns material simulations into discoveries, reports and shareable scientific cards. Today's example: ${pair} at ${cardData.score}% ${cardData.metric}.`,
     };
-    navigator.clipboard?.writeText(captions[channel] || captions.X);
-    alert(`${channel} caption copied.`);
+    const caption = captions[channel] || captions.X;
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(caption);
+      alert(`${channel} caption copied.`);
+    } else {
+      alert(caption);
+    }
   };
 
 
@@ -7593,8 +7602,8 @@ Generated in ElementOS.`,
       <Panel>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <Pill gold><ShieldCheck size={12}/> button value audit</Pill>
-            <h2 className="mt-3 text-3xl font-black">Every major card action now creates value.</h2>
+            <Pill gold><ShieldCheck size={12}/> media workflow</Pill>
+            <h2 className="mt-3 text-3xl font-black">Every export action has a clear purpose.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Use this engine to choose a live source from anywhere in ElementOS, export PDF/JSON/SVG, copy platform captions, create a full social pack, save the asset path and move users toward reports, workspace and public discovery pages.</p>
           </div>
           <div className="grid gap-2 sm:grid-cols-3">
@@ -7820,18 +7829,6 @@ Generated in ElementOS.`,
             ))}
           </div>
         </Panel>
-
-        <Panel>
-          <Pill gold><Orbit size={12}/> constellation universe</Pill>
-          <h2 className="mt-3 text-3xl font-black">Discovery Constellation</h2>
-          <div className="relative mt-5 h-72 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_35%),#020617]">
-            {[ [22,24,splitPair(cardData.title)[0]], [66,34,splitPair(cardData.title)[1]], [48,66,"Report"], [82,72,"Share"], [28,78,"Save"] ].map(([left, top, label], index) => (
-              <div key={label} className="absolute grid h-16 w-16 place-items-center rounded-2xl border border-cyan-300/30 bg-cyan-300/10 text-sm font-black text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,.18)]" style={{ left: `${left}%`, top: `${top}%`, transform: 'translate(-50%,-50%)' }}>{label}</div>
-            ))}
-            <div className="absolute left-[22%] top-[24%] h-px w-[45%] origin-left rotate-[12deg] bg-cyan-300/40" />
-            <div className="absolute left-[48%] top-[66%] h-px w-[35%] origin-left rotate-[10deg] bg-amber-300/40" />
-          </div>
-        </Panel>
       </div>
 
       <Panel>
@@ -7908,8 +7905,8 @@ Generated in ElementOS.`,
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <Pill gold><Target size={12}/> next growth step</Pill>
-            <h2 className="mt-3 text-4xl font-black">Turn this card into the viral loop.</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Export the card, post it, link to the public discovery page, then invite viewers to generate their own discovery. That is the loop: discover → card → share → click → create.</p>
+            <h2 className="mt-3 text-4xl font-black">Turn every discovery into a subscriber-ready media asset.</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Export the card, copy the right caption, generate the report, then send people back to ElementOS to create their own discovery. Simple loop: discover → explain → export → share → new user.</p>
           </div>
           <div className="grid gap-3">
             <Button onClick={exportSVG} variant="primary">Export Poster PDF/JSON/SVG</Button>
