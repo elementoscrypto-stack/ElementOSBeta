@@ -9234,21 +9234,27 @@ function MissionControlV57({ setPage, session, isPro, startCheckout }) {
 }
 
 function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage }) {
-  const [mode, setMode] = useState("Research Grade");
+  const [mode, setMode] = useState("Executive Summary");
   const [prompt, setPrompt] = useState("Find a high-confidence material discovery and tell me what to do next.");
   const active = elementMap[selected] || elementMap.H;
   const pair = (compare || [active.symbol, "Ti"]).slice(0,2);
   const pairScore = compatibilityScore(pair[0] || active.symbol, pair[1] || "Ti");
-  const modes = ["Explain Like I'm 12", "Research Grade", "Investor Mode", "Social Post", "Report Brief"];
+  const modes = ["Executive Summary", "Research Grade", "Investor Mode", "Social Post", "Report Brief"];
   const response = {
-    "Explain Like I'm 12": `${pair[0]} + ${pair[1]} looks interesting because the two materials behave similarly in important ways. ElementOS thinks this could be worth testing further.`,
+    "Executive Summary": `A concise overview of the findings, significance and recommended next steps. ${pair[0]} + ${pair[1]} achieved a ${pairScore}% compatibility signal, suggesting a strong candidate for deeper comparison, report generation and discovery media export.`,
     "Research Grade": `The ${pair[0]}-${pair[1]} pairing shows a ${pairScore}% compatibility signal across stability, pressure and thermal behaviour. Recommended next step: generate a report and compare against the Discovery Feed baseline.`,
     "Investor Mode": `ElementOS has identified ${pair[0]} + ${pair[1]} as a reportable discovery asset. The commercial story is stronger if it can be packaged as a public discovery page, technical dossier and social proof card.`,
     "Social Post": `Today's ElementOS discovery: ${pair[0]} + ${pair[1]} scored ${pairScore}% compatibility. Rare material relationship detected.`,
     "Report Brief": `Executive summary: ${pair[0]} + ${pair[1]} achieved ${pairScore}% compatibility. Evidence suggests a strong candidate for future-state simulation, report generation and media export.`,
   }[mode];
+  const executiveSummaryCards = [
+    ["Finding", `${pair[0]} + ${pair[1]} produced a ${pairScore}% compatibility signal across the ElementOS scoring model.`],
+    ["Significance", "This pairing may be worth deeper review where stability, pressure response and thermal behaviour need to work together."],
+    ["Recommended next step", "Generate a report, compare substitute materials and export a Discovery Media card for review or sharing."],
+    ["Confidence", `${pairScore}% compatibility signal`],
+  ];
   const recommended = smartElementStackV57(active.symbol).slice(0, 5);
-  const exportAI = () => exportAllFormats({ baseName: "elementos-discovery-ai", title: "ElementOS Discovery AI", summary: response, payload: { mode, prompt, selected, compare, response, recommended } });
+  const exportAI = () => exportAllFormats({ baseName: "elementos-executive-summary", title: "ElementOS Executive Summary", summary: response, payload: { mode, prompt, selected, compare, response, recommended, executiveSummaryCards } });
 
   return (
     <>
@@ -9260,13 +9266,33 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
       </Panel>
       <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
         <Panel>
-          <Pill gold><Sparkles size={12}/> prompt engine</Pill><h2 className="mt-3 text-4xl font-black">Ask Copilot</h2>
+          <Pill gold><Sparkles size={12}/> summary engine</Pill><h2 className="mt-3 text-4xl font-black">Generate Executive Summary</h2>
           <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="mt-5 min-h-[150px] w-full rounded-[2rem] border border-white/10 bg-black/30 p-5 outline-none" />
           <div className="mt-4 flex flex-wrap gap-2">{modes.map((m) => <Button key={m} onClick={() => setMode(m)} variant={mode === m ? "primary" : "ghost"}>{m}</Button>)}</div>
-          <div className="mt-5 grid gap-2 sm:grid-cols-2"><Button onClick={() => setPage("reports")} variant="primary">Generate Report</Button><Button onClick={() => setPage("viralcards")}>Create Poster Text</Button><Button onClick={() => setPage("compare")}>Open Compare</Button><Button onClick={exportAI}>Export AI Brief</Button></div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2"><Button onClick={() => setPage("reports")} variant="primary">Generate Report</Button><Button onClick={() => setPage("viralcards")}>Create Media Preview</Button><Button onClick={() => setPage("compare")}>Open Compare</Button><Button onClick={exportAI}>Export Executive Brief</Button></div>
         </Panel>
         <Panel>
-          <Pill gold><FileText size={12}/> copilot answer</Pill><h2 className="mt-3 text-4xl font-black">{mode}</h2>
+          <Pill gold><FileText size={12}/> executive summary</Pill><h2 className="mt-3 text-4xl font-black">{mode}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">A concise overview of the findings, significance and recommended next steps.</p>
+          <div className="mt-5 grid gap-4 lg:grid-cols-[0.7fr_1.3fr]">
+            <div className="grid place-items-center rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6 text-center">
+              <div className="grid h-44 w-44 place-items-center rounded-full border border-cyan-300/30 bg-[radial-gradient(circle,rgba(34,211,238,.22),rgba(2,6,23,.25)_62%)] shadow-[0_0_80px_rgba(34,211,238,.18)]">
+                <div>
+                  <div className="text-5xl font-black text-white">{pairScore}</div>
+                  <div className="mt-1 text-[10px] uppercase tracking-[.22em] text-cyan-200">Discovery Score</div>
+                </div>
+              </div>
+              <div className="mt-4 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-amber-100">{pairScore >= 90 ? "Legendary Discovery" : pairScore >= 78 ? "Strong Discovery" : "Discovery Signal"}</div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {executiveSummaryCards.map(([title, body]) => (
+                <div key={title} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                  <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{title}</div>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="mt-5 rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6 text-lg leading-8 text-cyan-50">{response}</div>
           <Info title="Recommended next step">Open Reports, generate a premium export, then create a Discovery Media card from the same result.</Info>
         </Panel>
