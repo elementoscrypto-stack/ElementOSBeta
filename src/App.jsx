@@ -3164,6 +3164,45 @@ function TimeMachine({ selected, setSelected, setPage }) {
     payload: { material: base.symbol, environment, selectedYear, stress, temperature, pressure, humidity, radiation, resilience, risk, verdict, timeline },
   });
 
+  const getMilestoneInsight = (t) => {
+    const baseline = timeline[0]?.stability || resilience;
+    const stabilityDelta = t.stability - baseline;
+    const exposureLoad = Math.round((t.corrosion + t.fatigue + t.pressureDrift + t.radiationDrift) / 4);
+    const dominant = [
+      ["Corrosion", t.corrosion, "Chemical/moisture attack is the strongest long-term pressure."],
+      ["Fatigue", t.fatigue, "Thermal cycling and mechanical load are driving material wear."],
+      ["Pressure", t.pressureDrift, "Compression/depth stress is the main risk signal."],
+      ["Radiation", t.radiationDrift, "Radiation exposure is the main degradation signal."],
+    ].sort((a, b) => b[1] - a[1])[0];
+
+    const status = t.stability >= 75 ? "Strong" : t.stability >= 55 ? "Watch" : t.stability >= 35 ? "Risk" : "Critical";
+    const statusCopy = {
+      Strong: "Suitable for long-duration use with normal inspection cycles.",
+      Watch: "Still usable, but inspection frequency and protective design matter.",
+      Risk: "Requires coatings, substitution review, or a reduced service window.",
+      Critical: "High degradation risk. Consider a different material or environment profile.",
+    }[status];
+
+    const action = {
+      Strong: "Generate report or compare against a lighter/cheaper substitute.",
+      Watch: "Add protective coating, reduce load, or compare Ti / Al / Fe alternatives.",
+      Risk: "Run a replacement scenario and check corrosion/pressure controls.",
+      Critical: "Do not treat as deployment-ready. Switch environment or material.",
+    }[status];
+
+    return {
+      status,
+      statusCopy,
+      action,
+      exposureLoad,
+      dominantName: dominant[0],
+      dominantValue: dominant[1],
+      dominantCopy: dominant[2],
+      stabilityDelta,
+      confidence: Math.max(62, Math.min(98, Math.round(100 - exposureLoad * 0.35 + t.stability * 0.25))),
+    };
+  };
+
   return (
     <div className="space-y-6">
       <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr] border-cyan-300/25 bg-gradient-to-br from-cyan-950/25 via-slate-950 to-fuchsia-950/20">
@@ -3223,7 +3262,76 @@ function TimeMachine({ selected, setSelected, setPage }) {
         </Panel>
       </div>
 
-      <Panel><h2 className="text-4xl font-black">Temporal Milestone Cards</h2><div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{timeline.slice(1).map((t) => <div key={t.year} className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-black/35 to-amber-400/10 p-5"><div className="text-xs uppercase tracking-[.22em] text-slate-500">year {t.year}</div><div className="mt-3 text-4xl font-black text-cyan-100">{t.stability}%</div><div className="mt-3 space-y-2 text-sm text-slate-300"><div>Corrosion: <b className="text-amber-100">{t.corrosion}%</b></div><div>Fatigue: <b className="text-rose-100">{t.fatigue}%</b></div><div>Pressure drift: <b className="text-cyan-100">{t.pressureDrift}%</b></div><div>Radiation drift: <b className="text-fuchsia-100">{t.radiationDrift}%</b></div></div></div>)}</div></Panel>
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Clock3 size={12}/> temporal milestone intelligence</Pill>
+            <h2 className="mt-3 text-4xl font-black">Temporal Milestone Cards</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+              Each card now explains what the future-state score means, which stressor is driving the change, how confidence is trending and what action a researcher should take next.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-bold text-cyan-100">
+            {base.symbol} · {environment}
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {timeline.slice(1).map((t) => {
+            const insight = getMilestoneInsight(t);
+            return (
+              <div key={t.year} className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-black/35 to-amber-400/10 p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-xs uppercase tracking-[.22em] text-slate-500">year {t.year}</div>
+                    <div className="mt-2 text-4xl font-black text-cyan-100">{t.stability}%</div>
+                    <div className="mt-1 text-xs font-bold uppercase tracking-[.18em] text-slate-500">stability forecast</div>
+                  </div>
+                  <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] ${insight.status === "Strong" ? "border-emerald-300/30 bg-emerald-300/10 text-emerald-100" : insight.status === "Watch" ? "border-amber-300/30 bg-amber-300/10 text-amber-100" : insight.status === "Risk" ? "border-orange-300/30 bg-orange-300/10 text-orange-100" : "border-rose-300/30 bg-rose-300/10 text-rose-100"}`}>
+                    {insight.status}
+                  </span>
+                </div>
+
+                <p className="mt-4 text-sm leading-6 text-slate-300">{insight.statusCopy}</p>
+
+                <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <div className="text-slate-500">Change from baseline</div>
+                    <div className={`mt-1 text-lg font-black ${insight.stabilityDelta >= 0 ? "text-emerald-100" : "text-rose-100"}`}>
+                      {insight.stabilityDelta >= 0 ? "+" : ""}{insight.stabilityDelta}%
+                    </div>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <div className="text-slate-500">Model confidence</div>
+                    <div className="mt-1 text-lg font-black text-cyan-100">{insight.confidence}%</div>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <div className="text-slate-500">Exposure load</div>
+                    <div className="mt-1 text-lg font-black text-amber-100">{insight.exposureLoad}%</div>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <div className="text-slate-500">Main driver</div>
+                    <div className="mt-1 text-lg font-black text-white">{insight.dominantName}</div>
+                  </div>
+                </div>
+
+                <div className="mt-4 space-y-2 text-sm text-slate-300">
+                  <div className="flex justify-between gap-3"><span>Corrosion</span><b className="text-amber-100">{t.corrosion}%</b></div>
+                  <div className="flex justify-between gap-3"><span>Fatigue</span><b className="text-rose-100">{t.fatigue}%</b></div>
+                  <div className="flex justify-between gap-3"><span>Pressure drift</span><b className="text-cyan-100">{t.pressureDrift}%</b></div>
+                  <div className="flex justify-between gap-3"><span>Radiation drift</span><b className="text-fuchsia-100">{t.radiationDrift}%</b></div>
+                </div>
+
+                <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-xs leading-5 text-cyan-50">
+                  <b>Interpretation:</b> {insight.dominantCopy}
+                </div>
+                <div className="mt-3 rounded-2xl border border-amber-300/15 bg-amber-300/10 p-3 text-xs leading-5 text-amber-50">
+                  <b>Next step:</b> {insight.action}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
     </div>
   );
 }
