@@ -2583,7 +2583,7 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
   </div>
 </Panel>
 
-<div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel><Panel><h2 className="text-2xl font-black">Scientific OS Feel</h2><p className="mt-4 text-sm leading-7 text-slate-300">Every major page now has a reason to exist: Explorer finds materials, Compare ranks them, Atlas visualizes response fields, Graph explains relationships, Reports turns everything into sellable outputs.</p></Panel></div></>;
+<div className="grid gap-6 xl:grid-cols-3"><Panel><h2 className="text-2xl font-black">Live Platform Signal</h2><MiniBars values={[2.8, 3.5, 4.2, 3.8, 4.7, 3.9, 4.4]}/><p className="mt-3 text-sm text-slate-400">Animated-style data blocks give the product more serious scientific dashboard energy.</p></Panel><Panel><h2 className="text-2xl font-black">Subscriber Value</h2><div className="mt-4 space-y-3">{["Saved experiments", "Premium reports", "Material comparison history", "Workspace identity"].map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-cyan-100"><CheckCircle2 size={15} className="mr-2 inline text-emerald-300"/>{x}</div>)}</div></Panel></div></>;
 }
 
 
@@ -4007,9 +4007,24 @@ function BehaviourGraph({ selected, setSelected }) {
       </Panel>
       <GuidePanel page="graph" />
       <Panel>
-        <div className="flex flex-wrap gap-2">
-          {metrics.map(m => <Button key={m} onClick={() => setMetric(m)} variant={metric === m ? "primary" : "ghost"}>{metricLabels[m]}</Button>)}
-          {Object.entries(modeLabels).map(([id, label]) => <Button key={id} onClick={() => setMode(id)} variant={mode === id ? "primary" : "ghost"}>{label}</Button>)}
+        <div className="grid gap-4 lg:grid-cols-[1fr_240px] lg:items-end">
+          <div>
+            <div className="mb-2 text-xs font-black uppercase tracking-[.2em] text-slate-500">Relationship metric</div>
+            <div className="flex flex-wrap gap-2">
+              {metrics.map(m => <Button key={m} onClick={() => setMetric(m)} variant={metric === m ? "primary" : "ghost"}>{metricLabels[m]}</Button>)}
+            </div>
+            <div className="mt-2 text-xs text-slate-500">Only one relationship metric is active at a time.</div>
+          </div>
+          <label className="block">
+            <span className="mb-2 block text-xs font-black uppercase tracking-[.2em] text-slate-500">View style</span>
+            <select
+              value={mode}
+              onChange={(event) => setMode(event.target.value)}
+              className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm font-black text-cyan-100 outline-none focus:border-cyan-300/60"
+            >
+              {Object.entries(modeLabels).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+            </select>
+          </label>
         </div>
       </Panel>
       <div className="grid gap-6 xl:grid-cols-[1fr_430px]">
@@ -6184,20 +6199,6 @@ function DiscoveryReputationSystem({ setPage }) {
           </div>
           <Button onClick={() => setPage("lab")} variant="primary" className="mt-5 w-full">Open My Saved Discoveries</Button>
         </div>
-        <div>
-          <Pill><Sparkles size={12} /> achievements</Pill>
-          <h3 className="mt-3 text-3xl font-black">Progression makes subscribers return.</h3>
-          <div className="mt-5 grid gap-3 md:grid-cols-5">
-            {badges.map(([name, status]) => (
-              <button key={name} onClick={() => setPage(status === "Next" ? "publicdiscovery" : "discover")} className="rounded-[1.4rem] border border-white/10 bg-white/[.035] p-4 text-left transition hover:bg-cyan-300/10">
-                <div className="mb-3 grid h-12 w-12 place-items-center rounded-xl border border-amber-300/30 bg-amber-300/10 text-amber-100">★</div>
-                <div className="text-sm font-black text-white">{name}</div>
-                <div className="mt-2 text-[10px] uppercase tracking-[.2em] text-cyan-200">{status}</div>
-              </button>
-            ))}
-          </div>
-          <Info title="Subscriber psychology">People share and keep using tools that reflect identity. Discovery Score, ranks and badges turn ElementOS into a personal scientific profile, not just a tool.</Info>
-        </div>
       </div>
     </Panel>
   );
@@ -6222,8 +6223,8 @@ function DiscoveryNetworkSubscriberEdition({ setPage }) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <Pill gold><Network size={12} /> live discovery network</Pill>
-          <h2 className="mt-3 text-4xl font-black">The platform should feel alive before the crowd arrives.</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">A live network layer gives first subscribers the sense that ElementOS is active, useful and growing every day.</p>
+          <h2 className="mt-3 text-4xl font-black">Live Discovery Network</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">A simple activity feed showing recent reports, discoveries, public pages and media exports across ElementOS.</p>
         </div>
         <Button onClick={() => setPage("discover")} variant="primary">Open Network Feed</Button>
       </div>
@@ -6491,24 +6492,6 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
               <p className="mt-3 text-sm leading-6 text-slate-400">{body}</p>
             </button>
           ))}
-        </div>
-      </Panel>
-
-      <Panel className="poster-card-gold">
-        <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr] xl:items-center">
-          <div>
-            <Pill gold><ShieldCheck size={12} /> why users subscribe</Pill>
-            <h2 className="mt-3 text-4xl font-black">ElementOS should feel useful in the first 30 seconds.</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-300">The landing page now shows the signal, the workflow, the outcome and the reason to come back tomorrow.</p>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {whySubscribe.map(([title, body]) => (
-              <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="font-black text-amber-100">{title}</div>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </Panel>
 
