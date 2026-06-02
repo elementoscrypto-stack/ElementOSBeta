@@ -4443,6 +4443,13 @@ function BehaviourGraph({ selected, setSelected }) {
     network: "Network",
     orbit: "Orbit",
     rank: "Rank",
+    spiral: "Spiral",
+    radial: "Radial Burst",
+    constellation: "Constellation",
+    matrix: "Matrix Grid",
+    wave: "Wave Field",
+    cluster: "Cluster Map",
+    timeline: "Timeline Arc",
   };
   const metricMax = metric === "alignment" ? 100 : 5;
   const allRelated = elements.filter(e => e.symbol !== selected).map(e => {
@@ -4454,12 +4461,59 @@ function BehaviourGraph({ selected, setSelected }) {
     const similarity = Math.max(0, Math.min(99, Math.round((100 - distance * 11) * 0.58 + metricAffinity * 0.42)));
     return { ...e, metrics: s, metricValue, metricAffinity, similarity, relationship: compatibilityScore(selected, e.symbol) };
   });
-  const related = allRelated.sort((a,b) => mode === "rank" ? b.metricValue - a.metricValue : b.similarity - a.similarity).slice(0, 22);
+  const related = allRelated.sort((a,b) => ["rank", "timeline"].includes(mode) ? b.metricValue - a.metricValue : b.similarity - a.similarity).slice(0, 22);
   const nodes = related.map((e, i) => {
     const ratio = Math.max(0.08, Math.min(1, (e.metricValue || 0) / metricMax));
-    const angle = mode === "rank" ? -Math.PI / 2 + (i / Math.max(1, related.length - 1)) * Math.PI : (i / related.length) * Math.PI * 2;
-    const radius = mode === "orbit" ? 16 + ratio * 28 : mode === "rank" ? 12 + i * 1.35 : 18 + (i % 5) * 4.6;
-    return { ...e, ratio, x: 50 + Math.cos(angle) * radius, y: 50 + Math.sin(angle) * radius };
+    const count = Math.max(1, related.length);
+    const angle = (i / count) * Math.PI * 2;
+    let x = 50;
+    let y = 50;
+
+    if (mode === "orbit") {
+      const radius = 20 + ratio * 26;
+      x = 50 + Math.cos(angle) * radius;
+      y = 50 + Math.sin(angle) * radius * 0.82;
+    } else if (mode === "rank") {
+      x = 18 + (i % 4) * 21;
+      y = 18 + Math.floor(i / 4) * 13;
+    } else if (mode === "spiral") {
+      const radius = 8 + i * 1.55;
+      const spiralAngle = i * 0.92;
+      x = 50 + Math.cos(spiralAngle) * radius;
+      y = 50 + Math.sin(spiralAngle) * radius * 0.9;
+    } else if (mode === "radial") {
+      const radius = 12 + (i % 6) * 6 + ratio * 13;
+      x = 50 + Math.cos(angle) * radius;
+      y = 50 + Math.sin(angle) * radius;
+    } else if (mode === "constellation") {
+      const ring = i % 3;
+      const radius = [18, 30, 42][ring];
+      const jitter = ((e.atomicNumber % 7) - 3) * 1.2;
+      x = 50 + Math.cos(angle + ring * 0.38) * (radius + jitter);
+      y = 50 + Math.sin(angle + ring * 0.38) * (radius * 0.86 + jitter);
+    } else if (mode === "matrix") {
+      x = 17 + (i % 6) * 13.2;
+      y = 18 + Math.floor(i / 6) * 17;
+    } else if (mode === "wave") {
+      x = 12 + (i / Math.max(1, count - 1)) * 76;
+      y = 50 + Math.sin(i * 0.72) * 22 + (ratio - 0.5) * 12;
+    } else if (mode === "cluster") {
+      const cluster = i % 4;
+      const centers = [[32, 34], [67, 32], [34, 68], [68, 66]];
+      const localAngle = i * 1.7;
+      const localRadius = 5 + (i % 5) * 2.1 + ratio * 6;
+      x = centers[cluster][0] + Math.cos(localAngle) * localRadius;
+      y = centers[cluster][1] + Math.sin(localAngle) * localRadius;
+    } else if (mode === "timeline") {
+      x = 12 + (i / Math.max(1, count - 1)) * 76;
+      y = 70 - ratio * 42 + Math.sin(i * 0.55) * 4;
+    } else {
+      const radius = 18 + (i % 5) * 4.6;
+      x = 50 + Math.cos(angle) * radius;
+      y = 50 + Math.sin(angle) * radius;
+    }
+
+    return { ...e, ratio, x: Math.max(9, Math.min(91, x)), y: Math.max(10, Math.min(90, y)) };
   });
   const top = related[0] || selectedElement;
   const exportGraph = () => {
@@ -4494,7 +4548,7 @@ function BehaviourGraph({ selected, setSelected }) {
             <div className="mt-2 text-xs text-slate-500">Only one relationship metric is active at a time.</div>
           </div>
           <label className="block">
-            <span className="mb-2 block text-xs font-black uppercase tracking-[.2em] text-slate-500">View style</span>
+            <span className="mb-2 block text-xs font-black uppercase tracking-[.2em] text-slate-500">Display pattern</span>
             <select
               value={mode}
               onChange={(event) => setMode(event.target.value)}
@@ -4582,6 +4636,7 @@ function BehaviourGraph({ selected, setSelected }) {
 
 function SimilarityUniverse({ selected, setSelected }) {
   const [mode, setMode] = useState("alloy");
+  const [displayPattern, setDisplayPattern] = useState("orbit");
   const [focus, setFocus] = useState(selected || "Al");
   const base = elementMap[focus] || elementMap[selected] || elementMap.Al;
   const modeLabels = {
@@ -4590,6 +4645,23 @@ function SimilarityUniverse({ selected, setSelected }) {
     thermal: "Thermal neighbourhoods",
     pressure: "Pressure families",
     rarity: "Rare discovery routes",
+    stability: "Stability web",
+    diffusion: "Diffusion map",
+    periodic: "Periodic rings",
+    quantum: "Quantum field",
+    radar: "Discovery radar",
+  };
+  const displayPatternLabels = {
+    orbit: "Orbit",
+    network: "Network",
+    spiral: "Spiral",
+    constellation: "Constellation",
+    galaxy: "Galaxy",
+    lattice: "Lattice",
+    wave: "Wave Field",
+    radar: "Radar Sweep",
+    cluster: "Cluster Map",
+    timeline: "Timeline Arc",
   };
 
   const relationships = generateRecommendations([base.symbol])?.[0]?.matches || [];
@@ -4604,6 +4676,11 @@ function SimilarityUniverse({ selected, setSelected }) {
         thermal: ["thermal", "pressure", "stability"],
         pressure: ["pressure", "stability", "diffusion"],
         rarity: ["rarity", "alignment", "stability"],
+        stability: ["stability", "pressure", "diffusion"],
+        diffusion: ["diffusion", "thermal", "pressure"],
+        periodic: ["alignment", "stability", "rarity"],
+        quantum: ["conductivity", "diffusion", "alignment"],
+        radar: ["pressure", "thermal", "conductivity"],
       }[mode] || ["stability", "pressure", "thermal"];
       const similarity = Math.max(1, Math.min(99, Math.round(100 - weights.reduce((sum, key) => sum + Math.abs((sb[key] || 0) - (se[key] || 0)) * 10, 0))));
       return { ...e, similarity, orbit: 150 + (e.atomicNumber % 5) * 42, phase: e.atomicNumber * 0.44 };
@@ -4612,14 +4689,60 @@ function SimilarityUniverse({ selected, setSelected }) {
     .slice(0, 22);
 
   const top = ranked[0] || relationships[0] || base;
-  const constellationSvg = ranked.slice(0, 8).map((r, i) => {
-    const angle = (i / 8) * Math.PI * 2;
-    return { ...r, x: 300 + Math.cos(angle) * (130 + (i % 3) * 28), y: 240 + Math.sin(angle) * (120 + (i % 2) * 35) };
+  const displayNodes = ranked.slice(0, 18).map((r, i) => {
+    const count = Math.min(18, ranked.length) || 1;
+    const angle = (i / count) * Math.PI * 2;
+    const ratio = Math.max(0.1, Math.min(1, r.similarity / 100));
+    let x = 300;
+    let y = 240;
+
+    if (displayPattern === "network") {
+      const radius = 105 + (i % 4) * 24;
+      x = 300 + Math.cos(angle) * radius;
+      y = 240 + Math.sin(angle) * radius * 0.82;
+    } else if (displayPattern === "spiral") {
+      const radius = 42 + i * 9.5;
+      x = 300 + Math.cos(i * 0.86) * radius;
+      y = 240 + Math.sin(i * 0.86) * radius * 0.8;
+    } else if (displayPattern === "constellation") {
+      const radius = 115 + (i % 3) * 36;
+      x = 300 + Math.cos(angle + (i % 2) * 0.22) * radius;
+      y = 240 + Math.sin(angle + (i % 2) * 0.22) * radius * 0.72;
+    } else if (displayPattern === "galaxy") {
+      const radius = 52 + i * 8.5;
+      x = 300 + Math.cos(angle * 1.7) * radius;
+      y = 240 + Math.sin(angle * 1.7) * radius * 0.72;
+    } else if (displayPattern === "lattice") {
+      x = 118 + (i % 6) * 72;
+      y = 92 + Math.floor(i / 6) * 92;
+    } else if (displayPattern === "wave") {
+      x = 70 + (i / Math.max(1, count - 1)) * 460;
+      y = 240 + Math.sin(i * 0.75) * 105 + (ratio - 0.5) * 50;
+    } else if (displayPattern === "radar") {
+      const radius = 65 + ratio * 150;
+      x = 300 + Math.cos(angle) * radius;
+      y = 240 + Math.sin(angle) * radius;
+    } else if (displayPattern === "cluster") {
+      const centers = [[185, 160], [420, 150], [210, 330], [430, 315]];
+      const c = centers[i % centers.length];
+      const local = 22 + (i % 5) * 9;
+      x = c[0] + Math.cos(i * 1.33) * local;
+      y = c[1] + Math.sin(i * 1.33) * local;
+    } else if (displayPattern === "timeline") {
+      x = 70 + (i / Math.max(1, count - 1)) * 460;
+      y = 365 - ratio * 235 + Math.sin(i * 0.5) * 10;
+    } else {
+      const radius = 115 + (i % 4) * 28;
+      x = 300 + Math.cos(angle) * radius;
+      y = 240 + Math.sin(angle) * radius * 0.78;
+    }
+
+    return { ...r, x: Math.max(58, Math.min(542, x)), y: Math.max(58, Math.min(422, y)), ratio };
   });
 
   const exportUniverse = () => {
     const content = `ElementOS Element Relationships\n\nFocus: ${base.name} (${base.symbol})\nMode: ${modeLabels[mode]}\nTop match: ${top.name || top.symbol} (${top.symbol})\n\nTop relationships:\n${ranked.slice(0, 10).map((r, i) => `${i + 1}. ${r.symbol} — ${r.name}: ${r.similarity}%`).join("\n")}\n\nGenerated by ElementOS Element Relationships`;
-    exportAllFormats({ baseName: `${base.symbol}-discovery-universe`, title: `Element Relationships: ${base.name}`, summary: content, payload: { focus: base.symbol, mode, ranked: ranked.slice(0, 10) } });
+    exportAllFormats({ baseName: `${base.symbol}-discovery-universe`, title: `Element Relationships: ${base.name}`, summary: content, payload: { focus: base.symbol, mode, displayPattern, ranked: ranked.slice(0, 10) } });
   };
 
   return (
@@ -4642,9 +4765,14 @@ function SimilarityUniverse({ selected, setSelected }) {
           <select value={focus} onChange={(e) => { setFocus(e.target.value); setSelected?.(e.target.value); }} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
             {elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
           </select>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <div className="mt-4 text-xs font-black uppercase tracking-[.2em] text-slate-500">Relationship lens</div>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
             {Object.entries(modeLabels).map(([id, label]) => <Button key={id} onClick={() => setMode(id)} variant={mode === id ? "primary" : "ghost"}>{label}</Button>)}
           </div>
+          <div className="mt-5 text-xs font-black uppercase tracking-[.2em] text-slate-500">Display pattern</div>
+          <select value={displayPattern} onChange={(e) => setDisplayPattern(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 text-sm font-black text-cyan-100 outline-none">
+            {Object.entries(displayPatternLabels).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+          </select>
           <Button onClick={exportUniverse} variant="primary" className="mt-5 w-full">Export Universe PDF/JSON/SVG</Button>
         </Panel>
       </Panel>
@@ -4657,7 +4785,7 @@ function SimilarityUniverse({ selected, setSelected }) {
               <div className="text-5xl font-black text-amber-100">{base.symbol}</div>
               <div className="mt-1 text-xs text-amber-100/80">{base.name}</div>
             </div>
-            {constellationSvg.map((r, i) => (
+            {displayNodes.map((r, i) => (
               <React.Fragment key={r.symbol}>
                 <svg className="absolute inset-0 h-full w-full pointer-events-none">
                   <line x1="50%" y1="50%" x2={r.x} y2={r.y} stroke="rgba(34,211,238,.28)" strokeWidth="1.2" />
@@ -4670,7 +4798,7 @@ function SimilarityUniverse({ selected, setSelected }) {
             ))}
             <div className="absolute bottom-5 left-5 rounded-2xl border border-white/10 bg-black/45 p-4 backdrop-blur-xl">
               <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Active field</div>
-              <div className="mt-1 text-xl font-black text-white">{modeLabels[mode]}</div>
+              <div className="mt-1 text-xl font-black text-white">{modeLabels[mode]}</div><div className="mt-1 text-xs text-slate-400">Pattern: {displayPatternLabels[displayPattern]}</div>
             </div>
           </div>
         </Panel>
