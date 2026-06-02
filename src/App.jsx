@@ -4263,7 +4263,7 @@ function BehaviourGraph({ selected, setSelected }) {
   const nodes = related.map((e, i) => {
     const ratio = Math.max(0.08, Math.min(1, (e.metricValue || 0) / metricMax));
     const angle = mode === "rank" ? -Math.PI / 2 + (i / Math.max(1, related.length - 1)) * Math.PI : (i / related.length) * Math.PI * 2;
-    const radius = mode === "orbit" ? 16 + ratio * 36 : mode === "rank" ? 12 + i * 2.25 : 18 + (i % 5) * 5.5;
+    const radius = mode === "orbit" ? 16 + ratio * 28 : mode === "rank" ? 12 + i * 1.35 : 18 + (i % 5) * 4.6;
     return { ...e, ratio, x: 50 + Math.cos(angle) * radius, y: 50 + Math.sin(angle) * radius };
   });
   const top = related[0] || selectedElement;
@@ -4312,11 +4312,66 @@ function BehaviourGraph({ selected, setSelected }) {
       </Panel>
       <div className="grid gap-6 xl:grid-cols-[1fr_430px]">
         <Panel>
-          <div className="relative h-[700px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_35%),linear-gradient(135deg,#020617,#07111f)]">
-            <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
-            <svg className="absolute inset-0 h-full w-full">{nodes.map((n, i) => <line key={n.symbol} x1="50%" y1="50%" x2={`${n.x}%`} y2={`${n.y}%`} stroke={i < 5 ? "rgba(251,191,36,.42)" : "rgba(34,211,238,.24)"} strokeWidth={i < 5 ? "2.8" : "1.3"}/>)}</svg>
-            <div className="absolute left-1/2 top-1/2 grid h-36 w-36 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[2rem] border border-amber-300/40 bg-amber-300/10 text-center shadow-[0_0_70px_rgba(251,191,36,.25)]"><div><div className="text-5xl font-black text-amber-100">{selected}</div><div className="text-[10px] uppercase tracking-[.2em] text-amber-100/70">{metricLabels[metric]}</div></div></div>
-            {nodes.map((n, i) => <button key={n.symbol} onClick={() => setSelected(n.symbol)} className="absolute grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-2xl border border-cyan-300/25 bg-slate-950/85 text-sm font-black text-cyan-100 transition hover:scale-125" style={{ left: `${n.x}%`, top: `${n.y}%`, boxShadow: `0 0 ${14 + n.ratio * 52}px rgba(34,211,238,.48)` }}><span>{n.symbol}</span><span className="text-[10px] text-slate-300">{mode === "rank" ? Number(n.metricValue).toFixed(metric === "alignment" ? 0 : 1) : `${n.similarity.toFixed(0)}%`}</span></button>)}
+          <div className="relative min-h-[760px] overflow-hidden rounded-[2.5rem] border border-cyan-300/20 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.18),transparent_33%),radial-gradient(circle_at_20%_18%,rgba(251,191,36,.12),transparent_26%),linear-gradient(135deg,#020617,#07111f_55%,#081426)] shadow-[0_0_120px_rgba(34,211,238,.10)]">
+            <div className="absolute inset-0 opacity-35" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "44px 44px" }} />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[620px] w-[620px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10 eos-orbit-lens" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[470px] w-[470px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-300/10 eos-orbit-lens-reverse" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
+            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+              <defs>
+                <radialGradient id="relationshipCoreGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="rgba(251,191,36,.48)" />
+                  <stop offset="48%" stopColor="rgba(34,211,238,.18)" />
+                  <stop offset="100%" stopColor="rgba(34,211,238,0)" />
+                </radialGradient>
+                <filter id="relationshipLineGlow">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <circle cx="500" cy="500" r="305" fill="url(#relationshipCoreGlow)" opacity=".36" />
+              {[170, 245, 325, 392].map((r, i) => (
+                <circle key={`orbit-ring-${r}`} cx="500" cy="500" r={r} fill="none" stroke={i % 2 ? "rgba(251,191,36,.12)" : "rgba(34,211,238,.14)"} strokeWidth="2" strokeDasharray={i % 2 ? "14 18" : "2 16"} />
+              ))}
+              {nodes.map((n, i) => {
+                const x = 500 + (n.x - 50) * 8.4;
+                const y = 500 + (n.y - 50) * 8.4;
+                return (
+                  <g key={`relationship-link-${n.symbol}`} filter="url(#relationshipLineGlow)">
+                    <line x1="500" y1="500" x2={x} y2={y} stroke={i < 5 ? "rgba(251,191,36,.58)" : "rgba(34,211,238,.26)"} strokeWidth={i < 5 ? "4" : "1.8"} strokeLinecap="round" />
+                    {i < 7 && <circle cx={x} cy={y} r="5" fill={i < 3 ? "rgba(251,191,36,.8)" : "rgba(34,211,238,.8)"} />}
+                  </g>
+                );
+              })}
+            </svg>
+            <div className="absolute left-1/2 top-1/2 grid h-40 w-40 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[2rem] border border-amber-300/50 bg-amber-300/10 text-center shadow-[0_0_90px_rgba(251,191,36,.30)] backdrop-blur-xl">
+              <div>
+                <div className="text-5xl font-black text-amber-100">{selected}</div>
+                <div className="mt-1 text-[10px] uppercase tracking-[.22em] text-amber-100/75">{metricLabels[metric]}</div>
+                <div className="mt-2 rounded-full border border-amber-200/20 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-amber-100">{modeLabels[mode]} lens</div>
+              </div>
+            </div>
+            {nodes.map((n, i) => {
+              const rankTone = i < 3 ? "border-amber-300/60 bg-amber-300/15 text-amber-50" : i < 8 ? "border-cyan-300/45 bg-cyan-300/10 text-cyan-50" : "border-white/15 bg-slate-950/88 text-slate-100";
+              return (
+                <button
+                  key={n.symbol}
+                  onClick={() => setSelected(n.symbol)}
+                  className={`group absolute grid h-[72px] w-[72px] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-2xl border text-sm font-black shadow-2xl backdrop-blur-xl transition duration-300 hover:z-20 hover:scale-125 ${rankTone}`}
+                  style={{ left: `${n.x}%`, top: `${n.y}%`, boxShadow: `0 0 ${20 + n.ratio * 64}px rgba(34,211,238,.30)` }}
+                  title={`${n.name}: ${n.similarity.toFixed(0)}% relationship match`}
+                >
+                  <span className="text-lg leading-none">{n.symbol}</span>
+                  <span className="rounded-full bg-black/30 px-2 py-0.5 text-[10px] text-slate-200">{mode === "rank" ? Number(n.metricValue).toFixed(metric === "alignment" ? 0 : 1) : `${n.similarity.toFixed(0)}%`}</span>
+                  <span className="pointer-events-none absolute -bottom-8 hidden whitespace-nowrap rounded-xl border border-white/10 bg-slate-950/95 px-3 py-1 text-[10px] text-slate-200 group-hover:block">{n.name}</span>
+                </button>
+              );
+            })}
+            <div className="absolute bottom-5 left-5 right-5 grid gap-3 rounded-[2rem] border border-white/10 bg-black/35 p-4 backdrop-blur-xl md:grid-cols-3">
+              <div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Top match</div><div className="mt-1 text-lg font-black text-amber-100">{top.symbol} · {top.name}</div></div>
+              <div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Relationship signal</div><div className="mt-1 text-lg font-black text-cyan-100">{Number(top.similarity || 0).toFixed(0)}% {metricLabels[metric]}</div></div>
+              <div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Visual mode</div><div className="mt-1 text-lg font-black text-white">{modeLabels[mode]} relationship map</div></div>
+            </div>
           </div>
         </Panel>
         <Panel>
