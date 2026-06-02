@@ -1976,7 +1976,7 @@ function Panel({ children, className = "" }) {
   );
 }
 function Pill({ children, gold = false }) { return <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] uppercase tracking-[.22em] ${gold ? "border-amber-300/30 bg-amber-300/10 text-amber-100" : "border-cyan-300/30 bg-cyan-400/10 text-cyan-100"}`}>{children}</span>; }
-function Button({ children, onClick, variant = "ghost", className = "" }) {
+function Button({ children, onClick, variant = "ghost", className = "", disabled = false, title, ariaLabel, ...props }) {
   const styles =
     variant === "primary"
       ? "border border-[#2478ff] bg-gradient-to-r from-[#0b63ff] via-[#0f7bff] to-[#08b4ff] text-white shadow-[0_0_28px_rgba(0,123,255,.35)]"
@@ -1985,6 +1985,10 @@ function Button({ children, onClick, variant = "ghost", className = "" }) {
       : "border border-[#17365f] bg-[#071425]/80 text-slate-100 hover:border-[#0ea5ff]/60 hover:bg-[#0b1d35]";
 
   const handleClick = (event) => {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
     if (typeof onClick === "function") {
       onClick(event);
       return;
@@ -1996,7 +2000,11 @@ function Button({ children, onClick, variant = "ghost", className = "" }) {
     <button
       type="button"
       onClick={handleClick}
-      className={`eos-button eos-touch-glow eos-liquid-button rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 ${styles} ${className}`}
+      disabled={disabled}
+      title={title}
+      aria-label={ariaLabel || (typeof children === "string" ? children : undefined)}
+      className={`eos-button eos-touch-glow eos-liquid-button rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none ${styles} ${className}`}
+      {...props}
     >
       {children}
     </button>
@@ -10218,6 +10226,7 @@ function SupportCenterModal({ open, onClose }) {
   };
 
   const submitSupport = async () => {
+    if (sending) return;
     if (!form.name.trim()) {
       setSupportError("Please add your name so we know who to reply to.");
       return;
@@ -10287,7 +10296,7 @@ function SupportCenterModal({ open, onClose }) {
               </label>
               <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
                 Reply email
-                <input value={form.email} onChange={(e) => updateSupportField("email", e.target.value)} placeholder="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                <input type="email" value={form.email} onChange={(e) => updateSupportField("email", e.target.value)} placeholder="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
               </label>
             </div>
             <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
