@@ -3041,6 +3041,30 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
         </Panel>
       </div>
 
+      <Panel className="border-emerald-300/20 bg-gradient-to-br from-emerald-300/10 via-slate-950 to-cyan-300/10">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><FileText size={12}/> time machine output</Pill>
+            <h2 className="mt-3 text-4xl font-black">Research-ready forecast output.</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">Turn the future simulation into something a subscriber can use: an executive brief, a scenario report, a poster card or a follow-up analysis path.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Forecast Pack</Button>
+            <Button onClick={() => setPage("viralcards")}>Create Time Poster</Button>
+            <Button onClick={() => setPage("simreports")}>Build Simulation Dossier</Button>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {[["Executive brief", `${base.name} in ${environment}: ${verdict}.`, "Clear summary for non-technical readers."], ["Technical signal", `Dominant driver: ${selectedInsight.dominantName} at ${selectedInsight.dominantValue}%.`, "Useful for follow-up engineering review."], ["Next decision", selectedInsight.action, "Turns the simulation into a concrete workflow."]].map(([title, value, copy]) => (
+            <div key={title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
+              <div className="mt-2 text-xl font-black text-white">{value}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-300">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -3203,14 +3227,41 @@ function TimeMachine({ selected, setSelected, setPage }) {
     };
   };
 
+  const selectedState = timeline.reduce((closest, item) => Math.abs(item.year - selectedYear) < Math.abs(closest.year - selectedYear) ? item : closest, timeline[0]);
+  const selectedInsight = getMilestoneInsight(selectedState);
+  const survivability = Math.max(1, Math.min(99, Math.round((selectedState.stability * 0.55) + (resilience * 0.25) + ((100 - risk) * 0.2))));
+  const serviceWindow = selectedState.stability >= 75 ? "Long service window" : selectedState.stability >= 55 ? "Managed service window" : selectedState.stability >= 35 ? "Shortened service window" : "Replacement likely";
+  const timeMachinePresets = [
+    { name: "Deep Ocean Titanium", material: "Ti", environment: environmentProfiles["Deep ocean"] ? "Deep ocean" : environment, year: 50, stress: 62, temperature: 12, pressure: 88, humidity: 76, radiation: 8, story: "Pressure, corrosion and long-duration exposure." },
+    { name: "Aerospace Aluminium", material: "Al", environment: environmentProfiles["High altitude"] ? "High altitude" : environment, year: 25, stress: 72, temperature: 34, pressure: 38, humidity: 22, radiation: 31, story: "Fatigue, thermal cycling and lightweight performance." },
+    { name: "Reactor Steel", material: "Fe", environment: environmentProfiles["Nuclear exposure"] ? "Nuclear exposure" : environment, year: 40, stress: 68, temperature: 82, pressure: 70, humidity: 18, radiation: 84, story: "Heat, radiation and structural stress." },
+    { name: "Coastal Copper", material: "Cu", environment: environmentProfiles["Coastal air"] ? "Coastal air" : environment, year: 30, stress: 35, temperature: 27, pressure: 24, humidity: 84, radiation: 12, story: "Moisture corrosion and environmental ageing." },
+  ];
+  const applyTimePreset = (preset) => {
+    if (elementMap[preset.material]) setMaterialAndSelected(preset.material);
+    if (environmentProfiles[preset.environment]) setEnvironment(preset.environment);
+    setSelectedYear(preset.year);
+    setStress(preset.stress);
+    setTemperature(preset.temperature);
+    setPressure(preset.pressure);
+    setHumidity(preset.humidity);
+    setRadiation(preset.radiation);
+  };
+  const timePhases = [
+    ["Now", "Baseline", resilience, "Starting condition before long-term exposure is applied."],
+    [`${selectedYear}y`, serviceWindow, survivability, `Projected survivability at the selected horizon in ${environment}.`],
+    ["Main driver", selectedInsight.dominantName, selectedInsight.dominantValue, selectedInsight.dominantCopy],
+    ["Decision", selectedInsight.status, selectedInsight.confidence, selectedInsight.action],
+  ];
+
   return (
     <div className="space-y-6">
       <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr] border-cyan-300/25 bg-gradient-to-br from-cyan-950/25 via-slate-950 to-fuchsia-950/20">
         <div>
-          <Pill gold><Clock3 size={12}/> temporal simulation engine</Pill>
-          <h1 className="mt-4 text-5xl font-black sm:text-7xl">Temporal <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Simulation Engine</span></h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A cinematic future-state lab for forecasting material behaviour across time, stress, pressure, corrosion, radiation and 50+ environment profiles.</p>
-          <Info title="Blank-page safety rebuild">This version avoids the previous fragile render path and uses a self-contained temporal graph, environment library, telemetry controls and export system.</Info>
+          <Pill gold><Clock3 size={12}/> time machine</Pill>
+          <h1 className="mt-4 text-5xl font-black sm:text-7xl">Time Machine <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Future Lab</span></h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A cinematic future-state lab that lets users fast-forward a material through years of pressure, heat, corrosion, fatigue and radiation, then see the decision in plain English.</p>
+          <Info title="What this does">Choose a material, choose an environment, drag the future horizon and ElementOS turns the forecast into stability, risk, degradation drivers, confidence and recommended next steps.</Info>
           <div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Time PDF/JSON/SVG</Button><Button onClick={() => setPage("scenario")}>Send to Scenario Builder</Button><Button onClick={() => setPage("matterlab")}>Open Advanced Material Analysis</Button></div>
         </div>
         <Panel>
@@ -3224,8 +3275,33 @@ function TimeMachine({ selected, setSelected, setPage }) {
 
       <GuidePanel page="timemachine" />
 
+      <Panel className="overflow-hidden border-amber-300/20 bg-gradient-to-br from-amber-300/10 via-slate-950 to-cyan-300/10">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Sparkles size={12}/> time lens</Pill>
+            <h2 className="mt-3 text-4xl font-black">See the material age before your eyes.</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">The Time Machine now explains the full story: current condition, future survivability, dominant degradation driver and the decision a researcher should make next.</p>
+          </div>
+          <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-5 text-right">
+            <div className="text-5xl font-black text-cyan-100">{survivability}%</div>
+            <div className="mt-1 text-xs font-black uppercase tracking-[.22em] text-cyan-200">survivability</div>
+            <div className="mt-2 text-sm text-slate-300">{serviceWindow}</div>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {timePhases.map(([label, title, value, copy]) => (
+            <div key={label} className="rounded-[2rem] border border-white/10 bg-black/30 p-5 shadow-[0_0_40px_rgba(34,211,238,.08)]">
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">{label}</div>
+              <div className="mt-2 text-2xl font-black text-white">{title}</div>
+              <div className="mt-3 text-4xl font-black text-amber-100">{value}{typeof value === "number" ? "%" : ""}</div>
+              <p className="mt-3 text-sm leading-6 text-slate-300">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
       <Panel className="border-cyan-300/25 bg-gradient-to-br from-slate-950 via-blue-950/20 to-cyan-950/20">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><Pill gold><Radar size={12}/> future-state simulation</Pill><h2 className="mt-3 text-5xl font-black">Temporal Field Graph</h2><p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">Glowing stability curve, corrosion drift, confidence fog, anomaly markers and live telemetry streams.</p></div><div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">LIVE · {environment}</div></div>
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><Pill gold><Radar size={12}/> future-state simulation</Pill><h2 className="mt-3 text-5xl font-black">Time Tunnel Graph</h2><p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">A glowing forecast graph showing stability decline, corrosion drift, milestone markers and the chosen future horizon.</p></div><div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">LIVE · {environment}</div></div>
         <div className="mt-6 grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
           <div className="relative h-[520px] overflow-hidden rounded-[2.5rem] border border-cyan-300/20 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.18),transparent_30%),linear-gradient(135deg,#020617,#07152a_55%,#0b1020)] p-5">
             <div className="absolute inset-0 opacity-30 bg-[linear-gradient(rgba(34,211,238,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.08)_1px,transparent_1px)] bg-[size:42px_42px]" />
@@ -3250,6 +3326,18 @@ function TimeMachine({ selected, setSelected, setPage }) {
         <Panel>
           <div className="flex items-start justify-between gap-4"><div><Pill gold><Clock3 size={12}/> temporal controls</Pill><h2 className="mt-3 text-4xl font-black">Temporal Control Deck</h2></div><div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-right"><div className="text-3xl font-black text-cyan-100">{selectedYear}y</div><div className="text-[10px] uppercase tracking-[.18em] text-cyan-200">horizon</div></div></div>
           <div className="mt-5 grid gap-4">
+            <div className="rounded-[2rem] border border-amber-300/15 bg-amber-300/10 p-4">
+              <div className="text-xs font-black uppercase tracking-[.2em] text-amber-100">Instant scenarios</div>
+              <p className="mt-2 text-sm leading-6 text-amber-50/80">Load a believable research scenario in one click, then adjust the sliders like a lab instrument.</p>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                {timeMachinePresets.map((preset) => (
+                  <button key={preset.name} onClick={() => applyTimePreset(preset)} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-left transition hover:border-amber-300/40 hover:bg-amber-300/10">
+                    <div className="text-sm font-black text-white">{preset.name}</div>
+                    <div className="mt-1 text-xs leading-5 text-slate-400">{preset.story}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
             <label className="grid gap-2"><span className="text-xs uppercase tracking-[.2em] text-slate-500">Material</span><select value={material} onChange={(e) => setMaterialAndSelected(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">{elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select></label>
             <div><span className="text-xs uppercase tracking-[.2em] text-slate-500">50+ Environment Library</span><div className="mt-3 flex max-h-28 flex-wrap gap-2 overflow-auto rounded-2xl border border-white/10 bg-black/20 p-3">{categories.map((cat) => <button key={cat} onClick={() => { setEnvCategory(cat); const first = cat === "All" ? Object.keys(environmentProfiles)[0] : Object.keys(environmentProfiles).find((key) => environmentProfiles[key].category === cat); if (first) setEnvironment(first); }} className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] ${envCategory === cat ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{cat}</button>)}</div><select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">{filteredEnvs.map((key) => <option key={key}>{key}</option>)}</select><div className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-sm leading-6 text-cyan-50"><b>{profile.category}</b> · {profile.label}</div></div>
             <label className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4"><div className="flex items-center justify-between text-sm"><span className="font-bold text-slate-200">Temporal Horizon</span><span className="font-black text-amber-100">{selectedYear} years</span></div><input type="range" min="1" max="1000" value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))} /><div className="flex flex-wrap gap-2">{[1,5,10,25,50,100,250,500,1000].map((y) => <button key={y} onClick={() => setSelectedYear(y)} className={`rounded-full border px-3 py-1 text-xs font-bold ${selectedYear === y ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{y}y</button>)}</div></label>
@@ -3257,7 +3345,7 @@ function TimeMachine({ selected, setSelected, setPage }) {
           </div>
         </Panel>
         <Panel>
-          <Pill><Radar size={12}/> future state tunnel</Pill><h2 className="mt-3 text-3xl font-black">Future-State Simulation</h2>
+          <Pill><Radar size={12}/> future state tunnel</Pill><h2 className="mt-3 text-3xl font-black">Cinematic Ageing Tunnel</h2><p className="mt-3 text-sm leading-6 text-slate-400">Each glowing layer is a future milestone. The bright core is the current material state; the outer layers show the forecast moving further into time.</p>
           <div className="mt-6 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-slate-950/80 p-6 [perspective:1100px]"><div className="relative mx-auto h-[430px] max-w-3xl [transform-style:preserve-3d] [transform:rotateX(58deg)_rotateZ(-32deg)]">{timeline.map((t, index) => <div key={t.year} className="absolute left-1/2 top-1/2 grid place-items-center rounded-[2rem] border border-cyan-300/25 bg-cyan-300/10 text-center shadow-[0_0_40px_rgba(34,211,238,.14)]" style={{ width: `${260 + index * 30}px`, height: `${68 + index * 8}px`, transform: `translate(-50%, -50%) translateZ(${index * 28}px)`, opacity: Math.max(.25, 1 - index * .075) }}><div className="text-xs uppercase tracking-[.22em] text-cyan-100">Year {t.year}</div><div className="text-2xl font-black text-white">{t.stability}%</div></div>)}<div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 shadow-[0_0_80px_rgba(251,191,36,.85)]" /></div></div>
         </Panel>
       </div>
