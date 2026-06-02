@@ -3240,6 +3240,9 @@ function TimeMachine({ selected, setSelected, setPage }) {
   const [pressure, setPressure] = useState(40);
   const [humidity, setHumidity] = useState(62);
   const [radiation, setRadiation] = useState(18);
+  const [scenarioSearch, setScenarioSearch] = useState("");
+  const [scenarioCategory, setScenarioCategory] = useState("All");
+  const [selectedScenarioId, setSelectedScenarioId] = useState("SCN-0001");
 
   const base = elementMap[material] || elementMap.H || elements[0];
   const baseScore = score(material);
@@ -3318,21 +3321,64 @@ function TimeMachine({ selected, setSelected, setPage }) {
   const selectedInsight = getMilestoneInsight(selectedState);
   const survivability = Math.max(1, Math.min(99, Math.round((selectedState.stability * 0.55) + (resilience * 0.25) + ((100 - risk) * 0.2))));
   const serviceWindow = selectedState.stability >= 75 ? "Long service window" : selectedState.stability >= 55 ? "Managed service window" : selectedState.stability >= 35 ? "Shortened service window" : "Replacement likely";
-  const timeMachinePresets = [
-    { name: "Deep Ocean Titanium", material: "Ti", environment: environmentProfiles["Deep ocean"] ? "Deep ocean" : environment, year: 50, stress: 62, temperature: 12, pressure: 88, humidity: 76, radiation: 8, story: "Pressure, corrosion and long-duration exposure." },
-    { name: "Aerospace Aluminium", material: "Al", environment: environmentProfiles["High altitude"] ? "High altitude" : environment, year: 25, stress: 72, temperature: 34, pressure: 38, humidity: 22, radiation: 31, story: "Fatigue, thermal cycling and lightweight performance." },
-    { name: "Reactor Steel", material: "Fe", environment: environmentProfiles["Nuclear exposure"] ? "Nuclear exposure" : environment, year: 40, stress: 68, temperature: 82, pressure: 70, humidity: 18, radiation: 84, story: "Heat, radiation and structural stress." },
-    { name: "Coastal Copper", material: "Cu", environment: environmentProfiles["Coastal air"] ? "Coastal air" : environment, year: 30, stress: 35, temperature: 27, pressure: 24, humidity: 84, radiation: 12, story: "Moisture corrosion and environmental ageing." },
-  ];
-  const applyTimePreset = (preset) => {
-    if (elementMap[preset.material]) setMaterialAndSelected(preset.material);
-    if (environmentProfiles[preset.environment]) setEnvironment(preset.environment);
-    setSelectedYear(preset.year);
-    setStress(preset.stress);
-    setTemperature(preset.temperature);
-    setPressure(preset.pressure);
-    setHumidity(preset.humidity);
-    setRadiation(preset.radiation);
+  const scenarioLibrary = useMemo(() => {
+    const envKeys = Object.keys(environmentProfiles);
+    const scenarioTypes = [
+      { category: "Marine", label: "deep-water pressure service", stress: 62, temperature: 14, pressure: 88, humidity: 78, radiation: 8, year: 50 },
+      { category: "Aerospace", label: "thermal cycling and vibration", stress: 74, temperature: 54, pressure: 32, humidity: 18, radiation: 42, year: 25 },
+      { category: "Industrial", label: "long-duty plant operation", stress: 68, temperature: 80, pressure: 67, humidity: 33, radiation: 18, year: 40 },
+      { category: "Climate", label: "weathering and outdoor exposure", stress: 42, temperature: 36, pressure: 28, humidity: 82, radiation: 16, year: 30 },
+      { category: "Geological", label: "buried formation load", stress: 58, temperature: 48, pressure: 86, humidity: 52, radiation: 25, year: 75 },
+      { category: "Extreme", label: "accelerated degradation envelope", stress: 84, temperature: 92, pressure: 78, humidity: 64, radiation: 72, year: 15 },
+      { category: "Energy", label: "thermal-energy infrastructure duty", stress: 70, temperature: 88, pressure: 72, humidity: 28, radiation: 46, year: 35 },
+      { category: "Transport", label: "motion fatigue and environmental cycling", stress: 77, temperature: 44, pressure: 42, humidity: 40, radiation: 12, year: 20 },
+      { category: "Construction", label: "structural service life exposure", stress: 64, temperature: 30, pressure: 55, humidity: 58, radiation: 10, year: 100 },
+      { category: "Research", label: "controlled laboratory ageing model", stress: 50, temperature: 50, pressure: 50, humidity: 50, radiation: 50, year: 10 },
+    ];
+    const adjectives = ["baseline", "high-load", "corrosion-watch", "fatigue-limit", "thermal-shock", "pressure-drift", "maintenance-light", "inspection-heavy", "field-ready", "future-state"];
+    return Array.from({ length: 5000 }, (_, index) => {
+      const type = scenarioTypes[index % scenarioTypes.length];
+      const env = envKeys[index % envKeys.length] || environment;
+      const drift = Math.floor(index / scenarioTypes.length);
+      const id = `SCN-${String(index + 1).padStart(4, "0")}`;
+      return {
+        id,
+        name: `${type.category} ${adjectives[index % adjectives.length]} scenario ${String(index + 1).padStart(4, "0")}`,
+        category: type.category,
+        environment: env,
+        year: Math.max(1, Math.min(1000, type.year + (drift % 9) * 5)),
+        stress: Math.max(0, Math.min(100, type.stress + ((index % 7) - 3) * 4)),
+        temperature: Math.max(0, Math.min(100, type.temperature + ((index % 11) - 5) * 3)),
+        pressure: Math.max(0, Math.min(100, type.pressure + ((index % 13) - 6) * 3)),
+        humidity: Math.max(0, Math.min(100, type.humidity + ((index % 17) - 8) * 2)),
+        radiation: Math.max(0, Math.min(100, type.radiation + ((index % 19) - 9) * 2)),
+        description: `${type.label} in ${env}. Designed as a selectable future simulation profile that works with any material.`,
+      };
+    });
+  }, [environmentProfiles, environment]);
+
+  const scenarioCategories = ["All", ...Array.from(new Set(scenarioLibrary.map((item) => item.category)))];
+  const filteredScenarios = scenarioLibrary.filter((item) => {
+    const query = scenarioSearch.trim().toLowerCase();
+    const categoryMatch = scenarioCategory === "All" || item.category === scenarioCategory;
+    const queryMatch = !query || `${item.name} ${item.environment} ${item.description} ${item.id}`.toLowerCase().includes(query);
+    return categoryMatch && queryMatch;
+  });
+  const selectedScenario = scenarioLibrary.find((item) => item.id === selectedScenarioId) || scenarioLibrary[0];
+
+  const applyTimeScenario = (scenario) => {
+    if (!scenario) return;
+    setSelectedScenarioId(scenario.id);
+    if (environmentProfiles[scenario.environment]) {
+      setEnvironment(scenario.environment);
+      setEnvCategory(environmentProfiles[scenario.environment]?.category || "All");
+    }
+    setSelectedYear(scenario.year);
+    setStress(scenario.stress);
+    setTemperature(scenario.temperature);
+    setPressure(scenario.pressure);
+    setHumidity(scenario.humidity);
+    setRadiation(scenario.radiation);
   };
   const timePhases = [
     ["Now", "Baseline", resilience, "Starting condition before long-term exposure is applied."],
@@ -3413,27 +3459,81 @@ function TimeMachine({ selected, setSelected, setPage }) {
         <Panel>
           <div className="flex items-start justify-between gap-4"><div><Pill gold><Clock3 size={12}/> temporal controls</Pill><h2 className="mt-3 text-4xl font-black">Temporal Control Deck</h2></div><div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-right"><div className="text-3xl font-black text-cyan-100">{selectedYear}y</div><div className="text-[10px] uppercase tracking-[.18em] text-cyan-200">horizon</div></div></div>
           <div className="mt-5 grid gap-4">
-            <div className="rounded-[2rem] border border-amber-300/15 bg-amber-300/10 p-4">
-              <div className="text-xs font-black uppercase tracking-[.2em] text-amber-100">Instant scenarios</div>
-              <p className="mt-2 text-sm leading-6 text-amber-50/80">Load a believable research scenario in one click, then adjust the sliders like a lab instrument.</p>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                {timeMachinePresets.map((preset) => (
-                  <button key={preset.name} onClick={() => applyTimePreset(preset)} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-left transition hover:border-amber-300/40 hover:bg-amber-300/10">
-                    <div className="text-sm font-black text-white">{preset.name}</div>
-                    <div className="mt-1 text-xs leading-5 text-slate-400">{preset.story}</div>
-                  </button>
-                ))}
+            <label className="grid gap-2"><span className="text-xs uppercase tracking-[.2em] text-slate-500">Material</span><select value={material} onChange={(e) => setMaterialAndSelected(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">{elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select><span className="text-xs leading-5 text-slate-500">Choose the material first. Every scenario below works with whichever material is selected.</span></label>
+            <div className="rounded-[2rem] border border-amber-300/15 bg-gradient-to-br from-amber-300/10 via-black/25 to-cyan-300/10 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div className="text-xs font-black uppercase tracking-[.2em] text-amber-100">Scenario Library</div>
+                  <p className="mt-2 text-sm leading-6 text-amber-50/80">Search 5,000 future simulations. Pick a material above, then load a scenario profile without forcing a hard-set element pairing.</p>
+                </div>
+                <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-sm font-black text-cyan-100">5,000 scenarios</div>
+              </div>
+              <input value={scenarioSearch} onChange={(e) => setScenarioSearch(e.target.value)} placeholder="Search scenarios: ocean, orbit, refinery, corrosion, pressure..." className="mt-4 w-full rounded-2xl border border-white/10 bg-black/35 p-4 text-sm outline-none placeholder:text-slate-600" />
+              <div className="mt-3 flex max-h-24 flex-wrap gap-2 overflow-auto rounded-2xl border border-white/10 bg-black/20 p-3">
+                {scenarioCategories.map((cat) => <button key={cat} onClick={() => setScenarioCategory(cat)} className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] ${scenarioCategory === cat ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{cat}</button>)}
+              </div>
+              <select value={selectedScenarioId} onChange={(e) => { const next = scenarioLibrary.find((item) => item.id === e.target.value); applyTimeScenario(next); }} className="mt-3 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
+                {(filteredScenarios.length ? filteredScenarios : scenarioLibrary).slice(0, 250).map((item) => <option key={item.id} value={item.id}>{item.id} — {item.name}</option>)}
+              </select>
+              <div className="mt-3 rounded-2xl border border-amber-300/15 bg-black/25 p-3 text-sm leading-6 text-amber-50/85">
+                <b>{selectedScenario?.name}</b><br />{selectedScenario?.description}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button onClick={() => applyTimeScenario(selectedScenario)} variant="primary">Load Scenario</Button>
+                <Button onClick={() => { setScenarioSearch(""); setScenarioCategory("All"); }}>Clear Search</Button>
               </div>
             </div>
-            <label className="grid gap-2"><span className="text-xs uppercase tracking-[.2em] text-slate-500">Material</span><select value={material} onChange={(e) => setMaterialAndSelected(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">{elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select></label>
             <div><span className="text-xs uppercase tracking-[.2em] text-slate-500">50+ Environment Library</span><div className="mt-3 flex max-h-28 flex-wrap gap-2 overflow-auto rounded-2xl border border-white/10 bg-black/20 p-3">{categories.map((cat) => <button key={cat} onClick={() => { setEnvCategory(cat); const first = cat === "All" ? Object.keys(environmentProfiles)[0] : Object.keys(environmentProfiles).find((key) => environmentProfiles[key].category === cat); if (first) setEnvironment(first); }} className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] ${envCategory === cat ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{cat}</button>)}</div><select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">{filteredEnvs.map((key) => <option key={key}>{key}</option>)}</select><div className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-sm leading-6 text-cyan-50"><b>{profile.category}</b> · {profile.label}</div></div>
             <label className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4"><div className="flex items-center justify-between text-sm"><span className="font-bold text-slate-200">Temporal Horizon</span><span className="font-black text-amber-100">{selectedYear} years</span></div><input type="range" min="1" max="1000" value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))} /><div className="flex flex-wrap gap-2">{[1,5,10,25,50,100,250,500,1000].map((y) => <button key={y} onClick={() => setSelectedYear(y)} className={`rounded-full border px-3 py-1 text-xs font-bold ${selectedYear === y ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{y}y</button>)}</div></label>
             {[["Stress Load", stress, setStress, "%"], ["Temperature", temperature, setTemperature, "°C"], ["Pressure Load", pressure, setPressure, "%"], ["Humidity", humidity, setHumidity, "%"], ["Radiation", radiation, setRadiation, "%"]].map(([label, value, setter, unit]) => <label key={label} className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-4"><div className="flex items-center justify-between text-sm"><span className="font-bold text-slate-200">{label}</span><span className="font-black text-cyan-100">{value}{unit}</span></div><input type="range" min="0" max="100" value={value} onChange={(e) => setter(Number(e.target.value))} /></label>)}
           </div>
         </Panel>
-        <Panel>
-          <Pill><Radar size={12}/> future state tunnel</Pill><h2 className="mt-3 text-3xl font-black">Cinematic Ageing Tunnel</h2><p className="mt-3 text-sm leading-6 text-slate-400">Each glowing layer is a future milestone. The bright core is the current material state; the outer layers show the forecast moving further into time.</p>
-          <div className="mt-6 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-slate-950/80 p-6 [perspective:1100px]"><div className="relative mx-auto h-[430px] max-w-3xl [transform-style:preserve-3d] [transform:rotateX(58deg)_rotateZ(-32deg)]">{timeline.map((t, index) => <div key={t.year} className="absolute left-1/2 top-1/2 grid place-items-center rounded-[2rem] border border-cyan-300/25 bg-cyan-300/10 text-center shadow-[0_0_40px_rgba(34,211,238,.14)]" style={{ width: `${260 + index * 30}px`, height: `${68 + index * 8}px`, transform: `translate(-50%, -50%) translateZ(${index * 28}px)`, opacity: Math.max(.25, 1 - index * .075) }}><div className="text-xs uppercase tracking-[.22em] text-cyan-100">Year {t.year}</div><div className="text-2xl font-black text-white">{t.stability}%</div></div>)}<div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 shadow-[0_0_80px_rgba(251,191,36,.85)]" /></div></div>
+        <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/25 to-fuchsia-950/25">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <Pill><Radar size={12}/> future state tunnel</Pill>
+              <h2 className="mt-3 text-4xl font-black">Cinematic Ageing Tunnel</h2>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">A living future-state tunnel for {base.name}. Each ring is a milestone; pulse speed, glow intensity and warning bands respond to forecast stability, exposure load and degradation pressure.</p>
+            </div>
+            <div className="rounded-2xl border border-amber-300/25 bg-amber-300/10 px-4 py-3 text-right">
+              <div className="text-3xl font-black text-amber-100">{survivability}%</div>
+              <div className="text-[10px] uppercase tracking-[.2em] text-amber-200">survivability lens</div>
+            </div>
+          </div>
+          <div className="relative mt-6 overflow-hidden rounded-[2.5rem] border border-cyan-300/20 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.18),transparent_28%),linear-gradient(135deg,#020617,#061425_45%,#160b2a)] p-5 shadow-[0_0_120px_rgba(34,211,238,.14)]">
+            <div className="pointer-events-none absolute inset-0 opacity-30 bg-[linear-gradient(rgba(34,211,238,.10)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.08)_1px,transparent_1px)] bg-[size:38px_38px]" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[720px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" style={{ animation: "eosSpin 28s linear infinite" }} />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-fuchsia-300/10" style={{ animation: "eosSpinReverse 36s linear infinite" }} />
+            <div className="relative mx-auto h-[560px] max-w-4xl [perspective:1400px]">
+              <div className="absolute inset-0 [transform-style:preserve-3d] [transform:rotateX(62deg)_rotateZ(-28deg)]">
+                {timeline.map((t, index) => {
+                  const insight = getMilestoneInsight(t);
+                  const size = 170 + index * 44;
+                  const glow = Math.max(0.18, t.stability / 100);
+                  const danger = 100 - t.stability;
+                  return (
+                    <div key={t.year} className="absolute left-1/2 top-1/2 rounded-full border text-center backdrop-blur-md" style={{ width: `${size}px`, height: `${size * 0.48}px`, transform: `translate(-50%, -50%) translateZ(${index * 34}px)`, borderColor: t.stability >= 60 ? `rgba(34,211,238,${0.2 + glow * 0.45})` : `rgba(251,113,133,${0.25 + danger / 170})`, background: t.stability >= 60 ? `radial-gradient(circle, rgba(34,211,238,${0.16 + glow * 0.1}), rgba(15,23,42,.12) 60%, transparent)` : `radial-gradient(circle, rgba(244,63,94,.18), rgba(15,23,42,.12) 60%, transparent)`, boxShadow: t.stability >= 60 ? `0 0 ${24 + glow * 50}px rgba(34,211,238,${0.16 + glow * 0.24})` : `0 0 ${28 + danger * 0.5}px rgba(244,63,94,.22)`, animation: `eosPulse ${2.4 + index * 0.18}s ease-in-out infinite` }}>
+                      <div className="absolute left-1/2 top-1/2 min-w-[118px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-black/45 px-3 py-2 shadow-2xl">
+                        <div className="text-[10px] uppercase tracking-[.22em] text-cyan-100">Year {t.year}</div>
+                        <div className="text-2xl font-black text-white">{t.stability}%</div>
+                        <div className="text-[9px] uppercase tracking-[.18em] text-slate-400">{insight.status}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 shadow-[0_0_110px_rgba(251,191,36,.95)]" style={{ animation: "eosPulse 1.8s ease-in-out infinite" }} />
+                <div className="absolute left-1/2 top-1/2 h-4 w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/25 blur-xl" />
+              </div>
+              <div className="absolute bottom-4 left-4 right-4 grid gap-3 md:grid-cols-3">
+                {[['Material', `${base.symbol} — ${base.name}`], ['Scenario', selectedScenario?.category || profile.category], ['Dominant driver', selectedInsight.dominantName]].map(([label, value]) => (
+                  <div key={label} className="rounded-2xl border border-white/10 bg-black/45 p-3 backdrop-blur-xl">
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+                    <div className="mt-1 text-sm font-black text-cyan-100">{value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </Panel>
       </div>
 
