@@ -4719,10 +4719,67 @@ function CalculationCore() {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
   const lowercase = "abcdefghijklmnopqrstuvwxyz".split("");
   const greekLetters = ["α", "β", "γ", "δ", "θ", "λ", "μ", "π", "ρ", "σ", "φ", "ω"];
+  const mathVariableGroups = [
+    {
+      id: "uppercase",
+      label: "A–Z",
+      desc: "Standard uppercase variables for algebra, geometry and quick equations.",
+      items: alphabet.map((letter, index) => ({ key: letter, label: letter, desc: `Uppercase variable ${letter}`, defaultValue: [12, 48, 3, 9.81, 2.5, 50, 96, 22, 100, 10][index] ?? 0 })),
+    },
+    {
+      id: "lowercase",
+      label: "a–z",
+      desc: "Standard lowercase variables used heavily in physics and calculus.",
+      items: lowercase.map((letter, index) => ({ key: letter, label: letter, desc: `Lowercase variable ${letter}`, defaultValue: [3, 4, 299792458, 10, 2.718281828, 5e14, 9.81, 6.626e-34, 100, 0.03][index] ?? 0 })),
+    },
+    {
+      id: "greek",
+      label: "Greek",
+      desc: "Greek science variables. They insert safe typed names like alpha and theta.",
+      items: [
+        ["alpha", "α", "alpha / angle / coefficient", 1],
+        ["beta", "β", "beta / factor / velocity ratio", 0.5],
+        ["gamma", "γ", "gamma / Lorentz factor", 1],
+        ["delta", "δ", "delta / small change", 0.1],
+        ["theta", "θ", "theta / angle", 45],
+        ["lambda", "λ", "lambda / wavelength", 0.5],
+        ["mu", "μ", "mu / friction or permeability", 0.03],
+        ["rho", "ρ", "rho / density", 7850],
+        ["sigma", "σ", "sigma / stress", 250],
+        ["tau", "τ", "tau / time constant or torque", 1],
+        ["phi", "φ", "phi / phase", 1.618],
+        ["omega", "ω", "omega / angular frequency", 6.283],
+      ].map(([key, label, desc, defaultValue]) => ({ key, label, desc, defaultValue })),
+    },
+    {
+      id: "physics",
+      label: "Physics",
+      desc: "Common mechanics, energy, waves, relativity and field variables.",
+      items: [
+        ["m", "m", "mass", 10], ["v", "v", "velocity", 3], ["a", "a", "acceleration", 9.81], ["F", "F", "force", 20],
+        ["E", "E", "energy", 100], ["P", "P", "power or pressure", 50], ["W", "W", "work", 100], ["r", "r", "radius", 5],
+        ["t", "t", "time", 50], ["f", "f", "frequency", 5e14], ["T", "T", "temperature or period", 300], ["q", "q", "charge", 1],
+        ["V", "V", "voltage or volume", 12], ["I", "I", "current or intensity", 100], ["R", "R", "resistance", 8], ["Bfield", "B", "magnetic field", 0.2],
+        ["g", "g", "gravity", 9.81], ["p", "p", "momentum", 30], ["L", "L", "length or angular momentum", 2], ["n", "n", "count or subdivision steps", 8],
+      ].map(([key, label, desc, defaultValue]) => ({ key, label, desc, defaultValue })),
+    },
+    {
+      id: "constants",
+      label: "Constants",
+      desc: "Science constants and ElementOS signal variables ready for equations.",
+      items: [
+        ["pi", "π", "pi", Math.PI], ["e", "e", "Euler number", Math.E], ["c", "c", "speed of light", 299792458],
+        ["Gconst", "G", "gravitational constant", 6.6743e-11], ["h", "h", "Planck constant", 6.62607015e-34], ["kB", "kB", "Boltzmann constant", 1.380649e-23],
+        ["NA", "NA", "Avogadro constant", 6.02214076e23], ["epsilon0", "ε0", "vacuum permittivity", 8.8541878128e-12], ["mu0", "μ0", "vacuum permeability", 1.25663706212e-6],
+        ["I0", "I0", "reference intensity", 10], ["K", "K", "scaling constant", 1], ["DeltaX", "ΔX", "change in X", 5], ["DeltaY", "ΔY", "change in Y", 20], ["Gv", "Gv", "comparison value", 12],
+      ].map(([key, label, desc, defaultValue]) => ({ key, label, desc, defaultValue })),
+    },
+  ];
   const [mode, setMode] = useState("calculate");
   const [expression, setExpression] = useState("A + B");
   const [title, setTitle] = useState("My Equation");
   const [activeVariable, setActiveVariable] = useState("A");
+  const [activeVariableGroup, setActiveVariableGroup] = useState("uppercase");
   const [variableSearch, setVariableSearch] = useState("");
   const [symbolSearch, setSymbolSearch] = useState("");
   const [converterCategory, setConverterCategory] = useState("Energy");
@@ -4734,28 +4791,10 @@ function CalculationCore() {
   const [saved, setSaved] = useState([]);
   const [variables, setVariables] = useState(() => {
     const values = {};
-    alphabet.forEach((letter, index) => { values[letter] = [12, 48, 3, 9.81, 2.5, 50, 96, 22, 100, 10][index] ?? 0; });
-    lowercase.forEach((letter, index) => { values[letter] = [3, 4, 299792458, 10, 2.718281828, 5e14, 9.81, 6.626e-34, 100, 0.03][index] ?? 0; });
-    return {
-      ...values,
-      pi: Math.PI,
-      e: Math.E,
-      c: 299792458,
-      G: 6.6743e-11,
-      h: 6.62607015e-34,
-      I: 100,
-      I0: 10,
-      K: 1,
-      t: 50,
-      DeltaX: 5,
-      DeltaY: 20,
-      m: 10,
-      v: 3,
-      r: 5,
-      F: 20,
-      n: 8,
-      Gv: 12,
-    };
+    mathVariableGroups.forEach((group) => {
+      group.items.forEach((item) => { values[item.key] = item.defaultValue ?? 0; });
+    });
+    return values;
   });
 
   const modes = [
@@ -4801,7 +4840,7 @@ function CalculationCore() {
     ["Subtract + divide", ["A - B", "A / B", "A / 2", "A / 3", "A / 4", "A / n", "(A / B) * 100", "A / (A + B)"]],
     ["Subdivision tools", ["/ 2", "/ 3", "/ 4", "/ n", "(A - B)", "(A + B) / 2", "DeltaY / DeltaX", "(F - Gv) / DeltaX"]],
     ["Functions", ["sqrt(", "log(", "sin(", "cos(", "tan(", "abs(", "pow("]],
-    ["Constants", ["pi", "e", "c", "G", "h"]],
+    ["Constants", ["pi", "e", "c", "Gconst", "h", "kB", "NA", "epsilon0", "mu0"]],
     ["Greek", greekLetters],
     ["Shapes", ["△", "○", "□", "◇", "∠", "⊕", "∞", "≈", "≤", "≥"]],
   ];
@@ -4819,6 +4858,18 @@ function CalculationCore() {
 
   const normalizeExpression = (raw) => raw
     .replace(/π/g, "pi")
+    .replace(/α/g, "alpha")
+    .replace(/β/g, "beta")
+    .replace(/γ/g, "gamma")
+    .replace(/δ/g, "delta")
+    .replace(/θ/g, "theta")
+    .replace(/λ/g, "lambda")
+    .replace(/μ/g, "mu")
+    .replace(/ρ/g, "rho")
+    .replace(/σ/g, "sigma")
+    .replace(/τ/g, "tau")
+    .replace(/φ/g, "phi")
+    .replace(/ω/g, "omega")
     .replace(/×/g, "*")
     .replace(/÷/g, "/")
     .replace(/\^/g, "**");
@@ -4858,8 +4909,14 @@ function CalculationCore() {
     return Math.abs(result) >= 100000 ? result.toExponential(4) : String(Math.round(result * 1000000) / 1000000);
   }, [converterCategory, converterFrom, converterTo, converterValue]);
 
-  const allVariableNames = [...alphabet, ...lowercase, "pi", "e", "c", "G", "h", "I", "I0", "K", "t", "m", "v", "r", "F"];
-  const visibleVariables = allVariableNames.filter((name) => name.toLowerCase().includes(variableSearch.toLowerCase()));
+  const allVariableItems = mathVariableGroups.flatMap((group) => group.items.map((item) => ({ ...item, groupId: group.id, groupLabel: group.label })));
+  const activeVariableItem = allVariableItems.find((item) => item.key === activeVariable) || allVariableItems[0];
+  const visibleVariables = allVariableItems.filter((item) => {
+    const matchesGroup = activeVariableGroup === "all" || item.groupId === activeVariableGroup;
+    const search = variableSearch.trim().toLowerCase();
+    const matchesSearch = !search || item.key.toLowerCase().includes(search) || item.label.toLowerCase().includes(search) || item.desc.toLowerCase().includes(search);
+    return matchesGroup && matchesSearch;
+  });
   const visibleSymbolGroups = symbolGroups.map(([group, items]) => [group, items.filter((s) => s.toLowerCase().includes(symbolSearch.toLowerCase()))]).filter(([, items]) => items.length);
 
   const addToExpression = (token) => setExpression((prev) => `${prev}${token}`);
@@ -4880,8 +4937,14 @@ function CalculationCore() {
     setVariableSearch("");
   };
   const resetValues = () => {
-    setVariables((prev) => ({ ...prev, A: 12, B: 48, C: 3, m: 10, v: 3, r: 5, I: 100, I0: 10, K: 1, t: 50 }));
+    const values = {};
+    mathVariableGroups.forEach((group) => {
+      group.items.forEach((item) => { values[item.key] = item.defaultValue ?? 0; });
+    });
+    setVariables(values);
     setActiveVariable("A");
+    setActiveVariableGroup("uppercase");
+    setVariableSearch("");
   };
   const resetConverter = () => {
     setConverterCategory("Energy");
@@ -4982,24 +5045,43 @@ function CalculationCore() {
           <Panel>
             <Pill><Database size={12}/> values</Pill>
             <h2 className="mt-3 text-3xl font-black">Variables</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Pick any letter, set its value, then use that letter inside your equation.</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-[.8fr_1.2fr]">
+            <p className="mt-2 text-sm leading-6 text-slate-400">Only one variable is active at a time. Choose a category, pick the variable, set the value, then insert it into the equation.</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {[{ id: "all", label: "All" }, ...mathVariableGroups].map((group) => (
+                <button key={group.id} onClick={() => setActiveVariableGroup(group.id)} className={`rounded-full border px-3 py-2 text-xs font-black uppercase tracking-[.14em] transition ${activeVariableGroup === group.id ? "border-cyan-300/60 bg-cyan-300/15 text-cyan-50" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>
+                  {group.label}
+                </button>
+              ))}
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-[.85fr_1.15fr]">
               <div>
-                <label className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Search letters</label>
-                <input value={variableSearch} onChange={(e) => setVariableSearch(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="A, b, pi..." />
-                <div className="mt-3 max-h-[310px] overflow-auto rounded-2xl border border-white/10 bg-black/20 p-3">
-                  <div className="grid grid-cols-6 gap-2">
-                    {visibleVariables.map((v) => <button key={v} onClick={() => setActiveVariable(v)} className={`rounded-xl px-2 py-2 text-sm font-black ${activeVariable === v ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-slate-200 hover:bg-white/20"}`}>{v}</button>)}
+                <label className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Search variables</label>
+                <input value={variableSearch} onChange={(e) => setVariableSearch(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="A, theta, velocity, density, Planck..." />
+                <div className="mt-3 max-h-[360px] overflow-auto rounded-2xl border border-white/10 bg-black/20 p-3">
+                  <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 lg:grid-cols-6">
+                    {visibleVariables.map((item) => (
+                      <button key={item.key} onClick={() => setActiveVariable(item.key)} title={`${item.label}: ${item.desc}`} className={`rounded-xl px-2 py-2 text-sm font-black transition ${activeVariable === item.key ? "bg-cyan-300 text-slate-950 shadow-[0_0_22px_rgba(34,211,238,.25)]" : "bg-white/10 text-slate-200 hover:bg-white/20"}`}>
+                        {item.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
               <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
-                <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">active variable</div>
-                <div className="mt-2 text-5xl font-black text-white">{activeVariable}</div>
+                <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">single active variable</div>
+                <div className="mt-2 flex items-end justify-between gap-4">
+                  <div>
+                    <div className="text-6xl font-black text-white">{activeVariableItem?.label || activeVariable}</div>
+                    <div className="mt-1 text-xs text-slate-400">Insert token: <span className="font-mono text-cyan-100">{activeVariable}</span></div>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 px-3 py-2 text-xs font-bold text-slate-300">{activeVariableItem?.groupLabel}</div>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-cyan-50">{activeVariableItem?.desc || "Choose a variable to edit."}</p>
                 <input type="number" value={variables[activeVariable] ?? 0} onChange={(e) => setVariables((prev) => ({ ...prev, [activeVariable]: Number(e.target.value) }))} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
-                <div className="mt-3 flex gap-2">
+                <div className="mt-3 flex flex-wrap gap-2">
                   <Button onClick={() => addToExpression(activeVariable)} variant="primary">Add to Equation</Button>
                   <Button onClick={() => setVariables((prev) => ({ ...prev, [activeVariable]: 0 }))}>Set 0</Button>
+                  <Button onClick={resetValues}>Reset Variables</Button>
                 </div>
               </div>
             </div>
