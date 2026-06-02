@@ -1508,7 +1508,7 @@ const MOBILE_PAGE_ORDER = [
 ];
 
 function pageLabel(page) {
-  return PAGE_LABELS[page] || String(page || "dashboard").replaceAll("-", " ");
+  return PAGE_LABELS[page] || String(page || "dashboard").replace(/-/g, " ");
 }
 
 
@@ -1595,11 +1595,11 @@ function slugifyExportName(value = "elementos-export") {
 
 function escapeXml(value = "") {
   return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&apos;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 }
 
 function wrapExportLines(value = "", maxChars = 62, maxLines = 14) {
@@ -1632,7 +1632,10 @@ function smartExportHeadline(value = "") {
     [/simulation dossier/i, "Simulation Intelligence Dossier"],
     [/viral/i, "Discovery Media Asset"],
   ];
-  const replaced = replacements.reduce((acc, [pattern, next]) => acc.replace(pattern, next), text);
+  const replaced = replacements.reduce((acc, replacement) => {
+    const [pattern, next] = replacement;
+    return acc.replace(pattern, String(next));
+  }, text);
   if (replaced.length <= 68) return replaced;
   return `${replaced.slice(0, 66).replace(/\s+\S*$/, "")}...`;
 }
@@ -6949,7 +6952,6 @@ function ExecutiveReportGeneratorPro({ setPage, compare = ["Al", "Ti", "Hf"] }) 
         { label: "Recommended Action", value: "Save to Workspace, generate media, and share the public discovery page." },
         { label: "Subscriber Value", value: "Turns a simulation into a professional asset." },
       ],
-      formats: ["pdf", "json", "svg"],
     });
   };
 
@@ -8045,6 +8047,7 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
     ["Product Hunt", "Use the founder card plus a clear before/after workflow demo."],
   ];
 
+  const ctaVariants = ["Open the discovery", "Generate your own", "View the full report", "Save this signal", "Join the Explorer access"];
   const performanceScore = Math.min(99, Math.round((cardData.score * 0.42) + (cardStats.shares / 8) + (cardStats.saves / 14) + 18));
   const viralReadiness = performanceScore >= 92 ? "LAUNCH READY" : performanceScore >= 82 ? "HIGH POTENTIAL" : performanceScore >= 72 ? "NEEDS STRONGER HOOK" : "REFINE BEFORE POSTING";
   const platform = "LinkedIn";
@@ -8064,7 +8067,6 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
   ];
   const genomePair = String(cardData.title || "Ti + Hf").split("+").map((item) => item.trim()).filter(Boolean);
   const discoveryGenome = `${genomePair[0] || "Ti"}${genomePair[1] || "Hf"}-X${String(cardStats.rank).padStart(2, "0")}-P${Math.round(cardData.score / 10)}`;
-  const ctaVariants = ["Open the discovery", "Generate your own", "View the full report", "Save this signal", "Join the Explorer access"];
   const abVariants = [
     ["A", "Rare signal headline", cardData.headline, "Best for X curiosity."],
     ["B", "Score-first headline", `${cardData.score}% ${cardData.metric}`, "Best for LinkedIn authority."],
