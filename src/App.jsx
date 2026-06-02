@@ -5390,8 +5390,8 @@ function CalculationCore() {
       </Panel>
 
       {mode === "calculate" && (
-        <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
-          <Panel>
+        <div className="grid gap-6 2xl:grid-cols-[0.95fr_1.05fr]">
+          <Panel className="max-h-none 2xl:max-h-[980px] 2xl:overflow-auto">
             <Pill gold><Calculator size={12}/> calculate</Pill>
             <h2 className="mt-3 text-3xl font-black">Enter an equation</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">Use normal maths: +, -, *, /, ^, brackets, variables and safe functions like sqrt, log, sin and cos.</p>
@@ -5413,7 +5413,7 @@ function CalculationCore() {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <Pill><Database size={12}/> variable command table</Pill>
-                <h2 className="mt-3 text-4xl font-black">Numbers, Symbols & Variables</h2>
+                <h2 className="mt-3 text-3xl font-black sm:text-4xl">Numbers, Symbols & Variables</h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">One active token at a time. Search every category, select a symbol, edit its value when it is calculable, then insert it into the equation.</p>
               </div>
               <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-right">
@@ -5422,7 +5422,7 @@ function CalculationCore() {
               </div>
             </div>
 
-            <div className="mt-5 grid gap-3 md:grid-cols-4">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">Letters</div><div className="mt-1 text-2xl font-black text-white">A–Z / a–z</div></div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">Science</div><div className="mt-1 text-2xl font-black text-white">Greek + Physics</div></div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">Maths</div><div className="mt-1 text-2xl font-black text-white">÷ − √ ∫ ∂ ∇</div></div>
@@ -5437,20 +5437,25 @@ function CalculationCore() {
               ))}
             </div>
 
-            <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_360px]">
+            <div className="mt-4 grid gap-4 2xl:grid-cols-[minmax(0,1fr)_380px]">
               <div>
                 <label className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Search the complete command table</label>
                 <input value={variableSearch} onChange={(e) => setVariableSearch(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white outline-none focus:border-cyan-300/50" placeholder="Search A, theta, divide, density, Planck, ∫, pressure, percent..." />
-                <div className="mt-3 max-h-[520px] overflow-auto rounded-[2rem] border border-white/10 bg-black/25 p-3">
-                  <div className="grid min-w-[720px] grid-cols-[90px_130px_1fr_120px] gap-2 border-b border-white/10 pb-2 text-[10px] font-black uppercase tracking-[.18em] text-slate-500">
+                <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-bold text-slate-400">
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">Scroll sideways for full table</span>
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">Scroll down for more symbols</span>
+                  <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-cyan-100">One selected token at a time</span>
+                </div>
+                <div className="mt-3 max-h-[520px] overflow-auto rounded-[2rem] border border-white/10 bg-black/25 p-3 sm:max-h-[600px] 2xl:max-h-[660px]">
+                  <div className="grid min-w-[680px] grid-cols-[78px_120px_minmax(260px,1fr)_105px] gap-2 border-b border-white/10 pb-2 text-[10px] font-black uppercase tracking-[.18em] text-slate-500">
                     <div>Symbol</div><div>Token</div><div>Meaning</div><div>Type</div>
                   </div>
                   <div className="mt-2 space-y-2">
                     {visibleVariables.map((item) => {
                       const active = activeVariable === item.key;
                       return (
-                        <button key={item.key} onClick={() => setActiveVariable(item.key)} title={`${item.label}: ${item.desc}`} className={`grid w-full min-w-[720px] grid-cols-[90px_130px_1fr_120px] items-center gap-2 rounded-2xl border p-3 text-left transition ${active ? "border-cyan-300/70 bg-cyan-300/15 shadow-[0_0_28px_rgba(34,211,238,.18)]" : "border-white/10 bg-white/[0.035] hover:border-cyan-300/30 hover:bg-white/[0.07]"}`}>
-                          <div className={`grid h-12 w-12 place-items-center rounded-2xl text-2xl font-black ${active ? "bg-cyan-300 text-slate-950" : "bg-black/35 text-cyan-100"}`}>{item.label}</div>
+                        <button key={item.key} onClick={() => setActiveVariable(item.key)} title={`${item.label}: ${item.desc}`} className={`grid w-full min-w-[680px] grid-cols-[78px_120px_minmax(260px,1fr)_105px] items-center gap-2 rounded-2xl border p-3 text-left transition ${active ? "border-cyan-300/70 bg-cyan-300/15 shadow-[0_0_28px_rgba(34,211,238,.18)]" : "border-white/10 bg-white/[0.035] hover:border-cyan-300/30 hover:bg-white/[0.07]"}`}>
+                          <div className={`grid h-11 w-11 place-items-center rounded-xl text-xl font-black ${active ? "bg-cyan-300 text-slate-950" : "bg-black/35 text-cyan-100"}`}>{item.label}</div>
                           <div className="font-mono text-sm text-cyan-100">{item.token}</div>
                           <div>
                             <div className="text-sm font-black text-white">{item.desc}</div>
@@ -5464,11 +5469,11 @@ function CalculationCore() {
                 </div>
               </div>
 
-              <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-5 shadow-[0_0_70px_rgba(34,211,238,.12)]">
+              <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-5 shadow-[0_0_70px_rgba(34,211,238,.12)] 2xl:sticky 2xl:top-6 2xl:max-h-[660px] 2xl:overflow-auto">
                 <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">selected command</div>
                 <div className="mt-3 flex items-end justify-between gap-4">
                   <div>
-                    <div className="text-7xl font-black leading-none text-white drop-shadow-[0_0_24px_rgba(34,211,238,.45)]">{activeVariableItem?.label}</div>
+                    <div className="max-w-[210px] break-all text-6xl font-black leading-none text-white drop-shadow-[0_0_24px_rgba(34,211,238,.45)] sm:text-7xl">{activeVariableItem?.label}</div>
                     <div className="mt-2 text-xs text-slate-400">Equation token: <span className="font-mono text-cyan-100">{activeVariableItem?.token}</span></div>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/35 px-3 py-2 text-xs font-bold text-slate-300">{activeVariableItem?.groupLabel}</div>
