@@ -1930,9 +1930,10 @@ function handlePlanCTA(plan) {
 }
 function Panel({ children, className = "" }) {
   return (
-    <div className={`eos-panel eos-living-card eos-magnetic-sheen relative overflow-hidden rounded-[1.15rem] border border-[#123257] bg-[#06101d]/88 p-5 shadow-[0_0_0_1px_rgba(35,120,255,.06),0_18px_80px_rgba(0,0,0,.42),inset_0_1px_0_rgba(255,255,255,.05)] backdrop-blur-2xl ${className}`}>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,145,255,.13),transparent_33%),radial-gradient(circle_at_bottom_right,rgba(112,0,255,.10),transparent_36%),linear-gradient(180deg,rgba(255,255,255,.035),transparent_38%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/45 to-transparent" />
+    <div className={`eos-panel eos-living-card eos-magnetic-sheen eos-premium-glass relative overflow-hidden rounded-[1.35rem] border border-[#123257] bg-[#06101d]/88 p-5 shadow-[0_0_0_1px_rgba(35,120,255,.06),0_18px_80px_rgba(0,0,0,.42),inset_0_1px_0_rgba(255,255,255,.05)] backdrop-blur-2xl ${className}`}>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,145,255,.15),transparent_33%),radial-gradient(circle_at_bottom_right,rgba(112,0,255,.12),transparent_36%),linear-gradient(180deg,rgba(255,255,255,.045),transparent_38%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/65 to-transparent" />
+      <div className="pointer-events-none absolute -inset-[1px] rounded-[inherit] eos-prism-border" />
       <div className="relative z-10">{children}</div>
     </div>
   );
@@ -1958,7 +1959,7 @@ function Button({ children, onClick, variant = "ghost", className = "" }) {
     <button
       type="button"
       onClick={handleClick}
-      className={`eos-button eos-touch-glow rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 ${styles} ${className}`}
+      className={`eos-button eos-touch-glow eos-liquid-button rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 ${styles} ${className}`}
     >
       {children}
     </button>
@@ -1971,6 +1972,8 @@ function Background() {
       <div className="absolute inset-0 eos-aurora-field bg-[radial-gradient(circle_at_16%_2%,rgba(34,211,238,.28),transparent_26%),radial-gradient(circle_at_82%_8%,rgba(250,204,21,.15),transparent_24%),radial-gradient(circle_at_66%_70%,rgba(79,70,229,.16),transparent_31%),radial-gradient(circle_at_18%_92%,rgba(8,145,178,.16),transparent_30%)]" />
       <div className="absolute inset-0 eos-grid-drift opacity-[.40] bg-[linear-gradient(rgba(103,232,249,.075)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,.075)_1px,transparent_1px)] bg-[size:42px_42px]" />
       <div className="absolute inset-0 eos-light-sweep opacity-[.16] bg-[linear-gradient(120deg,transparent_0%,rgba(255,255,255,.14)_12%,transparent_24%,transparent_72%,rgba(250,204,21,.12)_84%,transparent_100%)]" />
+      <div className="absolute inset-0 eos-starfield opacity-50" />
+      <div className="absolute inset-0 eos-nebula-ribbons" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,13,.16)_42%,rgba(1,4,10,.96)_100%)]" />
       <div className="absolute left-[12%] top-[-18rem] h-[46rem] w-[46rem] rounded-full bg-cyan-500/16 blur-3xl" />
       <div className="absolute right-[-10rem] top-[10%] h-[34rem] w-[34rem] rounded-full bg-blue-700/20 blur-3xl" />
@@ -1983,7 +1986,7 @@ function Background() {
 
 
 function LivingMotionLayer() {
-  const particles = Array.from({ length: 24 }, (_, i) => ({
+  const particles = Array.from({ length: 48 }, (_, i) => ({
     id: i,
     left: `${(i * 37) % 100}%`,
     top: `${(i * 19) % 100}%`,
@@ -2013,7 +2016,7 @@ function LivingMotionLayer() {
       {particles.map((p) => (
         <span
           key={p.id}
-          className="eos-particle absolute rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(103,232,249,.75)]"
+          className="eos-particle eos-firefly absolute rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(103,232,249,.75)]"
           style={{ left: p.left, top: p.top, width: p.size, height: p.size, opacity: p.opacity, animationDelay: p.delay, animationDuration: p.duration }}
         />
       ))}
@@ -2064,7 +2067,7 @@ function ElementOSThemeSkin() {
       @keyframes eosPulse { 0%,100% { opacity: .72; filter: brightness(1); } 50% { opacity: 1; filter: brightness(1.45); } }
       @keyframes eosDrift { 0% { transform: translateX(-18%); } 100% { transform: translateX(118%); } }
 
-      /* V85 Living Interface Motion System */
+      /* V85 Living Interface Motion System + V91 Visual Conversion Magic */
       .eos-aurora-field { animation: eosAuroraBreath 18s ease-in-out infinite alternate; transform-origin: center; }
       .eos-grid-drift { animation: eosGridSlide 28s linear infinite; }
       .eos-light-sweep { animation: eosLightSweep 14s ease-in-out infinite; }
@@ -2104,6 +2107,34 @@ function ElementOSThemeSkin() {
       @keyframes eosCardRise { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
       @keyframes eosActiveNavGlow { 0%,100% { box-shadow: inset 0 0 18px rgba(0,116,255,.10), 0 0 18px rgba(0,116,255,.10); } 50% { box-shadow: inset 0 0 26px rgba(0,174,255,.20), 0 0 26px rgba(0,174,255,.20); } }
       @keyframes eosLivePulse { 0%,100% { opacity:.72; transform: scale(1); } 50% { opacity:1; transform: scale(1.08); } }
+
+      /* V91 Visual Conversion Magic System */
+      .eos-premium-glass { perspective: 1200px; }
+      .eos-prism-border { opacity:.52; background: linear-gradient(120deg, rgba(103,232,249,.0), rgba(103,232,249,.30), rgba(250,204,21,.16), rgba(129,140,248,.24), rgba(103,232,249,.0)); mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); padding:1px; -webkit-mask-composite: xor; mask-composite: exclude; animation: eosPrismShift 7s ease-in-out infinite; }
+      .eos-magnetic-sheen:before { content:''; position:absolute; inset:-1px; background: radial-gradient(circle at var(--mx, 50%) var(--my, 0%), rgba(103,232,249,.18), transparent 38%); opacity:.55; pointer-events:none; transition: opacity .25s ease; }
+      .eos-liquid-button { box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 0 0 1px rgba(103,232,249,.08), 0 18px 44px rgba(0,0,0,.22); }
+      .eos-liquid-button:hover { filter: saturate(1.14) brightness(1.05); }
+      .eos-liquid-button:after { content:''; position:absolute; inset:-60% -20%; background: conic-gradient(from 90deg, transparent, rgba(255,255,255,.22), transparent, rgba(103,232,249,.16), transparent); opacity:.0; transform: rotate(0deg); transition: opacity .25s ease; animation:eosLiquidSpin 5.5s linear infinite; }
+      .eos-liquid-button:hover:after { opacity:.42; }
+      .eos-starfield { background-image: radial-gradient(circle, rgba(255,255,255,.55) 0 1px, transparent 1.5px), radial-gradient(circle, rgba(103,232,249,.42) 0 1px, transparent 1.6px), radial-gradient(circle, rgba(250,204,21,.30) 0 1px, transparent 1.6px); background-size: 180px 180px, 260px 260px, 340px 340px; background-position: 0 0, 80px 120px, 140px 40px; animation:eosStarDrift 42s linear infinite; }
+      .eos-nebula-ribbons { background: linear-gradient(115deg, transparent 0%, rgba(34,211,238,.04) 18%, transparent 30%, transparent 58%, rgba(250,204,21,.035) 70%, transparent 86%); animation:eosRibbonDrift 18s ease-in-out infinite alternate; }
+      .eos-firefly { mix-blend-mode: screen; }
+      .eos-wow-strip { position:relative; }
+      .eos-wow-strip:before { content:''; position:absolute; inset:-80% -10%; background: conic-gradient(from 180deg, transparent, rgba(34,211,238,.10), transparent, rgba(250,204,21,.08), transparent); animation:eosLiquidSpin 18s linear infinite; opacity:.75; }
+      .eos-wow-strip > * { position:relative; z-index:1; }
+      .eos-magic-tile { position:relative; overflow:hidden; }
+      .eos-magic-tile:before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 50% 0%, rgba(103,232,249,.20), transparent 44%); opacity:.36; transform: translateY(-28%); transition: transform .32s ease, opacity .32s ease; pointer-events:none; }
+      .eos-magic-tile:hover:before { opacity:.82; transform: translateY(0); }
+      .eos-page-stage { filter: drop-shadow(0 0 24px rgba(34,211,238,.035)); }
+      .eos-page-stage h1, .eos-page-stage h2 { letter-spacing:-.03em; }
+      .eos-page-stage h1:where(:not(.no-eos-glow)), .eos-page-stage h2:where(:not(.no-eos-glow)) { text-shadow: 0 0 34px rgba(103,232,249,.10); }
+      .eos-data-card:hover, .eos-panel:hover { transform: translateY(-3px) scale(1.002); }
+      .eos-panel:hover .eos-prism-border { opacity:.86; }
+      @keyframes eosPrismShift { 0%,100% { filter:hue-rotate(0deg) brightness(.92); opacity:.42; } 50% { filter:hue-rotate(18deg) brightness(1.25); opacity:.82; } }
+      @keyframes eosLiquidSpin { to { transform: rotate(360deg); } }
+      @keyframes eosStarDrift { from { background-position: 0 0, 80px 120px, 140px 40px; } to { background-position: 180px 180px, 340px 380px, 480px 380px; } }
+      @keyframes eosRibbonDrift { from { transform: translateX(-4%) skewX(-4deg); opacity:.52; } to { transform: translateX(4%) skewX(4deg); opacity:.86; } }
+
       @media (prefers-reduced-motion: reduce) {
         *, *:before, *:after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
       }
@@ -10248,6 +10279,46 @@ function SupportCenterModal({ open, onClose }) {
   );
 }
 
+
+function VisualConversionStrip({ page, setPage, isPro, startCheckout }) {
+  const highlights = [
+    ["Live discovery engine", "Animated material signals, relationship maps and scenario forecasts update across the interface."],
+    ["Subscriber-grade exports", "Cards, reports and executive briefs are designed to feel premium before the user pays."],
+    ["Research flow", "Pick material → run scenario → inspect result → export insight."],
+  ];
+  return (
+    <div className="eos-wow-strip overflow-hidden rounded-[1.6rem] border border-cyan-300/20 bg-slate-950/55 p-4 shadow-[0_0_70px_rgba(34,211,238,.10)] backdrop-blur-2xl">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.22em] text-amber-100">
+            ✨ Living Interface
+          </div>
+          <h2 className="mt-3 text-2xl font-black leading-tight text-white md:text-4xl">
+            ElementOS feels alive from the first click.
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+            A cinematic material-intelligence interface built to make discoveries, simulations, executive summaries and export previews feel premium enough to subscribe for.
+          </p>
+        </div>
+        <div className="grid gap-3 md:grid-cols-3 xl:min-w-[620px]">
+          {highlights.map(([title, body], index) => (
+            <button
+              key={title}
+              type="button"
+              onClick={() => index === 0 ? setPage("discover") : index === 1 ? setPage("viralcards") : setPage("scenario")}
+              className="eos-magic-tile group rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/10"
+            >
+              <div className="text-xs font-black uppercase tracking-[.20em] text-cyan-200">0{index + 1}</div>
+              <div className="mt-2 font-black text-white group-hover:text-cyan-100">{title}</div>
+              <div className="mt-1 text-xs leading-5 text-slate-400">{body}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState("landing");
   const [selected, setSelected] = useState("Al");
@@ -10597,6 +10668,7 @@ const startCheckout = async () => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
+        <VisualConversionStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />
         <PageMicroDataBar page={page} setPage={setPage} />
         <div className="hidden lg:block">
           <UltimateScienceCommandLayer
