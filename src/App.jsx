@@ -1930,7 +1930,7 @@ function handlePlanCTA(plan) {
 }
 function Panel({ children, className = "" }) {
   return (
-    <div className={`eos-panel eos-magnetic-sheen relative overflow-hidden rounded-[1.15rem] border border-[#123257] bg-[#06101d]/88 p-5 shadow-[0_0_0_1px_rgba(35,120,255,.06),0_18px_80px_rgba(0,0,0,.42),inset_0_1px_0_rgba(255,255,255,.05)] backdrop-blur-2xl ${className}`}>
+    <div className={`eos-panel eos-living-card eos-magnetic-sheen relative overflow-hidden rounded-[1.15rem] border border-[#123257] bg-[#06101d]/88 p-5 shadow-[0_0_0_1px_rgba(35,120,255,.06),0_18px_80px_rgba(0,0,0,.42),inset_0_1px_0_rgba(255,255,255,.05)] backdrop-blur-2xl ${className}`}>
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,145,255,.13),transparent_33%),radial-gradient(circle_at_bottom_right,rgba(112,0,255,.10),transparent_36%),linear-gradient(180deg,rgba(255,255,255,.035),transparent_38%)]" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/45 to-transparent" />
       <div className="relative z-10">{children}</div>
@@ -1958,7 +1958,7 @@ function Button({ children, onClick, variant = "ghost", className = "" }) {
     <button
       type="button"
       onClick={handleClick}
-      className={`eos-button rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 ${styles} ${className}`}
+      className={`eos-button eos-touch-glow rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 ${styles} ${className}`}
     >
       {children}
     </button>
@@ -1968,15 +1968,57 @@ function Info({ title, children }) { return <div className="mt-3 rounded-2xl bor
 function Background() {
   return (
     <div className="pointer-events-none fixed inset-0 overflow-hidden bg-[#01040a]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_2%,rgba(34,211,238,.28),transparent_26%),radial-gradient(circle_at_82%_8%,rgba(250,204,21,.15),transparent_24%),radial-gradient(circle_at_66%_70%,rgba(79,70,229,.16),transparent_31%),radial-gradient(circle_at_18%_92%,rgba(8,145,178,.16),transparent_30%)]" />
-      <div className="absolute inset-0 opacity-[.40] bg-[linear-gradient(rgba(103,232,249,.075)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,.075)_1px,transparent_1px)] bg-[size:42px_42px]" />
-      <div className="absolute inset-0 opacity-[.16] bg-[linear-gradient(120deg,transparent_0%,rgba(255,255,255,.14)_12%,transparent_24%,transparent_72%,rgba(250,204,21,.12)_84%,transparent_100%)]" />
+      <div className="absolute inset-0 eos-aurora-field bg-[radial-gradient(circle_at_16%_2%,rgba(34,211,238,.28),transparent_26%),radial-gradient(circle_at_82%_8%,rgba(250,204,21,.15),transparent_24%),radial-gradient(circle_at_66%_70%,rgba(79,70,229,.16),transparent_31%),radial-gradient(circle_at_18%_92%,rgba(8,145,178,.16),transparent_30%)]" />
+      <div className="absolute inset-0 eos-grid-drift opacity-[.40] bg-[linear-gradient(rgba(103,232,249,.075)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,.075)_1px,transparent_1px)] bg-[size:42px_42px]" />
+      <div className="absolute inset-0 eos-light-sweep opacity-[.16] bg-[linear-gradient(120deg,transparent_0%,rgba(255,255,255,.14)_12%,transparent_24%,transparent_72%,rgba(250,204,21,.12)_84%,transparent_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,13,.16)_42%,rgba(1,4,10,.96)_100%)]" />
       <div className="absolute left-[12%] top-[-18rem] h-[46rem] w-[46rem] rounded-full bg-cyan-500/16 blur-3xl" />
       <div className="absolute right-[-10rem] top-[10%] h-[34rem] w-[34rem] rounded-full bg-blue-700/20 blur-3xl" />
       <div className="absolute bottom-[-18rem] left-[32%] h-[36rem] w-[36rem] rounded-full bg-amber-400/10 blur-3xl" />
       <div className="eos-scanline absolute inset-0" />
       <div className="eos-lux-noise absolute inset-0" />
+    </div>
+  );
+}
+
+
+function LivingMotionLayer() {
+  const particles = Array.from({ length: 24 }, (_, i) => ({
+    id: i,
+    left: `${(i * 37) % 100}%`,
+    top: `${(i * 19) % 100}%`,
+    size: 2 + (i % 5),
+    delay: `${-(i * 0.43).toFixed(2)}s`,
+    duration: `${9 + (i % 8)}s`,
+    opacity: 0.18 + (i % 4) * 0.08,
+  }));
+
+  const beams = Array.from({ length: 7 }, (_, i) => ({
+    id: i,
+    top: `${10 + i * 13}%`,
+    delay: `${-(i * 1.4).toFixed(2)}s`,
+    duration: `${12 + i * 1.5}s`,
+  }));
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
+      <div className="absolute inset-0 eos-depth-vignette" />
+      {beams.map((beam) => (
+        <div
+          key={beam.id}
+          className="eos-living-beam absolute left-[-35%] h-px w-[38%] bg-gradient-to-r from-transparent via-cyan-200/45 to-transparent"
+          style={{ top: beam.top, animationDelay: beam.delay, animationDuration: beam.duration }}
+        />
+      ))}
+      {particles.map((p) => (
+        <span
+          key={p.id}
+          className="eos-particle absolute rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(103,232,249,.75)]"
+          style={{ left: p.left, top: p.top, width: p.size, height: p.size, opacity: p.opacity, animationDelay: p.delay, animationDuration: p.duration }}
+        />
+      ))}
+      <div className="absolute left-[4%] top-[12%] h-56 w-56 rounded-full border border-cyan-300/10 eos-orbit-lens" />
+      <div className="absolute bottom-[8%] right-[8%] h-72 w-72 rounded-full border border-amber-300/10 eos-orbit-lens-reverse" />
     </div>
   );
 }
@@ -2021,6 +2063,51 @@ function ElementOSThemeSkin() {
       @keyframes eosSpinReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
       @keyframes eosPulse { 0%,100% { opacity: .72; filter: brightness(1); } 50% { opacity: 1; filter: brightness(1.45); } }
       @keyframes eosDrift { 0% { transform: translateX(-18%); } 100% { transform: translateX(118%); } }
+
+      /* V85 Living Interface Motion System */
+      .eos-aurora-field { animation: eosAuroraBreath 18s ease-in-out infinite alternate; transform-origin: center; }
+      .eos-grid-drift { animation: eosGridSlide 28s linear infinite; }
+      .eos-light-sweep { animation: eosLightSweep 14s ease-in-out infinite; }
+      .eos-depth-vignette { background: radial-gradient(circle at 50% 42%, transparent 0%, rgba(1,4,10,.16) 52%, rgba(1,4,10,.62) 100%); }
+      .eos-living-beam { animation-name: eosBeamTravel; animation-timing-function: linear; animation-iteration-count: infinite; filter: blur(.2px); }
+      .eos-particle { animation-name: eosParticleFloat; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+      .eos-orbit-lens { animation: eosOrbitLens 18s linear infinite; box-shadow: 0 0 80px rgba(34,211,238,.08), inset 0 0 50px rgba(34,211,238,.04); }
+      .eos-orbit-lens-reverse { animation: eosOrbitLensReverse 24s linear infinite; box-shadow: 0 0 90px rgba(250,204,21,.06), inset 0 0 50px rgba(250,204,21,.035); }
+      .eos-living-card { transform: translateZ(0); transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease, filter .28s ease; }
+      .eos-living-card:hover { transform: translateY(-3px) scale(1.004); filter: saturate(1.08) brightness(1.03); }
+      .eos-living-card:hover .eos-panel-value, .eos-living-card:hover h1, .eos-living-card:hover h2, .eos-living-card:hover h3 { text-shadow: 0 0 24px rgba(103,232,249,.16); }
+      .eos-touch-glow { isolation: isolate; }
+      .eos-touch-glow:after { content:''; position:absolute; inset:auto 16% -42% 16%; height: 42%; border-radius:999px; background: radial-gradient(ellipse at center, rgba(103,232,249,.30), transparent 70%); opacity:0; transition: opacity .25s ease, transform .25s ease; transform: scaleX(.65); pointer-events:none; }
+      .eos-touch-glow:hover:after { opacity:1; transform: scaleX(1); }
+      .eos-page-stage { animation: eosPageBloom .34s ease-out both; }
+      .eos-page-stage > .eos-panel, .eos-page-stage .eos-panel { animation: eosCardRise .48s ease-out both; }
+      .eos-page-stage .eos-panel:nth-of-type(2) { animation-delay: .04s; }
+      .eos-page-stage .eos-panel:nth-of-type(3) { animation-delay: .08s; }
+      .eos-page-stage .eos-panel:nth-of-type(4) { animation-delay: .12s; }
+      .eos-data-card, .poster-card, .poster-card-gold { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+      .eos-data-card:hover, .poster-card:hover, .poster-card-gold:hover { transform: translateY(-2px); border-color: rgba(103,232,249,.32) !important; box-shadow: 0 0 42px rgba(34,211,238,.08), inset 0 1px 0 rgba(255,255,255,.06); }
+      .eos-nav-item, .eos-nav-item-active { transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease; }
+      .eos-nav-item:hover { transform: translateX(3px); box-shadow: 0 0 26px rgba(34,211,238,.07); }
+      .eos-nav-item-active { animation: eosActiveNavGlow 3.8s ease-in-out infinite; }
+      .eos-live-pulse { animation: eosLivePulse 2.6s ease-in-out infinite; }
+      .eos-score-orb { position: relative; overflow: hidden; }
+      .eos-score-orb:before { content:''; position:absolute; inset:-35%; border-radius:999px; background: conic-gradient(from 0deg, transparent, rgba(103,232,249,.22), transparent, rgba(250,204,21,.16), transparent); animation:eosSpin 9s linear infinite; }
+      .eos-score-orb > * { position:relative; z-index:1; }
+      @keyframes eosAuroraBreath { 0% { filter: hue-rotate(0deg) brightness(.92) saturate(1); transform: scale(1); } 50% { filter: hue-rotate(8deg) brightness(1.08) saturate(1.24); transform: scale(1.025); } 100% { filter: hue-rotate(-6deg) brightness(1.02) saturate(1.12); transform: scale(1.012); } }
+      @keyframes eosGridSlide { from { background-position: 0 0, 0 0; } to { background-position: 42px 42px, 42px 42px; } }
+      @keyframes eosLightSweep { 0%,100% { transform: translateX(-18%) rotate(0deg); opacity:.08; } 45% { transform: translateX(18%) rotate(.001deg); opacity:.24; } 70% { opacity:.12; } }
+      @keyframes eosBeamTravel { from { transform: translateX(0) rotate(-5deg); opacity:0; } 12% { opacity:.65; } 75% { opacity:.32; } to { transform: translateX(360%) rotate(-5deg); opacity:0; } }
+      @keyframes eosParticleFloat { 0%,100% { transform: translate3d(0,0,0) scale(.82); filter: brightness(.9); } 35% { transform: translate3d(18px,-34px,0) scale(1.1); filter: brightness(1.35); } 68% { transform: translate3d(-12px,22px,0) scale(.96); filter: brightness(1.05); } }
+      @keyframes eosOrbitLens { from { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.08); } to { transform: rotate(360deg) scale(1); } }
+      @keyframes eosOrbitLensReverse { from { transform: rotate(360deg) scale(1.02); } 50% { transform: rotate(180deg) scale(.94); } to { transform: rotate(0deg) scale(1.02); } }
+      @keyframes eosPageBloom { from { opacity:0; transform: translateY(10px) scale(.995); filter: blur(2px); } to { opacity:1; transform: translateY(0) scale(1); filter: blur(0); } }
+      @keyframes eosCardRise { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+      @keyframes eosActiveNavGlow { 0%,100% { box-shadow: inset 0 0 18px rgba(0,116,255,.10), 0 0 18px rgba(0,116,255,.10); } 50% { box-shadow: inset 0 0 26px rgba(0,174,255,.20), 0 0 26px rgba(0,174,255,.20); } }
+      @keyframes eosLivePulse { 0%,100% { opacity:.72; transform: scale(1); } 50% { opacity:1; transform: scale(1.08); } }
+      @media (prefers-reduced-motion: reduce) {
+        *, *:before, *:after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
+      }
+
 
       .poster-hero {
         background:
@@ -9975,6 +10062,7 @@ const startCheckout = async () => {
     <div className="eos-shell min-h-screen bg-[#02060d] text-slate-100">
       <ElementOSThemeSkin />
       <Background />
+      <LivingMotionLayer />
       <ToastCenter />
       <Sidebar page={page} setPage={setPage} />
       <CommandPalette
@@ -9993,7 +10081,7 @@ const startCheckout = async () => {
 
       <button
         onClick={() => setCommandOpen(true)}
-        className="fixed bottom-[156px] right-4 z-50 rounded-2xl border border-cyan-300/25 bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(34,211,238,.35)] lg:bottom-6"
+        className="eos-live-pulse fixed bottom-[156px] right-4 z-50 rounded-2xl border border-cyan-300/25 bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(34,211,238,.35)] lg:bottom-6"
       >
         Ask ElementOS
       </button>
@@ -10041,7 +10129,7 @@ const startCheckout = async () => {
         <div className="hidden lg:block">
           <CopilotEverywhereBar page={page} setPage={setPage} />
         </div>
-        <div className="animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
+        <div key={page} className="eos-page-stage animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
       </main>
 
       <SubscriptionUpgradeModal open={upgradeModalOpen} reason={upgradeReason} plan={plan} setPlan={setPlan} onClose={() => setUpgradeModalOpen(false)} startCheckout={startCheckout} />
