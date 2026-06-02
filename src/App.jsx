@@ -1427,7 +1427,7 @@ const PAGE_LABELS = {
   compare: "Compare Materials",
   periodic: "Periodic Map",
   atlas: "Material Interaction Atlas",
-  graph: "Relationship Graph",
+  graph: "Element Relationships",
   universe: "Element Relationships",
   scenario: "Mission Intelligence",
   visualization: "Advanced Visuals",
@@ -2345,8 +2345,7 @@ function Sidebar({ page, setPage }) {
         ["isotopes", "Isotope Lab", Atom],
         ["periodic", "Periodic Map", Layers],
         ["atlas", "Material Interaction Atlas", Radar],
-        ["graph", "Relationship Graph", Network],
-        ["universe", "Element Relationships", Orbit],
+        ["universe", "Element Relationships", Network],
       ],
     },
     {
@@ -2917,6 +2916,102 @@ function Discover({ setPage, setPublicDiscovery }) {
   );
 }
 
+
+
+function ScenarioBuilderSafe({ selected, setSelected, setPage }) {
+  const scenarioLibrary = [
+    { id: "coastal", label: "Coastal salt exposure", environment: "Coastal salt atmosphere", years: 25, intensity: 62, driver: "chloride corrosion and vibration" },
+    { id: "deep-ocean", label: "Deep-ocean pressure housing", environment: "Deep ocean pressure", years: 50, intensity: 78, driver: "hydrostatic pressure, corrosion and fatigue" },
+    { id: "industrial-heat", label: "Industrial heat cycle", environment: "Industrial heat", years: 15, intensity: 70, driver: "thermal cycling and oxidation" },
+    { id: "underground", label: "Humid underground tunnel", environment: "Humid underground", years: 40, intensity: 66, driver: "moisture, load stress and material fatigue" },
+    { id: "aerospace", label: "Aerospace thermal cycling", environment: "Aerospace cycling", years: 10, intensity: 72, driver: "rapid temperature changes and vibration" },
+    { id: "geothermal", label: "Deep geothermal system", environment: "Deep geothermal", years: 50, intensity: 84, driver: "heat, pressure and mineral-rich fluid exposure" },
+  ];
+  const [material, setMaterial] = useState(selected || "Al");
+  const [scenarioId, setScenarioId] = useState("deep-ocean");
+  const [customText, setCustomText] = useState("Investigate titanium performance in deep-ocean geothermal environments over 50 years.");
+  const [notes, setNotes] = useState("Focus on stability, thermal behaviour, corrosion risk and recommended substitutes.");
+
+  const activeMaterial = elementMap[material] || elementMap.Al;
+  const activeScenario = scenarioLibrary.find((item) => item.id === scenarioId) || scenarioLibrary[0];
+  const activeScore = score(activeMaterial.symbol);
+  const durability = Math.round((activeScore.stability * 18 + activeScore.thermal * 12 + activeScore.pressure * 13 + activeScore.diffusion * 9) / 2.6);
+  const riskScore = Math.max(4, Math.min(96, Math.round(activeScenario.intensity * 0.72 + activeScenario.years * 0.34 - activeScore.stability * 8 - activeScore.pressure * 4)));
+  const remainingIntegrity = Math.max(6, Math.min(99, 100 - riskScore + Math.round(activeScore.stability * 4)));
+  const confidence = Math.max(72, Math.min(98, Math.round(88 + activeScore.stability - activeScenario.intensity / 16)));
+  const verdict = riskScore >= 70 ? "High-risk scenario" : riskScore >= 45 ? "Manageable with controls" : "Strong candidate";
+  const action = riskScore >= 70 ? "Run a substitute search and add protective controls." : riskScore >= 45 ? "Create a report and test surface treatments." : "Generate an executive summary and export the scenario.";
+  const timeline = [1, 5, 10, 25, 50].map((year) => {
+    const stress = Math.log10(year + 1) * activeScenario.intensity * 0.72;
+    const integrity = Math.max(5, Math.min(99, Math.round(100 - stress + activeScore.stability * 5 - year * 0.08)));
+    return { year, integrity, risk: Math.max(1, Math.min(99, 100 - integrity + Math.round(activeScenario.intensity / 8))) };
+  });
+
+  const runScenario = () => {
+    const report = `ElementOS Scenario Builder\n\nMaterial: ${activeMaterial.name} (${activeMaterial.symbol})\nScenario: ${activeScenario.label}\nEnvironment: ${activeScenario.environment}\nHorizon: ${activeScenario.years} years\nRisk score: ${riskScore}%\nRemaining integrity: ${remainingIntegrity}%\nConfidence: ${confidence}%\nVerdict: ${verdict}\nRecommended action: ${action}\n\nCustom brief: ${customText}\nNotes: ${notes}`;
+    safeCopyText(report);
+  };
+
+  const exportScenario = () => {
+    const summary = `Scenario Intelligence: ${activeMaterial.name} in ${activeScenario.environment}. ${verdict}. Risk ${riskScore}%, remaining integrity ${remainingIntegrity}%, confidence ${confidence}%. Recommended action: ${action}`;
+    exportAllFormats({
+      baseName: `${activeMaterial.symbol}-scenario-builder`,
+      title: `Scenario Builder: ${activeMaterial.name}`,
+      summary,
+      payload: { material: activeMaterial.symbol, scenario: activeScenario, riskScore, remainingIntegrity, confidence, verdict, customText, notes, timeline },
+    });
+  };
+
+  return (
+    <>
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/30 via-slate-950 to-blue-950/30">
+        <div className="grid gap-8 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
+          <div>
+            <Pill gold><FileText size={12}/> scenario builder</Pill>
+            <h1 className="mt-4 text-5xl font-black sm:text-7xl">Scenario <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Builder</span></h1>
+            <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Choose a material, choose a real-world scenario, then generate a plain-English risk forecast with timeline data, confidence and recommended next steps.</p>
+            <Info title="How to use this page">Start with the material dropdown, choose the scenario type, adjust the custom brief if needed, then run or export the scenario.</Info>
+          </div>
+          <Panel>
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Scenario output</div>
+            <div className="mt-3 flex items-end justify-between gap-4">
+              <div><div className="text-7xl font-black text-cyan-100">{activeMaterial.symbol}</div><div className="text-2xl font-black">{activeMaterial.name}</div></div>
+              <div className="text-right"><div className="text-5xl font-black text-amber-100">{riskScore}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">risk score</div></div>
+            </div>
+            <div className="mt-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-sm leading-6 text-slate-300"><b className="text-white">{verdict}:</b> {action}</div>
+          </Panel>
+        </div>
+      </Panel>
+
+      <GuidePanel page="scenario" />
+
+      <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
+        <Panel>
+          <Pill gold><Bot size={12}/> scenario controls</Pill>
+          <h2 className="mt-3 text-3xl font-black">Build the simulation</h2>
+          <div className="mt-5 grid gap-4">
+            <label className="block"><span className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Material</span><select value={material} onChange={(e) => { setMaterial(e.target.value); setSelected?.(e.target.value); }} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select></label>
+            <label className="block"><span className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Scenario</span><select value={scenarioId} onChange={(e) => setScenarioId(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{scenarioLibrary.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
+            <label className="block"><span className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Custom brief</span><textarea value={customText} onChange={(e) => setCustomText(e.target.value)} rows={4} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-slate-100 outline-none" /></label>
+            <label className="block"><span className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Notes</span><textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-slate-100 outline-none" /></label>
+            <div className="grid gap-2 sm:grid-cols-3"><Button onClick={runScenario} variant="primary">Run Scenario</Button><Button onClick={exportScenario}>Export Scenario</Button><Button onClick={() => setPage?.("timemachine")}>Open Future Simulation</Button></div>
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><LineChart size={12}/> forecast intelligence</Pill>
+          <h2 className="mt-3 text-3xl font-black">Scenario forecast</h2>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {[["Remaining integrity", `${remainingIntegrity}%`], ["Confidence", `${confidence}%`], ["Durability signal", `${durability}%`]].map(([label, value]) => <div key={label} className="rounded-2xl border border-white/10 bg-white/[.04] p-4"><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">{label}</div><div className="mt-2 text-2xl font-black text-cyan-100">{value}</div></div>)}
+          </div>
+          <div className="mt-5 space-y-3">
+            {timeline.map((item) => <div key={item.year} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="flex items-center justify-between"><div className="font-black text-white">Year {item.year}</div><div className="text-sm font-black text-cyan-100">{item.integrity}% integrity</div></div><div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-amber-300" style={{ width: `${item.integrity}%` }} /></div><div className="mt-2 text-xs text-slate-500">Risk pressure: {item.risk}% · Driver: {activeScenario.driver}</div></div>)}
+          </div>
+        </Panel>
+      </div>
+    </>
+  );
+}
 
 function ScenarioBuilder({ selected, setSelected, setPage }) {
   const scenarioTemplates = [
@@ -8862,6 +8957,32 @@ function MissionControl({ setPage, session, isPro, startCheckout }) {
 }
 
 
+
+function ElementRelationshipsHub({ selected, setSelected }) {
+  const [view, setView] = useState("graph");
+  const focusElement = elementMap[selected] || elementMap.Al;
+  return (
+    <>
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-blue-950/30 via-slate-950 to-cyan-950/20">
+        <div className="grid gap-6 xl:grid-cols-[1fr_360px] xl:items-center">
+          <div>
+            <Pill gold><Network size={12}/> element relationships</Pill>
+            <h1 className="mt-4 text-5xl font-black sm:text-7xl">Element <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Relationships</span></h1>
+            <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">One page for relationship intelligence: graph view, orbit view, ranked candidates and relationship-universe discovery paths around the selected material.</p>
+            <Info title="Combined relationship page">Use Graph View for a visual network, or Universe View for substitute pathways and material families. Both use the same selected element.</Info>
+          </div>
+          <Panel>
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Current focus</div>
+            <div className="mt-3 flex items-end justify-between gap-4"><div><div className="text-7xl font-black text-cyan-100">{focusElement.symbol}</div><div className="text-2xl font-black">{focusElement.name}</div></div><Pill gold>{view === "graph" ? "Graph View" : "Universe View"}</Pill></div>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2"><Button onClick={() => setView("graph")} variant={view === "graph" ? "primary" : "ghost"}>Relationship Graph</Button><Button onClick={() => setView("universe")} variant={view === "universe" ? "primary" : "ghost"}>Universe View</Button></div>
+          </Panel>
+        </div>
+      </Panel>
+      {view === "graph" ? <BehaviourGraph selected={selected} setSelected={setSelected} /> : <SimilarityUniverse selected={selected} setSelected={setSelected} />}
+    </>
+  );
+}
+
 function MobileBottomNav({ page, setPage }) {
   const [moreOpen, setMoreOpen] = useState(false);
 
@@ -8885,7 +9006,7 @@ function MobileBottomNav({ page, setPage }) {
     ["welldriller", "Resource Discovery Lab", "Subsurface lab"],
     ["periodic", "Periodic Map", "Element table"],
     ["atlas", "Material Interaction Atlas", "Heat maps"],
-    ["universe", "Element Relationships", "Similar materials"],
+    ["universe", "Element Relationships", "Graph + similar materials"],
     ["calculations", "Calculations", "Math tools"],
     ["beta", "Create Account", "Explorer $0"],
   ];
@@ -9684,7 +9805,7 @@ function MaterialExplorerV57({ selected, setSelected, setCompare, setPage }) {
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
               <Button onClick={() => setCompare((x) => x.includes(active.symbol) ? x : [...x, active.symbol].slice(0, 8))} variant="primary">Add to Compare</Button>
-              <Button onClick={() => setPage("graph")}>Open Relationship Graph</Button>
+              <Button onClick={() => setPage("universe")}>Open Element Relationships</Button>
               <Button onClick={exportExplorer}>Export Profile</Button>
             </div>
           </Panel>
@@ -10229,7 +10350,7 @@ const startCheckout = async () => {
       publicdiscovery: <PublicDiscoveryPage discovery={publicDiscovery} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
       timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} />,
       matterlab: <MatterIntelligenceLab />,
-      scenario: <ScenarioBuilder selected={selected} setSelected={setSelected} setPage={setPage} />,
+      scenario: <ScenarioBuilderSafe selected={selected} setSelected={setSelected} setPage={setPage} />,
       lab: <DiscoveryVaultV57 session={session} selected={selected} compare={compare} setPage={setPage} />,
       visualization: <AdvancedVisualization selected={selected} compare={compare} setPage={setPage} />,
       welldriller: <ExperimentalWellDriller setPage={setPage} />,
@@ -10273,13 +10394,13 @@ const startCheckout = async () => {
         />
       ),
       graph: (
-        <BehaviourGraph
+        <ElementRelationshipsHub
           selected={selected}
           setSelected={setSelected}
         />
       ),
       universe: (
-        <SimilarityUniverse
+        <ElementRelationshipsHub
           selected={selected}
           setSelected={setSelected}
         />
