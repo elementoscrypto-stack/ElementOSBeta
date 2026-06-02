@@ -5028,6 +5028,12 @@ function CalculationCore() {
     ["chi", "χ", "chi / statistical value", 2], ["psi", "ψ", "psi / wavefunction", 1], ["omega", "ω", "omega / angular frequency", 6.283], ["Omega", "Ω", "Omega / resistance unit symbol", 8],
     ["Delta", "Δ", "Delta / change operator", 5], ["nabla", "∇", "nabla / gradient operator", 1], ["partial", "∂", "partial differential operator", 1],
   ];
+
+  // Safe display-only Greek symbol list for the Symbol Builder.
+  // V95 referenced `greekLetters` here but did not define it, which caused
+  // Calculation Studio to crash/blank as soon as the page rendered.
+  const greekLetters = greekItems.map(([key, label]) => label);
+
   const mathVariableGroups = [
     {
       id: "numbers",
