@@ -688,6 +688,40 @@ function RealTimeNetworkPanel({ discoveries = [], setPage }) {
   );
 }
 
+function DiscoveryOSFeed({ discoveries = [], setPage, setPublicDiscovery }) {
+  const ranked = adaptiveDiscoveryRank(discoveries.length ? discoveries : generateDiscoveryEngine(8));
+  const top = ranked.slice(0, 4);
+  return (
+    <Panel>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Pill gold><Sparkles size={12}/> discovery operating feed</Pill>
+          <h2 className="mt-3 text-4xl font-black">Research signals ready to open.</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">A focused feed of high-confidence material pairings. Open one as a public discovery, compare it, or send it into the media workflow.</p>
+        </div>
+        <Button onClick={() => setPage?.("viralcards")} variant="primary">Open Media Engine</Button>
+      </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {top.map((item) => (
+          <button
+            key={item.dna}
+            onClick={() => { setPublicDiscovery?.(item); setPage?.("publicdiscovery"); }}
+            className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/45 hover:bg-cyan-300/10"
+          >
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">{item.tier}</div>
+            <div className="mt-2 text-3xl font-black text-cyan-100">{item.a} + {item.b}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-300">{item.reason}</p>
+            <div className="mt-4 flex items-center justify-between text-xs font-black text-emerald-100">
+              <span>{item.aiConfidence}% confidence</span>
+              <span>+{item.velocity}% velocity</span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
 function PageHelpStrip({ page = "dashboard" }) {
   const g = guidanceForPage(page);
   const d = pageDataFor(page);
@@ -3262,13 +3296,13 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
             <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">Turn the future simulation into something a subscriber can use: an executive brief, a scenario report, a poster card or a follow-up analysis path.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Forecast Pack</Button>
+            <Button onClick={exportScenario} variant="primary"><Download size={16} className="inline"/> Export Scenario Pack</Button>
             <Button onClick={() => setPage("viralcards")}>Create Time Poster</Button>
             <Button onClick={() => setPage("simreports")}>Build Simulation Dossier</Button>
           </div>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {[["Executive brief", `${base.name} in ${environment}: ${verdict}.`, "Clear summary for non-technical readers."], ["Technical signal", `Dominant driver: ${selectedInsight.dominantName} at ${selectedInsight.dominantValue}%.`, "Useful for follow-up engineering review."], ["Next decision", selectedInsight.action, "Turns the simulation into a concrete workflow."]].map(([title, value, copy]) => (
+          {[["Executive brief", `${activeMaterial.name} in ${inferredEnvironment}: ${verdict}.`, "Clear summary for non-technical readers."], ["Technical signal", `Dominant driver: ${failureMode} at ${riskScore}%.`, "Useful for follow-up engineering review."], ["Next decision", `Review ${substitutes[0]?.name || "a higher-fit substitute"} and export the scenario pack.`, "Turns the simulation into a concrete workflow."]].map(([title, value, copy]) => (
             <div key={title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
               <div className="text-xs uppercase tracking-[.22em] text-slate-500">{title}</div>
               <div className="mt-2 text-xl font-black text-white">{value}</div>
@@ -3319,7 +3353,7 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
 
 
 function TimeMachine({ selected, setSelected, setPage }) {
-  const safeProfiles = typeof timeMachineEnvironmentProfiles !== "undefined" ? timeMachineEnvironmentProfiles : {
+  const safeProfiles = (typeof globalThis !== "undefined" && globalThis.timeMachineEnvironmentProfiles) ? globalThis.timeMachineEnvironmentProfiles : {
     "Coastal air": { category: "Marine", label: "Salt-air corrosion and humidity exposure", corrosion: 1.4, heat: 0.7, pressure: 0.6, radiation: 0.2 },
     "Deep ocean": { category: "Marine", label: "High pressure, low temperature and chloride load", corrosion: 1.6, heat: 0.3, pressure: 1.7, radiation: 0.2 },
     "Low orbit": { category: "Aerospace", label: "Vacuum, radiation and thermal cycling", corrosion: 0.2, heat: 1.1, pressure: 0.2, radiation: 1.8 },
@@ -8013,6 +8047,10 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
 
   const performanceScore = Math.min(99, Math.round((cardData.score * 0.42) + (cardStats.shares / 8) + (cardStats.saves / 14) + 18));
   const viralReadiness = performanceScore >= 92 ? "LAUNCH READY" : performanceScore >= 82 ? "HIGH POTENTIAL" : performanceScore >= 72 ? "NEEDS STRONGER HOOK" : "REFINE BEFORE POSTING";
+  const platform = "LinkedIn";
+  const ctaVariant = ctaVariants[1] || "Generate your own";
+  const viralScore = performanceScore;
+  const readiness = viralReadiness;
   const confidenceMetrics = [
     ["Signal Agreement", Math.min(99, Math.round(cardData.score * 0.94 + 5))],
     ["Historical Match", Math.min(99, Math.round(cardData.score * 0.88 + 8))],
