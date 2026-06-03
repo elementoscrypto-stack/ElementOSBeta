@@ -5071,6 +5071,26 @@ function CalculationCore() {
     ["△", "(0.5 * B * H)", "Triangle area: base × height ÷ 2"], ["○", "(pi * r^2)", "Circle area from radius"], ["□", "(L^2)", "Square area from side length"], ["◇", "((d * d) / 2)", "Diamond/rhombus estimate from diagonal"], ["∠", "theta", "Angle variable"],
     ["r", "r", "Radius", 5], ["d", "d", "Distance / diameter", 10], ["L", "L", "Length", 2], ["W", "W", "Width / work", 3], ["H", "H", "Height", 4], ["B", "B", "Base length", 6], ["A", "A", "Area / input value", 12]
   ];
+  const relations = [
+    ["=", " = ", "Equals"], ["≈", " ~= ", "Approximately equal"], ["≠", " != ", "Not equal"], ["<", " < ", "Less than"], [">", " > ", "Greater than"],
+    ["≤", " <= ", "Less than or equal"], ["≥", " >= ", "Greater than or equal"], ["∝", " proportional ", "Proportional relationship"], ["∞", "Infinity", "Infinity marker"]
+  ];
+  const sets = [
+    ["∈", " in ", "Element of"], ["∉", " notin ", "Not an element of"], ["∪", " union ", "Union"], ["∩", " intersection ", "Intersection"],
+    ["⊂", " subset ", "Subset"], ["⊆", " subseteq ", "Subset or equal"], ["∅", "emptySet", "Empty set"], ["ℝ", "Real", "Real numbers"], ["ℤ", "Integer", "Integers"], ["ℕ", "Natural", "Natural numbers"]
+  ];
+  const logic = [
+    ["∧", " and ", "Logical AND"], ["∨", " or ", "Logical OR"], ["¬", " not ", "Logical NOT"], ["⇒", " implies ", "Implies"], ["⇔", " iff ", "If and only if"], ["∀", "forall", "For all"], ["∃", "exists", "There exists"]
+  ];
+  const matrices = [
+    ["[ ]", "matrix", "Matrix placeholder"], ["det", "det", "Determinant"], ["tr", "trace", "Trace"], ["Iₙ", "Identity", "Identity matrix"], ["Aᵀ", "transpose", "Transpose"], ["A⁻¹", "inverse", "Inverse matrix"]
+  ];
+  const vectors = [
+    ["→v", "v", "Vector velocity"], ["→F", "F", "Force vector"], ["|v|", "abs(v)", "Vector magnitude"], ["·", " dot ", "Dot product"], ["×", " cross ", "Cross product"], ["î", "iHat", "Unit vector i"], ["ĵ", "jHat", "Unit vector j"], ["k̂", "kHat", "Unit vector k"]
+  ];
+  const statistics = [
+    ["x̄", "mean", "Mean / average"], ["μ", "mu", "Population mean"], ["σ", "sigma", "Standard deviation"], ["σ²", "variance", "Variance"], ["P(A)", "probA", "Probability of A"], ["n", "n", "Sample size"], ["z", "z", "Z-score"]
+  ];
 
   const makeToken = (category, symbol, token, meaning, defaultValue = 0, tokenType = "variable") => ({ category, symbol, token, meaning, defaultValue, tokenType });
   const toolkit = [
@@ -5084,6 +5104,12 @@ function CalculationCore() {
     ...operators.map(([symbol, token, meaning]) => makeToken("Operators", symbol, token, meaning, 0, "operator")),
     ...calculus.map(([symbol, token, meaning]) => makeToken("Calculus", symbol, token, meaning, 1, token.includes("/") ? "operator" : "symbol")),
     ...geometry.map(([symbol, token, meaning, defaultValue]) => makeToken("Geometry", symbol, token, meaning, defaultValue ?? 1, defaultValue === undefined ? "operator" : "variable")),
+    ...relations.map(([symbol, token, meaning]) => makeToken("Relations", symbol, token, meaning, 0, "symbol")),
+    ...sets.map(([symbol, token, meaning]) => makeToken("Sets", symbol, token, meaning, 0, "symbol")),
+    ...logic.map(([symbol, token, meaning]) => makeToken("Logic", symbol, token, meaning, 0, "symbol")),
+    ...matrices.map(([symbol, token, meaning]) => makeToken("Matrices", symbol, token, meaning, 0, "symbol")),
+    ...vectors.map(([symbol, token, meaning]) => makeToken("Vectors", symbol, token, meaning, 1, "symbol")),
+    ...statistics.map(([symbol, token, meaning]) => makeToken("Statistics", symbol, token, meaning, 1, "symbol")),
     makeToken("Telemetry", "S", "signal", "Signal strength", 92), makeToken("Telemetry", "B₀", "baseline", "Baseline reference", 50), makeToken("Telemetry", "N", "noise", "Noise floor", 7),
     makeToken("Telemetry", "Amp", "amplitude", "Amplitude", 10), makeToken("Telemetry", "I₀", "I0", "Reference intensity", 10), makeToken("Telemetry", "SI", "stabilityIndex", "Stability index", 96)
   ];
@@ -5093,7 +5119,7 @@ function CalculationCore() {
 
   const tokenKey = (item) => `${item.category}::${item.token}`;
   const activeItem = toolkit.find((item) => tokenKey(item) === activeTokenKey) || toolkit.find((item) => item.category === "A–Z" && item.token === "A") || toolkit[0];
-  const tokenCategories = ["All", "Numbers", "A–Z", "a–z", "Greek", "Physics", "Constants", "Operators", "Calculus", "Geometry", "Telemetry"];
+  const tokenCategories = ["All", "Numbers", "A–Z", "a–z", "Greek", "Physics", "Constants", "Operators", "Calculus", "Geometry", "Relations", "Sets", "Logic", "Matrices", "Vectors", "Statistics", "Telemetry"];
   const visibleToolkit = toolkit.filter((item) => {
     const search = tokenSearch.trim().toLowerCase();
     const categoryMatch = tokenCategory === "All" || item.category === tokenCategory;
@@ -5335,13 +5361,14 @@ function CalculationCore() {
           </Panel>
           <Panel className="overflow-hidden">
             <Pill gold><Database size={12}/> Mathematical Toolkit</Pill>
-            <h2 className="mt-3 text-3xl font-black">Numbers, variables, symbols and constants.</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Build equations using numbers, variables, symbols, constants and scientific operators. One token is selected at a time. Duplicate symbols like c or e now select the exact row you clicked.</p>
-            <div className="mt-5 flex flex-wrap gap-2">{tokenCategories.map((cat) => <button key={cat} onClick={() => setTokenCategory(cat)} className={`rounded-full border px-3 py-2 text-xs font-black uppercase tracking-[.14em] ${tokenCategory === cat ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>{cat}</button>)}</div>
+            <h2 className="mt-3 text-3xl font-black">Mathematical Toolkit</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Build equations using numbers, uppercase letters, lowercase letters, Greek symbols, constants, operators, geometry and scientific variables. One token is selected at a time, and A-Z / a-z now remain visually distinct.</p>
+            <div className="mt-5 flex flex-wrap gap-2">{tokenCategories.map((cat) => <button key={cat} onClick={() => setTokenCategory(cat)} className={`rounded-full border px-3 py-2 text-xs font-black tracking-[.14em] ${tokenCategory === cat ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>{cat}</button>)}</div>
+            <div className="mt-4 grid gap-3 md:grid-cols-3"><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Letters</div><div className="mt-1 text-sm text-slate-300">Uppercase A–Z and lowercase a–z are separate selectable variables.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Symbols</div><div className="mt-1 text-sm text-slate-300">Operators, relations, sets, logic, vectors, matrices and calculus tokens.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Science</div><div className="mt-1 text-sm text-slate-300">Greek, physics, constants, geometry, telemetry and statistics variables.</div></div></div>
             <input value={tokenSearch} onChange={(e) => setTokenSearch(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="Search symbols, variables, constants, operators..." />
             <div className="mt-5 max-h-[620px] overflow-auto rounded-2xl border border-white/10 bg-black/25">
               <table className="min-w-full text-left text-sm">
-                <thead className="sticky top-0 z-10 bg-slate-950/95 text-xs uppercase tracking-[.16em] text-slate-500"><tr><th className="p-3">Symbol</th><th className="p-3">Token</th><th className="p-3">Meaning</th><th className="p-3">Type</th><th className="p-3">Value</th></tr></thead>
+                <thead className="sticky top-0 z-10 bg-slate-950/95 text-xs uppercase tracking-[.16em] text-slate-500"><tr><th className="p-3">Symbol</th><th className="p-3">Token</th><th className="p-3">Meaning</th><th className="p-3">Category</th><th className="p-3">Value</th></tr></thead>
                 <tbody>{visibleToolkit.map((item) => {
                   const selectedToken = tokenKey(item) === activeTokenKey;
                   return <tr key={`${item.category}-${item.token}-${item.meaning}`} onClick={() => setActiveTokenKey(tokenKey(item))} className={`cursor-pointer border-t border-white/5 transition ${selectedToken ? "bg-cyan-300/15 text-cyan-50" : "hover:bg-white/[0.04]"}`}><td className="p-3 text-xl font-black">{item.symbol}</td><td className="p-3 font-mono text-cyan-100">{item.token}</td><td className="p-3 text-slate-300">{item.meaning}</td><td className="p-3 text-slate-400">{item.category}</td><td className="p-3">{variables[item.token] !== undefined ? <input value={variables[item.token]} onClick={(e) => e.stopPropagation()} onChange={(e) => setVariables((prev) => ({ ...prev, [item.token]: e.target.value }))} className="w-28 rounded-xl border border-white/10 bg-black/40 px-2 py-1 text-sm text-white" /> : <span className="text-slate-600">—</span>}</td></tr>;
