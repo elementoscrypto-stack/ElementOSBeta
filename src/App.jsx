@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { supabase } from "./supabaseClient";
 import {
@@ -2148,7 +2148,7 @@ function ElementOSThemeSkin() {
       .eos-button:before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent); transform: translateX(-120%); transition: transform .55s ease; }
       .eos-button:hover:before { transform: translateX(120%); }
       .eos-input, input, select, textarea { background: rgba(4, 12, 23, .92) !important; border-color: rgba(40, 105, 190, .32) !important; color: #eaf6ff !important; }
-      input::guided example, textarea::guided example { color: rgba(170,190,215,.62); }
+      input::placeholder, textarea::placeholder { color: rgba(170,190,215,.62); }
       .eos-nav-item { background: rgba(5,14,26,.72); border: 1px solid rgba(28,72,126,.42); }
       .eos-nav-item-active { background: linear-gradient(90deg, rgba(11,99,255,.28), rgba(8,180,255,.08)); border-color: rgba(40,132,255,.75); box-shadow: inset 0 0 18px rgba(0,116,255,.12), 0 0 22px rgba(0,116,255,.15); }
       .eos-orbital:before { content: ''; position: absolute; inset: -40%; border: 1px solid rgba(0,174,255,.18); border-radius: 999px; transform: rotate(25deg); }
@@ -3308,7 +3308,7 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
             value={scenarioText}
             onChange={(e) => setScenarioText(e.target.value)}
             className="mt-5 min-h-[170px] w-full rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 text-lg leading-8 outline-none focus:border-cyan-300/60"
-            guided example="Describe the material, environment and timescale..."
+            placeholder="Describe the material, environment and timescale..."
           />
           <div className="mt-4 flex flex-wrap gap-2">
             {scenarioTemplates.map((t) => <button key={t} onClick={() => setScenarioText(t)} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-bold text-slate-300 hover:border-cyan-300/40 hover:text-cyan-100">{t.split(" ").slice(0,4).join(" ")}...</button>)}
@@ -3689,7 +3689,7 @@ function TimeMachine({ selected, setSelected, setPage }) {
                 </div>
                 <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-sm font-black text-cyan-100">5,000 scenarios</div>
               </div>
-              <input value={scenarioSearch} onChange={(e) => setScenarioSearch(e.target.value)} guided example="Search scenarios: ocean, orbit, refinery, corrosion, pressure..." className="mt-4 w-full rounded-2xl border border-white/10 bg-black/35 p-4 text-sm outline-none guided example:text-slate-600" />
+              <input value={scenarioSearch} onChange={(e) => setScenarioSearch(e.target.value)} placeholder="Search scenarios: ocean, orbit, refinery, corrosion, pressure..." className="mt-4 w-full rounded-2xl border border-white/10 bg-black/35 p-4 text-sm outline-none placeholder:text-slate-600" />
               <div className="mt-3 flex max-h-24 flex-wrap gap-2 overflow-auto rounded-2xl border border-white/10 bg-black/20 p-3">
                 {scenarioCategories.map((cat) => <button key={cat} onClick={() => setScenarioCategory(cat)} className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] ${scenarioCategory === cat ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{cat}</button>)}
               </div>
@@ -3913,14 +3913,14 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                guided example="Full name"
+                placeholder="Full name"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
               />
 
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                guided example="Email"
+                placeholder="Email"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
               />
 
@@ -3928,7 +3928,7 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
-                guided example="Password"
+                placeholder="Password"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
               />
 
@@ -4008,7 +4008,7 @@ function Explorer({ selected, setSelected, setCompare }) {
   const [q, setQ] = useState(""); const [cat, setCat] = useState("All");
   const filtered = elements.filter(e => (cat === "All" || e.category === cat) && `${e.symbol} ${e.name} ${e.category}`.toLowerCase().includes(q.toLowerCase())).slice(0, 80);
   const el = elementMap[selected] || elementMap.Al; const s = score(selected);
-  return <><Panel><Pill gold><Search size={12}/> material explorer</Pill><h1 className="mt-4 text-5xl font-black">Element Explorer</h1><Info title="User value">Search and inspect the behaviour profile of each element before adding it to a comparison or report.</Info></Panel><GuidePanel page="explorer" /><div className="grid gap-6 xl:grid-cols-[420px_1fr]"><Panel><div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} guided example="Search elements..." className="w-full bg-transparent outline-none"/></div><select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{categories.map(c => <option key={c}>{c}</option>)}</select><div className="mt-4 max-h-[620px] overflow-auto pr-2">{filtered.map(e => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left ${selected === e.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}</div></Panel><Panel><div className="grid gap-6 xl:grid-cols-[1fr_360px]"><div><div className="text-8xl font-black text-cyan-100">{el.symbol}</div><h2 className="mt-2 text-4xl font-black">{el.name}</h2><p className="mt-2 text-slate-400">Atomic number {el.atomicNumber} · {el.category}</p><div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{metrics.map(k => <div key={k} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.22em] text-slate-500">{k === "alignment" ? "Alignment" : k}</div><div className="mt-2 text-3xl font-black text-cyan-100">{k === "alignment" ? s[k].toFixed(0) : s[k].toFixed(2)}</div></div>)}</div><Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))} variant="primary" className="mt-6">Add {el.symbol} to Compare</Button></div><Panel><h3 className="text-xl font-black">Behaviour Radar</h3><RadarChart data={s}/><p className="text-sm text-slate-400">A visual profile makes each element instantly understandable.</p></Panel></div></Panel></div></>;
+  return <><Panel><Pill gold><Search size={12}/> material explorer</Pill><h1 className="mt-4 text-5xl font-black">Element Explorer</h1><Info title="User value">Search and inspect the behaviour profile of each element before adding it to a comparison or report.</Info></Panel><GuidePanel page="explorer" /><div className="grid gap-6 xl:grid-cols-[420px_1fr]"><Panel><div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements..." className="w-full bg-transparent outline-none"/></div><select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{categories.map(c => <option key={c}>{c}</option>)}</select><div className="mt-4 max-h-[620px] overflow-auto pr-2">{filtered.map(e => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left ${selected === e.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}</div></Panel><Panel><div className="grid gap-6 xl:grid-cols-[1fr_360px]"><div><div className="text-8xl font-black text-cyan-100">{el.symbol}</div><h2 className="mt-2 text-4xl font-black">{el.name}</h2><p className="mt-2 text-slate-400">Atomic number {el.atomicNumber} · {el.category}</p><div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{metrics.map(k => <div key={k} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.22em] text-slate-500">{k === "alignment" ? "Alignment" : k}</div><div className="mt-2 text-3xl font-black text-cyan-100">{k === "alignment" ? s[k].toFixed(0) : s[k].toFixed(2)}</div></div>)}</div><Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))} variant="primary" className="mt-6">Add {el.symbol} to Compare</Button></div><Panel><h3 className="text-xl font-black">Behaviour Radar</h3><RadarChart data={s}/><p className="text-sm text-slate-400">A visual profile makes each element instantly understandable.</p></Panel></div></Panel></div></>;
 }
 function PeriodicTable({ selected, setSelected }) {
   const [layer, setLayer] = useState("conductivity");
@@ -5405,7 +5405,7 @@ function CalculationCore() {
             <label className="mt-5 block text-xs font-black uppercase tracking-[.18em] text-slate-500">Equation name</label>
             <input value={equationTitle} onChange={(e) => setEquationTitle(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none focus:border-cyan-300/50" />
             <label className="mt-5 block text-xs font-black uppercase tracking-[.18em] text-slate-500">Equation</label>
-            <textarea value={expression} onChange={(e) => setExpression(e.target.value)} rows={4} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 font-mono text-lg text-white outline-none focus:border-cyan-300/50" guided example="Example: A + B or 0.5 * m * v^2" />
+            <textarea value={expression} onChange={(e) => setExpression(e.target.value)} rows={4} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 font-mono text-lg text-white outline-none focus:border-cyan-300/50" placeholder="Example: A + B or 0.5 * m * v^2" />
             <div className="mt-4 flex flex-wrap gap-2">{presets.slice(0, 8).map((p) => <button key={p.name} onClick={() => usePreset(p)} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-bold text-slate-300 hover:border-cyan-300/40 hover:text-white">{p.name}</button>)}</div>
             <div className="mt-5 flex flex-wrap gap-3"><Button onClick={solve} variant="primary">Solve + Save</Button><Button onClick={clearEquation}>Clear Equation</Button><Button onClick={resetValues}>Reset Values</Button></div>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -5451,7 +5451,7 @@ function CalculationCore() {
             <p className="mt-2 text-sm leading-6 text-slate-400">Build equations using numbers, uppercase and lowercase letters, Greek symbols, constants, operators, geometry, calculus, trigonometry, matrices, vectors, statistics, quantum notation, relativity notation, telemetry tokens and scientific variables. One token is selected at a time so advanced users can move quickly without losing context.</p>
             <div className="mt-5 flex flex-wrap gap-2">{tokenCategories.map((cat) => <button key={cat} onClick={() => setTokenCategory(cat)} className={`rounded-full border px-3 py-2 text-xs font-black tracking-[.14em] ${tokenCategory === cat ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>{cat}</button>)}</div>
             <div className="mt-4 grid gap-3 md:grid-cols-3"><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Letters</div><div className="mt-1 text-sm text-slate-300">Uppercase A–Z and lowercase a–z are separate selectable variables.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Symbols</div><div className="mt-1 text-sm text-slate-300">Operators, relations, sets, logic, trigonometry, vectors, matrices, calculus and advanced notation tokens.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Science</div><div className="mt-1 text-sm text-slate-300">Greek, physics, constants, geometry, telemetry, statistics, quantum and relativity variables.</div></div></div>
-            <input value={tokenSearch} onChange={(e) => setTokenSearch(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" guided example="Search symbols, variables, constants, operators..." />
+            <input value={tokenSearch} onChange={(e) => setTokenSearch(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="Search symbols, variables, constants, operators..." />
             <div className="mt-5 max-h-[620px] overflow-auto rounded-2xl border border-white/10 bg-black/25">
               <table className="min-w-full text-left text-sm">
                 <thead className="sticky top-0 z-10 bg-slate-950/95 text-xs uppercase tracking-[.16em] text-slate-500"><tr><th className="p-3">Symbol</th><th className="p-3">Token</th><th className="p-3">Meaning</th><th className="p-3">Category</th><th className="p-3">Value</th></tr></thead>
@@ -5470,7 +5470,7 @@ function CalculationCore() {
           <Pill gold><BookOpen size={12}/> reference library</Pill>
           <h2 className="mt-3 text-3xl font-black">Find formulas fast.</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Search stress, density, relativity, quantum, lagrangian, telemetry, geometry or everyday maths. Pick a formula and it loads into the Calculator.</p>
-          <input value={librarySearch} onChange={(e) => setLibrarySearch(e.target.value)} className="mt-5 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" guided example="Search formulas, frameworks or variables..." />
+          <input value={librarySearch} onChange={(e) => setLibrarySearch(e.target.value)} className="mt-5 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="Search formulas, frameworks or variables..." />
           <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filteredPresets.map((preset) => <button key={`${preset.group}-${preset.name}`} onClick={() => usePreset(preset)} className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{preset.group}</div><div className="mt-2 text-xl font-black text-white">{preset.name}</div><div className="mt-2 font-mono text-sm text-amber-100">{preset.expr}</div><p className="mt-3 text-sm leading-6 text-slate-400">{preset.desc}</p><div className="mt-4 text-xs font-black uppercase tracking-[.18em] text-white">Use this formula →</div></button>)}
           </div>
@@ -6411,15 +6411,15 @@ function BetaLaunch({ session, setPage, startCheckout }) {
               <div className="mt-6 grid gap-4">
                 <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
                   Name
-                  <input value={name} onChange={(e) => setName(e.target.value)} guided example="Your name" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                  <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
                 </label>
                 <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
                   Email
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} guided example="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
                 </label>
                 <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
                   Password
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} guided example="Create a password" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
                 </label>
                 {notice && <div className="rounded-2xl border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">{notice}</div>}
                 <Button onClick={createExplorerAccount} variant="primary" className="w-full py-4">Create Account</Button>
@@ -8339,7 +8339,7 @@ Generated in ElementOS.`,
             ))}
           </div>
           <div className="mt-5 grid gap-2 sm:grid-cols-2">
-            <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" guided example="Founder name" />
+            <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Founder name" />
             <button onClick={() => setHeadlineMode(headlineMode === "AI Headline" ? "Simple" : "AI Headline")} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-left text-sm font-black text-cyan-100">{headlineMode}</button>
           </div>
           <div className="mt-5">
@@ -8357,7 +8357,7 @@ Generated in ElementOS.`,
             </div>
           </div>
           <div className="mt-5 grid gap-2 sm:grid-cols-3">
-            <input value={seriesNumber} onChange={(e) => setSeriesNumber(Number(e.target.value) || 1)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" guided example="Series number" />
+            <input value={seriesNumber} onChange={(e) => setSeriesNumber(Number(e.target.value) || 1)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Series number" />
             <Button onClick={() => setCardIndex((v) => v + 1)}>Next Discovery</Button>
             <Button onClick={copyCard}>Copy Post</Button>
             <Button onClick={createSocialPack}>Create Social Pack</Button>
@@ -8922,7 +8922,7 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="mt-5 min-h-[130px] w-full rounded-[2rem] border border-cyan-300/15 bg-slate-950/80 p-5 text-lg text-cyan-50 outline-none"
-          guided example="Ask: best materials for deep ocean pressure over 40 years"
+          placeholder="Ask: best materials for deep ocean pressure over 40 years"
         />
         <div className="mt-4 flex flex-wrap gap-2">
           {[
@@ -9604,7 +9604,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
           </div>
           <div className="mt-5 flex items-center gap-3 rounded-2xl border border-cyan-300/20 bg-black/45 px-4 py-3 shadow-[inset_0_0_35px_rgba(34,211,238,.08)]">
             <Search size={18} className="text-cyan-200" />
-            <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} guided example="Compare aluminium and titanium, export discovery poster, insert circle area formula..." className="w-full bg-transparent text-base font-bold text-white outline-none guided example:text-slate-500 sm:text-lg" />
+            <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Compare aluminium and titanium, export discovery poster, insert circle area formula..." className="w-full bg-transparent text-base font-bold text-white outline-none placeholder:text-slate-500 sm:text-lg" />
             <span className="hidden rounded-xl border border-white/10 px-3 py-1 text-xs text-slate-400 sm:inline">CTRL K</span>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">{quickPrompts.map((prompt) => <button key={prompt} onClick={() => setQuery(prompt)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40">{prompt}</button>)}</div>
@@ -9640,17 +9640,18 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
 
 function ToastCenter() {
   const [message, setMessage] = useState("");
+  const toastTimerRef = useRef(null);
 
   useEffect(() => {
     const handler = (event) => {
       setMessage(String(event.detail || "Done."));
-      window.clearTimeout(handler.timer);
-      handler.timer = window.setTimeout(() => setMessage(""), 2200);
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = window.setTimeout(() => setMessage(""), 2200);
     };
     window.addEventListener("elementos:toast", handler);
     return () => {
       window.removeEventListener("elementos:toast", handler);
-      window.clearTimeout(handler.timer);
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
     };
   }, []);
 
@@ -10045,7 +10046,7 @@ function MaterialExplorerV57({ selected, setSelected, setCompare, setPage }) {
 
       <div className="grid gap-6 xl:grid-cols-[390px_1fr]">
         <Panel>
-          <div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} guided example="Search elements, metals, gases..." className="w-full bg-transparent outline-none"/></div>
+          <div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements, metals, gases..." className="w-full bg-transparent outline-none"/></div>
           <select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{categories.map(c => <option key={c}>{c}</option>)}</select>
           <div className="mt-4 max-h-[660px] overflow-auto pr-2">
             {filtered.map((e) => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left ${active.symbol === e.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}
@@ -10590,11 +10591,11 @@ function SupportCenterModal({ open, onClose }) {
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
                 Your name
-                <input value={form.name} onChange={(e) => updateSupportField("name", e.target.value)} guided example="Paul Roper" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                <input value={form.name} onChange={(e) => updateSupportField("name", e.target.value)} placeholder="Paul Roper" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
               </label>
               <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
                 Reply email
-                <input type="email" value={form.email} onChange={(e) => updateSupportField("email", e.target.value)} guided example="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                <input type="email" value={form.email} onChange={(e) => updateSupportField("email", e.target.value)} placeholder="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
               </label>
             </div>
             <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
@@ -10605,7 +10606,7 @@ function SupportCenterModal({ open, onClose }) {
             </label>
             <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
               Message
-              <textarea value={form.message} onChange={(e) => updateSupportField("message", e.target.value)} guided example="Tell us what happened, what page you were on, and what you expected to happen." className="min-h-[160px] rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+              <textarea value={form.message} onChange={(e) => updateSupportField("message", e.target.value)} placeholder="Tell us what happened, what page you were on, and what you expected to happen." className="min-h-[160px] rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
             </label>
             <div className="rounded-2xl border border-dashed border-cyan-300/25 bg-cyan-300/10 p-5 text-sm text-cyan-100">
               Attachments: screenshots and PDFs are planned for the backend support route. For now, use the direct email button below if you need to attach files.
