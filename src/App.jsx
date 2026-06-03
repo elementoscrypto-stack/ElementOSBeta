@@ -10106,76 +10106,334 @@ function MissionControlV57({ setPage, session, isPro, startCheckout }) {
 }
 
 function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage }) {
-  const [mode, setMode] = useState("Executive Summary");
-  const [prompt, setPrompt] = useState("Find a high-confidence material discovery and tell me what to do next.");
-  const active = elementMap[selected] || elementMap.H;
-  const pair = (compare || [active.symbol, "Ti"]).slice(0,2);
-  const pairScore = compatibilityScore(pair[0] || active.symbol, pair[1] || "Ti");
-  const modes = ["Executive Summary", "Research Grade", "Investor Mode", "Social Post", "Report Brief"];
-  const response = {
-    "Executive Summary": `A concise overview of the findings, significance and recommended next steps. ${pair[0]} + ${pair[1]} achieved a ${pairScore}% compatibility signal, suggesting a strong candidate for deeper comparison, report generation and discovery media export.`,
-    "Research Grade": `The ${pair[0]}-${pair[1]} pairing shows a ${pairScore}% compatibility signal across stability, pressure and thermal behaviour. Recommended next step: generate a report and compare against the Discovery Feed baseline.`,
-    "Investor Mode": `ElementOS has identified ${pair[0]} + ${pair[1]} as a reportable discovery asset. The commercial story is stronger if it can be packaged as a public discovery page, technical dossier and social proof card.`,
-    "Social Post": `Today's ElementOS discovery: ${pair[0]} + ${pair[1]} scored ${pairScore}% compatibility. Rare material relationship detected.`,
-    "Report Brief": `Executive summary: ${pair[0]} + ${pair[1]} achieved ${pairScore}% compatibility. Evidence suggests a strong candidate for future-state simulation, report generation and media export.`,
-  }[mode];
-  const executiveSummaryCards = [
-    ["Finding", `${pair[0]} + ${pair[1]} produced a ${pairScore}% compatibility signal across the ElementOS scoring model.`],
-    ["Significance", "This pairing may be worth deeper review where stability, pressure response and thermal behaviour need to work together."],
-    ["Recommended next step", "Generate a report, compare substitute materials and export a Discovery Media card for review or sharing."],
-    ["Confidence", `${pairScore}% compatibility signal`],
+  const starterPrompt = "Investigate titanium in deep-ocean geothermal exposure over 50 years";
+  const [prompt, setPrompt] = useState(starterPrompt);
+  const [activeWorkflow, setActiveWorkflow] = useState("Forecast material ageing");
+  const [recentInvestigations, setRecentInvestigations] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("elementos_copilot_recent") || "[]");
+      return Array.isArray(saved) && saved.length ? saved.slice(0, 5) : [
+        "Titanium ocean exposure",
+        "Aluminium + copper relationship",
+        "50-year corrosion forecast",
+      ];
+    } catch {
+      return ["Titanium ocean exposure", "Aluminium + copper relationship", "50-year corrosion forecast"];
+    }
+  });
+
+  const normalized = prompt.toLowerCase();
+  const active = elementMap[selected] || elementMap.Ti || elementMap.Al;
+  const currentPair = (compare?.length ? compare : [active.symbol, "Ti"]).filter(Boolean).slice(0, 4);
+  const isPaidPlan = hasElementOSProAccess();
+  const activePlan = getElementOSPlan();
+
+  const suggestedWorkflows = [
+    "Compare two materials",
+    "Generate Executive Summary",
+    "Build a Time Machine scenario",
+    "Create a Research Report",
+    "Create a Poster",
+    "Explain this page",
+    "Find strongest material relationship",
+    "Build equation framework",
   ];
-  const recommended = smartElementStackV57(active.symbol).slice(0, 5);
-  const exportAI = () => exportAllFormats({ baseName: "elementos-executive-summary", title: "ElementOS Executive Summary", summary: response, payload: { mode, prompt, selected, compare, response, recommended, executiveSummaryCards } });
+
+  const detectMaterial = (text) => {
+    const directSymbol = elements.find((e) => text.includes(` ${e.symbol.toLowerCase()} `) || text === e.symbol.toLowerCase());
+    const byName = elements.find((e) => text.includes(e.name.toLowerCase()));
+    return byName || directSymbol || active;
+  };
+
+  const detectedMaterial = detectMaterial(` ${normalized} `);
+  const detectedEnvironment = useMemo(() => {
+    if (normalized.includes("ocean") || normalized.includes("salt") || normalized.includes("marine")) return "Deep-ocean / saltwater exposure";
+    if (normalized.includes("geothermal")) return "Deep-ocean geothermal exposure";
+    if (normalized.includes("heat") || normalized.includes("thermal") || normalized.includes("temperature")) return "High-temperature environment";
+    if (normalized.includes("pressure") || normalized.includes("deep")) return "High-pressure environment";
+    if (normalized.includes("space") || normalized.includes("vacuum")) return "Vacuum / aerospace environment";
+    if (normalized.includes("corrosion")) return "Corrosion-risk environment";
+    return "General material investigation";
+  }, [normalized]);
+
+  const detectedHorizon = useMemo(() => {
+    const match = normalized.match(/(\d+)\s*(year|years|yr|yrs)/);
+    if (match) return `${match[1]} years`;
+    if (normalized.includes("long term") || normalized.includes("long-term")) return "50 years";
+    return "50 years";
+  }, [normalized]);
+
+  const investigationType = useMemo(() => {
+    if (normalized.includes("poster") || normalized.includes("viral") || normalized.includes("card")) return "Media asset generation";
+    if (normalized.includes("report") || normalized.includes("summary") || normalized.includes("brief")) return "Executive research output";
+    if (normalized.includes("equation") || normalized.includes("formula") || normalized.includes("calculate")) return "Calculation framework";
+    if (normalized.includes("relationship") || normalized.includes("compare")) return "Material relationship analysis";
+    if (normalized.includes("time") || normalized.includes("forecast") || normalized.includes("years")) return "Future Simulation workflow";
+    return "Material investigation workflow";
+  }, [normalized]);
+
+  const materialStack = useMemo(() => {
+    const environmentBias = (symbol) => {
+      const s = score(symbol);
+      let value = s.stability * 20 + s.pressure * 14 + s.thermal * 12 + s.conductivity * 6 + s.rarity * 4;
+      if (detectedEnvironment.toLowerCase().includes("ocean")) value += s.stability * 16 + s.pressure * 12;
+      if (detectedEnvironment.toLowerCase().includes("thermal") || detectedEnvironment.toLowerCase().includes("geothermal")) value += s.thermal * 18;
+      if (detectedEnvironment.toLowerCase().includes("pressure")) value += s.pressure * 18;
+      return Math.round(value);
+    };
+    return elements
+      .map((e) => ({ ...e, aiScore: environmentBias(e.symbol), profile: score(e.symbol) }))
+      .sort((a, b) => b.aiScore - a.aiScore)
+      .slice(0, 6);
+  }, [detectedEnvironment]);
+
+  const riskProfile = useMemo(() => {
+    const s = score(detectedMaterial.symbol);
+    const thermalRisk = Math.max(4, Math.round(100 - s.thermal * 17));
+    const pressureRisk = Math.max(4, Math.round(100 - s.pressure * 17));
+    const stabilityRisk = Math.max(3, Math.round(100 - s.stability * 18));
+    const overall = Math.max(6, Math.min(92, Math.round((thermalRisk + pressureRisk + stabilityRisk) / 3)));
+    return {
+      overall,
+      label: overall < 25 ? "Low risk" : overall < 45 ? "Managed risk" : overall < 65 ? "Moderate risk" : "High review required",
+      thermalRisk,
+      pressureRisk,
+      stabilityRisk,
+    };
+  }, [detectedMaterial.symbol]);
+
+  const confidence = Math.max(82, Math.min(99, Math.round(94 - riskProfile.overall * 0.12 + materialStack[0].aiScore % 8)));
+  const recommendedLab = investigationType.includes("Future") ? "Future Simulation" : investigationType.includes("Calculation") ? "Calculation Studio" : investigationType.includes("relationship") ? "Element Relationships" : "Mission Intelligence";
+
+  const investigationPlan = [
+    ["Material", `${detectedMaterial.name} (${detectedMaterial.symbol})`],
+    ["Environment", detectedEnvironment],
+    ["Time horizon", detectedHorizon],
+    ["Risk profile", `${riskProfile.label} · ${riskProfile.overall}% review load`],
+    ["Recommended lab", recommendedLab],
+    ["Next step", investigationType.includes("Media") ? "Create Poster" : investigationType.includes("Calculation") ? "Open Calculation Studio" : "Run Future Simulation"],
+  ];
+
+  const exportOptions = [
+    ["Executive Report", "Generate a polished research report for subscribers.", "reports", true],
+    ["Discovery Poster", "Create a shareable visual asset from this investigation.", "viralcards", true],
+    ["Forecast Pack", "Run and export a long-horizon simulation.", "timemachine", true],
+    ["Calculation Board", "Open equations, formulas and variable frameworks.", "calculations", false],
+  ];
+
+  const rememberPrompt = (text = prompt) => {
+    const clean = text.trim();
+    if (!clean) return;
+    setRecentInvestigations((previous) => {
+      const next = [clean, ...previous.filter((item) => item !== clean)].slice(0, 6);
+      try { localStorage.setItem("elementos_copilot_recent", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+
+  const runInvestigation = () => {
+    rememberPrompt();
+    setSelected(detectedMaterial.symbol);
+    setCompare([detectedMaterial.symbol, ...materialStack.slice(0, 3).map((m) => m.symbol)].filter((v, i, a) => a.indexOf(v) === i));
+    setPage("timemachine");
+  };
+
+  const generateExecutiveReport = () => {
+    rememberPrompt();
+    if (!guardProAction("Generate Executive Report is a Pro Researcher feature.")) return;
+    setSelected(detectedMaterial.symbol);
+    setPage("reports");
+  };
+
+  const createPoster = () => {
+    rememberPrompt();
+    if (!guardProAction("Create Poster is a Pro Researcher feature.")) return;
+    setPage("viralcards");
+  };
+
+  const saveDiscovery = () => {
+    rememberPrompt();
+    if (!guardProAction("Save to Saved Discoveries is a Pro Researcher feature.")) return;
+    setPage("lab");
+  };
+
+  const exportBrief = () => {
+    rememberPrompt();
+    if (!guardProAction("Export Copilot briefs as PDF, JSON and SVG with Pro Researcher.")) return;
+    const summary = `ElementOS Research Assistant Brief\n\nPrompt: ${prompt}\nMaterial: ${detectedMaterial.name} (${detectedMaterial.symbol})\nEnvironment: ${detectedEnvironment}\nHorizon: ${detectedHorizon}\nRisk: ${riskProfile.label} (${riskProfile.overall}%)\nRecommended lab: ${recommendedLab}\nConfidence: ${confidence}%\n\nSuggested materials:\n${materialStack.map((m, i) => `${i + 1}. ${m.name} (${m.symbol}) — ${m.aiScore}`).join("\n")}`;
+    exportAllFormats({ baseName: "elementos-research-assistant-brief", title: "ElementOS Research Assistant Brief", summary, payload: { prompt, detectedMaterial, detectedEnvironment, detectedHorizon, riskProfile, materialStack } });
+  };
 
   return (
     <>
-      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-fuchsia-950/25 via-slate-950 to-cyan-950/30">
-        <div className="grid gap-8 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
-          <div><Pill gold><Bot size={12}/> scientific discovery assistant</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">Discovery <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">AI</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Ask ElementOS what a discovery means, how to explain it, what to export and what action should happen next.</p></div>
-          <Panel className="bg-black/30"><div className="text-xs uppercase tracking-[.25em] text-slate-500">active context</div><div className="mt-3 text-5xl font-black text-cyan-100">{pair[0]} + {pair[1]}</div><div className="mt-2 text-3xl font-black text-emerald-100">{pairScore}%</div><div className="text-xs uppercase tracking-[.18em] text-slate-500">compatibility signal</div></Panel>
-        </div>
-      </Panel>
-      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
-        <Panel>
-          <Pill gold><Sparkles size={12}/> summary engine</Pill><h2 className="mt-3 text-4xl font-black">Generate Executive Summary</h2>
-          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="mt-5 min-h-[150px] w-full rounded-[2rem] border border-white/10 bg-black/30 p-5 outline-none" />
-          <div className="mt-4 flex flex-wrap gap-2">{modes.map((m) => <Button key={m} onClick={() => setMode(m)} variant={mode === m ? "primary" : "ghost"}>{m}</Button>)}</div>
-          <div className="mt-5 grid gap-2 sm:grid-cols-2"><Button onClick={() => setPage("reports")} variant="primary">Generate Executive Report</Button><Button onClick={() => setPage("viralcards")}>Create Media Preview</Button><Button onClick={() => setPage("compare")}>Open Compare</Button><Button onClick={exportAI}>Export Executive Brief</Button></div>
-        </Panel>
-        <Panel>
-          <Pill gold><FileText size={12}/> executive summary</Pill><h2 className="mt-3 text-4xl font-black">{mode}</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">A concise overview of the findings, significance and recommended next steps.</p>
-          <div className="mt-5 grid gap-4 lg:grid-cols-[0.7fr_1.3fr]">
-            <div className="grid place-items-center rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6 text-center">
-              <div className="grid h-44 w-44 place-items-center rounded-full border border-cyan-300/30 bg-[radial-gradient(circle,rgba(34,211,238,.22),rgba(2,6,23,.25)_62%)] shadow-[0_0_80px_rgba(34,211,238,.18)]">
-                <div>
-                  <div className="text-5xl font-black text-white">{pairScore}</div>
-                  <div className="mt-1 text-[10px] uppercase tracking-[.22em] text-cyan-200">Discovery Score</div>
+      <Panel className="overflow-hidden border-cyan-300/25 bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.22),transparent_28%),radial-gradient(circle_at_80%_20%,rgba(251,191,36,.13),transparent_25%),linear-gradient(135deg,#020617,#07111f_55%,#111827)] p-0">
+        <div className="relative p-6 md:p-8">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 left-1/3 h-52 w-52 rounded-full bg-fuchsia-400/10 blur-3xl" />
+          <div className="relative grid gap-8 xl:grid-cols-[1.12fr_.88fr] xl:items-center">
+            <div>
+              <div className="flex flex-wrap gap-2">
+                <Pill gold><Bot size={12}/> Research Assistant</Pill>
+                <Pill><Sparkles size={12}/> Investigation Builder</Pill>
+                <Pill><FileText size={12}/> Report Generator</Pill>
+              </div>
+              <h1 className="mt-5 max-w-5xl text-5xl font-black leading-[.95] tracking-tight sm:text-7xl">
+                AI Copilot <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">for Material Intelligence</span>
+              </h1>
+              <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+                Type a research goal and ElementOS turns it into a workflow: suggested materials, risk profile, recommended lab, executive output and export-ready next actions.
+              </p>
+              <div className="mt-7 rounded-[2rem] border border-cyan-300/20 bg-black/35 p-4 shadow-[0_0_70px_rgba(34,211,238,.12)]">
+                <div className="mb-3 text-xs font-black uppercase tracking-[.22em] text-cyan-200">What do you want ElementOS to do?</div>
+                <textarea
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  className="min-h-[132px] w-full rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-5 text-base leading-7 text-cyan-50 outline-none focus:border-cyan-300/50"
+                  placeholder="Ask anything about materials, simulations, reports, formulas..."
+                />
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <Button onClick={runInvestigation} variant="primary">Run Simulation</Button>
+                  <Button onClick={generateExecutiveReport}>Generate Executive Report</Button>
+                  <Button onClick={createPoster}>Create Poster</Button>
+                  <Button onClick={() => setPage("calculations")}>Open Calculation Studio</Button>
                 </div>
               </div>
-              <div className="mt-4 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-amber-100">{pairScore >= 90 ? "Legendary Discovery" : pairScore >= 78 ? "Strong Discovery" : "Discovery Signal"}</div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {executiveSummaryCards.map(([title, body]) => (
-                <div key={title} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                  <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{title}</div>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">{body}</p>
+
+            <Panel className="bg-black/30">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-xs uppercase tracking-[.25em] text-slate-500">Executive Output</div>
+                  <div className="mt-3 text-5xl font-black text-emerald-100">{confidence}%</div>
+                  <div className="mt-1 text-xs uppercase tracking-[.18em] text-slate-500">workflow confidence</div>
+                </div>
+                <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-amber-100">{activePlan}</div>
+              </div>
+              <div className="mt-6 rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
+                <div className="text-xs uppercase tracking-[.2em] text-cyan-200">Recommended Next Step</div>
+                <div className="mt-2 text-2xl font-black text-white">{investigationPlan[investigationPlan.length - 1][1]}</div>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{isPaidPlan ? "Pro workflow ready: reports, posters and saved discoveries are unlocked." : "Explorer can investigate. Pro Researcher unlocks reports, posters and saved discoveries."}</p>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <Button onClick={saveDiscovery} className="w-full"><Save size={15} className="inline"/> Save to Discoveries</Button>
+                <Button onClick={exportBrief} className="w-full"><Download size={15} className="inline"/> Export Brief</Button>
+              </div>
+            </Panel>
+          </div>
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[.92fr_1.08fr]">
+        <Panel>
+          <Pill gold><ClipboardList size={12}/> Suggested Workflows</Pill>
+          <h2 className="mt-3 text-4xl font-black">Start with a proven research path.</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Use these as shortcuts. They rewrite the prompt and prepare the Copilot result cards instantly.</p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {suggestedWorkflows.map((workflow) => (
+              <button
+                key={workflow}
+                onClick={() => {
+                  setActiveWorkflow(workflow);
+                  const promptMap = {
+                    "Compare two materials": "Compare aluminium and titanium for aerospace structural reliability",
+                    "Generate Executive Summary": "Generate an executive summary for titanium in deep-ocean geothermal exposure over 50 years",
+                    "Build a Time Machine scenario": "Build a Time Machine scenario for titanium under saltwater pressure over 50 years",
+                    "Create a Research Report": "Create a research report for aluminium and copper thermal relationship analysis",
+                    "Create a Poster": "Create a poster from a legendary aluminium and titanium discovery",
+                    "Explain this page": "Explain how to use the AI Copilot and what action I should take next",
+                    "Find strongest material relationship": "Find the strongest material relationship for titanium under pressure and heat",
+                    "Build equation framework": "Build an equation framework for pressure, temperature, diffusion and time",
+                  };
+                  setPrompt(promptMap[workflow] || workflow);
+                }}
+                className={`rounded-[1.5rem] border p-4 text-left transition hover:-translate-y-1 ${activeWorkflow === workflow ? "border-cyan-300/50 bg-cyan-300/10 shadow-[0_0_40px_rgba(34,211,238,.12)]" : "border-white/10 bg-black/25 hover:bg-white/[.05]"}`}
+              >
+                <div className="text-sm font-black text-white">{workflow}</div>
+                <div className="mt-2 text-xs leading-5 text-slate-400">Click to load this investigation workflow into the Copilot input.</div>
+              </button>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><Target size={12}/> Investigation Plan</Pill>
+          <h2 className="mt-3 text-4xl font-black">Type goal → get workflow → generate asset.</h2>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {investigationPlan.map(([label, value]) => (
+              <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{label}</div>
+                <div className="mt-2 text-lg font-black text-white">{value}</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5">
+            <div className="text-xs uppercase tracking-[.22em] text-emerald-200">Risk Profile</div>
+            <div className="mt-2 text-3xl font-black text-emerald-100">{riskProfile.label}</div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {[ ["Thermal", riskProfile.thermalRisk], ["Pressure", riskProfile.pressureRisk], ["Stability", riskProfile.stabilityRisk] ].map(([label, value]) => (
+                <div key={label}>
+                  <div className="mb-2 flex justify-between text-[10px] uppercase tracking-[.16em] text-slate-400"><span>{label}</span><span>{value}%</span></div>
+                  <div className="h-2 overflow-hidden rounded-full bg-black/40"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${Math.max(8, 100 - value)}%` }} /></div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="mt-5 rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6 text-lg leading-8 text-cyan-50">{response}</div>
-          <Info title="Recommended next step">Open Reports, generate a premium export, then create a Discovery Media card from the same result.</Info>
         </Panel>
       </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
+        <Panel>
+          <Pill gold><Atom size={12}/> Suggested Materials</Pill>
+          <h2 className="mt-3 text-4xl font-black">Material stack for this investigation.</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {materialStack.map((material, index) => (
+              <button key={material.symbol} onClick={() => { setSelected(material.symbol); setCompare([material.symbol, ...currentPair].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4)); }} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-300/10 via-slate-950 to-emerald-300/10 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/40">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-xs uppercase tracking-[.22em] text-slate-500">rank #{index + 1}</div>
+                  <div className="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1 text-xs font-black text-emerald-100">{material.aiScore}</div>
+                </div>
+                <div className="mt-4 text-5xl font-black text-cyan-100">{material.symbol}</div>
+                <div className="mt-1 text-lg font-black text-white">{material.name}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-400">Balanced signal across stability, pressure, thermal response and research relevance.</p>
+              </button>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <Pill gold><Database size={12}/> Command Memory</Pill>
+          <h2 className="mt-3 text-4xl font-black">Recent investigations</h2>
+          <div className="mt-6 space-y-3">
+            {recentInvestigations.map((item) => (
+              <button key={item} onClick={() => setPrompt(item)} className="w-full rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40 hover:bg-white/[.05]">
+                <div className="text-sm font-black text-cyan-100">{item}</div>
+                <div className="mt-1 text-xs text-slate-500">Click to reopen this investigation.</div>
+              </button>
+            ))}
+          </div>
+          <Info title="Paid subscriber polish">
+            Explorer users can ask simple questions. Pro Researcher unlocks reports, posters and saved discoveries. Pro Lab unlocks advanced workflows, macros and future premium labs.
+          </Info>
+        </Panel>
+      </div>
+
       <Panel>
-        <Pill><Atom size={12}/> suggested material routes</Pill><h2 className="mt-3 text-4xl font-black">Copilot Recommendations</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">{recommended.map((r) => <button key={r.symbol} onClick={() => { setCompare([active.symbol, r.symbol]); setPage("compare"); }} className="rounded-[2rem] border border-white/10 bg-black/25 p-5 text-left hover:border-cyan-300/40"><div className="text-4xl font-black text-cyan-100">{r.symbol}</div><div className="mt-1 font-black text-white">{r.name}</div><div className="mt-2 text-sm text-slate-400">{r.compatibility}% compatibility</div></button>)}</div>
+        <Pill gold><Share2 size={12}/> Export Options</Pill>
+        <h2 className="mt-3 text-4xl font-black">Turn the answer into a research asset.</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {exportOptions.map(([title, body, target, locked]) => (
+            <div key={title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+              <div className="text-lg font-black text-white">{title}</div>
+              <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+              <Button onClick={() => { if (locked && !guardProAction(`${title} requires Pro Researcher.`)) return; setPage(target); }} variant={locked && !isPaidPlan ? "ghost" : "primary"} className="mt-5 w-full">{locked && !isPaidPlan ? "Unlock" : "Open"}</Button>
+            </div>
+          ))}
+        </div>
       </Panel>
     </>
   );
 }
+
 
 
 
