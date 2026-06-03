@@ -9214,309 +9214,373 @@ function MobileActionBar({ page, setPage, compare, session, isPro, startCheckout
   );
 }
 
-function CommandPalette({ open, onClose, page, setPage, selected, setSelected, compare, setCompare, session, isPro, startCheckout }) {
+function CommandPalette({ open, onClose, page, setPage, selected, setSelected, compare, setCompare, session, isPro, startCheckout, setSupportOpen }) {
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [recentCommands, setRecentCommands] = useState(() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem("elementos_recent_commands") || "[]");
+      return Array.isArray(parsed) ? parsed.filter(Boolean).slice(0, 10) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [pinnedCommands, setPinnedCommands] = useState(() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem("elementos_pinned_commands") || "[]");
+      return Array.isArray(parsed) && parsed.length ? parsed.filter(Boolean).slice(0, 12) : ["macro:aerospace", "page:calculations", "smart:report"];
+    } catch {
+      return ["macro:aerospace", "page:calculations", "smart:report"];
+    }
+  });
+  const [pendingCommand, setPendingCommand] = useState(null);
 
   useEffect(() => {
     if (open) {
       setQuery("");
       setActiveIndex(0);
+      setPendingCommand(null);
     }
   }, [open]);
 
-  const q = query.toLowerCase().trim();
-  const currentCompare = Array.isArray(compare) ? compare : [];
-
-  const pageActions = [
-    ["dashboard", "Open Dashboard", "Command centre, live network, researcher identity and launch workspace.", "Navigation", "Dashboard"],
-    ["copilot", "Ask AI Copilot", "Turn a plain-English research goal into simulations, reports and cards.", "AI", "Copilot"],
-    ["mission", "Open Mission Intelligence", "Guided onboarding missions for comparison, Future Simulation, Scenario Builder, Media Engine and reports.", "Onboarding", "Mission"],
-    ["discover", "Open Discovery Feed", "Trending pairings, momentum scores and AI-ranked material discoveries.", "Discovery", "Discover"],
-    ["matterlab", "Open Advanced Material Analysis", "Opportunity intelligence for ranked targets, ground signals, AI explanations and reports.", "Advanced Lab", "MIOS"],
-    ["isotopes", "Open Isotope Lab", "Advanced material variants and isotope-style scenario exploration.", "Research", "Isotope"],
-    ["timemachine", "Run Future Simulation", "Forecast ageing, corrosion, degradation and future material states.", "Simulation", "Time"],
-    ["scenario", "Build Scenario", "Convert a real-world material situation into risk, lifespan and substitute outputs.", "Simulation", "Scenario"],
-    ["welldriller", "Open Resource Discovery Lab", "Model a deep bore path, reservoir target and pressure profile.", "Simulation", "Well"],
-    ["seismo", "Open Wave Intelligence", "Compare P-wave and S-wave travel, arrival gaps and wave response.", "Simulation", "Seismo"],
-    ["simreports", "Create Simulation Dossier", "Create a universal dossier across Future Simulation, Seismo, Scenario and Well Driller.", "Reports", "Report"],
-    ["viralcards", "Create Media", "Generate a cinematic share card for discoveries, simulations and reports.", "Growth", "Share"],
-    ["beta", "Open Explorer Launch", "Explorer $0, Founding Researcher pricing, roadmap, feedback and upgrade conversion.", "Growth", "Explorer"],
-    ["calculations", "Open Calculation Studio", "Use premium calculation blocks to support report narratives.", "Tools", "Calc"],
-    ["lab", "Open Workspace", "Return to saved scenarios, reports, discoveries and research assets.", "Workspace", "Lab"],
-    ["visualization", "Open Visual Engine", "Survival curves, telemetry cards, pulse graphs and cinematic visuals.", "Visuals", "Visual"],
-    ["compare", "Open Compare Materials", "Compare stability, thermal, pressure, diffusion, rarity and alignment.", "Analysis", "Compare"],
-    ["explorer", "Search Elements", "Inspect an element profile before adding it to a comparison.", "Elements", "Search"],
-    ["periodic", "Open Periodic Map", "Browse all 118 elements with behaviour heat-map logic.", "Elements", "Periodic"],
-    ["reports", "Open Research Reports", "Create public reports, premium PDFs and shareable outputs.", "Reports", "PDF"],
-    ["beta", "Create Free Explorer Account", "Roadmap, feedback and early-access conversion.", "Growth", "Explorer"],
-  ];
-
-  const elementActions = elements.slice(0, 118).map((e) => [
-    `element:${e.symbol}`,
-    `${e.symbol} — ${e.name}`,
-    `${e.category} · atomic ${e.atomicNumber} · add to comparison and inspect behaviour profile.`,
-    "Element",
-    e.symbol,
-  ]);
-
-  const pairActions = [
-    ["pair:Al-Fe", "Compare Aluminium + Iron", "Classic structural pairing for stability, pressure and behaviour comparison.", "Pair", "Al Fe"],
-    ["pair:Ti-Hf", "Compare Titanium + Hafnium", "High-value advanced pairing for futuristic structural simulation cards.", "Pair", "Ti Hf"],
-    ["pair:Cu-Ag", "Compare Copper + Silver", "Conductivity corridor comparison for electrical/material exploration.", "Pair", "Cu Ag"],
-    ["pair:Si-Ge", "Compare Silicon + Germanium", "Semiconductor-adjacent behaviour pairing for advanced reports.", "Pair", "Si Ge"],
-    ["pair:W-Ta", "Compare Tungsten + Tantalum", "Heavy high-pressure thermal candidate pair for Future Simulation testing.", "Pair", "W Ta"],
-  ];
-
-  const smartActions = [
-    ["smart:ocean", "Simulate deep ocean pressure for 40 years", "Sets Titanium, Hafnium, Tungsten and Aluminium then opens Scenario Builder.", "Smart Action", "Ocean"],
-    ["smart:heat", "Find strongest high-heat material pair", "Loads Tungsten, Tantalum, Hafnium and Titanium into Compare.", "Smart Action", "Heat"],
-    ["smart:seismic", "Compare P-wave / S-wave arrival gap", "Opens Seismo for seismic travel and arrival-gap response.", "Smart Action", "Seismic"],
-    ["smart:well", "Model a deep Resource Discovery Lab path", "Opens Resource Discovery Lab with drilling simulation focus.", "Smart Action", "Well"],
-    ["smart:time", "Forecast material decay across 100 years", "Opens Future Simulation for long-horizon material survivability.", "Smart Action", "Time"],
-    ["smart:viral", "Turn current work into a share card", "Opens Poster Studio with social-growth workflow.", "Smart Action", "Share"],
-    ["smart:report", "Generate a simulation dossier", "Opens Simulation Dossiers for a polished export dossier.", "Smart Action", "Report"],
-    ["smart:mission", "Start the user onboarding mission path", "Opens Explorer Launch as the free account and upgrade pathway.", "Smart Action", "Mission"],
-    ["smart:checkout", isPro ? "Pro access is active" : "Upgrade to Pro Researcher", "Unlock reports, exports, vault, media and AI Copilot.", "Billing", "Pro"],
-  ];
-
-  const allActions = [...smartActions, ...pageActions, ...pairActions, ...elementActions];
-
-  const scoreMatch = ([id, title, desc, tag, alias]) => {
-    if (!q) return tag === "Smart Action" ? 20 : tag === "Navigation" ? 12 : 8;
-    const hay = `${id} ${title} ${desc} ${tag} ${alias || ""}`.toLowerCase();
-    let score = 0;
-    if (hay.includes(q)) score += 50;
-    if (title.toLowerCase().startsWith(q)) score += 25;
-    q.split(/\s+/).forEach((word) => {
-      if (word && hay.includes(word)) score += 10;
-    });
-    if (tag === "Smart Action") score += 8;
-    if (tag === "Element" && q.length <= 2 && (alias || "").toLowerCase().startsWith(q)) score += 35;
-    return score;
-  };
-
-  const filtered = allActions
-    .map((action) => ({ action, rank: scoreMatch(action) }))
-    .filter(({ rank }) => !q || rank > 0)
-    .sort((a, b) => b.rank - a.rank)
-    .slice(0, 18)
-    .map(({ action }) => action);
+  useEffect(() => {
+    try { localStorage.setItem("elementos_recent_commands", JSON.stringify(recentCommands.slice(0, 10))); } catch {}
+  }, [recentCommands]);
 
   useEffect(() => {
-    setActiveIndex(0);
-  }, [query]);
+    try { localStorage.setItem("elementos_pinned_commands", JSON.stringify(pinnedCommands.slice(0, 12))); } catch {}
+  }, [pinnedCommands]);
 
-  const runAction = (id) => {
-    if (id.startsWith("element:")) {
-      const sym = id.replace("element:", "");
-      setSelected(sym);
-      setCompare((prev) => Array.from(new Set([sym, ...(prev || [])])).slice(0, 6));
-      setPage("explorer");
-      onClose();
-      return;
+  const currentCompare = Array.isArray(compare) ? compare : [];
+  const normalizedQuery = query.toLowerCase().trim();
+  const supportEmail =
+    import.meta?.env?.VITE_SUPPORT_EMAIL ||
+    import.meta?.env?.SUPPORT_EMAIL ||
+    "elementoscrypto@gmail.com";
+
+  const aliases = {
+    aluminium: "Al", aluminum: "Al", al: "Al", titanium: "Ti", ti: "Ti", iron: "Fe", fe: "Fe",
+    copper: "Cu", cu: "Cu", silver: "Ag", ag: "Ag", gold: "Au", au: "Au", tungsten: "W", w: "W",
+    hafnium: "Hf", hf: "Hf", tantalum: "Ta", ta: "Ta", silicon: "Si", si: "Si", germanium: "Ge", ge: "Ge",
+    carbon: "C", c: "C", oxygen: "O", o: "O", hydrogen: "H", h: "H", lithium: "Li", li: "Li", nickel: "Ni", ni: "Ni",
+  };
+
+  const emitToast = (message) => window.dispatchEvent(new CustomEvent("elementos:toast", { detail: message }));
+
+  const rememberCommand = (command) => {
+    if (!command?.id) return;
+    setRecentCommands((prev) => {
+      const safePrev = Array.isArray(prev) ? prev : [];
+      return [command.id, ...safePrev.filter((id) => id !== command.id)].slice(0, 10);
+    });
+  };
+
+  const togglePinned = (id) => {
+    if (!id) return;
+    setPinnedCommands((prev) => {
+      const safePrev = Array.isArray(prev) ? prev : [];
+      return safePrev.includes(id) ? safePrev.filter((item) => item !== id) : [id, ...safePrev].slice(0, 12);
+    });
+  };
+
+  const typoDistance = (a = "", b = "") => {
+    if (!a || !b) return 99;
+    const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+    for (let i = 0; i <= a.length; i += 1) matrix[i][0] = i;
+    for (let j = 0; j <= b.length; j += 1) matrix[0][j] = j;
+    for (let i = 1; i <= a.length; i += 1) {
+      for (let j = 1; j <= b.length; j += 1) {
+        matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      }
     }
+    return matrix[a.length][b.length];
+  };
 
-    if (id.startsWith("pair:")) {
-      const pair = id.replace("pair:", "").split("-");
-      setSelected(pair[0]);
-      setCompare(pair.slice(0, 6));
-      setPage("compare");
-      onClose();
-      return;
-    }
+  const findElementTokens = (text) => {
+    const words = text.toLowerCase().replace(/\+/g, " ").replace(/,/g, " ").split(/\s+/).filter(Boolean);
+    const found = [];
+    words.forEach((word) => {
+      const direct = aliases[word];
+      if (direct && !found.includes(direct)) found.push(direct);
+      if (!direct) {
+        const fuzzy = elements.find((e) => typoDistance(word, e.name.toLowerCase()) <= 2 || word === e.symbol.toLowerCase());
+        if (fuzzy && !found.includes(fuzzy.symbol)) found.push(fuzzy.symbol);
+      }
+    });
+    return found.slice(0, 6);
+  };
 
-    if (id === "smart:ocean") {
-      setSelected("Ti");
-      setCompare(["Ti", "Hf", "W", "Al"]);
-      setPage("scenario");
-      onClose();
-      return;
-    }
-
-    if (id === "smart:heat") {
-      setSelected("W");
-      setCompare(["W", "Ta", "Hf", "Ti"]);
-      setPage("compare");
-      onClose();
-      return;
-    }
-
-    if (id === "smart:seismic") {
-      setPage("seismo");
-      onClose();
-      return;
-    }
-
-    if (id === "smart:well") {
-      setPage("welldriller");
-      onClose();
-      return;
-    }
-
-    if (id === "smart:time") {
-      setPage("timemachine");
-      onClose();
-      return;
-    }
-
-    if (id === "smart:viral") {
-      setPage("viralcards");
-      onClose();
-      return;
-    }
-
-    if (id === "smart:report") {
-      setPage("simreports");
-      onClose();
-      return;
-    }
-
-    if (id === "smart:mission") {
-      setPage("login");
-      onClose();
-      return;
-    }
-
-    if (id === "smart:checkout") {
-      if (!isPro) startCheckout?.();
-      onClose();
-      return;
-    }
-
+  const openPage = (id, message) => {
     setPage(id);
+    if (message) emitToast(message);
     onClose();
   };
 
-  const onKeyDown = (e) => {
-    if (e.key === "Escape") onClose();
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setActiveIndex((i) => Math.min(filtered.length - 1, i + 1));
+  const commands = useMemo(() => {
+    const list = [];
+    const add = (command) => list.push({ premium: false, dangerous: false, keywords: [], ...command });
+
+    [
+      ["dashboard", "Open Dashboard", "Command centre, live network and launch workspace.", "Pages"],
+      ["compare", "Go to Compare Engine", "Compare 2–6 elements across behaviour metrics.", "Pages"],
+      ["periodic", "Go to Periodic Map", "Browse all 118 elements by behaviour layer.", "Pages"],
+      ["atlas", "Go to Material Interaction Atlas", "Visual map of material behaviour under different environments.", "Pages"],
+      ["universe", "Go to Element Relationships", "Combined universe and relationship graph hub.", "Pages"],
+      ["timemachine", "Go to Future Simulation", "Forecast ageing, corrosion and long-range survivability.", "Pages"],
+      ["scenario", "Go to Scenario Builder", "Build real-world material scenarios and risk outputs.", "Pages"],
+      ["calculations", "Go to Calculation Studio", "Calculator, equation builder, toolkit, formulas and whiteboard.", "Pages"],
+      ["reports", "Go to Reports", "Open research reports, public links and export options.", "Pages"],
+      ["support", "Open Support Center", "Get help, report bugs or contact support.", "Help"],
+    ].forEach(([pageId, title, description, category]) => add({ id: `page:${pageId}`, title, description, category, label: pageId, execute: () => pageId === "support" ? (setSupportOpen?.(true), onClose()) : openPage(pageId) }));
+
+    elements.slice(0, 118).forEach((element) => add({
+      id: `element:${element.symbol}`,
+      title: `${element.symbol} — ${element.name}`,
+      description: `${element.category} · atomic ${element.atomicNumber}. Open profile and add to comparison.`,
+      category: "Elements",
+      label: element.symbol,
+      keywords: [element.name, element.symbol, element.category],
+      execute: () => {
+        setSelected(element.symbol);
+        setCompare((prev) => Array.from(new Set([element.symbol, ...(prev || [])])).slice(0, 6));
+        openPage("explorer", `${element.name} opened.`);
+      },
+    }));
+
+    [
+      ["Al-Fe", "Compare Aluminium + Iron", "Classic structural pairing for stability and pressure analysis."],
+      ["Al-Ti", "Compare Aluminium + Titanium", "High-value pairing for lightweight structural applications."],
+      ["Ti-Hf", "Compare Titanium + Hafnium", "Advanced pairing for long-horizon survivability testing."],
+      ["Cu-Ag", "Compare Copper + Silver", "Conductivity corridor comparison."],
+      ["Si-Ge", "Compare Silicon + Germanium", "Semiconductor-adjacent behaviour pairing."],
+    ].forEach(([pairId, title, description]) => add({
+      id: `pair:${pairId}`,
+      title,
+      description,
+      category: "Elements",
+      label: pairId.replace("-", " + "),
+      execute: () => {
+        const pair = pairId.split("-");
+        setSelected(pair[0]);
+        setCompare(pair);
+        openPage("compare", `${pair.join(" + ")} loaded.`);
+      },
+    }));
+
+    [
+      ["generate", "Generate Discovery", "Open Compare Engine and generate the next discovery insight.", "Discovery", "compare"],
+      ["save", "Save Discovery", "Save current discovery to Saved Discoveries.", "Discovery", "lab", true],
+      ["vault", "Open Saved Discoveries", "Review saved discoveries and workspaces.", "Discovery", "lab"],
+      ["copy-link", "Copy Discovery Link", "Copy the current public discovery link.", "Discovery", "discover"],
+      ["report", "Create Discovery Report", "Turn current discovery into a research report.", "Discovery", "reports", true],
+      ["poster", "Create Discovery Poster", "Turn current discovery into a poster or viral card.", "Discovery", "viralcards", true],
+      ["viral-card", "Create Viral Card", "Open Discovery Media Engine.", "Discovery", "viralcards", true],
+      ["trending", "Open Trending Discoveries", "Browse current trending discoveries.", "Discovery", "discover"],
+      ["legendary", "Show Legendary Discoveries", "Filter toward high-score discovery outputs.", "Discovery", "discover"],
+    ].forEach(([key, title, description, category, targetPage, premium]) => add({ id: `discovery:${key}`, title, description, category, premium: Boolean(premium), lockedReason: "Pro Researcher unlocks saved discoveries, reports, posters and viral cards.", execute: () => openPage(targetPage, title) }));
+
+    [
+      ["generate-report", "Generate Report", "Create a research report from current comparison.", "reports", true],
+      ["export-pdf", "Export PDF", "Export current result as a professional PDF.", "reports", true, true],
+      ["export-json", "Export JSON", "Export structured data for analysis or API use.", "reports", true, true],
+      ["export-svg", "Export SVG", "Export vector graphics for reports and posts.", "reports", true, true],
+      ["executive-summary", "Export Executive Summary", "Create a concise findings, significance and next-steps brief.", "reports", true],
+      ["latest-report", "Open Latest Report", "Open the most recent report view.", "reports", false],
+      ["public-report", "Open Public Report", "Open public report workflow.", "reports", false],
+    ].forEach(([key, title, description, targetPage, premium, dangerous]) => add({ id: `report:${key}`, title, description, category: "Reports", premium: Boolean(premium), dangerous: Boolean(dangerous), lockedReason: "Pro Researcher unlocks PDF, JSON, SVG and executive report exports.", execute: () => openPage(targetPage, title) }));
+
+    [
+      ["upgrade-researcher", "Upgrade to Pro Researcher", "Unlock reports, vault, exports, media engine and AI Copilot."],
+      ["upgrade-prolab", "Upgrade to Pro Lab", "Unlock advanced labs and future premium features."],
+      ["plan", `View Current Plan: ${isPro ? "Pro" : "Explorer"}`, "Review your current access level."],
+      ["locked", "Show Locked Features", "See what Pro Researcher and Pro Lab unlock."],
+      ["why-locked", "Explain Why This Is Locked", "Understand premium locks without leaving the page."],
+      ["pricing", "Open Pricing", "Review Explorer, Pro Researcher and Pro Lab."],
+      ["checkout", "Start Checkout", "Continue to Stripe Checkout."],
+      ["restore", "Restore Access", "Refresh account access after checkout."],
+      ["founding", "Show Founding Researcher Offer", "View founding $19 pricing and future $35 pricing."],
+      ["billing", "Billing Help", "Open support for billing and subscription help."],
+    ].forEach(([key, title, description]) => add({ id: `account:${key}`, title, description, category: "Account", label: key, execute: () => { if (["upgrade-researcher", "upgrade-prolab", "checkout"].includes(key)) startCheckout?.(key.includes("prolab") ? "prolab" : "researcher"); else if (key === "billing") setSupportOpen?.(true); else setPage("beta"); emitToast(title); onClose(); } }));
+
+    [
+      ["calculator", "Open Calculator", "Enter values and get answers."],
+      ["equation-builder", "Open Equation Builder", "Build equations visually using the Mathematical Toolkit."],
+      ["toolkit", "Open Mathematical Toolkit", "Browse numbers, variables, symbols and constants."],
+      ["reference", "Open Reference Library", "Find formulas for stress, density, relativity, quantum and more."],
+      ["whiteboard", "Open Whiteboard", "Organize equations, notes and diagrams."],
+      ["insert-variable", "Insert Variable", "Open toolkit and select a single active variable."],
+      ["circle-area", "Insert Circle Area Formula", "Insert A = πr² into the equation workflow."],
+      ["convert-units", "Convert Units", "Open calculator conversion tools."],
+      ["solve", "Solve Equation", "Open live equation solver."],
+      ["save-board", "Save Equation to Board", "Save current equation into the whiteboard.", true],
+    ].forEach(([key, title, description, premium]) => add({ id: `calc:${key}`, title, description, category: "Calculation Studio", premium: Boolean(premium), lockedReason: "Pro Researcher unlocks saved calculation boards and exports.", execute: () => openPage("calculations", title) }));
+
+    [
+      ["future", "Open Future Simulation", "Open Time Machine future forecasts."],
+      ["10-year", "Run 10-Year Forecast", "Open Future Simulation with short-horizon material logic."],
+      ["50-year", "Run 50-Year Forecast", "Open Future Simulation with long-horizon material logic."],
+      ["scenario-search", "Search Scenario", "Search the scenario library."],
+      ["scenario-library", "Open Scenario Library", "Browse thousands of future simulation scenarios."],
+      ["forecast-pack", "Export Forecast Pack", "Export future forecast pack.", true],
+      ["time-poster", "Create Time Poster", "Create a cinematic time simulation poster.", true],
+      ["tunnel", "Open Cinematic Ageing Tunnel", "Open the futuristic ageing tunnel visual."],
+      ["temporal-summary", "Generate Temporal Executive Summary", "Create a summary of long-range material behaviour.", true],
+    ].forEach(([key, title, description, premium]) => add({ id: `time:${key}`, title, description, category: "Time Machine", premium: Boolean(premium), lockedReason: "Pro Researcher unlocks forecast exports, posters and temporal summaries.", execute: () => openPage("timemachine", title) }));
+
+    ["Orbit", "Network", "Spiral", "Galaxy", "Lattice", "Radar", "Wave Field", "Cluster Map", "Timeline Arc", "Constellation"].forEach((view) => add({ id: `relationship:${view.toLowerCase().replace(/\s+/g, "-")}`, title: `Switch to ${view} View`, description: `Open Element Relationships with ${view} display pattern.`, category: "Relationships", execute: () => openPage("universe", `${view} relationship view opened.`) }));
+    [["metric", "Select Relationship Metric", "Choose stability, thermal, pressure, rarity or conductivity focus."], ["strongest", "Find Strongest Relationship", "Open relationship hub and inspect strongest material matches."], ["explain", "Explain Relationship Graph", "Open the combined relationship hub with explanations."]].forEach(([key, title, description]) => add({ id: `relationship:${key}`, title, description, category: "Relationships", execute: () => openPage("universe", title) }));
+
+    [
+      ["help", "Open Need Help", "Open support centre."],
+      ["bug", "Report a Bug", "Send an issue to support."],
+      ["feature", "Request a Feature", "Ask for an improvement or new feature."],
+      ["contact", "Contact Support", "Open support options."],
+      ["copy-email", "Copy Support Email", `Copy ${supportEmail} to clipboard.`],
+      ["account-help", "Open Account Help", "Get help with login and account access."],
+      ["billing-help", "Open Billing Help", "Get help with subscriptions and billing."],
+      ["tutorial", "Open Tutorial", "Open guided onboarding.", "mission"],
+      ["shortcuts", "Show Keyboard Shortcuts", "Show Ctrl/⌘ K, arrows, Enter and Esc."],
+      ["explain-page", "Explain This Page", "Open contextual guidance for the current page."],
+    ].forEach(([key, title, description, targetPage]) => add({ id: `help:${key}`, title, description, category: "Help", execute: () => { if (key === "copy-email") safeCopyText(supportEmail, "Support email copied."); else if (targetPage) setPage(targetPage); else setSupportOpen?.(true); emitToast(title); onClose(); } }));
+
+    add({ id: "macro:aerospace", title: "Command Macro: Create Aerospace Report", description: "Compare Al + Ti, open Future Simulation, generate Executive Summary, create poster, export PDF and save to vault.", category: "Macros", premium: true, lockedReason: "Command Macros are a Pro Researcher feature.", execute: () => { setSelected("Al"); setCompare(["Al", "Ti"]); setPage("simreports"); emitToast("Aerospace report macro prepared: Al + Ti loaded."); onClose(); } });
+
+    return list;
+  }, [isPro, supportEmail, setPage, setSelected, setCompare, setSupportOpen, startCheckout, onClose]);
+
+  const naturalCommand = () => {
+    if (!normalizedQuery) return null;
+    const tokens = findElementTokens(normalizedQuery);
+    if (normalizedQuery.startsWith("compare") && tokens.length >= 2) return { id: "nl:compare", title: `Compare ${tokens.join(" + ")}`, description: "Natural language command detected. Opens Compare Engine with these elements selected.", category: "Natural Language", execute: () => { setSelected(tokens[0]); setCompare(tokens); openPage("compare", `${tokens.join(" + ")} loaded.`); } };
+    if (normalizedQuery.includes("insert") && normalizedQuery.includes("circle") && normalizedQuery.includes("area")) return { id: "nl:circle-area", title: "Insert Circle Area Formula", description: "Opens Calculation Studio with the circle-area formula workflow.", category: "Natural Language", execute: () => openPage("calculations", "Circle area formula ready.") };
+    if (normalizedQuery.includes("legendary")) return { id: "nl:legendary", title: "Show Legendary Discoveries", description: "Opens Discovery Feed with a legendary-discovery focus.", category: "Natural Language", execute: () => openPage("discover", "Legendary discoveries opened.") };
+    if (normalizedQuery.includes("time machine") || normalizedQuery.includes("future") || normalizedQuery.includes("forecast")) {
+      const material = tokens[0];
+      return { id: "nl:time", title: material ? `Open Future Simulation for ${material}` : "Open Future Simulation", description: "Natural language forecast command detected.", category: "Natural Language", execute: () => { if (material) setSelected(material); openPage("timemachine", "Future Simulation opened."); } };
     }
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setActiveIndex((i) => Math.max(0, i - 1));
-    }
-    if (e.key === "Enter" && filtered[activeIndex]) {
-      e.preventDefault();
-      runAction(filtered[activeIndex][0]);
-    }
+    if (normalizedQuery.includes("aerospace report")) return commands.find((command) => command.id === "macro:aerospace");
+    return null;
   };
 
-  const quickPrompts = [
-    "deep ocean pressure",
-    "titanium",
-    "share card",
-    "seismo",
-    "simulation dossier",
-    "high heat pair",
-  ];
+  const nlCommand = naturalCommand();
+  const safeRecentCommands = Array.isArray(recentCommands) ? recentCommands : [];
+  const safePinnedCommands = Array.isArray(pinnedCommands) ? pinnedCommands : [];
+  const recentSet = new Set(safeRecentCommands);
+  const pinnedSet = new Set(safePinnedCommands);
 
+  const scoreCommand = (command) => {
+    const hay = `${command.id} ${command.title} ${command.description} ${command.category} ${(command.keywords || []).join(" ")}`.toLowerCase();
+    if (!normalizedQuery) {
+      let score = 5;
+      if (pinnedSet.has(command.id)) score += 40;
+      if (recentSet.has(command.id)) score += 25;
+      if (["Macros", "Pages", "Natural Language"].includes(command.category)) score += 8;
+      return score;
+    }
+    let score = 0;
+    if (hay.includes(normalizedQuery)) score += 70;
+    if (command.title.toLowerCase().startsWith(normalizedQuery)) score += 35;
+    normalizedQuery.split(/\s+/).forEach((word) => {
+      if (!word) return;
+      if (hay.includes(word)) score += 13;
+      if (typoDistance(word, "aluminium") <= 2 && hay.includes("aluminium")) score += 25;
+      if (typoDistance(word, "titanium") <= 2 && hay.includes("titanium")) score += 25;
+    });
+    if (command.category === "Elements" && normalizedQuery.length <= 3 && hay.includes(normalizedQuery)) score += 35;
+    if (pinnedSet.has(command.id)) score += 5;
+    if (recentSet.has(command.id)) score += 5;
+    return score;
+  };
+
+  const candidateCommands = [nlCommand, ...commands].filter(Boolean).filter((command, index, array) =>
+    array.findIndex((item) => item.id === command.id) === index
+  );
+
+  const filtered = candidateCommands
+    .map((command) => ({ command, rank: scoreCommand(command) }))
+    .filter(({ rank }) => !normalizedQuery || rank > 0)
+    .sort((a, b) => b.rank - a.rank)
+    .slice(0, 22)
+    .map(({ command }) => command);
+
+  useEffect(() => { setActiveIndex(0); }, [query]);
+
+  const selectedCommand = filtered[activeIndex] || filtered[0] || null;
+  const isLocked = selectedCommand?.premium && !isPro;
+
+  const runCommand = (command) => {
+    if (!command) return;
+    if (command.premium && !isPro) {
+      rememberCommand(command);
+      emitToast(command.lockedReason || "This command is available on Pro Researcher.");
+      startCheckout?.("researcher");
+      onClose();
+      return;
+    }
+    if (command.dangerous && pendingCommand !== command.id) {
+      setPendingCommand(command.id);
+      emitToast("Press Enter again to confirm export action.");
+      return;
+    }
+    rememberCommand(command);
+    command.execute?.();
+  };
+
+  const onKeyDown = (event) => {
+    if (event.key === "Escape") onClose();
+    if (event.key === "ArrowDown") { event.preventDefault(); setActiveIndex((index) => Math.min(filtered.length - 1, index + 1)); }
+    if (event.key === "ArrowUp") { event.preventDefault(); setActiveIndex((index) => Math.max(0, index - 1)); }
+    if (event.key === "Enter") { event.preventDefault(); runCommand(selectedCommand); }
+  };
+
+  const quickPrompts = ["Compare aluminium and titanium", "Generate executive summary", "Open Time Machine for titanium", "Export discovery poster", "Insert circle area formula", "Show legendary discoveries"];
+  const categoryCounts = filtered.reduce((acc, command) => { acc[command.category] = (acc[command.category] || 0) + 1; return acc; }, {});
   const currentContext = currentCompare.length ? currentCompare.slice(0, 5).join(" + ") : selected;
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] bg-black/75 p-4 backdrop-blur-xl" onClick={onClose} onKeyDown={onKeyDown}>
-      <div className="eos-command-shell mx-auto mt-6 flex max-h-[92vh] max-w-5xl flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/95 shadow-[0_0_170px_rgba(34,211,238,.34)]" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[80] bg-black/75 p-3 backdrop-blur-xl sm:p-4" onClick={onClose} onKeyDown={onKeyDown}>
+      <div className="eos-command-shell mx-auto mt-4 flex max-h-[94vh] max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/95 shadow-[0_0_180px_rgba(34,211,238,.35)] sm:mt-6" onClick={(e) => e.stopPropagation()}>
         <div className="border-b border-white/10 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <Pill gold><Sparkles size={12}/> command engine</Pill>
-              <h2 className="mt-3 text-4xl font-black">ElementOS Command Engine</h2>
-              <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">
-                Navigate, search elements, launch smart simulations, build reports, create viral cards and move through the platform like a real research operating system.
-              </p>
+              <Pill gold><Sparkles size={12}/> intelligent command engine</Pill>
+              <h2 className="mt-3 text-4xl font-black">What do you want ElementOS to do?</h2>
+              <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">Search pages, elements, reports, exports, support, billing, formulas and smart macros from one place. Use natural language like “compare aluminium and titanium”.</p>
             </div>
             <button onClick={onClose} className="rounded-2xl border border-white/10 px-4 py-2 text-sm text-slate-300">Esc</button>
           </div>
-
           <div className="mt-5 flex items-center gap-3 rounded-2xl border border-cyan-300/20 bg-black/45 px-4 py-3 shadow-[inset_0_0_35px_rgba(34,211,238,.08)]">
             <Search size={18} className="text-cyan-200" />
-            <input
-              autoFocus
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Try: titanium, deep ocean pressure, viral card, seismo, report..."
-              className="w-full bg-transparent text-lg font-bold text-white outline-none placeholder:text-slate-500"
-            />
+            <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Compare aluminium and titanium, export discovery poster, insert circle area formula..." className="w-full bg-transparent text-base font-bold text-white outline-none placeholder:text-slate-500 sm:text-lg" />
             <span className="hidden rounded-xl border border-white/10 px-3 py-1 text-xs text-slate-400 sm:inline">CTRL K</span>
           </div>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {quickPrompts.map((prompt) => (
-              <button
-                key={prompt}
-                onClick={() => setQuery(prompt)}
-                className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40"
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
+          <div className="mt-4 flex flex-wrap gap-2">{quickPrompts.map((prompt) => <button key={prompt} onClick={() => setQuery(prompt)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40">{prompt}</button>)}</div>
         </div>
-
-        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_310px]">
-          <div className="eos-command-scroll max-h-[56vh] p-4 lg:max-h-[58vh]">
+        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_360px]">
+          <div className="eos-command-scroll max-h-[58vh] p-4 lg:max-h-[62vh]">
+            <div className="mb-4 flex flex-wrap gap-2">{Object.entries(categoryCounts).map(([category, count]) => <span key={category} className="rounded-full border border-white/10 bg-white/[.035] px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-slate-400">{category} · {count}</span>)}</div>
             <div className="grid gap-3">
-              {filtered.map(([id, title, desc, tag], index) => (
-                <button
-                  key={`${id}-${title}`}
-                  onClick={() => runAction(id)}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  className={`group flex items-center justify-between gap-4 rounded-2xl border p-4 text-left transition ${
-                    index === activeIndex
-                      ? "border-cyan-300/45 bg-cyan-300/12 shadow-[0_0_35px_rgba(34,211,238,.14)]"
-                      : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"
-                  }`}
-                >
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-lg font-black text-cyan-100">{title}</span>
-                      <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{tag}</span>
-                    </div>
-                    <div className="mt-1 text-sm leading-6 text-slate-400">{desc}</div>
-                  </div>
-                  <ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" />
-                </button>
-              ))}
-
-              {!filtered.length && (
-                <div className="rounded-2xl border border-white/10 bg-black/30 p-8 text-center text-slate-400">
-                  No command found. Try “seismo”, “titanium”, “report”, “viral”, “ocean” or “time”.
-                </div>
-              )}
+              {filtered.map((command, index) => <button key={command.id} onClick={() => runCommand(command)} onMouseEnter={() => setActiveIndex(index)} className={`group flex items-center justify-between gap-4 rounded-2xl border p-4 text-left transition ${index === activeIndex ? "border-cyan-300/45 bg-cyan-300/12 shadow-[0_0_35px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}><div><div className="flex flex-wrap items-center gap-2"><span className="text-lg font-black text-cyan-100">{command.title}</span><span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{command.category}</span>{command.premium && <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-fuchsia-100">Pro</span>}{pinnedSet.has(command.id) && <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-cyan-100">Pinned</span>}</div><div className="mt-1 text-sm leading-6 text-slate-400">{command.description}</div></div><ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" /></button>)}
+              {!filtered.length && <div className="rounded-2xl border border-white/10 bg-black/30 p-8 text-center text-slate-400">No command found. Try “compare aluminium and titanium”, “report”, “billing help” or “circle area”.</div>}
             </div>
           </div>
-
-          <div className="eos-command-scroll max-h-[56vh] border-t border-white/10 bg-black/20 p-5 lg:max-h-[58vh] lg:border-l lg:border-t-0">
-            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Current context</div>
-            <div className="mt-2 text-2xl font-black text-cyan-100">{currentContext}</div>
-            <div className="mt-1 text-sm text-slate-400">Active page: {page}</div>
-
-            <div className="mt-5 grid gap-3">
-              <button onClick={() => runAction("smart:report")} className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-left text-sm text-emerald-100">
-                <b>Generate dossier</b><br />Turn current work into a universal simulation report.
-              </button>
-              <button onClick={() => runAction("smart:viral")} className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-left text-sm text-amber-100">
-                <b>Create share card</b><br />Make this screenshot-worthy for social growth.
-              </button>
-              <button onClick={() => runAction("smart:ocean")} className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-left text-sm text-cyan-100">
-                <b>Launch smart simulation</b><br />Deep ocean pressure scenario with advanced materials.
-              </button>
-            </div>
-
-            <div className="mt-5 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-xs leading-5 text-slate-400">
-              Keyboard: ↑ ↓ to move · Enter to launch · Esc to close. This is the OS layer that makes ElementOS feel premium.
-            </div>
+          <div className="eos-command-scroll max-h-[58vh] border-t border-white/10 bg-black/20 p-5 lg:max-h-[62vh] lg:border-l lg:border-t-0">
+            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Command preview</div>
+            <div className="mt-2 text-2xl font-black text-cyan-100">{selectedCommand?.title || "No command selected"}</div>
+            <div className="mt-2 text-sm leading-6 text-slate-400">{selectedCommand?.description || "Start typing to search the operating system."}</div>
+            {isLocked && <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">{selectedCommand.lockedReason || "This is a Pro Researcher command."}</div>}
+            {selectedCommand?.dangerous && <div className="mt-4 rounded-2xl border border-red-300/20 bg-red-300/10 p-4 text-sm leading-6 text-red-100">Export commands ask for confirmation before running.</div>}
+            <div className="mt-5 flex gap-2"><button onClick={() => runCommand(selectedCommand)} className="flex-1 rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 hover:bg-white">{isLocked ? "Upgrade" : pendingCommand === selectedCommand?.id ? "Confirm" : "Run Command"}</button>{selectedCommand && <button onClick={() => togglePinned(selectedCommand.id)} className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-black text-white hover:bg-white/10">{pinnedSet.has(selectedCommand.id) ? "Unpin" : "Pin"}</button>}</div>
+            <div className="mt-5 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-xs leading-5 text-slate-400"><div className="font-black uppercase tracking-[.18em] text-slate-500">Current context</div><div className="mt-2 text-sm font-black text-cyan-100">{currentContext}</div><div>Active page: {page}</div><div className="mt-3">Keyboard: ↑ ↓ to move · Enter to run · Esc to close.</div></div>
+            <div className="mt-5 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-4 text-sm leading-6 text-fuchsia-100"><b>Pro Macro Example</b><br />“Create aerospace report” prepares Al + Ti, Future Simulation, Executive Summary, Poster, PDF and Saved Discoveries workflow.</div>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
 
 
 function ToastCenter() {
@@ -10613,6 +10677,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         session={session}
         isPro={isPro}
         startCheckout={startCheckout}
+        setSupportOpen={setSupportOpen}
       />
 
       <button
@@ -10679,6 +10744,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         session={session}
         isPro={isPro}
         startCheckout={startCheckout}
+        setSupportOpen={setSupportOpen}
       />
       <MobileBottomNav page={page} setPage={setPage} />
     </div>
