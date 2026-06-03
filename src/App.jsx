@@ -10273,17 +10273,22 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
           <div className="pointer-events-none absolute bottom-0 left-1/3 h-52 w-52 rounded-full bg-fuchsia-400/10 blur-3xl" />
           <div className="relative grid gap-8 xl:grid-cols-[1.12fr_.88fr] xl:items-center">
             <div>
-              <div className="flex flex-wrap gap-2">
-                <Pill gold><Bot size={12}/> Research Assistant</Pill>
-                <Pill><Sparkles size={12}/> Investigation Builder</Pill>
-                <Pill><FileText size={12}/> Report Generator</Pill>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-cyan-100">
+                <Bot size={13}/> Research Assistant
               </div>
-              <h1 className="mt-5 max-w-5xl text-5xl font-black leading-[.95] tracking-tight sm:text-7xl">
+              <h1 className="max-w-5xl text-5xl font-black leading-[.95] tracking-tight sm:text-7xl">
                 AI Copilot <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">for Material Intelligence</span>
               </h1>
               <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-                Type a research goal and ElementOS turns it into a workflow: suggested materials, risk profile, recommended lab, executive output and export-ready next actions.
+                Type a goal. ElementOS turns it into a clear investigation plan with suggested materials, risk profile, recommended lab, executive output and export-ready next actions.
               </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                {["Build workflow", "Run simulation", "Create report"].map((item) => (
+                  <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-black text-cyan-50">
+                    <CheckCircle2 size={14} className="mr-2 inline text-emerald-200"/> {item}
+                  </div>
+                ))}
+              </div>
               <div className="mt-7 rounded-[2rem] border border-cyan-300/20 bg-black/35 p-4 shadow-[0_0_70px_rgba(34,211,238,.12)]">
                 <div className="mb-3 text-xs font-black uppercase tracking-[.22em] text-cyan-200">What do you want ElementOS to do?</div>
                 <textarea
@@ -11031,9 +11036,9 @@ const startCheckout = async (planName = "Pro Researcher") => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
-        {page !== "landing" && page !== "beta" && page !== "login" && <VisualConversionStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />}
-        {page !== "landing" && page !== "beta" && page !== "login" && <PageMicroDataBar page={page} setPage={setPage} />}
-        {page !== "landing" && page !== "beta" && page !== "login" && <div className="hidden lg:block">
+        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <VisualConversionStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />}
+        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <PageMicroDataBar page={page} setPage={setPage} />}
+        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <div className="hidden lg:block">
           <UltimateScienceCommandLayer
             page={page}
             setPage={setPage}
@@ -11044,10 +11049,10 @@ const startCheckout = async (planName = "Pro Researcher") => {
             startCheckout={startCheckout}
           />
         </div>}
-        {page !== "landing" && page !== "beta" && page !== "login" && <div className="hidden lg:block">
+        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <div className="hidden lg:block">
           <PageHelpStrip page={page} />
         </div>}
-        {page !== "landing" && page !== "beta" && page !== "login" && <div className="hidden lg:block">
+        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <div className="hidden lg:block">
           <CopilotEverywhereBar page={page} setPage={setPage} />
         </div>}
         <div key={page} className="eos-page-stage animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
