@@ -10107,13 +10107,14 @@ function MissionControlV57({ setPage, session, isPro, startCheckout }) {
 }
 
 function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage }) {
-  const starterPrompt = "Investigate titanium in deep-ocean geothermal exposure over 50 years";
+  const starterPrompt = "Titanium in geothermal ocean environments over 50 years";
   const [prompt, setPrompt] = useState(starterPrompt);
-  const [activeWorkflow, setActiveWorkflow] = useState("Forecast material ageing");
+  const [activePack, setActivePack] = useState("Marine");
   const [recentInvestigations, setRecentInvestigations] = useState(() => {
     try {
+      if (typeof window === "undefined") return ["Titanium ocean exposure", "Aluminium + copper relationship", "50-year corrosion forecast"];
       const saved = JSON.parse(localStorage.getItem("elementos_copilot_recent") || "[]");
-      return Array.isArray(saved) && saved.length ? saved.slice(0, 5) : [
+      return Array.isArray(saved) && saved.length ? saved.slice(0, 6) : [
         "Titanium ocean exposure",
         "Aluminium + copper relationship",
         "50-year corrosion forecast",
@@ -10125,34 +10126,45 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
 
   const normalized = prompt.toLowerCase();
   const active = elementMap[selected] || elementMap.Ti || elementMap.Al;
-  const currentPair = (compare?.length ? compare : [active.symbol, "Ti"]).filter(Boolean).slice(0, 4);
   const isPaidPlan = hasElementOSProAccess();
   const activePlan = getElementOSPlan();
 
-  const suggestedWorkflows = [
-    "Compare two materials",
-    "Generate Executive Summary",
-    "Build a Time Machine scenario",
-    "Create a Research Report",
-    "Create a Poster",
-    "Explain this page",
-    "Find strongest material relationship",
-    "Build equation framework",
+  const industryPacks = [
+    ["Aerospace", "Create aerospace report", "Compare Al + Ti, run future simulation, generate executive summary and export a research report.", "Create aerospace report using aluminium and titanium for lightweight thermal stability"],
+    ["Marine", "Create marine investigation", "Investigate pressure, corrosion, saltwater exposure and long-term structural reliability.", "Need lightweight marine material for deep-ocean pressure and corrosion over 50 years"],
+    ["Energy", "Create energy investigation", "Study heat, pressure, fatigue and industrial deployment potential.", "Investigate high-temperature energy system materials for pressure and thermal cycling"],
+    ["Medical", "Create medical investigation", "Rank biocompatibility-adjacent, corrosion-resistant and lightweight material candidates.", "Find lightweight corrosion-resistant material candidates for medical device environments"],
+    ["Mining", "Create mining investigation", "Build a harsh-environment resource workflow using pressure, wear and formation risk.", "Create mining equipment material investigation for abrasion pressure and long-duration exposure"],
+    ["Automotive", "Create automotive investigation", "Prioritize mass reduction, thermal response, fatigue and manufacturability.", "Create automotive lightweight material report for heat fatigue and structural reliability"],
+  ];
+
+  const suggestedPrompts = [
+    "Compare aluminium and titanium for aerospace structures",
+    "Generate Executive Summary for titanium ocean exposure",
+    "Build a Time Machine scenario for copper under high heat",
+    "Create a Research Report for hydrogen storage materials",
+    "Create a Poster from aluminium and titanium discovery",
+    "Explain this page and what I should do next",
+    "Find strongest material relationship for magnesium",
+    "PV=nRT explain formula variables example and applications",
   ];
 
   const detectMaterial = (text) => {
-    const directSymbol = elements.find((e) => text.includes(` ${e.symbol.toLowerCase()} `) || text === e.symbol.toLowerCase());
     const byName = elements.find((e) => text.includes(e.name.toLowerCase()));
-    return byName || directSymbol || active;
+    if (byName) return byName;
+    const symbolMatch = elements.find((e) => new RegExp(`(^|[^a-z0-9])${e.symbol.toLowerCase()}([^a-z0-9]|$)`).test(text));
+    return symbolMatch || active;
   };
 
   const detectedMaterial = detectMaterial(` ${normalized} `);
+
   const detectedEnvironment = useMemo(() => {
-    if (normalized.includes("ocean") || normalized.includes("salt") || normalized.includes("marine")) return "Deep-ocean / saltwater exposure";
     if (normalized.includes("geothermal")) return "Deep-ocean geothermal exposure";
+    if (normalized.includes("ocean") || normalized.includes("salt") || normalized.includes("marine")) return "Deep-ocean / saltwater exposure";
+    if (normalized.includes("nuclear") || normalized.includes("reactor")) return "Nuclear reactor environment";
+    if (normalized.includes("space") || normalized.includes("vacuum") || normalized.includes("aerospace")) return "Vacuum / aerospace environment";
     if (normalized.includes("heat") || normalized.includes("thermal") || normalized.includes("temperature")) return "High-temperature environment";
     if (normalized.includes("pressure") || normalized.includes("deep")) return "High-pressure environment";
-    if (normalized.includes("space") || normalized.includes("vacuum")) return "Vacuum / aerospace environment";
     if (normalized.includes("corrosion")) return "Corrosion-risk environment";
     return "General material investigation";
   }, [normalized]);
@@ -10161,13 +10173,28 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
     const match = normalized.match(/(\d+)\s*(year|years|yr|yrs)/);
     if (match) return `${match[1]} years`;
     if (normalized.includes("long term") || normalized.includes("long-term")) return "50 years";
+    if (normalized.includes("short term") || normalized.includes("short-term")) return "5 years";
     return "50 years";
   }, [normalized]);
 
+  const scenarioProfile = useMemo(() => {
+    const env = detectedEnvironment.toLowerCase();
+    return {
+      temperature: env.includes("geothermal") || env.includes("reactor") || env.includes("high-temperature") ? "High" : env.includes("ocean") ? "Variable" : "Moderate",
+      pressure: env.includes("ocean") || env.includes("pressure") || env.includes("reactor") ? "High" : "Standard",
+      horizon: detectedHorizon,
+      riskFactors: [
+        env.includes("ocean") ? "Saltwater corrosion" : "Surface degradation",
+        env.includes("geothermal") || env.includes("thermal") || env.includes("reactor") ? "Thermal cycling" : "Environmental cycling",
+        env.includes("pressure") || env.includes("ocean") ? "Pressure fatigue" : "Mechanical fatigue",
+      ],
+    };
+  }, [detectedEnvironment, detectedHorizon]);
+
   const investigationType = useMemo(() => {
+    if (/\bpv\s*=\s*nrt\b/.test(normalized) || normalized.includes("formula") || normalized.includes("equation") || normalized.includes("calculate")) return "Calculation framework";
     if (normalized.includes("poster") || normalized.includes("viral") || normalized.includes("card")) return "Media asset generation";
     if (normalized.includes("report") || normalized.includes("summary") || normalized.includes("brief")) return "Executive research output";
-    if (normalized.includes("equation") || normalized.includes("formula") || normalized.includes("calculate")) return "Calculation framework";
     if (normalized.includes("relationship") || normalized.includes("compare")) return "Material relationship analysis";
     if (normalized.includes("time") || normalized.includes("forecast") || normalized.includes("years")) return "Future Simulation workflow";
     return "Material investigation workflow";
@@ -10177,16 +10204,18 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
     const environmentBias = (symbol) => {
       const s = score(symbol);
       let value = s.stability * 20 + s.pressure * 14 + s.thermal * 12 + s.conductivity * 6 + s.rarity * 4;
-      if (detectedEnvironment.toLowerCase().includes("ocean")) value += s.stability * 16 + s.pressure * 12;
-      if (detectedEnvironment.toLowerCase().includes("thermal") || detectedEnvironment.toLowerCase().includes("geothermal")) value += s.thermal * 18;
-      if (detectedEnvironment.toLowerCase().includes("pressure")) value += s.pressure * 18;
+      const env = detectedEnvironment.toLowerCase();
+      if (env.includes("ocean") || env.includes("saltwater")) value += s.stability * 16 + s.pressure * 12;
+      if (env.includes("thermal") || env.includes("geothermal") || env.includes("reactor")) value += s.thermal * 18;
+      if (env.includes("pressure")) value += s.pressure * 18;
+      if (normalized.includes("lightweight") || normalized.includes("aerospace")) value += Math.max(0, 90 - (elementMap[symbol]?.atomicNumber || 50)) * 0.45;
       return Math.round(value);
     };
     return elements
       .map((e) => ({ ...e, aiScore: environmentBias(e.symbol), profile: score(e.symbol) }))
       .sort((a, b) => b.aiScore - a.aiScore)
       .slice(0, 6);
-  }, [detectedEnvironment]);
+  }, [detectedEnvironment, normalized]);
 
   const riskProfile = useMemo(() => {
     const s = score(detectedMaterial.symbol);
@@ -10203,23 +10232,58 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
     };
   }, [detectedMaterial.symbol]);
 
-  const confidence = Math.max(82, Math.min(99, Math.round(94 - riskProfile.overall * 0.12 + materialStack[0].aiScore % 8)));
-  const recommendedLab = investigationType.includes("Future") ? "Future Simulation" : investigationType.includes("Calculation") ? "Calculation Studio" : investigationType.includes("relationship") ? "Element Relationships" : "Mission Intelligence";
+  const confidence = Math.max(82, Math.min(99, Math.round(94 - riskProfile.overall * 0.12 + (materialStack[0]?.aiScore || 0) % 8)));
+  const recommendedLab = investigationType.includes("Future") ? "Future Simulation" : investigationType.includes("Calculation") ? "Calculation Studio" : investigationType.includes("relationship") ? "Element Relationships" : "Advanced Material Analysis";
+  const suggestedPair = [detectedMaterial.symbol, materialStack.find((m) => m.symbol !== detectedMaterial.symbol)?.symbol || "Ni"];
+
+  const researchPath = [
+    ["01", "Compare Materials", "Establish the strongest material stack and relationship baseline.", "compare"],
+    ["02", "Run Future Simulation", `Forecast performance across ${detectedHorizon} in ${detectedEnvironment}.`, "timemachine"],
+    ["03", "Generate Executive Summary", "Translate outputs into findings, significance, applications, risks and next steps.", "reports"],
+    ["04", "Create Research Report", "Package the investigation into an export-ready subscriber asset.", "simreports"],
+  ];
 
   const investigationPlan = [
     ["Material", `${detectedMaterial.name} (${detectedMaterial.symbol})`],
     ["Environment", detectedEnvironment],
     ["Time horizon", detectedHorizon],
-    ["Risk profile", `${riskProfile.label} · ${riskProfile.overall}% review load`],
-    ["Recommended lab", recommendedLab],
-    ["Next step", investigationType.includes("Media") ? "Create Poster" : investigationType.includes("Calculation") ? "Open Calculation Studio" : "Run Future Simulation"],
+    ["Risk factors", scenarioProfile.riskFactors.join(" · ")],
+    ["Recommended labs", "Future Simulation · Element Relationships · Advanced Material Analysis"],
+    ["Outputs", "Executive Report · Poster · Forecast Pack"],
   ];
 
-  const exportOptions = [
-    ["Executive Report", "Generate a polished research report for subscribers.", "reports", true],
-    ["Discovery Poster", "Create a shareable visual asset from this investigation.", "viralcards", true],
-    ["Forecast Pack", "Run and export a long-horizon simulation.", "timemachine", true],
-    ["Calculation Board", "Open equations, formulas and variable frameworks.", "calculations", false],
+  const executiveSummary = [
+    ["Finding", `${detectedMaterial.name} is the active investigation anchor for ${detectedEnvironment.toLowerCase()}.`],
+    ["Significance", `The model sees a ${riskProfile.label.toLowerCase()} profile with ${confidence}% workflow confidence.`],
+    ["Applications", activePack === "Aerospace" ? "Aerospace, lightweight structures, thermal reliability" : activePack === "Marine" ? "Marine, deep-ocean systems, corrosion-resilient assemblies" : activePack === "Energy" ? "Energy, heat systems, pressure environments" : "Research, engineering screening, early-stage materials review"],
+    ["Risks", scenarioProfile.riskFactors.join(", ")],
+    ["Recommended Next Step", "Run Future Simulation, then generate an Executive Report."],
+  ];
+
+  const discoveryRanking = [
+    ["Rank", confidence >= 94 ? "Top 4%" : confidence >= 90 ? "Top 8%" : "Top 12%"],
+    ["Industry Relevance", activePack],
+    ["Commercial Potential", confidence >= 92 ? "High" : "Medium-high"],
+    ["Research Priority", riskProfile.overall < 55 ? "Recommended" : "Review before recommendation"],
+  ];
+
+  const opportunity = {
+    title: `Potential Opportunity: ${suggestedPair[0]} + ${suggestedPair[1]}`,
+    reason: detectedEnvironment.toLowerCase().includes("thermal") || detectedEnvironment.toLowerCase().includes("geothermal") ? "High thermal resilience and strong long-horizon screening signal." : "Balanced stability, pressure response and material relationship signal.",
+    markets: activePack === "Marine" ? "Marine · Energy · Industrial" : activePack === "Aerospace" ? "Aerospace · Defence · Advanced manufacturing" : "Energy · Industrial · Research",
+  };
+
+  const calculationInsight = normalized.includes("pv") || normalized.includes("nrt") ? {
+    formula: "PV = nRT",
+    variables: "P pressure · V volume · n amount of substance · R gas constant · T temperature",
+    example: "Use it to estimate gas-state behaviour under pressure and temperature changes.",
+    applications: "Thermal systems, gas modelling, reactor environments, pressure vessels.",
+  } : null;
+
+  const trendingInvestigations = [
+    ["Titanium Corrosion", "Marine and geothermal exposure studies are trending."],
+    ["Hydrogen Storage", "Energy workflows are testing pressure and diffusion constraints."],
+    ["Battery Materials", "Lithium, nickel and graphite investigations are rising."],
   ];
 
   const rememberPrompt = (text = prompt) => {
@@ -10227,9 +10291,15 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
     if (!clean) return;
     setRecentInvestigations((previous) => {
       const next = [clean, ...previous.filter((item) => item !== clean)].slice(0, 6);
-      try { localStorage.setItem("elementos_copilot_recent", JSON.stringify(next)); } catch {}
+      try { if (typeof window !== "undefined") localStorage.setItem("elementos_copilot_recent", JSON.stringify(next)); } catch {}
       return next;
     });
+  };
+
+  const applyIndustryPack = (pack) => {
+    setActivePack(pack[0]);
+    setPrompt(pack[3]);
+    rememberPrompt(pack[3]);
   };
 
   const runInvestigation = () => {
@@ -10258,44 +10328,54 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
     setPage("lab");
   };
 
+  const runMacro = () => {
+    rememberPrompt("Create aerospace report");
+    if (!guardProAction("AI Command Macros are a Pro Lab workflow.")) return;
+    setSelected("Al");
+    setCompare(["Al", "Ti"]);
+    notifyUser("Aerospace macro prepared: Al + Ti comparison, Future Simulation, Executive Report and Poster workflow.");
+    setPage("reports");
+  };
+
   const exportBrief = () => {
     rememberPrompt();
-    if (!guardProAction("Export Copilot briefs as PDF, JSON and SVG with Pro Researcher.")) return;
-    const summary = `ElementOS Research Assistant Brief\n\nPrompt: ${prompt}\nMaterial: ${detectedMaterial.name} (${detectedMaterial.symbol})\nEnvironment: ${detectedEnvironment}\nHorizon: ${detectedHorizon}\nRisk: ${riskProfile.label} (${riskProfile.overall}%)\nRecommended lab: ${recommendedLab}\nConfidence: ${confidence}%\n\nSuggested materials:\n${materialStack.map((m, i) => `${i + 1}. ${m.name} (${m.symbol}) — ${m.aiScore}`).join("\n")}`;
-    exportAllFormats({ baseName: "elementos-research-assistant-brief", title: "ElementOS Research Assistant Brief", summary, payload: { prompt, detectedMaterial, detectedEnvironment, detectedHorizon, riskProfile, materialStack } });
+    if (!guardProAction("Export Research Director briefs as PDF, JSON and SVG with Pro Researcher.")) return;
+    const summary = `ElementOS Research Director Brief\n\nPrompt: ${prompt}\nMaterial: ${detectedMaterial.name} (${detectedMaterial.symbol})\nEnvironment: ${detectedEnvironment}\nHorizon: ${detectedHorizon}\nRisk: ${riskProfile.label} (${riskProfile.overall}%)\nRecommended lab: ${recommendedLab}\nConfidence: ${confidence}%\n\nExecutive Summary:\n${executiveSummary.map(([a,b]) => `${a}: ${b}`).join("\n")}\n\nSuggested materials:\n${materialStack.map((m, i) => `${i + 1}. ${m.name} (${m.symbol}) — ${m.aiScore}`).join("\n")}`;
+    exportAllFormats({ baseName: "elementos-research-director-brief", title: "ElementOS Research Director Brief", summary, payload: { prompt, detectedMaterial, detectedEnvironment, detectedHorizon, riskProfile, materialStack, executiveSummary } });
   };
 
   return (
     <>
-      <Panel className="overflow-hidden border-cyan-300/25 bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.22),transparent_28%),radial-gradient(circle_at_80%_20%,rgba(251,191,36,.13),transparent_25%),linear-gradient(135deg,#020617,#07111f_55%,#111827)] p-0">
+      <Panel className="overflow-hidden border-cyan-300/25 bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.24),transparent_28%),radial-gradient(circle_at_84%_22%,rgba(251,191,36,.16),transparent_24%),linear-gradient(135deg,#020617,#07111f_55%,#111827)] p-0">
         <div className="relative p-6 md:p-8">
           <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl" />
           <div className="pointer-events-none absolute bottom-0 left-1/3 h-52 w-52 rounded-full bg-fuchsia-400/10 blur-3xl" />
           <div className="relative grid gap-8 xl:grid-cols-[1.12fr_.88fr] xl:items-center">
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-cyan-100">
-                <Bot size={13}/> Research Assistant
+                <Bot size={13}/> Research Director
               </div>
               <h1 className="max-w-5xl text-5xl font-black leading-[.95] tracking-tight sm:text-7xl">
-                AI Copilot <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">for Material Intelligence</span>
+                Research Director <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">for Material Intelligence</span>
               </h1>
               <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-                Type a goal. ElementOS turns it into a clear investigation plan with suggested materials, risk profile, recommended lab, executive output and export-ready next actions.
+                Describe your goal and ElementOS will build the investigation, run the workflow and generate the outputs.
               </p>
               <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                {["Build workflow", "Run simulation", "Create report"].map((item) => (
-                  <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-black text-cyan-50">
-                    <CheckCircle2 size={14} className="mr-2 inline text-emerald-200"/> {item}
+                {[["Goal", "Describe what you need"], ["Investigation", "Copilot builds the plan"], ["Outputs", "Reports, posters and forecasts"]].map(([title, body]) => (
+                  <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-cyan-50">
+                    <div className="font-black text-white"><CheckCircle2 size={14} className="mr-2 inline text-emerald-200"/> {title}</div>
+                    <div className="mt-1 text-xs text-slate-400">{body}</div>
                   </div>
                 ))}
               </div>
               <div className="mt-7 rounded-[2rem] border border-cyan-300/20 bg-black/35 p-4 shadow-[0_0_70px_rgba(34,211,238,.12)]">
-                <div className="mb-3 text-xs font-black uppercase tracking-[.22em] text-cyan-200">What do you want ElementOS to do?</div>
+                <div className="mb-3 text-xs font-black uppercase tracking-[.22em] text-cyan-200">What would you like to investigate?</div>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   className="min-h-[132px] w-full rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-5 text-base leading-7 text-cyan-50 outline-none focus:border-cyan-300/50"
-                  placeholder="Ask anything about materials, simulations, reports, formulas..."
+                  placeholder="Ask anything about materials, simulations, forecasts, reports or equations..."
                 />
                 <div className="mt-4 flex flex-wrap gap-3">
                   <Button onClick={runInvestigation} variant="primary">Run Simulation</Button>
@@ -10309,15 +10389,15 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
             <Panel className="bg-black/30">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-xs uppercase tracking-[.25em] text-slate-500">Executive Output</div>
-                  <div className="mt-3 text-5xl font-black text-emerald-100">{confidence}%</div>
-                  <div className="mt-1 text-xs uppercase tracking-[.18em] text-slate-500">workflow confidence</div>
+                  <div className="text-xs uppercase tracking-[.25em] text-slate-500">Copilot Confidence</div>
+                  <div className="mt-3 text-6xl font-black text-emerald-100">{confidence}%</div>
+                  <div className="mt-1 text-xs uppercase tracking-[.18em] text-slate-500">based on relationships, forecasts and material profiles</div>
                 </div>
                 <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-amber-100">{activePlan}</div>
               </div>
               <div className="mt-6 rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
                 <div className="text-xs uppercase tracking-[.2em] text-cyan-200">Recommended Next Step</div>
-                <div className="mt-2 text-2xl font-black text-white">{investigationPlan[investigationPlan.length - 1][1]}</div>
+                <div className="mt-2 text-2xl font-black text-white">Run Future Simulation</div>
                 <p className="mt-2 text-sm leading-6 text-slate-300">{isPaidPlan ? "Pro workflow ready: reports, posters and saved discoveries are unlocked." : "Explorer can investigate. Pro Researcher unlocks reports, posters and saved discoveries."}</p>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -10329,85 +10409,133 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[.92fr_1.08fr]">
+      <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
         <Panel>
-          <Pill gold><ClipboardList size={12}/> Suggested Workflows</Pill>
-          <h2 className="mt-3 text-4xl font-black">Start with a proven research path.</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Use these as shortcuts. They rewrite the prompt and prepare the Copilot result cards instantly.</p>
+          <Pill gold><BriefcaseBusiness size={12}/> One-Click Research Packs</Pill>
+          <h2 className="mt-3 text-4xl font-black">Start with an industry workflow.</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Pick a sector and Research Director prepares the investigation, material focus, workflow and outputs.</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {suggestedWorkflows.map((workflow) => (
-              <button
-                key={workflow}
-                onClick={() => {
-                  setActiveWorkflow(workflow);
-                  const promptMap = {
-                    "Compare two materials": "Compare aluminium and titanium for aerospace structural reliability",
-                    "Generate Executive Summary": "Generate an executive summary for titanium in deep-ocean geothermal exposure over 50 years",
-                    "Build a Time Machine scenario": "Build a Time Machine scenario for titanium under saltwater pressure over 50 years",
-                    "Create a Research Report": "Create a research report for aluminium and copper thermal relationship analysis",
-                    "Create a Poster": "Create a poster from a legendary aluminium and titanium discovery",
-                    "Explain this page": "Explain how to use the AI Copilot and what action I should take next",
-                    "Find strongest material relationship": "Find the strongest material relationship for titanium under pressure and heat",
-                    "Build equation framework": "Build an equation framework for pressure, temperature, diffusion and time",
-                  };
-                  setPrompt(promptMap[workflow] || workflow);
-                }}
-                className={`rounded-[1.5rem] border p-4 text-left transition hover:-translate-y-1 ${activeWorkflow === workflow ? "border-cyan-300/50 bg-cyan-300/10 shadow-[0_0_40px_rgba(34,211,238,.12)]" : "border-white/10 bg-black/25 hover:bg-white/[.05]"}`}
-              >
-                <div className="text-sm font-black text-white">{workflow}</div>
-                <div className="mt-2 text-xs leading-5 text-slate-400">Click to load this investigation workflow into the Copilot input.</div>
+            {industryPacks.map((pack) => (
+              <button key={pack[0]} onClick={() => applyIndustryPack(pack)} className={`rounded-[1.5rem] border p-4 text-left transition hover:-translate-y-1 ${activePack === pack[0] ? "border-amber-300/45 bg-amber-300/10" : "border-white/10 bg-black/25 hover:border-cyan-300/35"}`}>
+                <div className="text-xs uppercase tracking-[.2em] text-cyan-200">{pack[0]}</div>
+                <div className="mt-2 text-lg font-black text-white">{pack[1]}</div>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{pack[2]}</p>
               </button>
             ))}
           </div>
         </Panel>
 
         <Panel>
-          <Pill gold><Target size={12}/> Investigation Plan</Pill>
-          <h2 className="mt-3 text-4xl font-black">Type goal → get workflow → generate asset.</h2>
+          <Pill gold><ClipboardList size={12}/> Investigation Builder</Pill>
+          <h2 className="mt-3 text-4xl font-black">Investigation Plan</h2>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {investigationPlan.map(([label, value]) => (
-              <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{label}</div>
-                <div className="mt-2 text-lg font-black text-white">{value}</div>
+              <div key={label} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-4">
+                <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+                <div className="mt-2 text-sm font-black leading-6 text-cyan-50">{value}</div>
               </div>
             ))}
           </div>
-          <div className="mt-5 rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5">
-            <div className="text-xs uppercase tracking-[.22em] text-emerald-200">Risk Profile</div>
-            <div className="mt-2 text-3xl font-black text-emerald-100">{riskProfile.label}</div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              {[ ["Thermal", riskProfile.thermalRisk], ["Pressure", riskProfile.pressureRisk], ["Stability", riskProfile.stabilityRisk] ].map(([label, value]) => (
-                <div key={label}>
-                  <div className="mb-2 flex justify-between text-[10px] uppercase tracking-[.16em] text-slate-400"><span>{label}</span><span>{value}%</span></div>
-                  <div className="h-2 overflow-hidden rounded-full bg-black/40"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${Math.max(8, 100 - value)}%` }} /></div>
-                </div>
-              ))}
-            </div>
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><CheckCircle2 size={12}/> AI Research Path</Pill>
+            <h2 className="mt-3 text-4xl font-black">Recommended Workflow</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">A guided journey from goal to output. Each step moves the user closer to a subscriber-worthy asset.</p>
+          </div>
+          <Button onClick={runMacro} variant="primary">Run Pro Macro</Button>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {researchPath.map(([num, title, body, target]) => (
+            <button key={title} onClick={() => setPage(target)} className="rounded-[2rem] border border-white/10 bg-black/25 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-300/10">
+              <div className="grid h-12 w-12 place-items-center rounded-2xl border border-cyan-300/25 bg-cyan-300/10 text-sm font-black text-cyan-100">{num}</div>
+              <div className="mt-4 text-xl font-black text-white">{title}</div>
+              <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+            </button>
+          ))}
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
+        <Panel>
+          <Pill gold><FileText size={12}/> Executive Summary Generator</Pill>
+          <h2 className="mt-3 text-4xl font-black">Executive Output</h2>
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
+            {executiveSummary.map(([title, body]) => (
+              <div key={title} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                <div className="text-xs uppercase tracking-[.2em] text-amber-100">{title}</div>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{body}</p>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel>
+          <Pill gold><Target size={12}/> AI Discovery Ranking</Pill>
+          <h2 className="mt-3 text-4xl font-black">Research Priority</h2>
+          <div className="mt-6 space-y-3">
+            {discoveryRanking.map(([label, value]) => (
+              <div key={label} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                <div className="text-xs uppercase tracking-[.2em] text-slate-500">{label}</div>
+                <div className="text-lg font-black text-cyan-100">{value}</div>
+              </div>
+            ))}
           </div>
         </Panel>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
         <Panel>
-          <Pill gold><Atom size={12}/> Suggested Materials</Pill>
-          <h2 className="mt-3 text-4xl font-black">Material stack for this investigation.</h2>
+          <Pill gold><Atom size={12}/> Material Recommendation Engine</Pill>
+          <h2 className="mt-3 text-4xl font-black">Ranked material stack</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {materialStack.map((material, index) => (
-              <button key={material.symbol} onClick={() => { setSelected(material.symbol); setCompare([material.symbol, ...currentPair].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4)); }} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-300/10 via-slate-950 to-emerald-300/10 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/40">
+              <button key={material.symbol} onClick={() => { setSelected(material.symbol); setCompare([material.symbol, ...suggestedPair].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4)); }} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-300/10 via-slate-950 to-emerald-300/10 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/40">
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-xs uppercase tracking-[.22em] text-slate-500">rank #{index + 1}</div>
                   <div className="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1 text-xs font-black text-emerald-100">{material.aiScore}</div>
                 </div>
                 <div className="mt-4 text-5xl font-black text-cyan-100">{material.symbol}</div>
                 <div className="mt-1 text-lg font-black text-white">{material.name}</div>
-                <p className="mt-3 text-sm leading-6 text-slate-400">Balanced signal across stability, pressure, thermal response and research relevance.</p>
+                <p className="mt-3 text-sm leading-6 text-slate-400">Ranked by suitability for {detectedEnvironment.toLowerCase()}.</p>
               </button>
             ))}
           </div>
         </Panel>
 
         <Panel>
-          <Pill gold><Database size={12}/> Command Memory</Pill>
+          <Pill gold><Radar size={12}/> Opportunity Scanner</Pill>
+          <h2 className="mt-3 text-4xl font-black">{opportunity.title}</h2>
+          <p className="mt-4 text-sm leading-7 text-slate-300"><b>Reason:</b> {opportunity.reason}</p>
+          <p className="mt-3 text-sm leading-7 text-slate-300"><b>Potential Markets:</b> {opportunity.markets}</p>
+          <div className="mt-5 rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-5">
+            <div className="text-xs uppercase tracking-[.2em] text-emerald-200">Subscriber value</div>
+            <p className="mt-2 text-sm leading-6 text-emerald-50">Opportunity scanning turns the Copilot from a chatbot into a research outcome engine.</p>
+          </div>
+        </Panel>
+      </div>
+
+      {calculationInsight && (
+        <Panel>
+          <Pill gold><Calculator size={12}/> Calculation Studio Integration</Pill>
+          <h2 className="mt-3 text-4xl font-black">Formula Interpretation</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {Object.entries(calculationInsight).map(([label, value]) => (
+              <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                <div className="text-xs uppercase tracking-[.2em] text-cyan-200">{label}</div>
+                <div className="mt-2 text-sm leading-6 text-slate-300">{value}</div>
+              </div>
+            ))}
+          </div>
+          <Button onClick={() => setPage("calculations")} variant="primary" className="mt-5">Open Calculation Studio</Button>
+        </Panel>
+      )}
+
+      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+        <Panel>
+          <Pill gold><Database size={12}/> Investigation Memory</Pill>
           <h2 className="mt-3 text-4xl font-black">Recent investigations</h2>
           <div className="mt-6 space-y-3">
             {recentInvestigations.map((item) => (
@@ -10417,29 +10545,34 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
               </button>
             ))}
           </div>
-          <Info title="Paid subscriber polish">
-            Explorer users can ask simple questions. Pro Researcher unlocks reports, posters and saved discoveries. Pro Lab unlocks advanced workflows, macros and future premium labs.
-          </Info>
+        </Panel>
+        <Panel>
+          <Pill gold><Network size={12}/> Live Research Feed</Pill>
+          <h2 className="mt-3 text-4xl font-black">Trending investigations</h2>
+          <div className="mt-6 grid gap-3 md:grid-cols-3">
+            {trendingInvestigations.map(([title, body]) => (
+              <div key={title} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-4">
+                <div className="text-lg font-black text-white">{title}</div>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+              </div>
+            ))}
+          </div>
+          <Info title="Explain this page">Describe your goal. Research Director identifies the material, environment, timeline, risk profile, recommended workflow and export-ready outputs.</Info>
         </Panel>
       </div>
 
       <Panel>
-        <Pill gold><Share2 size={12}/> Export Options</Pill>
-        <h2 className="mt-3 text-4xl font-black">Turn the answer into a research asset.</h2>
+        <Pill gold><Share2 size={12}/> Discovery Copilot</Pill>
+        <h2 className="mt-3 text-4xl font-black">What would you like to do next?</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {exportOptions.map(([title, body, target, locked]) => (
-            <div key={title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-              <div className="text-lg font-black text-white">{title}</div>
-              <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
-              <Button onClick={() => { if (locked && !guardProAction(`${title} requires Pro Researcher.`)) return; setPage(target); }} variant={locked && !isPaidPlan ? "ghost" : "primary"} className="mt-5 w-full">{locked && !isPaidPlan ? "Unlock" : "Open"}</Button>
-            </div>
+          {[["Generate Executive Report", generateExecutiveReport], ["Create Poster", createPoster], ["Run Forecast", runInvestigation], ["Find Similar Materials", () => setPage("universe")]].map(([title, action]) => (
+            <Button key={title} onClick={action} variant={title === "Run Forecast" ? "primary" : "ghost"} className="w-full">{title}</Button>
           ))}
         </div>
       </Panel>
     </>
   );
 }
-
 
 
 
