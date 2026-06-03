@@ -10837,8 +10837,8 @@ const startCheckout = async (planName = "Pro Researcher") => {
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
         {page !== "landing" && <VisualConversionStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />}
-        <PageMicroDataBar page={page} setPage={setPage} />
-        <div className="hidden lg:block">
+        {page !== "landing" && <PageMicroDataBar page={page} setPage={setPage} />}
+        {page !== "landing" && <div className="hidden lg:block">
           <UltimateScienceCommandLayer
             page={page}
             setPage={setPage}
@@ -10848,13 +10848,13 @@ const startCheckout = async (planName = "Pro Researcher") => {
             isPro={isPro}
             startCheckout={startCheckout}
           />
-        </div>
-        <div className="hidden lg:block">
+        </div>}
+        {page !== "landing" && <div className="hidden lg:block">
           <PageHelpStrip page={page} />
-        </div>
-        <div className="hidden lg:block">
+        </div>}
+        {page !== "landing" && <div className="hidden lg:block">
           <CopilotEverywhereBar page={page} setPage={setPage} />
-        </div>
+        </div>}
         <div key={page} className="eos-page-stage animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
       </main>
 
