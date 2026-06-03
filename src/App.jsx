@@ -5083,55 +5083,95 @@ function CalculationCore() {
   const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
   const lower = "abcdefghijklmnopqrstuvwxyz".split("");
   const greek = [
-    ["α", "alpha", "Alpha coefficient / angle", 1], ["β", "beta", "Beta factor", 0.5], ["γ", "gamma", "Gamma / Lorentz factor", 1], ["δ", "delta", "Small change", 0.1],
-    ["ε", "epsilon", "Small value / strain", 0.01], ["η", "eta", "Efficiency", 0.85], ["θ", "theta", "Angle", 45], ["κ", "kappa", "Curvature / conductivity", 0.4],
-    ["λ", "lambda", "Wavelength", 0.5], ["μ", "mu", "Friction / permeability", 0.03], ["ν", "nu", "Frequency", 60], ["ρ", "rho", "Density", 7850],
-    ["σ", "sigma", "Stress / standard deviation", 250], ["τ", "tau", "Torque / time constant", 1], ["φ", "phi", "Phase / golden ratio", 1.618], ["ψ", "psi", "Wavefunction", 1],
-    ["ω", "omega", "Angular frequency", 6.283], ["Δ", "Delta", "Change operator", 5]
+    ["Α", "AlphaUpper", "Uppercase alpha", 1], ["Β", "BetaUpper", "Uppercase beta", 1], ["Γ", "GammaUpper", "Gamma function / geometry", 1], ["Δ", "Delta", "Change / difference", 5],
+    ["Ε", "EpsilonUpper", "Uppercase epsilon", 1], ["Ζ", "ZetaUpper", "Uppercase zeta", 1], ["Η", "EtaUpper", "Uppercase eta", 1], ["Θ", "ThetaUpper", "Angle operator", 45],
+    ["Ι", "IotaUpper", "Uppercase iota", 1], ["Κ", "KappaUpper", "Uppercase kappa", 1], ["Λ", "LambdaUpper", "Eigenvalue / lambda matrix", 1], ["Μ", "MuUpper", "Uppercase mu", 1],
+    ["Ν", "NuUpper", "Uppercase nu", 1], ["Ξ", "XiUpper", "Uppercase xi", 1], ["Ο", "OmicronUpper", "Uppercase omicron", 1], ["Π", "PiProduct", "Product operator", 1],
+    ["Ρ", "RhoUpper", "Uppercase rho", 1], ["Σ", "SigmaSum", "Summation operator", 1], ["Τ", "TauUpper", "Uppercase tau", 1], ["Υ", "UpsilonUpper", "Uppercase upsilon", 1],
+    ["Φ", "PhiUpper", "Flux / potential", 1], ["Χ", "ChiUpper", "Uppercase chi", 1], ["Ψ", "PsiUpper", "Wavefunction", 1], ["Ω", "OmegaUpper", "Ohms / sample space", 1],
+    ["α", "alpha", "Alpha coefficient / angle", 1], ["β", "beta", "Beta factor / regression coefficient", 0.5], ["γ", "gamma", "Gamma / Lorentz factor", 1], ["δ", "delta", "Small change", 0.1],
+    ["ε", "epsilon", "Small value / strain", 0.01], ["ζ", "zeta", "Damping ratio / zeta function", 0.7], ["η", "eta", "Efficiency", 0.85], ["θ", "theta", "Angle", 45],
+    ["ι", "iota", "Small index", 1], ["κ", "kappa", "Curvature / conductivity", 0.4], ["λ", "lambda", "Wavelength / eigenvalue", 0.5], ["μ", "mu", "Friction / mean / permeability", 0.03],
+    ["ν", "nu", "Frequency / Poisson ratio", 0.33], ["ξ", "xi", "Random variable / damping", 1], ["ο", "omicron", "Small omicron", 1], ["π", "pi", "Pi constant / product index", Math.PI],
+    ["ρ", "rho", "Density / resistivity", 7850], ["σ", "sigma", "Stress / standard deviation", 250], ["τ", "tau", "Torque / time constant", 1], ["υ", "upsilon", "Velocity-style variable", 1],
+    ["φ", "phi", "Phase / golden ratio", 1.618], ["χ", "chi", "Chi variable", 1], ["ψ", "psi", "Wavefunction", 1], ["ω", "omega", "Angular frequency", 6.283]
   ];
   const constants = [
-    ["π", "pi", "Pi", Math.PI], ["e", "e", "Euler's number", Math.E], ["c", "c", "Speed of light", 299792458], ["G", "Gconst", "Gravitational constant", 6.6743e-11],
-    ["h", "h", "Planck constant", 6.62607015e-34], ["kB", "kB", "Boltzmann constant", 1.380649e-23], ["NA", "NA", "Avogadro constant", 6.02214076e23],
-    ["ε0", "epsilon0", "Vacuum permittivity", 8.8541878128e-12], ["μ0", "mu0", "Vacuum permeability", 1.25663706212e-6]
+    ["π", "pi", "Pi", Math.PI], ["τ", "tauConst", "Tau = 2π", Math.PI * 2], ["e", "eConst", "Euler's number", Math.E], ["φ", "phiConst", "Golden ratio", 1.61803398875],
+    ["i", "imaginaryI", "Imaginary unit", 0], ["∞", "Infinity", "Infinity", 0], ["c", "speedOfLight", "Speed of light", 299792458], ["G", "Gconst", "Gravitational constant", 6.6743e-11],
+    ["h", "planck", "Planck constant", 6.62607015e-34], ["ℏ", "hbar", "Reduced Planck constant", 1.054571817e-34], ["kB", "kB", "Boltzmann constant", 1.380649e-23], ["NA", "NA", "Avogadro constant", 6.02214076e23],
+    ["R", "gasConstant", "Universal gas constant", 8.314462618], ["σSB", "sigmaSB", "Stefan-Boltzmann constant", 5.670374419e-8], ["ε0", "epsilon0", "Vacuum permittivity", 8.8541878128e-12], ["μ0", "mu0", "Vacuum permeability", 1.25663706212e-6],
+    ["ke", "coulombK", "Coulomb constant", 8.9875517923e9], ["me", "electronMass", "Electron mass", 9.1093837015e-31], ["mp", "protonMass", "Proton mass", 1.67262192369e-27], ["mn", "neutronMass", "Neutron mass", 1.67492749804e-27],
+    ["qe", "elementaryCharge", "Elementary charge", 1.602176634e-19], ["a0", "bohrRadius", "Bohr radius", 5.29177210903e-11], ["g0", "standardGravity", "Standard gravity", 9.80665], ["atm", "atmosphere", "Standard atmosphere", 101325]
   ];
   const physics = [
     ["m", "m", "Mass", 10], ["v", "v", "Velocity", 12], ["a", "a", "Acceleration", 9.81], ["F", "F", "Force", 100], ["E", "E", "Energy", 1000],
-    ["P", "P", "Pressure / power", 101325], ["V", "V", "Volume / voltage", 1], ["T", "T", "Temperature / time", 293], ["R", "R", "Resistance / gas constant", 8.314],
-    ["I", "I", "Current / intensity", 10], ["Q", "Q", "Charge / heat", 1], ["f", "f", "Frequency", 60], ["x", "x", "Position", 1], ["t", "t", "Time", 1]
+    ["P", "P", "Pressure / power", 101325], ["V", "V", "Volume / voltage", 1], ["T", "T", "Temperature / time", 293], ["R", "R", "Resistance / radius", 8.314],
+    ["I", "I", "Current / intensity", 10], ["Q", "Q", "Charge / heat", 1], ["q", "q", "Charge", 1], ["f", "f", "Frequency", 60], ["x", "x", "Position", 1], ["y", "y", "Vertical position", 1], ["z", "z", "Depth / third coordinate", 1], ["t", "t", "Time", 1],
+    ["p", "p", "Momentum", 5], ["L", "L", "Angular momentum / length", 2], ["W", "W", "Work / width", 3], ["U", "U", "Potential energy", 100], ["K", "K", "Kinetic energy", 100],
+    ["B", "B", "Magnetic field", 0.5], ["D", "D", "Electric displacement / diffusion", 1], ["H", "H", "Magnetic field intensity / height", 4], ["J", "J", "Current density", 1],
+    ["Φ", "PhiUpper", "Flux", 1], ["A", "A", "Area / vector potential", 12], ["Ω", "OmegaUpper", "Resistance unit / sample space", 1], ["ρ", "rho", "Density", 7850]
   ];
   const operators = [
-    ["+", " + ", "Add"], ["−", " - ", "Subtract"], ["×", " * ", "Multiply"], ["÷", " / ", "Divide"], ["^", " ^ ", "Power"], ["=", " = ", "Equals"],
-    ["≈", " ~= ", "Approximately equal"], ["<", " < ", "Less than"], [">", " > ", "Greater than"], ["≤", " <= ", "Less or equal"], ["≥", " >= ", "Greater or equal"],
-    ["(", "(", "Open bracket"], [")", ")", "Close bracket"], ["Fraction", "A / B", "Part divided by whole"], ["Root", "sqrt(", "Square root"], ["Mean", "(A + B) / 2", "Average"],
-    ["Half", "A / 2", "Split into two"], ["Third", "A / 3", "Split into three"], ["Quarter", "A / 4", "Split into four"], ["A/n", "A / n", "Subdivide into n steps"]
+    ["+", " + ", "Add"], ["−", " - ", "Subtract"], ["×", " * ", "Multiply"], ["÷", " / ", "Divide"], ["/", " / ", "Slash divide"], ["^", " ^ ", "Power"], ["**", " ^ ", "Power"], ["=", " = ", "Equals"],
+    ["±", " +/- ", "Plus or minus"], ["∓", " -/+ ", "Minus or plus"], ["∗", " * ", "Asterisk product"], ["∘", " compose ", "Function composition"], ["%", " % ", "Modulo / percent"], ["!", "!", "Factorial marker"],
+    ["≈", " ~= ", "Approximately equal"], ["≃", " ~= ", "Asymptotically / approximately equal"], ["≅", " ~= ", "Congruent / approximately equal"], ["∼", " ~ ", "Similar / distributed as"],
+    ["<", " < ", "Less than"], [">", " > ", "Greater than"], ["≤", " <= ", "Less or equal"], ["≥", " >= ", "Greater or equal"], ["≪", " << ", "Much less than"], ["≫", " >> ", "Much greater than"],
+    ["(", "(", "Open bracket"], [")", ")", "Close bracket"], ["[", "[", "Open square bracket"], ["]", "]", "Close square bracket"], ["{", "{", "Open brace"], ["}", "}", "Close brace"],
+    ["Fraction", "A / B", "Part divided by whole"], ["Root", "sqrt(", "Square root"], ["nth root", "root(n,A)", "n-th root"], ["Mean", "(A + B) / 2", "Average"],
+    ["Half", "A / 2", "Split into two"], ["Third", "A / 3", "Split into three"], ["Quarter", "A / 4", "Split into four"], ["A/n", "A / n", "Subdivide into n steps"], ["Ratio", "A / (A + B)", "Ratio share"], ["Percent", "(A / B) * 100", "Percentage share"]
   ];
   const calculus = [
-    ["∫", "integral", "Integral marker"], ["∂", "partial", "Partial derivative"], ["∇", "nabla", "Gradient"], ["Σ", "sum", "Summation"], ["Π", "product", "Product"],
-    ["Δx", "DeltaX", "Change in x"], ["Δy", "DeltaY", "Change in y"], ["dx", "dx", "Differential x"], ["dt", "dt", "Differential time"], ["dy/dx", "DeltaY / DeltaX", "Rate of change"]
+    ["∫", "integral", "Integral marker"], ["∮", "contourIntegral", "Contour integral"], ["∯", "surfaceIntegral", "Surface integral"], ["∰", "volumeIntegral", "Volume integral"],
+    ["d/dx", "DeltaY / DeltaX", "Derivative rate of change"], ["∂", "partial", "Partial derivative"], ["∂²", "partial2", "Second partial derivative"], ["∇", "nabla", "Gradient / del operator"], ["∇·", "divergence", "Divergence"], ["∇×", "curl", "Curl"],
+    ["Σ", "sum", "Summation"], ["Π", "product", "Product"], ["lim", "limit", "Limit"], ["sup", "supremum", "Supremum"], ["inf", "infimum", "Infimum"], ["argmax", "argmax", "Argument maximum"], ["argmin", "argmin", "Argument minimum"],
+    ["Δx", "DeltaX", "Change in x"], ["Δy", "DeltaY", "Change in y"], ["dx", "dx", "Differential x"], ["dt", "dt", "Differential time"], ["dy/dx", "DeltaY / DeltaX", "Rate of change"], ["∴", "therefore", "Therefore"], ["∵", "because", "Because"]
   ];
   const geometry = [
-    ["△", "(0.5 * B * H)", "Triangle area: base × height ÷ 2"], ["○", "(pi * r^2)", "Circle area from radius"], ["□", "(L^2)", "Square area from side length"], ["◇", "((d * d) / 2)", "Diamond/rhombus estimate from diagonal"], ["∠", "theta", "Angle variable"],
-    ["r", "r", "Radius", 5], ["d", "d", "Distance / diameter", 10], ["L", "L", "Length", 2], ["W", "W", "Width / work", 3], ["H", "H", "Height", 4], ["B", "B", "Base length", 6], ["A", "A", "Area / input value", 12]
+    ["△", "(0.5 * B * H)", "Triangle area: base × height ÷ 2"], ["○", "(pi * r^2)", "Circle area from radius"], ["□", "(L^2)", "Square area from side length"], ["▭", "(L * W)", "Rectangle area"], ["◇", "((d1 * d2) / 2)", "Rhombus / diamond area"],
+    ["⬡", "((3 * sqrt(3) / 2) * s^2)", "Hexagon area"], ["∠", "theta", "Angle variable"], ["∟", "rightAngle", "Right angle"], ["⊥", "perpendicular", "Perpendicular"], ["∥", "parallel", "Parallel"], ["≅", "congruent", "Congruent"], ["∼", "similar", "Similar geometry"],
+    ["πr²", "pi * r^2", "Circle area"], ["2πr", "2 * pi * r", "Circle circumference"], ["4πr²", "4 * pi * r^2", "Sphere surface area"], ["4/3πr³", "(4/3) * pi * r^3", "Sphere volume"],
+    ["r", "r", "Radius", 5], ["d", "d", "Distance / diameter", 10], ["s", "s", "Side length", 2], ["L", "L", "Length", 2], ["W", "W", "Width / work", 3], ["H", "H", "Height", 4], ["B", "B", "Base length", 6], ["A", "A", "Area / input value", 12]
   ];
   const relations = [
-    ["=", " = ", "Equals"], ["≈", " ~= ", "Approximately equal"], ["≠", " != ", "Not equal"], ["<", " < ", "Less than"], [">", " > ", "Greater than"],
-    ["≤", " <= ", "Less than or equal"], ["≥", " >= ", "Greater than or equal"], ["∝", " proportional ", "Proportional relationship"], ["∞", "Infinity", "Infinity marker"]
+    ["=", " = ", "Equals"], ["≠", " != ", "Not equal"], ["≈", " ~= ", "Approximately equal"], ["≡", " equivalent ", "Identically equal / congruent"], ["≜", " definedAs ", "Defined as"], ["≔", " assignedAs ", "Assigned as"],
+    ["<", " < ", "Less than"], [">", " > ", "Greater than"], ["≤", " <= ", "Less than or equal"], ["≥", " >= ", "Greater than or equal"], ["∝", " proportional ", "Proportional relationship"], ["∞", "Infinity", "Infinity marker"], ["∴", "therefore", "Therefore"], ["∵", "because", "Because"]
   ];
   const sets = [
-    ["∈", " in ", "Element of"], ["∉", " notin ", "Not an element of"], ["∪", " union ", "Union"], ["∩", " intersection ", "Intersection"],
-    ["⊂", " subset ", "Subset"], ["⊆", " subseteq ", "Subset or equal"], ["∅", "emptySet", "Empty set"], ["ℝ", "Real", "Real numbers"], ["ℤ", "Integer", "Integers"], ["ℕ", "Natural", "Natural numbers"]
+    ["∈", " in ", "Element of"], ["∉", " notin ", "Not an element of"], ["∋", " containsAsMember ", "Contains as member"], ["∪", " union ", "Union"], ["∩", " intersection ", "Intersection"], ["\\", " setMinus ", "Set difference"],
+    ["⊂", " subset ", "Subset"], ["⊃", " superset ", "Superset"], ["⊆", " subseteq ", "Subset or equal"], ["⊇", " superseteq ", "Superset or equal"], ["⊄", " notSubset ", "Not subset"], ["∅", "emptySet", "Empty set"],
+    ["ℝ", "Real", "Real numbers"], ["ℤ", "Integer", "Integers"], ["ℕ", "Natural", "Natural numbers"], ["ℚ", "Rational", "Rational numbers"], ["ℂ", "Complex", "Complex numbers"], ["ℙ", "Prime", "Prime numbers / probability"], ["𝔽", "Field", "Mathematical field"]
   ];
   const logic = [
-    ["∧", " and ", "Logical AND"], ["∨", " or ", "Logical OR"], ["¬", " not ", "Logical NOT"], ["⇒", " implies ", "Implies"], ["⇔", " iff ", "If and only if"], ["∀", "forall", "For all"], ["∃", "exists", "There exists"]
+    ["∧", " and ", "Logical AND"], ["∨", " or ", "Logical OR"], ["¬", " not ", "Logical NOT"], ["⊕", " xor ", "Exclusive OR"], ["⊻", " xor ", "Exclusive OR"], ["⇒", " implies ", "Implies"], ["⇐", " impliedBy ", "Implied by"], ["⇔", " iff ", "If and only if"],
+    ["∀", "forall", "For all"], ["∃", "exists", "There exists"], ["∄", "notExists", "Does not exist"], ["⊢", "proves", "Proves"], ["⊨", "models", "Models / entails"], ["⊤", "true", "True"], ["⊥", "false", "False / contradiction"]
   ];
   const matrices = [
-    ["[ ]", "matrix", "Matrix placeholder"], ["det", "det", "Determinant"], ["tr", "trace", "Trace"], ["Iₙ", "Identity", "Identity matrix"], ["Aᵀ", "transpose", "Transpose"], ["A⁻¹", "inverse", "Inverse matrix"]
+    ["[ ]", "matrix", "Matrix placeholder"], ["det", "det", "Determinant"], ["tr", "trace", "Trace"], ["rank", "rank", "Matrix rank"], ["eig", "eigen", "Eigenvalue / eigenvector"], ["Iₙ", "Identity", "Identity matrix"], ["0ₙ", "ZeroMatrix", "Zero matrix"],
+    ["Aᵀ", "transpose", "Transpose"], ["A⁻¹", "inverse", "Inverse matrix"], ["diag", "diagonal", "Diagonal matrix"], ["adj", "adjugate", "Adjugate"], ["ker", "kernel", "Kernel / null space"], ["im", "image", "Image / range"]
   ];
   const vectors = [
-    ["→v", "v", "Vector velocity"], ["→F", "F", "Force vector"], ["|v|", "abs(v)", "Vector magnitude"], ["·", " dot ", "Dot product"], ["×", " cross ", "Cross product"], ["î", "iHat", "Unit vector i"], ["ĵ", "jHat", "Unit vector j"], ["k̂", "kHat", "Unit vector k"]
+    ["→v", "v", "Vector velocity"], ["→a", "a", "Acceleration vector"], ["→F", "F", "Force vector"], ["→r", "rVec", "Position vector"], ["|v|", "abs(v)", "Vector magnitude"], ["‖v‖", "norm(v)", "Vector norm"],
+    ["·", " dot ", "Dot product"], ["×", " cross ", "Cross product"], ["⊗", " tensorProduct ", "Tensor product"], ["⊙", " hadamard ", "Hadamard product"], ["î", "iHat", "Unit vector i"], ["ĵ", "jHat", "Unit vector j"], ["k̂", "kHat", "Unit vector k"], ["ê", "eHat", "Unit basis vector"]
   ];
   const statistics = [
-    ["x̄", "mean", "Mean / average"], ["μ", "mu", "Population mean"], ["σ", "sigma", "Standard deviation"], ["σ²", "variance", "Variance"], ["P(A)", "probA", "Probability of A"], ["n", "n", "Sample size"], ["z", "z", "Z-score"]
+    ["x̄", "mean", "Mean / average"], ["μ", "mu", "Population mean"], ["σ", "sigma", "Standard deviation"], ["σ²", "variance", "Variance"], ["s²", "sampleVariance", "Sample variance"], ["P(A)", "probA", "Probability of A"], ["P(A|B)", "probAGivenB", "Conditional probability"],
+    ["n", "n", "Sample size"], ["z", "z", "Z-score"], ["t", "tStat", "t-statistic"], ["χ²", "chiSquare", "Chi-square"], ["r", "correlation", "Correlation coefficient"], ["R²", "rSquared", "Coefficient of determination"], ["β", "beta", "Regression coefficient"], ["SE", "standardError", "Standard error"], ["CI", "confidenceInterval", "Confidence interval"]
+  ];
+  const trig = [
+    ["sin", "sin(", "Sine"], ["cos", "cos(", "Cosine"], ["tan", "tan(", "Tangent"], ["csc", "csc(", "Cosecant"], ["sec", "sec(", "Secant"], ["cot", "cot(", "Cotangent"],
+    ["asin", "asin(", "Inverse sine"], ["acos", "acos(", "Inverse cosine"], ["atan", "atan(", "Inverse tangent"], ["sinh", "sinh(", "Hyperbolic sine"], ["cosh", "cosh(", "Hyperbolic cosine"], ["tanh", "tanh(", "Hyperbolic tangent"]
+  ];
+  const numberSystems = [
+    ["0–9", "digits", "Decimal digits"], [".", ".", "Decimal point"], ["−", " - ", "Negative / subtraction"], ["ℕ", "Natural", "Natural numbers"], ["ℤ", "Integer", "Integers"], ["ℚ", "Rational", "Rationals"], ["ℝ", "Real", "Reals"], ["ℂ", "Complex", "Complex numbers"], ["i", "imaginaryI", "Imaginary unit"], ["∞", "Infinity", "Infinity"]
+  ];
+  const quantum = [
+    ["|ψ⟩", "ketPsi", "Quantum ket state"], ["⟨ψ|", "braPsi", "Quantum bra state"], ["⟨A⟩", "expectationA", "Expectation value"], ["Ĥ", "Hamiltonian", "Hamiltonian operator"], ["Ψ", "PsiUpper", "Wavefunction"], ["ψ", "psi", "Wavefunction amplitude"],
+    ["ℏ", "hbar", "Reduced Planck constant"], ["σx", "sigmaX", "Pauli X"], ["σy", "sigmaY", "Pauli Y"], ["σz", "sigmaZ", "Pauli Z"], ["⊗", "tensorProduct", "Tensor product"], ["†", "dagger", "Hermitian adjoint"]
+  ];
+  const relativity = [
+    ["γ", "gamma", "Lorentz factor"], ["β", "beta", "v/c ratio"], ["c", "speedOfLight", "Speed of light"], ["τ", "properTime", "Proper time"], ["ds²", "spacetimeInterval", "Spacetime interval"], ["ημν", "minkowskiMetric", "Minkowski metric"],
+    ["gμν", "metricTensor", "Metric tensor"], ["Tμν", "stressEnergyTensor", "Stress-energy tensor"], ["Rμν", "ricciTensor", "Ricci tensor"], ["Λ", "cosmologicalConstant", "Cosmological constant"]
   ];
 
   const makeToken = (category, symbol, token, meaning, defaultValue = 0, tokenType = "variable") => ({ category, symbol, token, meaning, defaultValue, tokenType });
@@ -5152,6 +5192,10 @@ function CalculationCore() {
     ...matrices.map(([symbol, token, meaning]) => makeToken("Matrices", symbol, token, meaning, 0, "symbol")),
     ...vectors.map(([symbol, token, meaning]) => makeToken("Vectors", symbol, token, meaning, 1, "symbol")),
     ...statistics.map(([symbol, token, meaning]) => makeToken("Statistics", symbol, token, meaning, 1, "symbol")),
+    ...trig.map(([symbol, token, meaning]) => makeToken("Trigonometry", symbol, token, meaning, 1, "operator")),
+    ...numberSystems.map(([symbol, token, meaning]) => makeToken("Number Systems", symbol, token, meaning, 0, "symbol")),
+    ...quantum.map(([symbol, token, meaning]) => makeToken("Quantum", symbol, token, meaning, 1, "symbol")),
+    ...relativity.map(([symbol, token, meaning]) => makeToken("Relativity", symbol, token, meaning, 1, "symbol")),
     makeToken("Telemetry", "S", "signal", "Signal strength", 92), makeToken("Telemetry", "B₀", "baseline", "Baseline reference", 50), makeToken("Telemetry", "N", "noise", "Noise floor", 7),
     makeToken("Telemetry", "Amp", "amplitude", "Amplitude", 10), makeToken("Telemetry", "I₀", "I0", "Reference intensity", 10), makeToken("Telemetry", "SI", "stabilityIndex", "Stability index", 96)
   ];
@@ -5161,7 +5205,7 @@ function CalculationCore() {
 
   const tokenKey = (item) => `${item.category}::${item.token}`;
   const activeItem = toolkit.find((item) => tokenKey(item) === activeTokenKey) || toolkit.find((item) => item.category === "A–Z" && item.token === "A") || toolkit[0];
-  const tokenCategories = ["All", "Numbers", "A–Z", "a–z", "Greek", "Physics", "Constants", "Operators", "Calculus", "Geometry", "Relations", "Sets", "Logic", "Matrices", "Vectors", "Statistics", "Telemetry"];
+  const tokenCategories = ["All", "Numbers", "Number Systems", "A–Z", "a–z", "Greek", "Physics", "Constants", "Operators", "Trigonometry", "Calculus", "Geometry", "Relations", "Sets", "Logic", "Matrices", "Vectors", "Statistics", "Quantum", "Relativity", "Telemetry"];
   const visibleToolkit = toolkit.filter((item) => {
     const search = tokenSearch.trim().toLowerCase();
     const categoryMatch = tokenCategory === "All" || item.category === tokenCategory;
@@ -5404,9 +5448,9 @@ function CalculationCore() {
           <Panel className="overflow-hidden">
             <Pill gold><Database size={12}/> Mathematical Toolkit</Pill>
             <h2 className="mt-3 text-3xl font-black">Mathematical Toolkit</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Build equations using numbers, uppercase letters, lowercase letters, Greek symbols, constants, operators, geometry and scientific variables. One token is selected at a time, and A-Z / a-z now remain visually distinct.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Build equations using numbers, uppercase and lowercase letters, Greek symbols, constants, operators, geometry, calculus, trigonometry, matrices, vectors, statistics, quantum notation, relativity notation, telemetry tokens and scientific variables. One token is selected at a time so advanced users can move quickly without losing context.</p>
             <div className="mt-5 flex flex-wrap gap-2">{tokenCategories.map((cat) => <button key={cat} onClick={() => setTokenCategory(cat)} className={`rounded-full border px-3 py-2 text-xs font-black tracking-[.14em] ${tokenCategory === cat ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>{cat}</button>)}</div>
-            <div className="mt-4 grid gap-3 md:grid-cols-3"><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Letters</div><div className="mt-1 text-sm text-slate-300">Uppercase A–Z and lowercase a–z are separate selectable variables.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Symbols</div><div className="mt-1 text-sm text-slate-300">Operators, relations, sets, logic, vectors, matrices and calculus tokens.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Science</div><div className="mt-1 text-sm text-slate-300">Greek, physics, constants, geometry, telemetry and statistics variables.</div></div></div>
+            <div className="mt-4 grid gap-3 md:grid-cols-3"><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Letters</div><div className="mt-1 text-sm text-slate-300">Uppercase A–Z and lowercase a–z are separate selectable variables.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Symbols</div><div className="mt-1 text-sm text-slate-300">Operators, relations, sets, logic, trigonometry, vectors, matrices, calculus and advanced notation tokens.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Science</div><div className="mt-1 text-sm text-slate-300">Greek, physics, constants, geometry, telemetry, statistics, quantum and relativity variables.</div></div></div>
             <input value={tokenSearch} onChange={(e) => setTokenSearch(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="Search symbols, variables, constants, operators..." />
             <div className="mt-5 max-h-[620px] overflow-auto rounded-2xl border border-white/10 bg-black/25">
               <table className="min-w-full text-left text-sm">
