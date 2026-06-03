@@ -2094,7 +2094,49 @@ function ElementOSThemeSkin() {
         --eos-muted: #8ca4c0;
       }
       html { background: var(--eos-bg); }
-      body { background: var(--eos-bg); color: var(--eos-text); }
+      body { background: var(--eos-bg); color: var(--eos-text); overflow-x: hidden; }
+
+      /* V111: Natural desktop zoom-out without affecting mobile readability.
+         Desktop/laptop gets a denser 82% interface, similar to manually zooming out.
+         Large monitors are slightly less compressed, mobile remains full-size. */
+      .eos-app-scale { --eos-ui-scale: 1; }
+      @media (min-width: 1024px) and (max-width: 1535px) {
+        .eos-app-scale { zoom: .82; }
+      }
+      @media (min-width: 1536px) {
+        .eos-app-scale { zoom: .88; }
+      }
+      @media (min-width: 1024px) and (max-height: 760px) {
+        .eos-app-scale { zoom: .76; }
+      }
+      @supports not (zoom: 1) {
+        @media (min-width: 1024px) {
+          .eos-app-scale {
+            transform: scale(.82);
+            transform-origin: top left;
+            width: calc(100% / .82);
+            min-height: calc(100vh / .82);
+          }
+        }
+        @media (min-width: 1536px) {
+          .eos-app-scale {
+            transform: scale(.88);
+            width: calc(100% / .88);
+            min-height: calc(100vh / .88);
+          }
+        }
+      }
+      @media (max-width: 1023px) {
+        .eos-app-scale { zoom: 1; }
+        html, body, #root { width: 100%; max-width: 100%; overflow-x: hidden; }
+        .eos-page-stage, .eos-panel, .eos-data-card, .poster-card, .poster-card-gold { max-width: 100%; }
+        .eos-page-stage { overflow-x: hidden; }
+        .eos-page-stage .eos-panel, .eos-page-stage .poster-card, .eos-page-stage .poster-card-gold { border-radius: 1.35rem; }
+        .eos-page-stage h1 { font-size: clamp(2.05rem, 11vw, 3.25rem); line-height: .95; }
+        .eos-page-stage h2 { font-size: clamp(1.55rem, 7.5vw, 2.25rem); line-height: 1.02; }
+        .eos-page-stage button, .eos-page-stage input, .eos-page-stage select, .eos-page-stage textarea { min-height: 44px; }
+        .eos-page-stage table { min-width: 680px; }
+      }
       * { scrollbar-width: thin; scrollbar-color: rgba(0,145,255,.55) rgba(2,6,13,.65); }
       *::-webkit-scrollbar { width: 10px; height: 10px; }
       *::-webkit-scrollbar-track { background: rgba(2,6,13,.8); }
@@ -5719,7 +5761,7 @@ function PublicReportView({ report, status }) {
   if (!report) {
     const isMissing = String(status || "").toLowerCase().includes("not found") || String(status || "").toLowerCase().includes("failed");
     return (
-      <div className="eos-shell min-h-screen bg-[#02060d] text-slate-100">
+      <div className="eos-shell eos-app-scale min-h-screen bg-[#02060d] text-slate-100">
         <ElementOSThemeSkin />
         <Background />
         <main className="relative z-10 mx-auto max-w-5xl space-y-6 p-6 lg:p-10">
@@ -5766,7 +5808,7 @@ function PublicReportView({ report, status }) {
   }));
 
   return (
-    <div className="eos-shell min-h-screen bg-[#02060d] text-slate-100">
+    <div className="eos-shell eos-app-scale min-h-screen bg-[#02060d] text-slate-100">
       <ElementOSThemeSkin />
       <Background />
 
@@ -9256,7 +9298,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const supportEmail =
     import.meta?.env?.VITE_SUPPORT_EMAIL ||
     import.meta?.env?.SUPPORT_EMAIL ||
-    "elementoscrypto@gmail.com";
+    "elementoscryto@gmail.com";
 
   const aliases = {
     aluminium: "Al", aluminum: "Al", al: "Al", titanium: "Ti", ti: "Ti", iron: "Fe", fe: "Fe",
@@ -10196,7 +10238,7 @@ function SupportCenterModal({ open, onClose }) {
   const SUPPORT_INBOX =
     import.meta?.env?.VITE_SUPPORT_EMAIL ||
     import.meta?.env?.SUPPORT_EMAIL ||
-    "elementoscrypto@gmail.com";
+    "elementoscryto@gmail.com";
 
   const [created, setCreated] = useState(false);
   const [sending, setSending] = useState(false);
@@ -10674,7 +10716,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
   }
 
   return (
-    <div className="eos-shell min-h-screen bg-[#02060d] text-slate-100">
+    <div className="eos-shell eos-app-scale min-h-screen bg-[#02060d] text-slate-100">
       <ElementOSThemeSkin />
       <Background />
       <LivingMotionLayer />
