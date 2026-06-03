@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 // =====================================================
-// ELEMENTOS V63 CLARITY + MOBILE UX EDITION
+// ELEMENTOS V101 FULL SITE DEBUG PASS
 // Preserves the existing site, but reduces visible clutter,
 // simplifies labels, and keeps pricing consistent.
 // =====================================================
@@ -1332,16 +1332,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
   const publicUrl = createDiscoveryUrl(current);
 
   const copyText = (text) => {
-    if (navigator?.clipboard?.writeText) {
-      safeCopyText(text);
-      return;
-    }
-    const input = document.createElement("textarea");
-    input.value = text;
-    document.body.appendChild(input);
-    input.select();
-    document.execCommand("copy");
-    input.remove();
+    safeCopyText(text);
   };
 
   const savePublicDiscovery = () => {
@@ -1498,7 +1489,6 @@ const MOBILE_PAGE_ORDER = [
   "lab",
   "periodic",
   "atlas",
-  "graph",
   "universe",
   "visualization",
   "calculations",
@@ -1554,6 +1544,14 @@ function setElementOSPlan(plan) {
   localStorage.setItem("elementos_pro", plan === "Explorer" ? "false" : "true");
   window.dispatchEvent(new CustomEvent("elementos:plan", { detail: plan }));
 }
+
+function getStripePriceForPlan(planName = "Pro Researcher") {
+  const env = import.meta?.env || {};
+  if (planName === "Pro Lab") return env.VITE_STRIPE_PROLAB_PRICE || "";
+  if (planName === "Pro Researcher") return env.VITE_STRIPE_RESEARCHER_PRICE || "";
+  return "";
+}
+
 
 function hasElementOSProAccess() {
   const plan = getElementOSPlan();
@@ -1939,11 +1937,18 @@ function notifyUser(message) {
 
 async function safeCopyText(text, message = "Copied to clipboard.") {
   try {
-    if (navigator?.clipboard?.writeText && window.isSecureContext) {
-      await navigator.clipboard.writeText(String(text || ""));
-    } else {
+    const value = String(text || "");
+    const canUseClipboard =
+      typeof navigator !== "undefined" &&
+      !!navigator.clipboard?.writeText &&
+      typeof window !== "undefined" &&
+      window.isSecureContext;
+
+    if (canUseClipboard) {
+      await navigator.clipboard.writeText(value);
+    } else if (typeof document !== "undefined") {
       const input = document.createElement("textarea");
-      input.value = String(text || "");
+      input.value = value;
       input.setAttribute("readonly", "");
       input.style.position = "fixed";
       input.style.left = "-9999px";
@@ -1951,7 +1956,10 @@ async function safeCopyText(text, message = "Copied to clipboard.") {
       input.select();
       document.execCommand("copy");
       input.remove();
+    } else {
+      throw new Error("Clipboard is not available in this environment.");
     }
+
     notifyUser(message);
     return true;
   } catch (error) {
@@ -5018,7 +5026,7 @@ function CalculationCore() {
   const [mode, setMode] = useState("calculator");
   const [equationTitle, setEquationTitle] = useState("Material calculation");
   const [expression, setExpression] = useState("A + B");
-  const [activeToken, setActiveToken] = useState("A");
+  const [activeTokenKey, setActiveTokenKey] = useState("A–Z::A");
   const [tokenCategory, setTokenCategory] = useState("All");
   const [tokenSearch, setTokenSearch] = useState("");
   const [librarySearch, setLibrarySearch] = useState("");
@@ -5083,7 +5091,8 @@ function CalculationCore() {
   const editableTokens = toolkit.filter((item) => item.tokenType === "variable" || item.tokenType === "constant");
   const [variables, setVariables] = useState(() => Object.fromEntries(editableTokens.map((item) => [item.token, item.defaultValue ?? 0])));
 
-  const activeItem = toolkit.find((item) => item.token === activeToken) || toolkit.find((item) => item.token === "A") || toolkit[0];
+  const tokenKey = (item) => `${item.category}::${item.token}`;
+  const activeItem = toolkit.find((item) => tokenKey(item) === activeTokenKey) || toolkit.find((item) => item.category === "A–Z" && item.token === "A") || toolkit[0];
   const tokenCategories = ["All", "Numbers", "A–Z", "a–z", "Greek", "Physics", "Constants", "Operators", "Calculus", "Geometry", "Telemetry"];
   const visibleToolkit = toolkit.filter((item) => {
     const search = tokenSearch.trim().toLowerCase();
@@ -5112,8 +5121,10 @@ function CalculationCore() {
     if (normalized.includes("=")) return { value: "—", error: "Remove equals signs before calculating. Use equations like A + B or m * c^2." };
     if (!allowed.test(normalized)) return { value: "—", error: "Only numbers, variables, operators and safe math functions are allowed." };
     try {
-      const names = [...Object.keys(variables), ...Object.keys(safeMath)];
-      const vals = [...Object.values(variables).map(Number), ...Object.values(safeMath)];
+      const variableEntries = Object.entries(variables).map(([name, value]) => [name, Number(value)]);
+      const safeMathEntries = Object.entries(safeMath).filter(([name]) => !(name in variables));
+      const names = [...variableEntries.map(([name]) => name), ...safeMathEntries.map(([name]) => name)];
+      const vals = [...variableEntries.map(([, value]) => value), ...safeMathEntries.map(([, value]) => value)];
       const fn = Function(...names, `"use strict"; return (${normalized});`);
       const out = fn(...vals);
       if (!Number.isFinite(Number(out))) return { value: "—", error: "Result is not a finite number." };
@@ -5146,7 +5157,11 @@ function CalculationCore() {
       return String(Math.round(result * 100000) / 100000);
     }
     const table = conversions[converterCategory] || {};
-    const result = value * Number(table[converterFrom]) / Number(table[converterTo]);
+    const fromFactor = Number(table[converterFrom]);
+    const toFactor = Number(table[converterTo]);
+    if (!Number.isFinite(fromFactor) || !Number.isFinite(toFactor) || toFactor === 0) return "—";
+    const result = value * fromFactor / toFactor;
+    if (!Number.isFinite(result)) return "—";
     return Math.abs(result) >= 100000 ? result.toExponential(4) : String(Math.round(result * 1000000) / 1000000);
   }, [converterCategory, converterFrom, converterTo, converterValue]);
 
@@ -5179,7 +5194,7 @@ function CalculationCore() {
 
   const addToExpression = (token) => setExpression((prev) => `${prev}${token}`);
   const insertToken = (item = activeItem) => {
-    setActiveToken(item.token);
+    setActiveTokenKey(tokenKey(item));
     if (item.tokenType !== "symbol") addToExpression(item.token);
   };
   const usePreset = (preset) => {
@@ -5199,7 +5214,7 @@ function CalculationCore() {
   };
   const resetValues = () => {
     setVariables(Object.fromEntries(editableTokens.map((item) => [item.token, item.defaultValue ?? 0])));
-    setActiveToken("A");
+    setActiveTokenKey("A–Z::A");
     setTokenCategory("All");
     setTokenSearch("");
   };
@@ -5310,15 +5325,15 @@ function CalculationCore() {
           <Panel className="overflow-hidden">
             <Pill gold><Database size={12}/> Mathematical Toolkit</Pill>
             <h2 className="mt-3 text-3xl font-black">Numbers, variables, symbols and constants.</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">Build equations using numbers, variables, symbols, constants and scientific operators. One token is selected at a time.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Build equations using numbers, variables, symbols, constants and scientific operators. One token is selected at a time. Duplicate symbols like c or e now select the exact row you clicked.</p>
             <div className="mt-5 flex flex-wrap gap-2">{tokenCategories.map((cat) => <button key={cat} onClick={() => setTokenCategory(cat)} className={`rounded-full border px-3 py-2 text-xs font-black uppercase tracking-[.14em] ${tokenCategory === cat ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>{cat}</button>)}</div>
             <input value={tokenSearch} onChange={(e) => setTokenSearch(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="Search symbols, variables, constants, operators..." />
             <div className="mt-5 max-h-[620px] overflow-auto rounded-2xl border border-white/10 bg-black/25">
               <table className="min-w-full text-left text-sm">
                 <thead className="sticky top-0 z-10 bg-slate-950/95 text-xs uppercase tracking-[.16em] text-slate-500"><tr><th className="p-3">Symbol</th><th className="p-3">Token</th><th className="p-3">Meaning</th><th className="p-3">Type</th><th className="p-3">Value</th></tr></thead>
                 <tbody>{visibleToolkit.map((item) => {
-                  const selectedToken = activeItem.token === item.token && activeItem.category === item.category;
-                  return <tr key={`${item.category}-${item.token}-${item.meaning}`} onClick={() => setActiveToken(item.token)} className={`cursor-pointer border-t border-white/5 transition ${selectedToken ? "bg-cyan-300/15 text-cyan-50" : "hover:bg-white/[0.04]"}`}><td className="p-3 text-xl font-black">{item.symbol}</td><td className="p-3 font-mono text-cyan-100">{item.token}</td><td className="p-3 text-slate-300">{item.meaning}</td><td className="p-3 text-slate-400">{item.category}</td><td className="p-3">{variables[item.token] !== undefined ? <input value={variables[item.token]} onClick={(e) => e.stopPropagation()} onChange={(e) => setVariables((prev) => ({ ...prev, [item.token]: e.target.value }))} className="w-28 rounded-xl border border-white/10 bg-black/40 px-2 py-1 text-sm text-white" /> : <span className="text-slate-600">—</span>}</td></tr>;
+                  const selectedToken = tokenKey(item) === activeTokenKey;
+                  return <tr key={`${item.category}-${item.token}-${item.meaning}`} onClick={() => setActiveTokenKey(tokenKey(item))} className={`cursor-pointer border-t border-white/5 transition ${selectedToken ? "bg-cyan-300/15 text-cyan-50" : "hover:bg-white/[0.04]"}`}><td className="p-3 text-xl font-black">{item.symbol}</td><td className="p-3 font-mono text-cyan-100">{item.token}</td><td className="p-3 text-slate-300">{item.meaning}</td><td className="p-3 text-slate-400">{item.category}</td><td className="p-3">{variables[item.token] !== undefined ? <input value={variables[item.token]} onClick={(e) => e.stopPropagation()} onChange={(e) => setVariables((prev) => ({ ...prev, [item.token]: e.target.value }))} className="w-28 rounded-xl border border-white/10 bg-black/40 px-2 py-1 text-sm text-white" /> : <span className="text-slate-600">—</span>}</td></tr>;
                 })}</tbody>
               </table>
             </div>
@@ -6244,7 +6259,7 @@ ElementOS is an AI-native exploratory simulation platform for material intellige
 
 ElementOS is now open with Explorer $0, Pro Researcher $19/month and Pro Lab $35/month.`;
 
-    navigator.clipboard?.writeText(post);
+    safeCopyText(post, "Explorer launch post copied.");
   };
 
   const exportExplorerBrief = () => {
@@ -7467,7 +7482,7 @@ function ExperimentalWellDriller({ setPage }) {
               <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
                 <div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div>
                 <div className="mt-2 text-4xl font-black text-cyan-100">{value}%</div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${Math.min(99, value)}%` }} /></div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-950"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${Math.min(99, Number(value) || 0)}%` }} /></div>
                 <p className="mt-2 text-xs text-slate-400">{desc}</p>
               </div>
             ))}
@@ -8023,12 +8038,7 @@ ${cardData.statA} · ${cardData.statB} · ${cardData.statC}
 ${cardData.hook}
 ${cardData.cardNumber}
 Generated in ElementOS`;
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(text);
-      alert("Discovery card copy saved to clipboard.");
-    } else {
-      alert(text);
-    }
+    safeCopyText(text, "Discovery card copy saved to clipboard.");
   };
 
   const copyCaption = (channel = "X") => {
@@ -8046,12 +8056,7 @@ Generated in ElementOS.`,
       ProductHunt: `ElementOS turns material simulations into discoveries, reports and shareable scientific cards. Today's example: ${pair} at ${cardData.score}% ${cardData.metric}.`,
     };
     const caption = captions[channel] || captions.X;
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(caption);
-      alert(`${channel} caption copied.`);
-    } else {
-      alert(caption);
-    }
+    safeCopyText(caption, `${channel} caption copied.`);
   };
 
 
@@ -9578,10 +9583,8 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
 
   const copyLaunchPitch = async () => {
     const pitch = `ElementOS turns material data into discoveries, reports and shareable scientific media. Today's discovery: ${primaryDiscovery.a} + ${primaryDiscovery.b} at ${primaryDiscovery.score}% confidence. Discover. Simulate. Understand.`;
-    try {
-      await navigator.clipboard.writeText(pitch);
-      alert("Launch pitch copied.");
-    } catch (error) {
+    const copied = await safeCopyText(pitch, "Launch pitch copied.");
+    if (!copied) {
       if (!guardProAction("Download launch pitch text")) return;
       downloadFile("elementos-launch-pitch.txt", pitch);
     }
@@ -10021,14 +10024,25 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
 
 function SubscriptionUpgradeModal({ open, reason, plan, setPlan, onClose, startCheckout }) {
   if (!open) return null;
-  const choosePlan = (name) => {
+  const choosePlan = async (name) => {
     setPlan(name);
-    setElementOSPlan(name);
-    if (name !== "Explorer") {
-      window.dispatchEvent(new CustomEvent("elementos:toast", { detail: `${name} selected. Premium actions unlocked in preview.` }));
-      if (typeof startCheckout === "function") startCheckout();
+
+    if (name === "Explorer") {
+      setElementOSPlan("Explorer");
+      notifyUser("Explorer plan selected.");
+      onClose?.();
+      return;
     }
-    onClose?.();
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("elementos_pending_plan", name);
+    }
+
+    if (typeof startCheckout === "function") {
+      await startCheckout(name);
+    } else {
+      showUpgradeModal("Stripe Checkout is not connected yet. Add the checkout API route before taking paid subscribers.");
+    }
   };
   return (
     <div className="fixed inset-0 z-[120] grid place-items-center bg-black/70 p-4 backdrop-blur-xl">
@@ -10299,14 +10313,17 @@ useEffect(() => {
   }
 
   if (params.get("checkout") === "success") {
+    const completedPlan = localStorage.getItem("elementos_pending_plan") || "Pro Researcher";
+    setElementOSPlan(completedPlan);
+    localStorage.removeItem("elementos_pending_plan");
     setIsPro(true);
-    setPlan(getElementOSPlan() === "Explorer" ? "Pro Researcher" : getElementOSPlan());
-    localStorage.setItem("elementos_pro", "true");
-    alert("ElementOS Pro activated.");
+    setPlan(completedPlan);
+    alert(`${completedPlan} activated.`);
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 
   if (params.get("checkout") === "cancelled") {
+    localStorage.removeItem("elementos_pending_plan");
     alert("Checkout cancelled.");
     window.history.replaceState({}, document.title, window.location.pathname);
   }
@@ -10406,10 +10423,18 @@ useEffect(() => {
     alert("Workspace restored.");
   };
 
-const startCheckout = async () => {
+const startCheckout = async (planName = "Pro Researcher") => {
   if (!session) {
     alert("Create a free Explorer account before upgrading.");
     setPage("login");
+    return;
+  }
+
+  const selectedPlan = planName === "Pro Lab" ? "Pro Lab" : "Pro Researcher";
+  const priceId = getStripePriceForPlan(selectedPlan);
+
+  if (!priceId) {
+    alert(`Stripe price ID missing for ${selectedPlan}. Add ${selectedPlan === "Pro Lab" ? "VITE_STRIPE_PROLAB_PRICE" : "VITE_STRIPE_RESEARCHER_PRICE"} in Vercel Environment Variables.`);
     return;
   }
 
@@ -10421,6 +10446,8 @@ const startCheckout = async () => {
       },
       body: JSON.stringify({
         email: session.user.email,
+        plan: selectedPlan,
+        priceId,
       }),
     });
 
@@ -10432,6 +10459,7 @@ const startCheckout = async () => {
     }
 
     if (data.url) {
+      if (typeof window !== "undefined") localStorage.setItem("elementos_pending_plan", selectedPlan);
       window.location.href = data.url;
     } else {
       alert(data.error || "Checkout failed. No checkout URL was returned.");
