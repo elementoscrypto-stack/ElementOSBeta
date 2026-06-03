@@ -9780,10 +9780,10 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
               <Pill><Download size={12} /> pdf json svg ready</Pill>
             </div>
             <h2 className="mt-4 text-4xl font-black leading-[.95] tracking-tight md:text-6xl">
-              Every click should create <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">an asset.</span>
+              Research outputs, <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">ready to use.</span>
             </h2>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300 md:text-base">
-              ElementOS now runs as a discovery loop: find signal, explain it, export it, save it, share it and bring users back tomorrow.
+              Generate discoveries, executive reports, simulations and research-ready exports from one clear workflow.
             </p>
             <div className="mt-5 grid gap-2 sm:grid-cols-3">
               {[
@@ -10647,7 +10647,7 @@ function VisualConversionStrip({ page, setPage, isPro, startCheckout }) {
             ✨ Living Interface
           </div>
           <h2 className="mt-3 text-2xl font-black leading-tight text-white md:text-4xl">
-            ElementOS feels alive from the first click.
+            Live research workflow
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
             A cinematic material-intelligence interface built to make discoveries, simulations, executive summaries and export previews feel premium enough to subscribe for.
@@ -11036,19 +11036,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
-        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <VisualConversionStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />}
         {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <PageMicroDataBar page={page} setPage={setPage} />}
-        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <div className="hidden lg:block">
-          <UltimateScienceCommandLayer
-            page={page}
-            setPage={setPage}
-            selected={selected}
-            compare={compare}
-            session={session}
-            isPro={isPro}
-            startCheckout={startCheckout}
-          />
-        </div>}
         {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <div className="hidden lg:block">
           <PageHelpStrip page={page} />
         </div>}
