@@ -9265,7 +9265,15 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     carbon: "C", c: "C", oxygen: "O", o: "O", hydrogen: "H", h: "H", lithium: "Li", li: "Li", nickel: "Ni", ni: "Ni",
   };
 
-  const emitToast = (message) => window.dispatchEvent(new CustomEvent("elementos:toast", { detail: message }));
+  const emitToast = (message) => {
+    try {
+      if (typeof window !== "undefined" && typeof window.dispatchEvent === "function") {
+        window.dispatchEvent(new CustomEvent("elementos:toast", { detail: message }));
+      }
+    } catch {
+      console.log(message);
+    }
+  };
 
   const rememberCommand = (command) => {
     if (!command?.id) return;
@@ -9504,6 +9512,9 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     .map(({ command }) => command);
 
   useEffect(() => { setActiveIndex(0); }, [query]);
+  useEffect(() => {
+    setActiveIndex((index) => Math.min(Math.max(index, 0), Math.max(filtered.length - 1, 0)));
+  }, [filtered.length]);
 
   const selectedCommand = filtered[activeIndex] || filtered[0] || null;
   const isLocked = selectedCommand?.premium && !isPro;
@@ -9540,7 +9551,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] bg-black/75 p-3 backdrop-blur-xl sm:p-4" onClick={onClose} onKeyDown={onKeyDown}>
+    <div className="fixed inset-0 z-[80] bg-black/75 p-3 backdrop-blur-xl sm:p-4" onClick={onClose} onKeyDown={onKeyDown} role="dialog" aria-modal="true" aria-label="ElementOS command engine" tabIndex={-1}>
       <div className="eos-command-shell mx-auto mt-4 flex max-h-[94vh] max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/95 shadow-[0_0_180px_rgba(34,211,238,.35)] sm:mt-6" onClick={(e) => e.stopPropagation()}>
         <div className="border-b border-white/10 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -9557,6 +9568,10 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
             <span className="hidden rounded-xl border border-white/10 px-3 py-1 text-xs text-slate-400 sm:inline">CTRL K</span>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">{quickPrompts.map((prompt) => <button key={prompt} onClick={() => setQuery(prompt)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40">{prompt}</button>)}</div>
+          <div className="mt-3 grid gap-2 text-xs text-slate-400 sm:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Pinned</span><div className="mt-1 truncate text-cyan-100">{safePinnedCommands.slice(0, 4).join(" · ") || "Pin your favourite commands"}</div></div>
+            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Recent</span><div className="mt-1 truncate text-amber-100">{safeRecentCommands.slice(0, 4).join(" · ") || "Recent commands will appear here"}</div></div>
+          </div>
         </div>
         <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_360px]">
           <div className="eos-command-scroll max-h-[58vh] p-4 lg:max-h-[62vh]">
@@ -9572,7 +9587,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
             <div className="mt-2 text-sm leading-6 text-slate-400">{selectedCommand?.description || "Start typing to search the operating system."}</div>
             {isLocked && <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">{selectedCommand.lockedReason || "This is a Pro Researcher command."}</div>}
             {selectedCommand?.dangerous && <div className="mt-4 rounded-2xl border border-red-300/20 bg-red-300/10 p-4 text-sm leading-6 text-red-100">Export commands ask for confirmation before running.</div>}
-            <div className="mt-5 flex gap-2"><button onClick={() => runCommand(selectedCommand)} className="flex-1 rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 hover:bg-white">{isLocked ? "Upgrade" : pendingCommand === selectedCommand?.id ? "Confirm" : "Run Command"}</button>{selectedCommand && <button onClick={() => togglePinned(selectedCommand.id)} className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-black text-white hover:bg-white/10">{pinnedSet.has(selectedCommand.id) ? "Unpin" : "Pin"}</button>}</div>
+            <div className="mt-5 flex gap-2"><button disabled={!selectedCommand} onClick={() => runCommand(selectedCommand)} className={`flex-1 rounded-2xl px-4 py-3 text-sm font-black transition ${selectedCommand ? "bg-cyan-300 text-slate-950 hover:bg-white" : "cursor-not-allowed bg-white/10 text-slate-500"}`}>{isLocked ? "Upgrade" : pendingCommand === selectedCommand?.id ? "Confirm" : "Run Command"}</button>{selectedCommand && <button onClick={() => togglePinned(selectedCommand.id)} className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-black text-white hover:bg-white/10">{pinnedSet.has(selectedCommand.id) ? "Unpin" : "Pin"}</button>}</div>
             <div className="mt-5 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-xs leading-5 text-slate-400"><div className="font-black uppercase tracking-[.18em] text-slate-500">Current context</div><div className="mt-2 text-sm font-black text-cyan-100">{currentContext}</div><div>Active page: {page}</div><div className="mt-3">Keyboard: ↑ ↓ to move · Enter to run · Esc to close.</div></div>
             <div className="mt-5 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-4 text-sm leading-6 text-fuchsia-100"><b>Pro Macro Example</b><br />“Create aerospace report” prepares Al + Ti, Future Simulation, Executive Summary, Poster, PDF and Saved Discoveries workflow.</div>
           </div>
