@@ -1984,7 +1984,7 @@ function Panel({ children, className = "" }) {
   );
 }
 function Pill({ children, gold = false }) { return <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] uppercase tracking-[.22em] ${gold ? "border-amber-300/30 bg-amber-300/10 text-amber-100" : "border-cyan-300/30 bg-cyan-400/10 text-cyan-100"}`}>{children}</span>; }
-function Button({ children, onClick, variant = "ghost", className = "", disabled = false, title, ariaLabel, ...props }) {
+function Button({ children, onClick, variant = "ghost", className = "", disabled = false, title = "", ariaLabel = "", ...props }) {
   const styles =
     variant === "primary"
       ? "border border-[#2478ff] bg-gradient-to-r from-[#0b63ff] via-[#0f7bff] to-[#08b4ff] text-white shadow-[0_0_28px_rgba(0,123,255,.35)]"
@@ -4722,20 +4722,6 @@ function SimilarityUniverse({ selected, setSelected }) {
   const [mode, setMode] = useState("alloy");
   const [displayPattern, setDisplayPattern] = useState("orbit");
   const [focus, setFocus] = useState(selected || "Al");
-
-  useEffect(() => {
-    const validPatterns = ["orbit", "network", "spiral", "constellation", "galaxy", "lattice", "wave", "radar", "cluster", "timeline"];
-    try {
-      const stored = localStorage.getItem("elementos_relationship_pattern");
-      if (validPatterns.includes(stored)) setDisplayPattern(stored);
-    } catch {}
-    const handler = (event) => {
-      const nextPattern = String(event.detail || "");
-      if (validPatterns.includes(nextPattern)) setDisplayPattern(nextPattern);
-    };
-    window.addEventListener("elementos:setRelationshipPattern", handler);
-    return () => window.removeEventListener("elementos:setRelationshipPattern", handler);
-  }, []);
   const base = elementMap[focus] || elementMap[selected] || elementMap.Al;
   const modeLabels = {
     alloy: "Alloy pathways",
@@ -5051,20 +5037,6 @@ function CalculationCore() {
   const [boardTitle, setBoardTitle] = useState("ElementOS Calculation Board");
   const [history, setHistory] = useState([]);
   const [saved, setSaved] = useState([]);
-
-  useEffect(() => {
-    const validModes = ["calculator", "builder", "library", "whiteboard"];
-    try {
-      const stored = localStorage.getItem("elementos_calculation_mode");
-      if (validModes.includes(stored)) setMode(stored);
-    } catch {}
-    const handler = (event) => {
-      const nextMode = String(event.detail || "");
-      if (validModes.includes(nextMode)) setMode(nextMode);
-    };
-    window.addEventListener("elementos:setCalculationMode", handler);
-    return () => window.removeEventListener("elementos:setCalculationMode", handler);
-  }, []);
 
   const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
   const lower = "abcdefghijklmnopqrstuvwxyz".split("");
@@ -9283,7 +9255,8 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const normalizedQuery = query.toLowerCase().trim();
   const supportEmail =
     import.meta?.env?.VITE_SUPPORT_EMAIL ||
-    "elementoscryto@gmail.com";
+    import.meta?.env?.SUPPORT_EMAIL ||
+    "elementoscrypto@gmail.com";
 
   const aliases = {
     aluminium: "Al", aluminum: "Al", al: "Al", titanium: "Ti", ti: "Ti", iron: "Fe", fe: "Fe",
@@ -9448,32 +9421,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
       ["convert-units", "Convert Units", "Open calculator conversion tools."],
       ["solve", "Solve Equation", "Open live equation solver."],
       ["save-board", "Save Equation to Board", "Save current equation into the whiteboard.", true],
-    ].forEach(([key, title, description, premium]) => add({
-      id: `calc:${key}`,
-      title,
-      description,
-      category: "Calculation Studio",
-      premium: Boolean(premium),
-      lockedReason: "Pro Researcher unlocks saved calculation boards and exports.",
-      execute: () => {
-        const modeMap = {
-          calculator: "calculator",
-          "convert-units": "calculator",
-          solve: "calculator",
-          "equation-builder": "builder",
-          toolkit: "builder",
-          "insert-variable": "builder",
-          "circle-area": "builder",
-          reference: "library",
-          whiteboard: "whiteboard",
-          "save-board": "whiteboard",
-        };
-        const nextMode = modeMap[key] || "calculator";
-        try { localStorage.setItem("elementos_calculation_mode", nextMode); } catch {}
-        try { window.dispatchEvent(new CustomEvent("elementos:setCalculationMode", { detail: nextMode })); } catch {}
-        openPage("calculations", title);
-      }
-    }));
+    ].forEach(([key, title, description, premium]) => add({ id: `calc:${key}`, title, description, category: "Calculation Studio", premium: Boolean(premium), lockedReason: "Pro Researcher unlocks saved calculation boards and exports.", execute: () => openPage("calculations", title) }));
 
     [
       ["future", "Open Future Simulation", "Open Time Machine future forecasts."],
@@ -9487,30 +9435,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
       ["temporal-summary", "Generate Temporal Executive Summary", "Create a summary of long-range material behaviour.", true],
     ].forEach(([key, title, description, premium]) => add({ id: `time:${key}`, title, description, category: "Time Machine", premium: Boolean(premium), lockedReason: "Pro Researcher unlocks forecast exports, posters and temporal summaries.", execute: () => openPage("timemachine", title) }));
 
-    ["Orbit", "Network", "Spiral", "Galaxy", "Lattice", "Radar", "Wave Field", "Cluster Map", "Timeline Arc", "Constellation"].forEach((view) => add({
-      id: `relationship:${view.toLowerCase().replace(/\s+/g, "-")}`,
-      title: `Switch to ${view} View`,
-      description: `Open Element Relationships with ${view} display pattern.`,
-      category: "Relationships",
-      execute: () => {
-        const patternMap = {
-          Orbit: "orbit",
-          Network: "network",
-          Spiral: "spiral",
-          Galaxy: "galaxy",
-          Lattice: "lattice",
-          Radar: "radar",
-          "Wave Field": "wave",
-          "Cluster Map": "cluster",
-          "Timeline Arc": "timeline",
-          Constellation: "constellation",
-        };
-        const pattern = patternMap[view] || "orbit";
-        try { localStorage.setItem("elementos_relationship_pattern", pattern); } catch {}
-        try { window.dispatchEvent(new CustomEvent("elementos:setRelationshipPattern", { detail: pattern })); } catch {}
-        openPage("universe", `${view} relationship view opened.`);
-      }
-    }));
+    ["Orbit", "Network", "Spiral", "Galaxy", "Lattice", "Radar", "Wave Field", "Cluster Map", "Timeline Arc", "Constellation"].forEach((view) => add({ id: `relationship:${view.toLowerCase().replace(/\s+/g, "-")}`, title: `Switch to ${view} View`, description: `Open Element Relationships with ${view} display pattern.`, category: "Relationships", execute: () => openPage("universe", `${view} relationship view opened.`) }));
     [["metric", "Select Relationship Metric", "Choose stability, thermal, pressure, rarity or conductivity focus."], ["strongest", "Find Strongest Relationship", "Open relationship hub and inspect strongest material matches."], ["explain", "Explain Relationship Graph", "Open the combined relationship hub with explanations."]].forEach(([key, title, description]) => add({ id: `relationship:${key}`, title, description, category: "Relationships", execute: () => openPage("universe", title) }));
 
     [
@@ -9548,11 +9473,6 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const nlCommand = naturalCommand();
   const safeRecentCommands = Array.isArray(recentCommands) ? recentCommands : [];
   const safePinnedCommands = Array.isArray(pinnedCommands) ? pinnedCommands : [];
-  const commandTitleMap = new Map(commands.map((command) => [command.id, command.title]));
-  const commandSummary = (ids = []) => ids
-    .slice(0, 4)
-    .map((id) => commandTitleMap.get(id) || String(id).replace(/^[^:]+:/, "").replace(/-/g, " "))
-    .join(" · ");
   const recentSet = new Set(safeRecentCommands);
   const pinnedSet = new Set(safePinnedCommands);
 
@@ -9649,8 +9569,8 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
           </div>
           <div className="mt-4 flex flex-wrap gap-2">{quickPrompts.map((prompt) => <button key={prompt} onClick={() => setQuery(prompt)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40">{prompt}</button>)}</div>
           <div className="mt-3 grid gap-2 text-xs text-slate-400 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Pinned</span><div className="mt-1 truncate text-cyan-100">{commandSummary(safePinnedCommands) || "Pin your favourite commands"}</div></div>
-            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Recent</span><div className="mt-1 truncate text-amber-100">{commandSummary(safeRecentCommands) || "Recent commands will appear here"}</div></div>
+            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Pinned</span><div className="mt-1 truncate text-cyan-100">{safePinnedCommands.slice(0, 4).join(" · ") || "Pin your favourite commands"}</div></div>
+            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Recent</span><div className="mt-1 truncate text-amber-100">{safeRecentCommands.slice(0, 4).join(" · ") || "Recent commands will appear here"}</div></div>
           </div>
         </div>
         <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_360px]">
@@ -10275,7 +10195,8 @@ function SubscriptionUpgradeModal({ open, reason, plan, setPlan, onClose, startC
 function SupportCenterModal({ open, onClose }) {
   const SUPPORT_INBOX =
     import.meta?.env?.VITE_SUPPORT_EMAIL ||
-    "elementoscryto@gmail.com";
+    import.meta?.env?.SUPPORT_EMAIL ||
+    "elementoscrypto@gmail.com";
 
   const [created, setCreated] = useState(false);
   const [sending, setSending] = useState(false);
