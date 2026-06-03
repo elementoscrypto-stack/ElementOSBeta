@@ -5068,8 +5068,8 @@ function CalculationCore() {
     ["Δx", "DeltaX", "Change in x"], ["Δy", "DeltaY", "Change in y"], ["dx", "dx", "Differential x"], ["dt", "dt", "Differential time"], ["dy/dx", "DeltaY / DeltaX", "Rate of change"]
   ];
   const geometry = [
-    ["△", "triangle", "Triangle marker"], ["○", "circle", "Circle marker"], ["□", "square", "Square marker"], ["◇", "diamond", "Diamond marker"], ["∠", "angle", "Angle marker"],
-    ["r", "r", "Radius", 5], ["d", "d", "Distance / diameter", 10], ["L", "L", "Length", 2], ["W", "W", "Width / work", 3], ["H", "H", "Height", 4]
+    ["△", "(0.5 * B * H)", "Triangle area: base × height ÷ 2"], ["○", "(pi * r^2)", "Circle area from radius"], ["□", "(L^2)", "Square area from side length"], ["◇", "((d * d) / 2)", "Diamond/rhombus estimate from diagonal"], ["∠", "theta", "Angle variable"],
+    ["r", "r", "Radius", 5], ["d", "d", "Distance / diameter", 10], ["L", "L", "Length", 2], ["W", "W", "Width / work", 3], ["H", "H", "Height", 4], ["B", "B", "Base length", 6], ["A", "A", "Area / input value", 12]
   ];
 
   const makeToken = (category, symbol, token, meaning, defaultValue = 0, tokenType = "variable") => ({ category, symbol, token, meaning, defaultValue, tokenType });
@@ -5083,7 +5083,7 @@ function CalculationCore() {
     ...constants.map(([symbol, token, meaning, defaultValue]) => makeToken("Constants", symbol, token, meaning, defaultValue, "constant")),
     ...operators.map(([symbol, token, meaning]) => makeToken("Operators", symbol, token, meaning, 0, "operator")),
     ...calculus.map(([symbol, token, meaning]) => makeToken("Calculus", symbol, token, meaning, 1, token.includes("/") ? "operator" : "symbol")),
-    ...geometry.map(([symbol, token, meaning, defaultValue]) => makeToken("Geometry", symbol, token, meaning, defaultValue ?? 1, defaultValue === undefined ? "symbol" : "variable")),
+    ...geometry.map(([symbol, token, meaning, defaultValue]) => makeToken("Geometry", symbol, token, meaning, defaultValue ?? 1, defaultValue === undefined ? "operator" : "variable")),
     makeToken("Telemetry", "S", "signal", "Signal strength", 92), makeToken("Telemetry", "B₀", "baseline", "Baseline reference", 50), makeToken("Telemetry", "N", "noise", "Noise floor", 7),
     makeToken("Telemetry", "Amp", "amplitude", "Amplitude", 10), makeToken("Telemetry", "I₀", "I0", "Reference intensity", 10), makeToken("Telemetry", "SI", "stabilityIndex", "Stability index", 96)
   ];
@@ -5195,7 +5195,18 @@ function CalculationCore() {
   const addToExpression = (token) => setExpression((prev) => `${prev}${token}`);
   const insertToken = (item = activeItem) => {
     setActiveTokenKey(tokenKey(item));
-    if (item.tokenType !== "symbol") addToExpression(item.token);
+    const tokenText = item.tokenType === "operator" ? ` ${item.token} ` : item.token;
+    addToExpression(tokenText);
+  };
+  const addSelectedTokenToBoard = (item = activeItem) => {
+    setActiveTokenKey(tokenKey(item));
+    setSaved((prev) => [{
+      id: `token-${Date.now()}`,
+      type: item.category === "Geometry" ? "Geometry" : "Toolkit Token",
+      title: `${item.symbol} ${item.meaning}`,
+      formula: item.token,
+      note: `${item.category} token saved from the Mathematical Toolkit.`
+    }, ...prev].slice(0, 12));
   };
   const usePreset = (preset) => {
     setEquationTitle(preset.name);
@@ -5315,10 +5326,10 @@ function CalculationCore() {
             <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-4">
               <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Current equation</div>
               <textarea value={expression} onChange={(e) => setExpression(e.target.value)} rows={4} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 font-mono text-lg text-white outline-none" />
-              <div className="mt-4 flex flex-wrap gap-3"><Button onClick={() => insertToken(activeItem)} variant="primary">Insert Selected Token</Button><Button onClick={solve}>Save Equation</Button><Button onClick={clearEquation}>Clear</Button></div>
+              <div className="mt-4 flex flex-wrap gap-3"><Button onClick={() => insertToken(activeItem)} variant="primary">Insert Selected Token</Button><Button onClick={() => addSelectedTokenToBoard(activeItem)}>Add Token to Whiteboard</Button><Button onClick={solve}>Save Equation</Button><Button onClick={clearEquation}>Clear</Button></div>
             </div>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Selected token</div><div className="mt-2 text-4xl font-black text-white">{activeItem.symbol}</div><div className="mt-1 font-mono text-sm text-cyan-100">{activeItem.token}</div><p className="mt-2 text-sm leading-6 text-slate-300">{activeItem.meaning}</p></div>
+              <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Selected token</div><div className="mt-2 text-4xl font-black text-white">{activeItem.symbol}</div><div className="mt-1 font-mono text-sm text-cyan-100">{activeItem.token}</div><p className="mt-2 text-sm leading-6 text-slate-300">{activeItem.meaning}</p><p className="mt-2 text-xs leading-5 text-slate-500">Geometry tokens now insert working formulas into the equation area and can also be saved directly to the Whiteboard.</p></div>
               <HelpBox title="Live interpretation">{live.error ? live.error : `${expression || "Equation"} currently evaluates to ${live.value}. Save it when it is useful.`}</HelpBox>
             </div>
           </Panel>
