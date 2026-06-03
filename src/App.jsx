@@ -9556,8 +9556,25 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     setActiveIndex((index) => Math.min(Math.max(index, 0), Math.max(filtered.length - 1, 0)));
   }, [filtered.length]);
 
+  const commandTitleById = useMemo(() => {
+    const map = new Map();
+    candidateCommands.forEach((command) => map.set(command.id, command.title));
+    return map;
+  }, [candidateCommands]);
+
+  const friendlyCommandList = (ids = []) => {
+    const safeIds = Array.isArray(ids) ? ids : [];
+    return safeIds
+      .slice(0, 4)
+      .map((id) => commandTitleById.get(id) || String(id || "").replace(/^[^:]+:/, "").replace(/-/g, " "))
+      .filter(Boolean)
+      .join(" · ");
+  };
+
   const selectedCommand = filtered[activeIndex] || filtered[0] || null;
   const isLocked = selectedCommand?.premium && !isPro;
+
+  useEffect(() => { setPendingCommand(null); }, [selectedCommand?.id]);
 
   const runCommand = (command) => {
     if (!command) return;
@@ -9579,7 +9596,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
 
   const onKeyDown = (event) => {
     if (event.key === "Escape") onClose();
-    if (event.key === "ArrowDown") { event.preventDefault(); setActiveIndex((index) => Math.min(filtered.length - 1, index + 1)); }
+    if (event.key === "ArrowDown") { event.preventDefault(); setActiveIndex((index) => Math.max(0, Math.min(filtered.length - 1, index + 1))); }
     if (event.key === "ArrowUp") { event.preventDefault(); setActiveIndex((index) => Math.max(0, index - 1)); }
     if (event.key === "Enter") { event.preventDefault(); runCommand(selectedCommand); }
   };
@@ -9609,8 +9626,8 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
           </div>
           <div className="mt-4 flex flex-wrap gap-2">{quickPrompts.map((prompt) => <button key={prompt} onClick={() => setQuery(prompt)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40">{prompt}</button>)}</div>
           <div className="mt-3 grid gap-2 text-xs text-slate-400 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Pinned</span><div className="mt-1 truncate text-cyan-100">{safePinnedCommands.slice(0, 4).join(" · ") || "Pin your favourite commands"}</div></div>
-            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Recent</span><div className="mt-1 truncate text-amber-100">{safeRecentCommands.slice(0, 4).join(" · ") || "Recent commands will appear here"}</div></div>
+            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Pinned</span><div className="mt-1 truncate text-cyan-100">{friendlyCommandList(safePinnedCommands) || "Pin your favourite commands"}</div></div>
+            <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Recent</span><div className="mt-1 truncate text-amber-100">{friendlyCommandList(safeRecentCommands) || "Recent commands will appear here"}</div></div>
           </div>
         </div>
         <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_360px]">
