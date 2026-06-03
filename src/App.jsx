@@ -7196,6 +7196,29 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
                 The most cinematic discovery workspace for <span className="poster-cyan">matter intelligence</span>
               </p>
 
+              <div className="mx-auto mt-6 max-w-4xl overflow-hidden rounded-[2rem] border border-cyan-300/25 bg-black/35 p-5 text-left shadow-[0_0_75px_rgba(34,211,238,.14)] backdrop-blur-xl">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.22em] text-amber-100">
+                      ✨ Living Research Environment
+                    </div>
+                    <h2 className="mt-3 text-2xl font-black leading-tight text-white md:text-3xl">
+                      Every interaction creates a research asset.
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                      Explore materials, simulate behaviour, generate discoveries, create executive summaries, and export shareable reports from one intelligent workspace.
+                    </p>
+                  </div>
+                  <div className="grid min-w-[220px] gap-2 text-sm">
+                    {["Discoveries", "Simulations", "Reports", "Saved Research"].map((asset) => (
+                      <div key={asset} className="rounded-2xl border border-white/10 bg-white/[0.045] px-4 py-3 font-black text-cyan-50">
+                        ✓ {asset}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div className="poster-orbit relative mx-auto mt-8 grid h-60 w-60 place-items-center rounded-[2rem] border border-cyan-300/50 bg-cyan-300/10 shadow-[0_0_110px_rgba(34,211,238,.32)] sm:h-80 sm:w-80">
                 <div className="absolute inset-[-34px] rounded-full border border-cyan-300/20" />
                 <div className="absolute inset-[-62px] rounded-full border border-amber-300/15" />
@@ -10813,7 +10836,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
-        <VisualConversionStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />
+        {page !== "landing" && <VisualConversionStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />}
         <PageMicroDataBar page={page} setPage={setPage} />
         <div className="hidden lg:block">
           <UltimateScienceCommandLayer
