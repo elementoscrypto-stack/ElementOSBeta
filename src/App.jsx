@@ -1314,7 +1314,7 @@ function MatterIntelligenceLab() {
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{activeTarget.id} is ready for report generation, workspace save and public discovery packaging.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button onClick={exportMatter} variant="primary">Generate Report</Button>
+            <Button onClick={exportMatter} variant="primary">Generate Executive Report</Button>
             <Button onClick={toggleSaveTarget}>{savedTargets.includes(activeTarget.id) ? "Saved to Workspace" : "Save to Workspace"}</Button>
             <Button onClick={runScan}>Run Similar Scan</Button>
           </div>
@@ -1433,7 +1433,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
           <Button onClick={() => copyText(`ElementOS Public Discovery: ${pair} — ${current.score}% score. ${current.reason}`)}>Copy Share Text</Button>
           <Button onClick={savePublicDiscovery}>Save to Workspace</Button>
           <Button onClick={() => setPage("timemachine")}>Run Future Simulation</Button>
-          <Button onClick={() => setPage("simreports")}>Generate Dossier</Button>
+          <Button onClick={() => setPage("simreports")}>Generate Research Dossier</Button>
           <Button onClick={() => { setPublicDiscovery?.(null); window.history.replaceState({}, document.title, window.location.pathname); setPage("discover"); }}>Back to Feed</Button>
         </div>
       </Panel>
@@ -1729,7 +1729,7 @@ function makeExportSvg({ title = "ElementOS Export", summary = "", payload = {},
 
   <g transform="translate(92 1250)">
     <text x="0" y="0" fill="${palette.a}" font-family="Inter, Arial" font-size="19" font-weight="950" letter-spacing="3">DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
-    <text x="0" y="36" fill="#94a3b8" font-family="Inter, Arial" font-size="17" font-weight="800">Generated ${generated} · ElementOS Discovery Operating System</text>
+    <text x="0" y="36" fill="#94a3b8" font-family="Inter, Arial" font-size="17" font-weight="800">Generated ${generated} · ElementOS Material Intelligence Platform</text>
   </g>
 </svg>`;
 }
@@ -2148,7 +2148,7 @@ function ElementOSThemeSkin() {
       .eos-button:before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent); transform: translateX(-120%); transition: transform .55s ease; }
       .eos-button:hover:before { transform: translateX(120%); }
       .eos-input, input, select, textarea { background: rgba(4, 12, 23, .92) !important; border-color: rgba(40, 105, 190, .32) !important; color: #eaf6ff !important; }
-      input::placeholder, textarea::placeholder { color: rgba(170,190,215,.62); }
+      input::guided example, textarea::guided example { color: rgba(170,190,215,.62); }
       .eos-nav-item { background: rgba(5,14,26,.72); border: 1px solid rgba(28,72,126,.42); }
       .eos-nav-item-active { background: linear-gradient(90deg, rgba(11,99,255,.28), rgba(8,180,255,.08)); border-color: rgba(40,132,255,.75); box-shadow: inset 0 0 18px rgba(0,116,255,.12), 0 0 22px rgba(0,116,255,.15); }
       .eos-orbital:before { content: ''; position: absolute; inset: -40%; border: 1px solid rgba(0,174,255,.18); border-radius: 999px; transform: rotate(25deg); }
@@ -2622,7 +2622,7 @@ function Sidebar({ page, setPage }) {
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal prototype wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Generate Discovery", "compare", FileText], ["Advanced Material Analysis", "matterlab", Globe2], ["Ask ElementOS", "copilot", Sparkles], ["Mission Intelligence", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Future Simulation", "timemachine", Clock3], ["Resource Discovery Lab", "welldriller", Radar], ["Wave Intelligence", "seismo", Network], ["Reports", "simreports", BookOpen], ["Poster Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Saved Discoveries", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Material Interaction Atlas", "atlas", Radar], ["Explorer Launch", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Create Free Explorer Account</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, vault, PDF/JSON/SVG exports, media tools and AI Copilot through Stripe Checkout.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Access Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["6", "clear behaviour layers"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal research preview wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Generate Discovery", "compare", FileText], ["Advanced Material Analysis", "matterlab", Globe2], ["Ask ElementOS", "copilot", Sparkles], ["Mission Intelligence", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Future Simulation", "timemachine", Clock3], ["Resource Discovery Lab", "welldriller", Radar], ["Wave Intelligence", "seismo", Network], ["Reports", "simreports", BookOpen], ["Poster Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Saved Discoveries", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Material Interaction Atlas", "atlas", Radar], ["Explorer Launch", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Create Free Explorer Account</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, vault, PDF/JSON/SVG exports, media tools and AI Copilot through Stripe Checkout.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Access Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["6", "clear behaviour layers"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
       <DiscoveryNetworkSubscriberEdition setPage={setPage} />
       <SubscriberWorkspaceVault setPage={setPage} />
@@ -2908,7 +2908,7 @@ function Discover({ setPage, setPublicDiscovery }) {
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
               <Button onClick={() => safeCopyText(`I discovered ${today?.a} + ${today?.b} on ElementOS before 98% of researchers.`)}>Copy Share Card</Button>
-              <Button variant="primary" onClick={() => setPage("reports")}>Generate Report</Button>
+              <Button variant="primary" onClick={() => setPage("reports")}>Generate Executive Report</Button>
             </div>
           </div>
         </div>
@@ -3025,7 +3025,7 @@ function Discover({ setPage, setPublicDiscovery }) {
               Discoveries with high AI confidence or fast trend velocity are promoted into this premium feed.
             </p>
           </div>
-          <Button onClick={() => setPage("reports")} variant="primary">Generate Report</Button>
+          <Button onClick={() => setPage("reports")} variant="primary">Generate Executive Report</Button>
         </div>
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {autoPromoted.map((d) => (
@@ -3308,7 +3308,7 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
             value={scenarioText}
             onChange={(e) => setScenarioText(e.target.value)}
             className="mt-5 min-h-[170px] w-full rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 text-lg leading-8 outline-none focus:border-cyan-300/60"
-            placeholder="Describe the material, environment and timescale..."
+            guided example="Describe the material, environment and timescale..."
           />
           <div className="mt-4 flex flex-wrap gap-2">
             {scenarioTemplates.map((t) => <button key={t} onClick={() => setScenarioText(t)} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-bold text-slate-300 hover:border-cyan-300/40 hover:text-cyan-100">{t.split(" ").slice(0,4).join(" ")}...</button>)}
@@ -3689,7 +3689,7 @@ function TimeMachine({ selected, setSelected, setPage }) {
                 </div>
                 <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-sm font-black text-cyan-100">5,000 scenarios</div>
               </div>
-              <input value={scenarioSearch} onChange={(e) => setScenarioSearch(e.target.value)} placeholder="Search scenarios: ocean, orbit, refinery, corrosion, pressure..." className="mt-4 w-full rounded-2xl border border-white/10 bg-black/35 p-4 text-sm outline-none placeholder:text-slate-600" />
+              <input value={scenarioSearch} onChange={(e) => setScenarioSearch(e.target.value)} guided example="Search scenarios: ocean, orbit, refinery, corrosion, pressure..." className="mt-4 w-full rounded-2xl border border-white/10 bg-black/35 p-4 text-sm outline-none guided example:text-slate-600" />
               <div className="mt-3 flex max-h-24 flex-wrap gap-2 overflow-auto rounded-2xl border border-white/10 bg-black/20 p-3">
                 {scenarioCategories.map((cat) => <button key={cat} onClick={() => setScenarioCategory(cat)} className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] ${scenarioCategory === cat ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{cat}</button>)}
               </div>
@@ -3913,14 +3913,14 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Full name"
+                guided example="Full name"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
               />
 
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
+                guided example="Email"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
               />
 
@@ -3928,7 +3928,7 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
-                placeholder="Password"
+                guided example="Password"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4 outline-none"
               />
 
@@ -4008,7 +4008,7 @@ function Explorer({ selected, setSelected, setCompare }) {
   const [q, setQ] = useState(""); const [cat, setCat] = useState("All");
   const filtered = elements.filter(e => (cat === "All" || e.category === cat) && `${e.symbol} ${e.name} ${e.category}`.toLowerCase().includes(q.toLowerCase())).slice(0, 80);
   const el = elementMap[selected] || elementMap.Al; const s = score(selected);
-  return <><Panel><Pill gold><Search size={12}/> material explorer</Pill><h1 className="mt-4 text-5xl font-black">Element Explorer</h1><Info title="User value">Search and inspect the behaviour profile of each element before adding it to a comparison or report.</Info></Panel><GuidePanel page="explorer" /><div className="grid gap-6 xl:grid-cols-[420px_1fr]"><Panel><div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements..." className="w-full bg-transparent outline-none"/></div><select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{categories.map(c => <option key={c}>{c}</option>)}</select><div className="mt-4 max-h-[620px] overflow-auto pr-2">{filtered.map(e => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left ${selected === e.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}</div></Panel><Panel><div className="grid gap-6 xl:grid-cols-[1fr_360px]"><div><div className="text-8xl font-black text-cyan-100">{el.symbol}</div><h2 className="mt-2 text-4xl font-black">{el.name}</h2><p className="mt-2 text-slate-400">Atomic number {el.atomicNumber} · {el.category}</p><div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{metrics.map(k => <div key={k} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.22em] text-slate-500">{k === "alignment" ? "Alignment" : k}</div><div className="mt-2 text-3xl font-black text-cyan-100">{k === "alignment" ? s[k].toFixed(0) : s[k].toFixed(2)}</div></div>)}</div><Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))} variant="primary" className="mt-6">Add {el.symbol} to Compare</Button></div><Panel><h3 className="text-xl font-black">Behaviour Radar</h3><RadarChart data={s}/><p className="text-sm text-slate-400">A visual profile makes each element instantly understandable.</p></Panel></div></Panel></div></>;
+  return <><Panel><Pill gold><Search size={12}/> material explorer</Pill><h1 className="mt-4 text-5xl font-black">Element Explorer</h1><Info title="User value">Search and inspect the behaviour profile of each element before adding it to a comparison or report.</Info></Panel><GuidePanel page="explorer" /><div className="grid gap-6 xl:grid-cols-[420px_1fr]"><Panel><div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} guided example="Search elements..." className="w-full bg-transparent outline-none"/></div><select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{categories.map(c => <option key={c}>{c}</option>)}</select><div className="mt-4 max-h-[620px] overflow-auto pr-2">{filtered.map(e => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left ${selected === e.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}</div></Panel><Panel><div className="grid gap-6 xl:grid-cols-[1fr_360px]"><div><div className="text-8xl font-black text-cyan-100">{el.symbol}</div><h2 className="mt-2 text-4xl font-black">{el.name}</h2><p className="mt-2 text-slate-400">Atomic number {el.atomicNumber} · {el.category}</p><div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{metrics.map(k => <div key={k} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.22em] text-slate-500">{k === "alignment" ? "Alignment" : k}</div><div className="mt-2 text-3xl font-black text-cyan-100">{k === "alignment" ? s[k].toFixed(0) : s[k].toFixed(2)}</div></div>)}</div><Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))} variant="primary" className="mt-6">Add {el.symbol} to Compare</Button></div><Panel><h3 className="text-xl font-black">Behaviour Radar</h3><RadarChart data={s}/><p className="text-sm text-slate-400">A visual profile makes each element instantly understandable.</p></Panel></div></Panel></div></>;
 }
 function PeriodicTable({ selected, setSelected }) {
   const [layer, setLayer] = useState("conductivity");
@@ -5147,7 +5147,7 @@ function CalculationCore() {
     ["∀", "forall", "For all"], ["∃", "exists", "There exists"], ["∄", "notExists", "Does not exist"], ["⊢", "proves", "Proves"], ["⊨", "models", "Models / entails"], ["⊤", "true", "True"], ["⊥", "false", "False / contradiction"]
   ];
   const matrices = [
-    ["[ ]", "matrix", "Matrix placeholder"], ["det", "det", "Determinant"], ["tr", "trace", "Trace"], ["rank", "rank", "Matrix rank"], ["eig", "eigen", "Eigenvalue / eigenvector"], ["Iₙ", "Identity", "Identity matrix"], ["0ₙ", "ZeroMatrix", "Zero matrix"],
+    ["[ ]", "matrix", "Matrix guided example"], ["det", "det", "Determinant"], ["tr", "trace", "Trace"], ["rank", "rank", "Matrix rank"], ["eig", "eigen", "Eigenvalue / eigenvector"], ["Iₙ", "Identity", "Identity matrix"], ["0ₙ", "ZeroMatrix", "Zero matrix"],
     ["Aᵀ", "transpose", "Transpose"], ["A⁻¹", "inverse", "Inverse matrix"], ["diag", "diagonal", "Diagonal matrix"], ["adj", "adjugate", "Adjugate"], ["ker", "kernel", "Kernel / null space"], ["im", "image", "Image / range"]
   ];
   const vectors = [
@@ -5405,7 +5405,7 @@ function CalculationCore() {
             <label className="mt-5 block text-xs font-black uppercase tracking-[.18em] text-slate-500">Equation name</label>
             <input value={equationTitle} onChange={(e) => setEquationTitle(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none focus:border-cyan-300/50" />
             <label className="mt-5 block text-xs font-black uppercase tracking-[.18em] text-slate-500">Equation</label>
-            <textarea value={expression} onChange={(e) => setExpression(e.target.value)} rows={4} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 font-mono text-lg text-white outline-none focus:border-cyan-300/50" placeholder="Example: A + B or 0.5 * m * v^2" />
+            <textarea value={expression} onChange={(e) => setExpression(e.target.value)} rows={4} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 font-mono text-lg text-white outline-none focus:border-cyan-300/50" guided example="Example: A + B or 0.5 * m * v^2" />
             <div className="mt-4 flex flex-wrap gap-2">{presets.slice(0, 8).map((p) => <button key={p.name} onClick={() => usePreset(p)} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-bold text-slate-300 hover:border-cyan-300/40 hover:text-white">{p.name}</button>)}</div>
             <div className="mt-5 flex flex-wrap gap-3"><Button onClick={solve} variant="primary">Solve + Save</Button><Button onClick={clearEquation}>Clear Equation</Button><Button onClick={resetValues}>Reset Values</Button></div>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -5451,7 +5451,7 @@ function CalculationCore() {
             <p className="mt-2 text-sm leading-6 text-slate-400">Build equations using numbers, uppercase and lowercase letters, Greek symbols, constants, operators, geometry, calculus, trigonometry, matrices, vectors, statistics, quantum notation, relativity notation, telemetry tokens and scientific variables. One token is selected at a time so advanced users can move quickly without losing context.</p>
             <div className="mt-5 flex flex-wrap gap-2">{tokenCategories.map((cat) => <button key={cat} onClick={() => setTokenCategory(cat)} className={`rounded-full border px-3 py-2 text-xs font-black tracking-[.14em] ${tokenCategory === cat ? "border-cyan-300/50 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"}`}>{cat}</button>)}</div>
             <div className="mt-4 grid gap-3 md:grid-cols-3"><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Letters</div><div className="mt-1 text-sm text-slate-300">Uppercase A–Z and lowercase a–z are separate selectable variables.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Symbols</div><div className="mt-1 text-sm text-slate-300">Operators, relations, sets, logic, trigonometry, vectors, matrices, calculus and advanced notation tokens.</div></div><div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Science</div><div className="mt-1 text-sm text-slate-300">Greek, physics, constants, geometry, telemetry, statistics, quantum and relativity variables.</div></div></div>
-            <input value={tokenSearch} onChange={(e) => setTokenSearch(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="Search symbols, variables, constants, operators..." />
+            <input value={tokenSearch} onChange={(e) => setTokenSearch(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" guided example="Search symbols, variables, constants, operators..." />
             <div className="mt-5 max-h-[620px] overflow-auto rounded-2xl border border-white/10 bg-black/25">
               <table className="min-w-full text-left text-sm">
                 <thead className="sticky top-0 z-10 bg-slate-950/95 text-xs uppercase tracking-[.16em] text-slate-500"><tr><th className="p-3">Symbol</th><th className="p-3">Token</th><th className="p-3">Meaning</th><th className="p-3">Category</th><th className="p-3">Value</th></tr></thead>
@@ -5470,7 +5470,7 @@ function CalculationCore() {
           <Pill gold><BookOpen size={12}/> reference library</Pill>
           <h2 className="mt-3 text-3xl font-black">Find formulas fast.</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Search stress, density, relativity, quantum, lagrangian, telemetry, geometry or everyday maths. Pick a formula and it loads into the Calculator.</p>
-          <input value={librarySearch} onChange={(e) => setLibrarySearch(e.target.value)} className="mt-5 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="Search formulas, frameworks or variables..." />
+          <input value={librarySearch} onChange={(e) => setLibrarySearch(e.target.value)} className="mt-5 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" guided example="Search formulas, frameworks or variables..." />
           <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filteredPresets.map((preset) => <button key={`${preset.group}-${preset.name}`} onClick={() => usePreset(preset)} className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{preset.group}</div><div className="mt-2 text-xl font-black text-white">{preset.name}</div><div className="mt-2 font-mono text-sm text-amber-100">{preset.expr}</div><p className="mt-3 text-sm leading-6 text-slate-400">{preset.desc}</p><div className="mt-4 text-xs font-black uppercase tracking-[.18em] text-white">Use this formula →</div></button>)}
           </div>
@@ -6336,228 +6336,125 @@ function MyLab({ session, selected, compare, setPage }) {
 
 
 function BetaLaunch({ session, setPage, startCheckout }) {
+  const [name, setName] = useState(session?.user?.user_metadata?.name || "");
   const [email, setEmail] = useState(session?.user?.email || "");
-  const [role, setRole] = useState("Founder / creator");
-  const [feature, setFeature] = useState("Discovery media assets for Seismo, Future Simulation and Well Driller");
+  const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [notice, setNotice] = useState("");
 
-  const seed = (email || "founder@elementos.ai").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  const founderNumber = String(1 + (seed % 999)).padStart(3, "0");
-  const explorerStats = [
-    ["042", "founding researcher slots"],
-    ["8", "core growth loops"],
-    ["24h", "feedback response target"],
-    ["Pro", "report/export track"],
+  const accountBenefits = [
+    ["Save discoveries", "Keep your strongest material findings in Saved Discoveries."],
+    ["Generate research reports", "Turn comparisons and simulations into professional executive outputs."],
+    ["Access advanced tools", "Move from Explorer into Pro Researcher or Pro Lab when you are ready."],
   ];
 
-  const roadmap = [
-    ["Now", "Media Engine + Universal Simulation Dossiers", "Turn every discovery into a shareable output."],
-    ["Next", "Mobile-first simulator polish", "Make TikTok/X/Reddit traffic feel instant and premium."],
-    ["Soon", "Public discovery URLs", "Every report, Seismo readout and Future Simulation forecast becomes indexable."],
-    ["Later", "Team labs + API access", "Move from creator tool into enterprise-ready simulation workspace."],
-  ];
+  const createExplorerAccount = () => {
+    if (!email.trim()) {
+      setNotice("Please enter an email address so your ElementOS account can be linked later.");
+      return;
+    }
 
-  const saveExplorerApplication = () => {
-    const application = {
-      email: email || "anonymous@elementos.ai",
-      role,
-      feature,
-      founderNumber,
+    const account = {
+      name: name || "ElementOS Explorer",
+      email,
       createdAt: new Date().toISOString(),
+      plan: "Explorer",
     };
 
     try {
-      const existing = JSON.parse(localStorage.getItem("elementos_explorer_applications") || "[]");
-      localStorage.setItem("elementos_explorer_applications", JSON.stringify([application, ...existing].slice(0, 50)));
+      const existing = JSON.parse(localStorage.getItem("elementos_explorer_accounts") || "[]");
+      localStorage.setItem("elementos_explorer_accounts", JSON.stringify([account, ...existing].slice(0, 50)));
     } catch (error) {
-      console.warn("Explorer application local save skipped", error);
+      console.warn("Explorer account local save skipped", error);
     }
 
     setSubmitted(true);
-  };
-
-  const copyLaunchPost = () => {
-    const post = `I just created my free ElementOS Explorer account as Founding Researcher #${founderNumber}.
-
-ElementOS is an AI-native exploratory simulation platform for material intelligence, Future Simulation forecasts, Seismo wave modelling, Well Driller simulations, Scenario Builder reports and discovery media assets.
-
-ElementOS is now open with Explorer $0, Pro Researcher $19/month and Pro Lab $35/month.`;
-
-    safeCopyText(post, "Explorer launch post copied.");
-  };
-
-  const exportExplorerBrief = () => {
-    const content = [
-      "ElementOS Explorer Launch Brief",
-      "==========================",
-      "",
-      `Founding Researcher ID: #${founderNumber}`,
-      `Email: ${email || "not provided"}`,
-      `Role: ${role}`,
-      `Requested feature: ${feature}`,
-      "",
-      "Explorer promise:",
-      "ElementOS gives users free read-only discovery access, then unlocks reports, exports, vault, media and advanced labs through Pro Researcher and Pro Lab.",
-      "",
-      "Core launch loops:",
-      "- Discovery media assets",
-      "- TikTok/X/Reddit-ready visuals",
-      "- Public reports",
-      "- Mobile app feel",
-      "- Faster performance",
-      "- Better onboarding",
-      "- Cleaner scientific language",
-      "- Community and leaderboards",
-    ].join("\\n");
-
-    exportAllFormats({ baseName: `elementos-explorer-brief-${founderNumber}`, title: `ElementOS Explorer Launch Brief ${founderNumber}`, summary: content, payload: { founderNumber, track: "Explorer Launch" } });
+    setNotice("");
   };
 
   return (
     <>
-      <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
+      <Panel className="grid gap-8 xl:grid-cols-[.95fr_1.05fr] xl:items-start">
         <div>
-          <Pill gold><UserPlus size={12}/> explorer launch system</Pill>
-          <h1 className="mt-4 text-5xl font-black sm:text-7xl">
-            Founding Researcher <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Explorer Launch</span>
+          <Pill gold><UserPlus size={12}/> create account</Pill>
+          <h1 className="mt-4 text-5xl font-black leading-tight sm:text-7xl">
+            Create Account
           </h1>
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Convert visitors into free Explorer users, then give them a clear upgrade path into Pro Researcher at $19/month or Pro Lab at $35/month.
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-300">
+            Start exploring ElementOS. Create your account to save discoveries, generate reports and access advanced tools when you upgrade.
           </p>
-          <Info title="Why this matters">
-            The goal is no longer only adding features. The goal is getting real users to join, test, share, request improvements and feel early ownership in the platform.
-          </Info>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Button onClick={() => setPage("viralcards")} variant="primary">Create Media</Button>
-            <Button onClick={() => setPage("simreports")}>Open Simulation Dossiers</Button>
-            <Button onClick={copyLaunchPost}>Copy Launch Post</Button>
+          <div className="mt-6 grid gap-3">
+            {accountBenefits.map(([title, body]) => (
+              <div key={title} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
+                <div className="text-sm font-black text-cyan-100">{title}</div>
+                <div className="mt-1 text-sm leading-6 text-slate-300">{body}</div>
+              </div>
+            ))}
           </div>
         </div>
 
-        <Panel>
-          <div className="text-xs uppercase tracking-[.22em] text-slate-500">your early access identity</div>
-          <div className="mt-4 rounded-[2rem] border border-amber-300/25 bg-gradient-to-br from-amber-300/20 via-cyan-300/10 to-fuchsia-400/10 p-6">
-            <div className="text-sm uppercase tracking-[.22em] text-amber-100">Founding Researcher</div>
-            <div className="mt-3 text-7xl font-black text-white">#{founderNumber}</div>
-            <p className="mt-4 text-sm leading-7 text-amber-50/90">
-              New users need identity. This badge makes the Explorer launch feel polished, screenshot-worthy and worth sharing.
-            </p>
-          </div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {explorerStats.map(([value, label]) => (
-              <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="text-3xl font-black text-cyan-100">{value}</div>
-                <div className="mt-1 text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div>
+        <Panel className="border-cyan-300/25 bg-black/25">
+          {submitted ? (
+            <div className="rounded-[2rem] border border-emerald-300/25 bg-emerald-300/10 p-8 text-center">
+              <CheckCircle2 className="mx-auto text-emerald-200" size={46} />
+              <h2 className="mt-4 text-3xl font-black text-emerald-100">Explorer Account Ready</h2>
+              <p className="mt-3 text-sm leading-6 text-slate-300">Your account details have been saved for this browser. When Supabase auth is fully connected, this same page can become the live signup flow.</p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <Button onClick={() => setPage("dashboard")} variant="primary">Open Dashboard</Button>
+                <Button onClick={() => setPage("discover")}>Start Exploring</Button>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div>
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">Explorer account</div>
+              <h2 className="mt-3 text-3xl font-black">Start free. Upgrade when ready.</h2>
+              <div className="mt-6 grid gap-4">
+                <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
+                  Name
+                  <input value={name} onChange={(e) => setName(e.target.value)} guided example="Your name" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                </label>
+                <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
+                  Email
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} guided example="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                </label>
+                <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
+                  Password
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} guided example="Create a password" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                </label>
+                {notice && <div className="rounded-2xl border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">{notice}</div>}
+                <Button onClick={createExplorerAccount} variant="primary" className="w-full py-4">Create Account</Button>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-center text-sm text-slate-300">
+                  Already have an account? <button type="button" onClick={() => setPage("login")} className="font-black text-cyan-100 underline decoration-cyan-300/40">Sign In</button>
+                </div>
+              </div>
+            </div>
+          )}
         </Panel>
       </Panel>
-
-      <GuidePanel page="beta" />
-
-      <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
-        <Panel>
-          <Pill gold><Sparkles size={12}/> create account</Pill>
-          <h2 className="mt-3 text-4xl font-black">Apply for Early Access</h2>
-          <p className="mt-2 text-sm leading-7 text-slate-400">
-            Capture intent from early users, understand who they are, and learn what feature would make them subscribe.
-          </p>
-
-          <div className="mt-5 space-y-4">
-            <label className="block">
-              <div className="mb-2 text-xs uppercase tracking-[.2em] text-slate-500">email</div>
-              <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="w-full rounded-2xl border border-white/10 bg-black/30 p-4 text-white outline-none focus:border-cyan-300/40" />
-            </label>
-            <label className="block">
-              <div className="mb-2 text-xs uppercase tracking-[.2em] text-slate-500">who are you?</div>
-              <select value={role} onChange={(e) => setRole(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/30 p-4 text-white outline-none focus:border-cyan-300/40">
-                <option>Founder / creator</option>
-                <option>Engineer / builder</option>
-                <option>Student / researcher</option>
-                <option>Materials enthusiast</option>
-                <option>Investor / advisor</option>
-                <option>Curious explorer</option>
-              </select>
-            </label>
-            <label className="block">
-              <div className="mb-2 text-xs uppercase tracking-[.2em] text-slate-500">what should we build next?</div>
-              <textarea value={feature} onChange={(e) => setFeature(e.target.value)} rows={4} className="w-full rounded-2xl border border-white/10 bg-black/30 p-4 text-white outline-none focus:border-cyan-300/40" />
-            </label>
-
-            <div className="flex flex-wrap gap-3">
-              <Button onClick={saveExplorerApplication} variant="primary">Create Account</Button>
-              <Button onClick={exportExplorerBrief}>Export Explorer PDF/JSON/SVG</Button>
-              <Button onClick={startCheckout}>Upgrade Pro</Button>
-            </div>
-
-            {submitted && (
-              <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100">
-                ✓ Explorer account path saved locally. Founding Researcher #{founderNumber} assigned.
-              </div>
-            )}
-          </div>
-        </Panel>
-
-        <Panel>
-          <Pill><BookOpen size={12}/> public roadmap</Pill>
-          <h2 className="mt-3 text-4xl font-black">Build Roadmap Users Can Believe In</h2>
-          <p className="mt-2 text-sm leading-7 text-slate-400">
-            A public roadmap gives early users confidence that the platform is moving, improving and listening.
-          </p>
-          <div className="mt-6 space-y-4">
-            {roadmap.map(([stage, title, desc]) => (
-              <div key={stage} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/10 p-4">
-                <div className="text-xs uppercase tracking-[.22em] text-cyan-200">{stage}</div>
-                <div className="mt-2 text-xl font-black text-white">{title}</div>
-                <p className="mt-2 text-sm leading-6 text-slate-300">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </Panel>
-      </div>
 
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <Pill gold><Network size={12}/> feedback command centre</Pill>
-            <h2 className="mt-3 text-4xl font-black">What Early Users Should Test</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">
-              Send Explorer users to the most screenshot-worthy flows first. These are the pages that create emotion, social proof and subscription intent.
-            </p>
+            <Pill gold><Sparkles size={12}/> plans</Pill>
+            <h2 className="mt-3 text-4xl font-black">Choose the level that matches your workflow.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">Explorer is free. Pro Researcher unlocks reports, exports and saved research. Pro Lab unlocks the full advanced toolset.</p>
           </div>
-          <Button onClick={() => setPage("landing")} variant="primary">Open Landing Page</Button>
         </div>
-
-        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {[
-            ["Media Engine", "Can users create a card they would actually post?", "viralcards"],
-            ["Future Simulation", "Does the future-state simulation feel understandable and premium?", "timemachine"],
-            ["Seismo", "Do P-wave and S-wave visuals feel clear, useful and cool?", "seismo"],
-            ["Well Driller", "Does the subsurface simulation feel like a serious demo?", "welldriller"],
-            ["Scenario Builder", "Can a user type a situation and understand the result?", "scenario"],
-            ["Reports", "Would someone pay for the export?", "simreports"],
-            ["Mobile UX", "Can a phone user navigate without confusion?", "landing"],
-            ["Onboarding", "Do users know what to do in under 10 seconds?", "dashboard"],
-          ].map(([title, desc, target]) => (
-            <button key={title} onClick={() => setPage(target)} className="rounded-[1.6rem] border border-white/10 bg-black/25 p-5 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
-              <div className="text-lg font-black text-cyan-100">{title}</div>
-              <p className="mt-2 text-sm leading-6 text-slate-400">{desc}</p>
-            </button>
-          ))}
-        </div>
-      </Panel>
-
-      <Panel>
-        <div className="grid gap-5 xl:grid-cols-3">
-          {[
-            ["Founder update", "ElementOS is open with Explorer $0, Pro Researcher $19/month and Pro Lab $35/month for researchers who want AI-native material simulation, temporal forecasts and shareable discovery reports."],
-            ["Community promise", "Every Explorer user can influence the roadmap. The best requested features become visible product milestones."],
-            ["Conversion hook", "Free users explore. Pro users export, save, publish and build a permanent research workspace."],
-          ].map(([title, body]) => (
-            <div key={title} className="rounded-[2rem] border border-amber-300/15 bg-amber-300/10 p-5">
-              <div className="text-xl font-black text-amber-100">{title}</div>
-              <p className="mt-3 text-sm leading-7 text-amber-50/90">{body}</p>
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          {ELEMENTOS_SUBSCRIPTION_PLANS.map((plan) => (
+            <div key={plan.name} className={`rounded-[2rem] border p-5 ${plan.recommended ? "border-amber-300/40 bg-amber-300/10" : "border-white/10 bg-white/[0.035]"}`}>
+              <div className="text-xs uppercase tracking-[.22em] text-slate-500">{plan.eyebrow}</div>
+              <div className="mt-2 text-2xl font-black text-white">{plan.name}</div>
+              <div className="mt-3 text-4xl font-black text-cyan-100">{plan.price}</div>
+              <p className="mt-3 min-h-[72px] text-sm leading-6 text-slate-300">{plan.description}</p>
+              <div className="mt-4 space-y-2 text-sm text-slate-300">
+                {plan.features.slice(0, 6).map((feature) => <div key={feature}>✓ {feature}</div>)}
+              </div>
+              {plan.name === "Explorer" ? (
+                <Button onClick={() => setPage("discover")} className="mt-5 w-full">Start Exploring</Button>
+              ) : (
+                <Button onClick={() => startCheckout?.(plan.name)} variant="primary" className="mt-5 w-full">Upgrade to {plan.name}</Button>
+              )}
             </div>
           ))}
         </div>
@@ -6565,8 +6462,6 @@ ElementOS is now open with Explorer $0, Pro Researcher $19/month and Pro Lab $35
     </>
   );
 }
-
-
 
 function GuidedNextStep({ title = "Recommended next step", body = "Follow the guided path: explore, compare, simulate, report and save.", primary = "mission", secondary = "compare", setPage }) {
   return (
@@ -7153,7 +7048,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
               <div className="grid h-12 w-12 place-items-center rounded-xl border border-cyan-300/40 bg-cyan-300/10 text-2xl font-black text-white shadow-[0_0_35px_rgba(34,211,238,.24)]">E</div>
               <div>
                 <div className="text-2xl font-black tracking-[.12em] text-white">Element<span className="poster-cyan">OS</span></div>
-                <div className="text-[10px] uppercase tracking-[.28em] text-slate-500">Discovery Operating System</div>
+                <div className="text-[10px] uppercase tracking-[.28em] text-slate-500">Material Intelligence Platform</div>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -7193,8 +7088,16 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
                 ELEMENT<span className="poster-cyan">OS</span>
               </h1>
               <p className="mx-auto mt-5 max-w-3xl text-sm font-semibold uppercase tracking-[.35em] text-slate-200 sm:text-lg">
-                The most cinematic discovery workspace for <span className="poster-cyan">matter intelligence</span>
+                The operating system for <span className="poster-cyan">material intelligence</span>
               </p>
+
+              <div className="mx-auto mt-5 grid max-w-4xl gap-3 text-left sm:grid-cols-2 xl:grid-cols-4">
+                {["Explore materials", "Model interactions", "Generate discoveries", "Create research reports"].map((item) => (
+                  <div key={item} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 px-4 py-3 text-sm font-black text-cyan-50">
+                    ✓ {item}
+                  </div>
+                ))}
+              </div>
 
               <div className="mx-auto mt-6 max-w-4xl overflow-hidden rounded-[2rem] border border-cyan-300/25 bg-black/35 p-5 text-left shadow-[0_0_75px_rgba(34,211,238,.14)] backdrop-blur-xl">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -7279,6 +7182,31 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
         </div>
       </Panel>
 
+      <Panel className="border-cyan-300/20 bg-cyan-300/5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Pill gold><Compass size={12}/> start here</Pill>
+            <h2 className="mt-3 text-4xl font-black">Four steps to your first research asset.</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">ElementOS is easiest when the first journey is clear: select a material, compare it, generate a discovery, then create an executive report.</p>
+          </div>
+          <Button onClick={() => setPage("discover")} variant="primary">Start Exploring</Button>
+        </div>
+        <div className="mt-6 grid gap-3 md:grid-cols-4">
+          {[
+            ["01", "Select a material", "Open Explore or the Periodic Map and choose the material you care about."],
+            ["02", "Compare materials", "Run a comparison across stability, thermal, pressure, diffusion and rarity."],
+            ["03", "Generate a discovery", "Turn the result into a clear discovery card with score, class and use cases."],
+            ["04", "Create a report", "Export an executive report or save it to your workspace."],
+          ].map(([step, title, body]) => (
+            <button key={title} type="button" onClick={() => setPage(step === "01" ? "explorer" : step === "02" ? "compare" : step === "03" ? "discover" : "simreports")} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/10">
+              <div className="text-xs font-black text-cyan-200">{step}</div>
+              <div className="mt-2 text-lg font-black text-white">{title}</div>
+              <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+            </button>
+          ))}
+        </div>
+      </Panel>
+
       <DiscoveryCommandCenter setPage={setPage} compare={heroCompare} />
       <DiscoveryNetworkSubscriberEdition setPage={setPage} />
       <SubscriberWorkspaceVault setPage={setPage} />
@@ -7300,10 +7228,13 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
             <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-3xl font-black text-cyan-100">{daily?.momentum || 91}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">momentum</div></div>
             <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4"><div className="text-3xl font-black text-amber-100">{daily?.tier || 'RARE'}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">rarity</div></div>
           </div>
+          <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-50">
+            <span className="font-black text-white">Credibility layer:</span> Top simulated pairing class with recommended applications across aerospace, marine, energy and advanced structures.
+          </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <Button onClick={() => setPage('discover')} variant="primary">Open Discovery Feed</Button>
             <Button onClick={() => setPage('publicdiscovery')}>View Public Page</Button>
-            <Button onClick={() => setPage('simreports')}>Generate Report</Button>
+            <Button onClick={() => setPage('simreports')}>Generate Executive Report</Button>
           </div>
         </Panel>
 
@@ -7351,7 +7282,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
   );
 }
 
-function ExperimentalWellDriller({ setPage }) {
+function AdvancedWellDriller({ setPage }) {
   const [depth, setDepth] = useState(3200);
   const [pressure, setPressure] = useState(62);
   const [rpm, setRpm] = useState(118);
@@ -8199,7 +8130,7 @@ ${cardData.tier} · ${cardData.top}
 
 Generated in ElementOS.`,
       LinkedIn: `I generated a new ElementOS discovery asset: ${pair}. The model returned ${cardData.score}% ${cardData.metric}, classified as ${cardData.tier}. This is the kind of shareable scientific intelligence workflow ElementOS is being built for.`,
-      Reddit: `I am testing a material-discovery prototype called ElementOS. This card shows ${pair} with ${cardData.score}% ${cardData.metric}. I am looking for feedback on whether the explanation and export format make the result understandable.`,
+      Reddit: `I am testing a material-discovery research preview called ElementOS. This card shows ${pair} with ${cardData.score}% ${cardData.metric}. I am looking for feedback on whether the explanation and export format make the result understandable.`,
       ProductHunt: `ElementOS turns material simulations into discoveries, reports and shareable scientific cards. Today's example: ${pair} at ${cardData.score}% ${cardData.metric}.`,
     };
     const caption = captions[channel] || captions.X;
@@ -8225,7 +8156,7 @@ Generated in ElementOS.`,
       captions: {
         x: `${cardData.headline}\n\n${pair} · ${cardData.score}% ${cardData.metric}\n${cardData.tier} · ${cardData.top}\n\nBuilt in ElementOS.`,
         linkedin: `I generated a new ElementOS discovery asset: ${pair}. It scored ${cardData.score}% ${cardData.metric} and is classified as ${cardData.tier}. ElementOS turns simulations into reports, posters and shareable scientific discovery pages.`,
-        reddit: `I am testing ElementOS, a material-discovery prototype. This export shows ${pair} with ${cardData.score}% ${cardData.metric}. I would love feedback on whether the card explains the discovery clearly.`,
+        reddit: `I am testing ElementOS, a material-discovery research preview. This export shows ${pair} with ${cardData.score}% ${cardData.metric}. I would love feedback on whether the card explains the discovery clearly.`,
       },
       ctaVariants,
       platformRecommendations,
@@ -8408,7 +8339,7 @@ Generated in ElementOS.`,
             ))}
           </div>
           <div className="mt-5 grid gap-2 sm:grid-cols-2">
-            <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Founder name" />
+            <input value={founderName} onChange={(e) => setFounderName(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" guided example="Founder name" />
             <button onClick={() => setHeadlineMode(headlineMode === "AI Headline" ? "Simple" : "AI Headline")} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-left text-sm font-black text-cyan-100">{headlineMode}</button>
           </div>
           <div className="mt-5">
@@ -8426,7 +8357,7 @@ Generated in ElementOS.`,
             </div>
           </div>
           <div className="mt-5 grid gap-2 sm:grid-cols-3">
-            <input value={seriesNumber} onChange={(e) => setSeriesNumber(Number(e.target.value) || 1)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" placeholder="Series number" />
+            <input value={seriesNumber} onChange={(e) => setSeriesNumber(Number(e.target.value) || 1)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none" guided example="Series number" />
             <Button onClick={() => setCardIndex((v) => v + 1)}>Next Discovery</Button>
             <Button onClick={copyCard}>Copy Post</Button>
             <Button onClick={createSocialPack}>Create Social Pack</Button>
@@ -8748,7 +8679,7 @@ Generated in ElementOS.`,
           </div>
           <div className="grid gap-3">
             <Button onClick={exportSVG} variant="primary">Export Poster PDF/JSON/SVG</Button>
-            <Button onClick={() => setPage("reports")}>Generate Report</Button>
+            <Button onClick={() => setPage("reports")}>Generate Executive Report</Button>
             <Button onClick={() => setPage("lab")}>Save to Workspace</Button>
           </div>
         </div>
@@ -8991,7 +8922,7 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="mt-5 min-h-[130px] w-full rounded-[2rem] border border-cyan-300/15 bg-slate-950/80 p-5 text-lg text-cyan-50 outline-none"
-          placeholder="Ask: best materials for deep ocean pressure over 40 years"
+          guided example="Ask: best materials for deep ocean pressure over 40 years"
         />
         <div className="mt-4 flex flex-wrap gap-2">
           {[
@@ -9673,7 +9604,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
           </div>
           <div className="mt-5 flex items-center gap-3 rounded-2xl border border-cyan-300/20 bg-black/45 px-4 py-3 shadow-[inset_0_0_35px_rgba(34,211,238,.08)]">
             <Search size={18} className="text-cyan-200" />
-            <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Compare aluminium and titanium, export discovery poster, insert circle area formula..." className="w-full bg-transparent text-base font-bold text-white outline-none placeholder:text-slate-500 sm:text-lg" />
+            <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} guided example="Compare aluminium and titanium, export discovery poster, insert circle area formula..." className="w-full bg-transparent text-base font-bold text-white outline-none guided example:text-slate-500 sm:text-lg" />
             <span className="hidden rounded-xl border border-white/10 px-3 py-1 text-xs text-slate-400 sm:inline">CTRL K</span>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">{quickPrompts.map((prompt) => <button key={prompt} onClick={() => setQuery(prompt)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40">{prompt}</button>)}</div>
@@ -9830,7 +9761,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
       sections: [
         ["X Hook", `Today's ElementOS discovery: ${primaryDiscovery.a} + ${primaryDiscovery.b} scored ${primaryDiscovery.score}%.`],
         ["LinkedIn Hook", "Material discovery is becoming a shareable research workflow."],
-        ["Reddit Hook", "Seeking feedback on an AI-native material discovery prototype."],
+        ["Reddit Hook", "Seeking feedback on an AI-native material discovery research preview."],
       ],
     });
   };
@@ -9843,7 +9774,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
         <div className="relative grid gap-5 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
           <div>
             <div className="flex flex-wrap gap-2">
-              <Pill gold><Sparkles size={12} /> ultimate science os</Pill>
+              <Pill gold><Sparkles size={12} /> material intelligence platform</Pill>
               <Pill><Radar size={12} /> live discovery command</Pill>
               <Pill><Download size={12} /> pdf json svg ready</Pill>
             </div>
@@ -10114,7 +10045,7 @@ function MaterialExplorerV57({ selected, setSelected, setCompare, setPage }) {
 
       <div className="grid gap-6 xl:grid-cols-[390px_1fr]">
         <Panel>
-          <div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements, metals, gases..." className="w-full bg-transparent outline-none"/></div>
+          <div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} guided example="Search elements, metals, gases..." className="w-full bg-transparent outline-none"/></div>
           <select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{categories.map(c => <option key={c}>{c}</option>)}</select>
           <div className="mt-4 max-h-[660px] overflow-auto pr-2">
             {filtered.map((e) => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left ${active.symbol === e.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}
@@ -10210,7 +10141,7 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
           <Pill gold><Sparkles size={12}/> summary engine</Pill><h2 className="mt-3 text-4xl font-black">Generate Executive Summary</h2>
           <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="mt-5 min-h-[150px] w-full rounded-[2rem] border border-white/10 bg-black/30 p-5 outline-none" />
           <div className="mt-4 flex flex-wrap gap-2">{modes.map((m) => <Button key={m} onClick={() => setMode(m)} variant={mode === m ? "primary" : "ghost"}>{m}</Button>)}</div>
-          <div className="mt-5 grid gap-2 sm:grid-cols-2"><Button onClick={() => setPage("reports")} variant="primary">Generate Report</Button><Button onClick={() => setPage("viralcards")}>Create Media Preview</Button><Button onClick={() => setPage("compare")}>Open Compare</Button><Button onClick={exportAI}>Export Executive Brief</Button></div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2"><Button onClick={() => setPage("reports")} variant="primary">Generate Executive Report</Button><Button onClick={() => setPage("viralcards")}>Create Media Preview</Button><Button onClick={() => setPage("compare")}>Open Compare</Button><Button onClick={exportAI}>Export Executive Brief</Button></div>
         </Panel>
         <Panel>
           <Pill gold><FileText size={12}/> executive summary</Pill><h2 className="mt-3 text-4xl font-black">{mode}</h2>
@@ -10365,7 +10296,7 @@ function SupportCenterModal({ open, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[125] grid place-items-center bg-black/70 p-4 backdrop-blur-xl">
-      <div className="w-full max-w-3xl rounded-[2rem] border border-cyan-300/25 bg-slate-950 p-6 shadow-[0_0_120px_rgba(34,211,238,.22)]">
+      <div className="w-[94vw] max-w-5xl max-h-[85vh] overflow-y-auto rounded-[2rem] border border-cyan-300/25 bg-slate-950 p-5 md:p-7 shadow-[0_0_120px_rgba(34,211,238,.22)]">
         <div className="flex items-start justify-between gap-4">
           <div>
             <Pill gold><ClipboardList size={12}/> support center</Pill>
@@ -10373,8 +10304,13 @@ function SupportCenterModal({ open, onClose }) {
             <p className="mt-2 text-sm leading-6 text-slate-400">
               Send a support request for account help, billing, exports, bugs or feature questions. We reply by email.
             </p>
-            <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
-              Support inbox: <span className="font-black text-white">{SUPPORT_INBOX}</span>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
+                Support inbox: <span className="font-black text-white">{SUPPORT_INBOX}</span>
+              </div>
+              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100">
+                Average response time: <span className="font-black text-white">24–48 hours</span>
+              </div>
             </div>
           </div>
           <Button onClick={onClose}>Close</Button>
@@ -10396,11 +10332,11 @@ function SupportCenterModal({ open, onClose }) {
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
                 Your name
-                <input value={form.name} onChange={(e) => updateSupportField("name", e.target.value)} placeholder="Paul Roper" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                <input value={form.name} onChange={(e) => updateSupportField("name", e.target.value)} guided example="Paul Roper" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
               </label>
               <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
                 Reply email
-                <input type="email" value={form.email} onChange={(e) => updateSupportField("email", e.target.value)} placeholder="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+                <input type="email" value={form.email} onChange={(e) => updateSupportField("email", e.target.value)} guided example="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
               </label>
             </div>
             <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
@@ -10411,7 +10347,7 @@ function SupportCenterModal({ open, onClose }) {
             </label>
             <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
               Message
-              <textarea value={form.message} onChange={(e) => updateSupportField("message", e.target.value)} placeholder="Tell us what happened, what page you were on, and what you expected to happen." className="min-h-[160px] rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
+              <textarea value={form.message} onChange={(e) => updateSupportField("message", e.target.value)} guided example="Tell us what happened, what page you were on, and what you expected to happen." className="min-h-[160px] rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
             </label>
             <div className="rounded-2xl border border-dashed border-cyan-300/25 bg-cyan-300/10 p-5 text-sm text-cyan-100">
               Attachments: screenshots and PDFs are planned for the backend support route. For now, use the direct email button below if you need to attach files.
@@ -10719,7 +10655,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       scenario: <ScenarioBuilderSafe selected={selected} setSelected={setSelected} setPage={setPage} />,
       lab: <DiscoveryVaultV57 session={session} selected={selected} compare={compare} setPage={setPage} />,
       visualization: <AdvancedVisualization selected={selected} compare={compare} setPage={setPage} />,
-      welldriller: <ExperimentalWellDriller setPage={setPage} />,
+      welldriller: <AdvancedWellDriller setPage={setPage} />,
       seismo: <SeismoSimulator setPage={setPage} />,
       simreports: <UniversalSimulationReports selected={selected} compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} setPage={setPage} />,
       viralcards: <ViralDiscoveryCardStudio selected={selected} compare={compare} setPage={setPage} />,
@@ -10836,9 +10772,9 @@ const startCheckout = async (planName = "Pro Researcher") => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
-        {page !== "landing" && <VisualConversionStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />}
-        {page !== "landing" && <PageMicroDataBar page={page} setPage={setPage} />}
-        {page !== "landing" && <div className="hidden lg:block">
+        {page !== "landing" && page !== "beta" && page !== "login" && <VisualConversionStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />}
+        {page !== "landing" && page !== "beta" && page !== "login" && <PageMicroDataBar page={page} setPage={setPage} />}
+        {page !== "landing" && page !== "beta" && page !== "login" && <div className="hidden lg:block">
           <UltimateScienceCommandLayer
             page={page}
             setPage={setPage}
@@ -10849,10 +10785,10 @@ const startCheckout = async (planName = "Pro Researcher") => {
             startCheckout={startCheckout}
           />
         </div>}
-        {page !== "landing" && <div className="hidden lg:block">
+        {page !== "landing" && page !== "beta" && page !== "login" && <div className="hidden lg:block">
           <PageHelpStrip page={page} />
         </div>}
-        {page !== "landing" && <div className="hidden lg:block">
+        {page !== "landing" && page !== "beta" && page !== "login" && <div className="hidden lg:block">
           <CopilotEverywhereBar page={page} setPage={setPage} />
         </div>}
         <div key={page} className="eos-page-stage animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
