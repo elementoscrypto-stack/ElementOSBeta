@@ -2335,6 +2335,11 @@ function ElementOSThemeSkin() {
           radial-gradient(circle at 88% 8%, rgba(250,204,21,.10), transparent 24%),
           linear-gradient(135deg, rgba(2,6,13,.98), rgba(7,20,38,.96) 56%, rgba(2,6,13,.98));
       }
+      /* V125: command modal should feel full-size even when the main app uses desktop zoom-out. */
+      @media (min-width: 1024px) and (max-width: 1279px) { .eos-command-reset { zoom: 1.18; } }
+      @media (min-width: 1280px) and (max-width: 1799px) { .eos-command-reset { zoom: 1.25; } }
+      @media (min-width: 1800px) { .eos-command-reset { zoom: 1.12; } }
+      @media (max-width: 767px) { .eos-command-reset { zoom: 1; } }
 
 
 
@@ -2688,7 +2693,7 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
       ["Public report momentum", "New compatibility discoveries are actively being shared."],
     ].map(([title, desc]) => (
       <div key={title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-        <div className="text-lg font-black text-cyan-100">{title}</div>
+        <div className="text-xl font-black text-cyan-100">{title}</div>
         <p className="mt-3 text-sm leading-6 text-slate-400">{desc}</p>
       </div>
     ))}
@@ -9629,9 +9634,9 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] bg-black/75 p-2 backdrop-blur-xl sm:p-4" onClick={onClose} onKeyDown={onKeyDown} role="dialog" aria-modal="true" aria-label="ElementOS command engine" tabIndex={-1}>
-      <div className="eos-command-shell mx-auto mt-2 flex max-h-[96vh] w-full max-w-[1180px] flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/95 shadow-[0_0_180px_rgba(34,211,238,.35)] sm:mt-4" onClick={(e) => e.stopPropagation()}>
-        <div className="border-b border-white/10 p-4 sm:p-5">
+    <div className="eos-command-reset fixed inset-0 z-[80] bg-black/80 p-2 backdrop-blur-2xl sm:p-4" onClick={onClose} onKeyDown={onKeyDown} role="dialog" aria-modal="true" aria-label="ElementOS command engine" tabIndex={-1}>
+      <div className="eos-command-shell mx-auto mt-2 flex max-h-[94vh] w-[96vw] max-w-[1540px] flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/95 shadow-[0_0_180px_rgba(34,211,238,.35)] sm:mt-4" onClick={(e) => e.stopPropagation()}>
+        <div className="border-b border-white/10 p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <Pill gold><Sparkles size={12}/> intelligent command engine</Pill>
@@ -9651,15 +9656,15 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
             <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Recent</span><div className="mt-1 truncate text-amber-100">{friendlyCommandList(safeRecentCommands) || "Recent commands will appear here"}</div></div>
           </div>
         </div>
-        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_420px]">
-          <div className="eos-command-scroll max-h-[64vh] p-4 lg:max-h-[70vh]">
+        <div className="grid min-h-0 flex-1 overflow-hidden xl:grid-cols-[minmax(0,1.25fr)_520px]">
+          <div className="eos-command-scroll max-h-[66vh] min-h-[420px] p-5 xl:max-h-[72vh]">
             <div className="mb-4 flex flex-wrap gap-2">{Object.entries(categoryCounts).map(([category, count]) => <span key={category} className="rounded-full border border-white/10 bg-white/[.035] px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-slate-400">{category} · {count}</span>)}</div>
             <div className="grid gap-3">
-              {filtered.map((command, index) => <button key={command.id} onClick={() => runCommand(command)} onMouseEnter={() => setActiveIndex(index)} className={`group flex items-start justify-between gap-4 rounded-2xl border p-4 text-left transition ${index === activeIndex ? "border-cyan-300/45 bg-cyan-300/12 shadow-[0_0_35px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}><div><div className="flex flex-wrap items-center gap-2"><span className="text-lg font-black text-cyan-100">{command.title}</span><span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{command.category}</span>{command.premium && <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-fuchsia-100">Pro</span>}{pinnedSet.has(command.id) && <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-cyan-100">Pinned</span>}</div><div className="mt-1 text-sm leading-6 text-slate-400">{command.description}</div></div><ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" /></button>)}
+              {filtered.map((command, index) => <button key={command.id} onClick={() => runCommand(command)} onMouseEnter={() => setActiveIndex(index)} className={`group flex items-start justify-between gap-5 rounded-[1.5rem] border p-5 text-left transition ${index === activeIndex ? "border-cyan-300/45 bg-cyan-300/12 shadow-[0_0_35px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}><div><div className="flex flex-wrap items-center gap-2"><span className="text-lg font-black text-cyan-100">{command.title}</span><span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{command.category}</span>{command.premium && <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-fuchsia-100">Pro</span>}{pinnedSet.has(command.id) && <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-cyan-100">Pinned</span>}</div><div className="mt-1 text-sm leading-6 text-slate-400">{command.description}</div></div><ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" /></button>)}
               {!filtered.length && <div className="rounded-2xl border border-white/10 bg-black/30 p-8 text-center text-slate-400">No command found. Try “compare aluminium and titanium”, “report”, “billing help” or “circle area”.</div>}
             </div>
           </div>
-          <div className="eos-command-scroll max-h-[64vh] border-t border-white/10 bg-black/20 p-5 lg:max-h-[70vh] lg:border-l lg:border-t-0">
+          <div className="eos-command-scroll max-h-[66vh] min-h-[420px] border-t border-white/10 bg-black/24 p-6 xl:max-h-[72vh] xl:border-l xl:border-t-0">
             <div className="text-xs uppercase tracking-[.22em] text-slate-500">Command preview</div>
             <div className="mt-2 text-2xl font-black text-cyan-100">{selectedCommand?.title || "No command selected"}</div>
             <div className="mt-2 text-sm leading-6 text-slate-400">{selectedCommand?.description || "Start typing to search the operating system."}</div>
@@ -10731,7 +10736,7 @@ function SupportCenterModal({ open, onClose }) {
       setCreated(true);
     } catch (error) {
       console.warn("Support endpoint not connected yet.", error);
-      setSupportError(`The ticket backend is not connected yet. For launch, email us directly at ${SUPPORT_INBOX}.`);
+      setSupportError("The ticket backend is not connected yet. Use Email Support Directly to open your email app with this request filled in.");
     } finally {
       setSending(false);
     }
@@ -10739,7 +10744,7 @@ function SupportCenterModal({ open, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[125] grid place-items-center bg-black/70 p-4 backdrop-blur-xl">
-      <div className="w-[94vw] max-w-5xl max-h-[85vh] overflow-y-auto rounded-[2rem] border border-cyan-300/25 bg-slate-950 p-5 md:p-7 shadow-[0_0_120px_rgba(34,211,238,.22)]">
+      <div className="w-[94vw] max-w-6xl max-h-[86vh] overflow-y-auto rounded-[2rem] border border-cyan-300/25 bg-slate-950 p-5 md:p-7 shadow-[0_0_120px_rgba(34,211,238,.22)]">
         <div className="flex items-start justify-between gap-4">
           <div>
             <Pill gold><ClipboardList size={12}/> support center</Pill>
@@ -10747,13 +10752,8 @@ function SupportCenterModal({ open, onClose }) {
             <p className="mt-2 text-sm leading-6 text-slate-400">
               Send a support request for account help, billing, exports, bugs or feature questions. We reply by email.
             </p>
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
-              <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
-                Support inbox: <span className="font-black text-white">{SUPPORT_INBOX}</span>
-              </div>
-              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100">
-                Average response time: <span className="font-black text-white">24–48 hours</span>
-              </div>
+            <div className="mt-3 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100">
+              Average response time: <span className="font-black text-white">24–48 hours</span>
             </div>
           </div>
           <Button onClick={onClose}>Close</Button>
@@ -10769,8 +10769,8 @@ function SupportCenterModal({ open, onClose }) {
         ) : (
           <div className="mt-6 grid gap-4">
             <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-slate-300">
-              <div className="font-black text-white">What the email field is for</div>
-              <div className="mt-1">This is the customer/user email address. ElementOS uses it so support can reply. Your support inbox is {SUPPORT_INBOX}.</div>
+              <div className="font-black text-white">What the reply email is for</div>
+              <div className="mt-1">Enter the email address where you want ElementOS support to reply. We use this only to contact you about this request.</div>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
