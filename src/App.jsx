@@ -5086,7 +5086,7 @@ function IsotopeLab() {
 function CalculationCore() {
   const [mode, setMode] = useState("calculator");
   const [equationTitle, setEquationTitle] = useState("Material calculation");
-  const [expression, setExpression] = useState("A + B");
+  const [expression, setExpression] = useState("");
   const [activeTokenKey, setActiveTokenKey] = useState("A–Z::A");
   const [tokenCategory, setTokenCategory] = useState("All");
   const [tokenSearch, setTokenSearch] = useState("");
@@ -5266,6 +5266,12 @@ function CalculationCore() {
     }
   }, [expression, variables]);
 
+  const hasActiveCalculation = expression.trim().length > 0 || history.length > 0 || saved.length > 0;
+  const displayLiveValue = expression.trim().length > 0 ? live.value : "";
+  const displayLiveMessage = expression.trim().length > 0
+    ? (live.error ? live.error : `${expression} currently evaluates to ${live.value}. Save it when it is useful.`)
+    : "No active calculation. Enter an equation or restore a saved workspace to see a live result.";
+
   const conversions = {
     Energy: { J: 1, kJ: 1000, Wh: 3600, kWh: 3600000, eV: 1.602176634e-19 },
     Length: { m: 1, cm: 0.01, mm: 0.001, km: 1000, inch: 0.0254, ft: 0.3048, mile: 1609.344 },
@@ -5345,6 +5351,7 @@ function CalculationCore() {
     setMode("calculator");
   };
   const solve = () => {
+    if (!expression.trim()) { showToast("Enter an equation first."); return; }
     const item = { id: Date.now(), title: equationTitle, expression, result: live.value, error: live.error };
     setHistory((prev) => [item, ...prev].slice(0, 10));
     if (!live.error) setSaved((prev) => [{ id: `board-${Date.now()}`, type: "Equation", title: equationTitle, formula: `${expression} = ${live.value}`, note: "Solved in Calculation Studio." }, ...prev].slice(0, 12));
@@ -5461,7 +5468,7 @@ function CalculationCore() {
             </div>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Selected token</div><div className="mt-2 text-4xl font-black text-white">{activeItem.symbol}</div><div className="mt-1 font-mono text-sm text-cyan-100">{activeItem.token}</div><p className="mt-2 text-sm leading-6 text-slate-300">{activeItem.meaning}</p><p className="mt-2 text-xs leading-5 text-slate-500">Geometry tokens now insert working formulas into the equation area and can also be saved directly to the Whiteboard.</p></div>
-              <HelpBox title="Live interpretation">{live.error ? live.error : `${expression || "Equation"} currently evaluates to ${live.value}. Save it when it is useful.`}</HelpBox>
+              <HelpBox title="Live interpretation">{displayLiveMessage}</HelpBox>
             </div>
           </Panel>
           <Panel className="overflow-hidden">
@@ -9308,8 +9315,8 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const currentCompare = Array.isArray(compare) ? compare : [];
   const normalizedQuery = query.toLowerCase().trim();
   const supportEmail =
-    import.meta.env?.VITE_SUPPORT_EMAIL ||
-    import.meta.env?.SUPPORT_EMAIL ||
+    (import.meta.env || {}).VITE_SUPPORT_EMAIL ||
+    (import.meta.env || {}).SUPPORT_EMAIL ||
     "elementoscryto@gmail.com";
 
   const aliases = {
@@ -9622,14 +9629,14 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] bg-black/75 p-3 backdrop-blur-xl sm:p-4" onClick={onClose} onKeyDown={onKeyDown} role="dialog" aria-modal="true" aria-label="ElementOS command engine" tabIndex={-1}>
-      <div className="eos-command-shell mx-auto mt-4 flex max-h-[94vh] max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/95 shadow-[0_0_180px_rgba(34,211,238,.35)] sm:mt-6" onClick={(e) => e.stopPropagation()}>
-        <div className="border-b border-white/10 p-5">
+    <div className="fixed inset-0 z-[80] bg-black/75 p-2 backdrop-blur-xl sm:p-4" onClick={onClose} onKeyDown={onKeyDown} role="dialog" aria-modal="true" aria-label="ElementOS command engine" tabIndex={-1}>
+      <div className="eos-command-shell mx-auto mt-2 flex max-h-[96vh] w-full max-w-[1180px] flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/95 shadow-[0_0_180px_rgba(34,211,238,.35)] sm:mt-4" onClick={(e) => e.stopPropagation()}>
+        <div className="border-b border-white/10 p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <Pill gold><Sparkles size={12}/> intelligent command engine</Pill>
-              <h2 className="mt-3 text-4xl font-black">What do you want ElementOS to do?</h2>
-              <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">Search pages, elements, reports, exports, support, billing, formulas and smart macros from one place. Use natural language like “compare aluminium and titanium”.</p>
+              <h2 className="mt-3 text-3xl font-black sm:text-4xl">What do you want ElementOS to do?</h2>
+              <p className="mt-1 max-w-4xl text-sm leading-6 text-slate-400">Search pages, elements, reports, exports, support, billing, formulas and smart macros from one place. Use natural language like “compare aluminium and titanium”.</p>
             </div>
             <button onClick={onClose} className="rounded-2xl border border-white/10 px-4 py-2 text-sm text-slate-300">Esc</button>
           </div>
@@ -9638,24 +9645,32 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
             <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Compare aluminium and titanium, export discovery poster, insert circle area formula..." className="w-full bg-transparent text-base font-bold text-white outline-none placeholder:text-slate-500 sm:text-lg" />
             <span className="hidden rounded-xl border border-white/10 px-3 py-1 text-xs text-slate-400 sm:inline">CTRL K</span>
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">{quickPrompts.map((prompt) => <button key={prompt} onClick={() => setQuery(prompt)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40">{prompt}</button>)}</div>
+          <div className="mt-4 hidden flex-wrap gap-2 sm:flex">{quickPrompts.map((prompt) => <button key={prompt} onClick={() => setQuery(prompt)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-bold text-cyan-100 hover:border-cyan-200/40">{prompt}</button>)}</div>
           <div className="mt-3 grid gap-2 text-xs text-slate-400 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Pinned</span><div className="mt-1 truncate text-cyan-100">{friendlyCommandList(safePinnedCommands) || "Pin your favourite commands"}</div></div>
             <div className="rounded-2xl border border-white/10 bg-white/[.025] p-3"><span className="font-black uppercase tracking-[.18em] text-slate-500">Recent</span><div className="mt-1 truncate text-amber-100">{friendlyCommandList(safeRecentCommands) || "Recent commands will appear here"}</div></div>
           </div>
         </div>
-        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_360px]">
-          <div className="eos-command-scroll max-h-[58vh] p-4 lg:max-h-[62vh]">
+        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_420px]">
+          <div className="eos-command-scroll max-h-[64vh] p-4 lg:max-h-[70vh]">
             <div className="mb-4 flex flex-wrap gap-2">{Object.entries(categoryCounts).map(([category, count]) => <span key={category} className="rounded-full border border-white/10 bg-white/[.035] px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-slate-400">{category} · {count}</span>)}</div>
             <div className="grid gap-3">
-              {filtered.map((command, index) => <button key={command.id} onClick={() => runCommand(command)} onMouseEnter={() => setActiveIndex(index)} className={`group flex items-center justify-between gap-4 rounded-2xl border p-4 text-left transition ${index === activeIndex ? "border-cyan-300/45 bg-cyan-300/12 shadow-[0_0_35px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}><div><div className="flex flex-wrap items-center gap-2"><span className="text-lg font-black text-cyan-100">{command.title}</span><span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{command.category}</span>{command.premium && <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-fuchsia-100">Pro</span>}{pinnedSet.has(command.id) && <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-cyan-100">Pinned</span>}</div><div className="mt-1 text-sm leading-6 text-slate-400">{command.description}</div></div><ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" /></button>)}
+              {filtered.map((command, index) => <button key={command.id} onClick={() => runCommand(command)} onMouseEnter={() => setActiveIndex(index)} className={`group flex items-start justify-between gap-4 rounded-2xl border p-4 text-left transition ${index === activeIndex ? "border-cyan-300/45 bg-cyan-300/12 shadow-[0_0_35px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}><div><div className="flex flex-wrap items-center gap-2"><span className="text-lg font-black text-cyan-100">{command.title}</span><span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{command.category}</span>{command.premium && <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-fuchsia-100">Pro</span>}{pinnedSet.has(command.id) && <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-cyan-100">Pinned</span>}</div><div className="mt-1 text-sm leading-6 text-slate-400">{command.description}</div></div><ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" /></button>)}
               {!filtered.length && <div className="rounded-2xl border border-white/10 bg-black/30 p-8 text-center text-slate-400">No command found. Try “compare aluminium and titanium”, “report”, “billing help” or “circle area”.</div>}
             </div>
           </div>
-          <div className="eos-command-scroll max-h-[58vh] border-t border-white/10 bg-black/20 p-5 lg:max-h-[62vh] lg:border-l lg:border-t-0">
+          <div className="eos-command-scroll max-h-[64vh] border-t border-white/10 bg-black/20 p-5 lg:max-h-[70vh] lg:border-l lg:border-t-0">
             <div className="text-xs uppercase tracking-[.22em] text-slate-500">Command preview</div>
             <div className="mt-2 text-2xl font-black text-cyan-100">{selectedCommand?.title || "No command selected"}</div>
             <div className="mt-2 text-sm leading-6 text-slate-400">{selectedCommand?.description || "Start typing to search the operating system."}</div>
+            {selectedCommand && (
+              <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.06] p-4 text-sm leading-6 text-cyan-50">
+                <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">What happens</div>
+                <div className="mt-2">✓ Opens the right workspace or runs the selected action.</div>
+                <div>✓ Keeps your current material context where possible.</div>
+                <div>✓ Premium exports remain locked until Pro access is active.</div>
+              </div>
+            )}
             {isLocked && <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">{selectedCommand.lockedReason || "This is a Pro Researcher command."}</div>}
             {selectedCommand?.dangerous && <div className="mt-4 rounded-2xl border border-red-300/20 bg-red-300/10 p-4 text-sm leading-6 text-red-100">Export commands ask for confirmation before running.</div>}
             <div className="mt-5 flex gap-2"><button disabled={!selectedCommand} onClick={() => runCommand(selectedCommand)} className={`flex-1 rounded-2xl px-4 py-3 text-sm font-black transition ${selectedCommand ? "bg-cyan-300 text-slate-950 hover:bg-white" : "cursor-not-allowed bg-white/10 text-slate-500"}`}>{isLocked ? "Upgrade" : pendingCommand === selectedCommand?.id ? "Confirm" : "Run Command"}</button>{selectedCommand && <button onClick={() => togglePinned(selectedCommand.id)} className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-black text-white hover:bg-white/10">{pinnedSet.has(selectedCommand.id) ? "Unpin" : "Pin"}</button>}</div>
@@ -10662,8 +10677,8 @@ function SubscriptionUpgradeModal({ open, reason, plan, setPlan, onClose, startC
 
 function SupportCenterModal({ open, onClose }) {
   const SUPPORT_INBOX =
-    import.meta.env?.VITE_SUPPORT_EMAIL ||
-    import.meta.env?.SUPPORT_EMAIL ||
+    (import.meta.env || {}).VITE_SUPPORT_EMAIL ||
+    (import.meta.env || {}).SUPPORT_EMAIL ||
     "elementoscryto@gmail.com";
 
   const [created, setCreated] = useState(false);
@@ -10749,7 +10764,7 @@ function SupportCenterModal({ open, onClose }) {
             <h3 className="mt-4 text-3xl font-black text-emerald-100">Ticket Created</h3>
             <p className="mt-2 text-lg font-black text-white">Reference: {ticketReference}</p>
             <p className="mt-2 text-sm text-slate-300">We'll reply to <span className="font-bold text-white">{form.email}</span>.</p>
-            <p className="mt-1 text-xs text-slate-500">Support inbox: {SUPPORT_INBOX}</p>
+            <p className="mt-1 text-xs text-slate-500">Average response time: 24–48 hours.</p>
           </div>
         ) : (
           <div className="mt-6 grid gap-4">
