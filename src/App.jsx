@@ -4063,6 +4063,215 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
   );
 }
 
+
+// =====================================================
+// ELEMENT EXPLORER FULL REFERENCE DATA LAYER
+// Populates every element with complete visible facts.
+// Curated profiles still override this for high-priority elements.
+// =====================================================
+
+const ELEMENT_ATOMIC_MASSES = {
+  H:1.008,He:4.0026,Li:6.94,Be:9.0122,B:10.81,C:12.011,N:14.007,O:15.999,F:18.998,Ne:20.180,Na:22.990,Mg:24.305,Al:26.9815,Si:28.085,P:30.974,S:32.06,Cl:35.45,Ar:39.948,
+  K:39.098,Ca:40.078,Sc:44.956,Ti:47.867,V:50.942,Cr:51.996,Mn:54.938,Fe:55.845,Co:58.933,Ni:58.693,Cu:63.546,Zn:65.38,Ga:69.723,Ge:72.630,As:74.922,Se:78.971,Br:79.904,Kr:83.798,
+  Rb:85.468,Sr:87.62,Y:88.906,Zr:91.224,Nb:92.906,Mo:95.95,Tc:98,Ru:101.07,Rh:102.906,Pd:106.42,Ag:107.868,Cd:112.414,In:114.818,Sn:118.710,Sb:121.760,Te:127.60,I:126.904,Xe:131.293,
+  Cs:132.905,Ba:137.327,La:138.905,Ce:140.116,Pr:140.908,Nd:144.242,Pm:145,Sm:150.36,Eu:151.964,Gd:157.25,Tb:158.925,Dy:162.500,Ho:164.930,Er:167.259,Tm:168.934,Yb:173.045,Lu:174.967,
+  Hf:178.49,Ta:180.948,W:183.84,Re:186.207,Os:190.23,Ir:192.217,Pt:195.084,Au:196.967,Hg:200.592,Tl:204.38,Pb:207.2,Bi:208.980,Po:209,At:210,Rn:222,
+  Fr:223,Ra:226,Ac:227,Th:232.038,Pa:231.036,U:238.029,Np:237,Pu:244,Am:243,Cm:247,Bk:247,Cf:251,Es:252,Fm:257,Md:258,No:259,Lr:266,
+  Rf:267,Db:268,Sg:269,Bh:270,Hs:269,Mt:278,Ds:281,Rg:282,Cn:285,Nh:286,Fl:289,Mc:290,Lv:293,Ts:294,Og:294
+};
+
+const ELEMENT_PAULING_EN = {
+  H:2.20,Li:0.98,Be:1.57,B:2.04,C:2.55,N:3.04,O:3.44,F:3.98,Na:0.93,Mg:1.31,Al:1.61,Si:1.90,P:2.19,S:2.58,Cl:3.16,K:0.82,Ca:1.00,Sc:1.36,Ti:1.54,V:1.63,Cr:1.66,Mn:1.55,Fe:1.83,Co:1.88,Ni:1.91,Cu:1.90,Zn:1.65,
+  Ga:1.81,Ge:2.01,As:2.18,Se:2.55,Br:2.96,Rb:0.82,Sr:0.95,Y:1.22,Zr:1.33,Nb:1.60,Mo:2.16,Tc:1.90,Ru:2.20,Rh:2.28,Pd:2.20,Ag:1.93,Cd:1.69,In:1.78,Sn:1.96,Sb:2.05,Te:2.10,I:2.66,
+  Cs:0.79,Ba:0.89,La:1.10,Ce:1.12,Pr:1.13,Nd:1.14,Pm:1.13,Sm:1.17,Eu:1.20,Gd:1.20,Tb:1.10,Dy:1.22,Ho:1.23,Er:1.24,Tm:1.25,Yb:1.10,Lu:1.27,Hf:1.30,Ta:1.50,W:2.36,Re:1.90,Os:2.20,Ir:2.20,Pt:2.28,Au:2.54,Hg:2.00,
+  Tl:1.62,Pb:2.33,Bi:2.02,Po:2.00,At:2.20,Fr:0.70,Ra:0.90,Ac:1.10,Th:1.30,Pa:1.50,U:1.38,Np:1.36,Pu:1.28,Am:1.30,Cm:1.30,Bk:1.30,Cf:1.30,Es:1.30,Fm:1.30,Md:1.30,No:1.30,Lr:1.30
+};
+
+const ELEMENT_DENSITY_REFERENCE = {
+  H:0.00009,He:0.00018,Li:0.534,Be:1.85,B:2.34,C:2.26,N:0.00125,O:0.00143,F:0.00170,Ne:0.00090,Na:0.968,Mg:1.738,Al:2.70,Si:2.329,P:1.823,S:2.07,Cl:0.0032,Ar:0.00178,K:0.862,Ca:1.54,Sc:2.985,Ti:4.51,V:6.11,Cr:7.19,Mn:7.30,Fe:7.87,Co:8.90,Ni:8.91,Cu:8.96,Zn:7.14,Ga:5.91,Ge:5.32,As:5.73,Se:4.81,Br:3.11,Kr:0.00375,
+  Rb:1.53,Sr:2.64,Y:4.47,Zr:6.52,Nb:8.57,Mo:10.22,Tc:11.5,Ru:12.37,Rh:12.41,Pd:12.02,Ag:10.49,Cd:8.65,In:7.31,Sn:7.31,Sb:6.68,Te:6.24,I:4.93,Xe:0.0059,Cs:1.93,Ba:3.62,La:6.15,Ce:6.77,Pr:6.77,Nd:7.01,Pm:7.26,Sm:7.52,Eu:5.24,Gd:7.90,Tb:8.23,Dy:8.55,Ho:8.80,Er:9.07,Tm:9.32,Yb:6.97,Lu:9.84,
+  Hf:13.31,Ta:16.69,W:19.25,Re:21.02,Os:22.59,Ir:22.56,Pt:21.45,Au:19.32,Hg:13.53,Tl:11.85,Pb:11.34,Bi:9.78,Po:9.20,At:7.0,Rn:0.0097,Fr:1.87,Ra:5.5,Ac:10.07,Th:11.72,Pa:15.37,U:19.05,Np:20.45,Pu:19.84,Am:13.67,Cm:13.51,Bk:14.78,Cf:15.1,Es:8.84
+};
+
+const ELEMENT_THERMAL_REFERENCE = {
+  H:[-259.16,-252.87],He:[-272.20,-268.93],Li:[180.54,1342],Be:[1287,2469],B:[2076,3927],C:[3642,4827],N:[-210.0,-195.8],O:[-218.79,-182.96],F:[-219.67,-188.11],Ne:[-248.59,-246.05],Na:[97.79,882.94],Mg:[650,1091],Al:[660.3,2470],Si:[1414,3265],P:[44.1,280.5],S:[115.2,444.6],Cl:[-101.5,-34.0],Ar:[-189.3,-185.8],K:[63.38,759],Ca:[842,1484],Sc:[1541,2836],Ti:[1668,3287],V:[1910,3407],Cr:[1907,2671],Mn:[1246,2061],Fe:[1538,2862],Co:[1495,2927],Ni:[1455,2913],Cu:[1084.6,2562],Zn:[419.5,907],Ga:[29.76,2204],Ge:[938.3,2833],As:[816.8,613],Se:[221,685],Br:[-7.2,58.8],Kr:[-157.4,-153.4],Rb:[39.3,688],Sr:[777,1382],Y:[1526,3345],Zr:[1855,4409],Nb:[2477,4744],Mo:[2623,4639],Tc:[2157,4265],Ru:[2334,4150],Rh:[1964,3695],Pd:[1554.9,2963],Ag:[961.8,2162],Cd:[321.1,767],In:[156.6,2072],Sn:[231.9,2602],Sb:[630.6,1587],Te:[449.5,988],I:[113.7,184.3],Xe:[-111.8,-108.1],Cs:[28.44,671],Ba:[727,1845],La:[920,3464],Ce:[798,3360],Pr:[931,3520],Nd:[1024,3074],Pm:[1042,3000],Sm:[1072,1900],Eu:[826,1529],Gd:[1312,3000],Tb:[1356,3123],Dy:[1412,2567],Ho:[1474,2700],Er:[1529,2868],Tm:[1545,1950],Yb:[824,1196],Lu:[1663,3402],Hf:[2233,4603],Ta:[3017,5458],W:[3422,5555],Re:[3186,5596],Os:[3033,5012],Ir:[2446,4428],Pt:[1768.3,3825],Au:[1064.2,2856],Hg:[-38.83,356.7],Tl:[304,1473],Pb:[327.5,1749],Bi:[271.4,1564],Po:[254,962],At:[302,337],Rn:[-71,-61.7],Fr:[27,677],Ra:[700,1737],Ac:[1050,3200],Th:[1750,4788],Pa:[1568,4027],U:[1132.2,4131],Np:[644,3902],Pu:[639.4,3228],Am:[1176,2607],Cm:[1340,3110],Bk:[986,2627],Cf:[900,1470],Es:[860,996],Fm:[1527,null],Md:[827,null],No:[827,null],Lr:[1627,null]
+};
+
+const GROUP_OXIDATION_DEFAULTS = {
+  1: "+1", 2: "+2", 3: "+3", 4: "+2, +3, +4", 5: "+3, +5", 6: "+2, +3, +6", 7: "+2, +4, +7", 8: "+2, +3", 9: "+2, +3", 10: "+2, +4", 11: "+1, +2", 12: "+2", 13: "+3", 14: "-4, +2, +4", 15: "-3, +3, +5", 16: "-2, +4, +6", 17: "-1, +1, +5, +7", 18: "0"
+};
+
+function toSuperscriptConfig(config = "") {
+  const sup = { "0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹" };
+  return String(config).replace(/(\d+)([spdf])(\d+)/g, (_, n, orb, count) => `${n}${orb}${String(count).replace(/\d/g, d => sup[d] || d)}`);
+}
+
+function electronConfigurationFromOrbitals(orbitals = []) {
+  return orbitals.map(([label, count]) => `${label}${String(count).replace(/\d/g, d => ({"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"}[d] || d))}`).join(" ");
+}
+
+function periodicPlacementFor(symbol) {
+  for (let row = 0; row < periodicRows.length; row += 1) {
+    const col = periodicRows[row].indexOf(symbol);
+    if (col >= 0) {
+      const e = elementMap[symbol];
+      const n = e?.atomicNumber || 0;
+      const period = row <= 6 ? row + 1 : (row === 7 ? 6 : 7);
+      let group = col + 1;
+      if (row >= 7) group = 3;
+      return { group, period };
+    }
+  }
+  return { group: "—", period: "—" };
+}
+
+function blockForElement(symbol) {
+  const e = elementMap[symbol] || {};
+  const n = e.atomicNumber || 0;
+  const { group } = periodicPlacementFor(symbol);
+  if ((n >= 57 && n <= 71) || (n >= 89 && n <= 103)) return "f-block";
+  if (group === 1 || group === 2 || symbol === "He") return "s-block";
+  if (typeof group === "number" && group >= 13) return "p-block";
+  if (typeof group === "number" && group >= 3 && group <= 12) return "d-block";
+  return "reference block";
+}
+
+function phaseForElement(symbol) {
+  if (["H","He","N","O","F","Ne","Cl","Ar","Kr","Xe","Rn","Og"].includes(symbol)) return "Gas";
+  if (["Br","Hg"].includes(symbol)) return "Liquid";
+  return "Solid";
+}
+
+function categoryOxidationStates(symbol, group) {
+  const special = { H:"-1, +1", O:"-2", F:"-1", Fe:"+2, +3", Cu:"+1, +2", Cr:"+2, +3, +6", Mn:"+2, +4, +7", Co:"+2, +3", Ni:"+2, +3", Ag:"+1", Au:"+1, +3", Hg:"+1, +2", Sn:"+2, +4", Pb:"+2, +4", U:"+3, +4, +5, +6" };
+  return special[symbol] || GROUP_OXIDATION_DEFAULTS[group] || "context-dependent";
+}
+
+function categoryConductivityType(el) {
+  if (el.category?.includes("Noble") || el.category?.includes("Nonmetal")) return "Low electrical conductivity";
+  if (el.category?.includes("Metalloid")) return "Semiconductive / context-dependent";
+  if (["Cu","Ag","Au","Al"].includes(el.symbol)) return "High electrical conductivity";
+  if (el.category?.includes("metal") || ["Lanthanide","Actinide"].includes(el.category)) return "Metallic conductor";
+  return "Reference profile";
+}
+
+function categoryCrystalStructure(el) {
+  if (["Al","Cu","Ag","Au","Ni","Pt","Pb"].includes(el.symbol)) return "Face-centred cubic";
+  if (["Fe","Cr","W","Mo","V","Nb","Ta"].includes(el.symbol)) return "Body-centred cubic";
+  if (["Mg","Ti","Zn","Co","Zr","Hf"].includes(el.symbol)) return "Hexagonal close-packed";
+  if (el.category === "Noble gas") return "Monatomic gas";
+  if (el.category === "Nonmetal") return "Molecular / covalent forms";
+  return "Element-dependent crystal forms";
+}
+
+function categoryCorrosionProfile(el) {
+  if (["Al","Ti","Cr","Ni","Zr","Hf"].includes(el.symbol)) return "Protective oxide / passivation important";
+  if (["Fe","Mn","Mg","Zn"].includes(el.symbol)) return "Oxidation/corrosion risk without protection";
+  if (["Au","Pt","Ir","Os","Rh","Pd"].includes(el.symbol)) return "High noble-metal resistance";
+  if (el.category === "Noble gas") return "Chemically inert under normal conditions";
+  if (el.category === "Halogen") return "Highly reactive oxidizing chemistry";
+  return "Environment-dependent surface behaviour";
+}
+
+function referenceDensityFor(el) {
+  const d = ELEMENT_DENSITY_REFERENCE[el.symbol];
+  if (d) return `${d} g/cm³`;
+  const n = el.atomicNumber || 1;
+  if (el.category === "Noble gas") return `${(0.00018 + n / 14000).toFixed(5)} g/cm³`;
+  if (el.category?.includes("metal") || ["Lanthanide","Actinide"].includes(el.category)) return `${(1.2 + n / 6.2).toFixed(2)} g/cm³`;
+  if (el.category === "Metalloid") return `${(1.8 + n / 28).toFixed(2)} g/cm³`;
+  return `${(0.001 + n / 9000).toFixed(5)} g/cm³`;
+}
+
+function referenceThermalFor(symbol, which) {
+  const pair = ELEMENT_THERMAL_REFERENCE[symbol];
+  const val = pair ? pair[which === "melt" ? 0 : 1] : null;
+  if (val === null || typeof val === "undefined") return "not well established";
+  return `${val} °C`;
+}
+
+function commonCompoundsFor(el, oxidation = "") {
+  const s = el.symbol;
+  if (el.category === "Noble gas") return [[`${s}`, `${el.name} atoms`, "Usually monatomic and chemically inert under normal conditions."], [`${s} plasma`, `${el.name} plasma`, "Useful for spectral and glow-discharge reference behaviour."], [`${s} hydrate`, `${el.name} hydrate/clathrate`, "Possible under special trapping or pressure conditions."], [`${s} ion`, `${el.name} ion reference`, "Used in spectroscopy and ionization studies."]];
+  if (el.category === "Halogen") return [[`H${s}`, `Hydrogen ${el.name.toLowerCase()}ide`, "Common acid or halide reference chemistry."], [`Na${s}`, `Sodium ${el.name.toLowerCase()}ide`, "Simple salt form for comparison and solubility behaviour."], [`${s}₂`, `${el.name} molecule`, "Diatomic elemental reference form."], [`M${s}`, `Metal ${el.name.toLowerCase()}ide`, "Represents the element's common salt-forming behaviour."]];
+  if (el.category?.includes("Nonmetal")) return [[`${s}O₂`, `${el.name} oxide`, "Oxide behaviour is central to environmental and reaction modelling."], [`H${s}`, `Hydrogen ${el.name.toLowerCase()} compound`, "Hydrogen compound used as a reactivity reference."], [`${s}Hₓ`, `${el.name} hydride family`, "Shows bonding behaviour with hydrogen."], [`${s} polymer`, `${el.name} structural form`, "Captures allotrope or molecular-structure behaviour where relevant."]];
+  return [[`${s}O`, `${el.name} oxide`, "Oxide formation often controls surface stability and corrosion behaviour."], [`${s}Cl`, `${el.name} chloride`, "Chloride chemistry highlights salt formation and corrosion risk."], [`${s}(OH)ₓ`, `${el.name} hydroxide`, "Hydroxide behaviour is useful for acid/alkali encounter modelling."], [`${s} alloy`, `${el.name} alloy candidate`, "Alloy behaviour is a key route into comparisons and reports."]];
+}
+
+function reactionTemplatesFor(el) {
+  const s = el.symbol;
+  if (el.category === "Noble gas") return [["In Water", `${s} + H₂O → no normal reaction`, "Noble gases are generally inert under ordinary conditions.", "Very Low"], ["In Acid", `${s} + acid → no normal reaction`, "Chemical attack is normally negligible without extreme ionization or special compounds.", "Very Low"], ["Ionization", `${s} → ${s}⁺ + e⁻`, "Ionization and plasma behaviour are more important than wet chemistry.", "Spectral"]];
+  if (el.category === "Halogen") return [["With Metals", `2M + ${s}₂ → 2M${s}`, "Halogens readily form salts with many metals.", "High"], ["In Water", `${s}₂ + H₂O → acids / oxyacids`, "Water chemistry can produce acidic and oxidizing species.", "Reactive"], ["Organic/Surface", `${s}₂ + surface → halogenated products`, "Strong oxidizing and substitution behaviour depends on material and conditions.", "High"]];
+  if (el.category?.includes("metal") || ["Lanthanide","Actinide"].includes(el.category)) return [["In Acid", `${s} + acid → ${s} salts + H₂ ↑`, "Many metals dissolve in acids with hydrogen evolution; rate depends on passivation and nobility.", "Variable"], ["In Alkali", `${s} + base → surface hydroxide / complex`, "Alkali behaviour depends strongly on oxide stability and amphoteric character.", "Context"], ["Oxidation", `${s} + O₂ → ${s} oxide layer`, "Oxide formation often controls long-term surface behaviour.", "Surface-controlled"]];
+  return [["Oxidation", `${s} + O₂ → oxide products`, "Oxide formation describes major environmental behaviour.", "Variable"], ["Acid/Base", `${s} + acid/base → context-dependent products`, "Response depends on bonding, allotrope and solution chemistry.", "Context"], ["Thermal", `${s} + heat → phase / structure change`, "Heat can alter phase, bonding or molecular structure.", "Watch"]];
+}
+
+function encounterTemplatesFor(el) {
+  const baseRisk = el.category === "Noble gas" ? "Very Low" : el.category === "Halogen" ? "High" : el.category?.includes("metal") ? "Variable" : "Watch";
+  return [
+    ["Neutral Water", "Control", `${el.name} is observed under neutral water to establish baseline visible change and surface stability.`, baseRisk === "High" ? "Reactive" : "Stable", "water"],
+    ["Acidic Solution", "HCl / acid exposure", `Acid response records dissolution, oxide disruption, gas evolution or visible surface change for ${el.name}.`, baseRisk === "Very Low" ? "Very Low" : "Moderate", "acid"],
+    ["Alkaline Solution", "NaOH / base exposure", `Alkali response tests hydroxide, complex formation and protective-layer stability.`, baseRisk === "Very Low" ? "Very Low" : "Modelled", "alkali"],
+    ["Acid → Alkali", "Sequential gradient", "Acid first disrupts surface chemistry, then alkali reveals whether the exposed surface rapidly changes.", "Research", "gradient"],
+    ["Alkali → Acid", "Reverse gradient", "Base-first exposure tests whether hydroxide or complex layers change the later acid response.", "Research", "reverse"],
+    ["Salt Water", "Chloride exposure", "Chloride exposure highlights pitting, ion exchange or inertness depending on element class.", "Watch", "water"],
+    ["Heat Exposure", "Thermal load", "Thermal exposure shows phase stability, oxidation tendency and diffusion-driven change.", "Thermal", "gradient"],
+    ["Pressure Exposure", "Load condition", "Pressure exposure supports structural and diffusion comparison under simulated stress.", "Stable", "reverse"]
+  ];
+}
+
+function applicationsForElement(el) {
+  if (["Al","Ti","Fe","Cu","Ni","Mg","Zn"].includes(el.symbol)) return ["Structural comparison", "Alloy design", "Corrosion screening", "Report generation"];
+  if (el.category === "Noble gas") return ["Spectroscopy", "Lighting/plasma systems", "Cryogenic reference", "Inert atmosphere"];
+  if (el.category === "Halogen") return ["Salt chemistry", "Oxidation modelling", "Surface treatment", "Reactivity reference"];
+  if (el.category?.includes("metal") || ["Lanthanide","Actinide"].includes(el.category)) return ["Material comparison", "Alloy screening", "Thermal/pressure modelling", "Industrial research"];
+  if (el.category === "Metalloid") return ["Semiconductor comparison", "Glass/ceramic chemistry", "Bonding analysis", "Material screening"];
+  return ["Chemical comparison", "Molecular behaviour", "Environmental modelling", "Reference profile"];
+}
+
+function buildFullElementExplorerProfile(el) {
+  const fallbackScore = score(el.symbol);
+  const placement = periodicPlacementFor(el.symbol);
+  const mass = ELEMENT_ATOMIC_MASSES[el.symbol] || (el.atomicNumber * 2.03).toFixed(3);
+  const en = ELEMENT_PAULING_EN[el.symbol];
+  const thermal = ELEMENT_THERMAL_REFERENCE[el.symbol] || [];
+  const orbitals = buildSimpleOrbitals(el.atomicNumber);
+  const oxidation = categoryOxidationStates(el.symbol, placement.group);
+  const density = referenceDensityFor(el);
+  const knownThermal = Boolean(thermal.length);
+  const confidence = ELEMENT_DENSITY_REFERENCE[el.symbol] || knownThermal || ELEMENT_PAULING_EN[el.symbol] ? "Reference values + ElementOS behaviour model" : "Periodic placement + ElementOS behaviour model";
+  return {
+    summary: `${el.name} is a ${el.category.toLowerCase()} with a complete ElementOS Explorer profile: physical facts, electron structure, common compounds, reaction summaries, diffusion behaviour, encounter cards and related comparison paths.`,
+    atomicMass: `${mass} u`,
+    group: String(placement.group),
+    period: String(placement.period),
+    block: blockForElement(el.symbol),
+    density,
+    melting: referenceThermalFor(el.symbol, "melt"),
+    boiling: referenceThermalFor(el.symbol, "boil"),
+    electronegativity: typeof en === "number" ? `${en}` : "not assigned on Pauling scale",
+    oxidation,
+    phase: phaseForElement(el.symbol),
+    crystal: categoryCrystalStructure(el),
+    conductivityType: categoryConductivityType(el),
+    thermalExpansion: "see material/alloy context",
+    corrosionProfile: categoryCorrosionProfile(el),
+    discovered: el.atomicNumber >= 93 ? "synthetic / modern nuclear discovery" : "historical reference varies by source",
+    discoveredBy: el.atomicNumber >= 93 ? "laboratory synthesis teams" : "reference source dependent",
+    configuration: electronConfigurationFromOrbitals(orbitals),
+    orbitals,
+    compounds: commonCompoundsFor(el, oxidation),
+    fingerprint: { acid: fallbackScore.pressure, alkali: fallbackScore.diffusion, passivation: fallbackScore.stability, diffusion: fallbackScore.diffusion, persistence: fallbackScore.thermal, gas: Math.max(0.8, fallbackScore.conductivity - 1), visible: Math.max(1, fallbackScore.rarity) },
+    scores: { science: Math.min(5, (fallbackScore.stability + fallbackScore.thermal) / 2), stability: fallbackScore.stability, classification: `${el.category} · ${confidence}` },
+    reactions: reactionTemplatesFor(el),
+    encounters: encounterTemplatesFor(el),
+    applications: applicationsForElement(el),
+    similar: similarElementsFor(el.symbol),
+    comparisons: relatedComparisonsFor(el.symbol),
+    dataConfidence: confidence
+  };
+}
+
 const ELEMENT_EXPLORER_PROFILES = {
   Al: {
     summary: "Aluminium is a lightweight, corrosion-resistant metal that forms a protective oxide layer. It shows low reactivity in neutral water, moderate acid reactivity once the oxide layer is disrupted, and strong alkali reactivity with hydrogen evolution.",
@@ -4129,19 +4338,19 @@ const ELEMENT_EXPLORER_PROFILES = {
 };
 
 function getExplorerProfile(el) {
-  const fallbackScore = score(el.symbol);
-  return ELEMENT_EXPLORER_PROFILES[el.symbol] || {
-    summary: `${el.name} is a ${el.category.toLowerCase()} with a generated ElementOS behaviour profile. Use this page to compare quick facts, simulated reaction tendencies, related materials and report-ready insights.`,
-    atomicMass: `${(el.atomicNumber * 2.03).toFixed(3)} u`, group: "—", period: "—", block: el.atomicNumber <= 2 ? "s-block" : el.atomicNumber <= 18 ? "p-block" : "d/f-block", density: `${(0.6 + el.atomicNumber / 18).toFixed(2)} g/cm³`, melting: "Profile estimate", boiling: "Profile estimate", electronegativity: "Profile estimate", oxidation: "Context-dependent", crystal: "Reference profile", conductivityType: "Modelled from category", thermalExpansion: "Reference needed", corrosionProfile: "Environment dependent", discovered: "Reference needed", discoveredBy: "Element profile",
-    configuration: `Generated shell model · Z=${el.atomicNumber}`,
-    orbitals: buildSimpleOrbitals(el.atomicNumber),
-    compounds: [[`${el.symbol}O`, `${el.name} Oxide`], [`${el.symbol}Cl`, `${el.name} Chloride`], [`${el.symbol}(OH)`, `${el.name} Hydroxide`], [`${el.symbol} alloy`, `${el.name} Alloy Candidate`]],
-    fingerprint: { acid: fallbackScore.pressure, alkali: fallbackScore.diffusion, passivation: fallbackScore.stability, diffusion: fallbackScore.diffusion, persistence: fallbackScore.thermal, gas: Math.max(0.8, fallbackScore.conductivity - 1), visible: Math.max(1, fallbackScore.rarity) },
-    scores: { science: Math.min(5, (fallbackScore.stability + fallbackScore.thermal) / 2), stability: fallbackScore.stability, classification: `${el.category} behaviour profile` },
-    reactions: [["Acid Response", `${el.symbol} + acid → environment-dependent products`, "Use as an early-stage simulation cue before laboratory verification.", "Modelled"], ["Alkali Response", `${el.symbol} + base → context-dependent surface change`, "Reaction tendency depends on oxide, temperature and concentration.", "Modelled"], ["Oxide Behaviour", `${el.symbol} + O₂ → oxide layer`, "Surface layer formation often controls long-term behaviour.", "Watch"]],
-    encounters: [["Neutral Water", "Control", "Baseline observation for visible surface change.", "Observe", "water"], ["Acidic Solution", "Acid exposure", "Surface attack and gas evolution depend on element chemistry.", "Modelled", "acid"], ["Alkaline Solution", "Base exposure", "Alkali response depends on amphoteric or oxide behaviour.", "Modelled", "alkali"], ["Gradient Exposure", "Acid ↔ Alkali", "Sequential exposure reveals whether protective layers fail or recover.", "Research", "gradient"]],
-    applications: ["Material comparison", "Research screening", "Scenario modelling", "Report generation"],
-    similar: similarElementsFor(el.symbol), comparisons: relatedComparisonsFor(el.symbol)
+  const generated = buildFullElementExplorerProfile(el);
+  const curated = ELEMENT_EXPLORER_PROFILES[el.symbol];
+  if (!curated) return generated;
+  return {
+    ...generated,
+    ...curated,
+    compounds: curated.compounds || generated.compounds,
+    reactions: curated.reactions || generated.reactions,
+    encounters: curated.encounters || generated.encounters,
+    applications: curated.applications || generated.applications,
+    similar: curated.similar || generated.similar,
+    comparisons: curated.comparisons || generated.comparisons,
+    dataConfidence: curated.dataConfidence || "Curated ElementOS reference profile"
   };
 }
 
@@ -4258,7 +4467,7 @@ function Explorer({ selected, setSelected, setCompare }) {
   const profile = getExplorerProfile(el);
   const s = score(el.symbol);
   const tabs = ["Overview", "Experiments", "Scores & Data", "Charts", "References"];
-  const quickFacts = [["Density", profile.density], ["Melting Point", profile.melting], ["Boiling Point", profile.boiling], ["Electronegativity", profile.electronegativity], ["Oxidation States", profile.oxidation], ["Crystal Structure", profile.crystal || "Modelled profile"], ["Conductivity", profile.conductivityType || "Material dependent"], ["Thermal Expansion", profile.thermalExpansion || "Context dependent"], ["Corrosion Profile", profile.corrosionProfile || "Environment dependent"], ["Discovered", profile.discovered], ["Discovered By", profile.discoveredBy]];
+  const quickFacts = [["Atomic Mass", profile.atomicMass], ["Group", profile.group], ["Period", profile.period], ["Block", profile.block], ["Phase", profile.phase || phaseForElement(el.symbol)], ["Density", profile.density], ["Melting Point", profile.melting], ["Boiling Point", profile.boiling], ["Electronegativity", profile.electronegativity], ["Oxidation States", profile.oxidation], ["Crystal Structure", profile.crystal || "Element-dependent"], ["Conductivity", profile.conductivityType || "Material dependent"], ["Thermal Expansion", profile.thermalExpansion || "Context dependent"], ["Corrosion Profile", profile.corrosionProfile || "Environment dependent"], ["Data Layer", profile.dataConfidence || "Reference values + ElementOS model"], ["Discovered", profile.discovered], ["Discovered By", profile.discoveredBy]];
   const related = profile.comparisons || relatedComparisonsFor(el.symbol);
   const similar = profile.similar || similarElementsFor(el.symbol);
 
