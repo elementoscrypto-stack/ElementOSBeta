@@ -297,9 +297,9 @@ function guidanceForPage(page) {
       next: "Create a free Explorer account, try the platform, then upgrade to Pro Researcher or Pro Lab when exports, reports, vault, media and advanced labs are needed.",
     },
     copilot: {
-      title: "What AI Copilot does",
-      description: "AI Copilot is the command center for ElementOS. It turns plain-language goals into material suggestions, scenario ideas, reports, simulations and viral-card actions.",
-      next: "Ask a goal like deep ocean pressure for 40 years, then launch the suggested simulation, report or viral card.",
+      title: "Research Director",
+      description: "Describe a material goal and ElementOS turns it into an investigation plan, suggested workflow and professional outputs.",
+      next: "Type a goal, review the investigation plan, then run the recommended workflow.",
     },
     mission: {
       title: "What Mission Intelligence does",
@@ -357,14 +357,14 @@ function guidanceForPage(page) {
       next: "Use the calculation blocks to support your report narrative.",
     },
     timemachine: {
-      title: "What the Future Simulation does",
-      description: "The Future Simulation simulates how materials change across 1, 10, 50 and 100 year horizons under heat, pressure, corrosion, stress and environmental exposure.",
-      next: "Choose a material and environment, scan the future-state cards, then export the timeline or compare the strongest result.",
+      title: "Time Machine",
+      description: "Forecast how a selected material may perform over time under heat, pressure, corrosion, stress and exposure.",
+      next: "Choose a material and scenario, then run the forecast.",
     },
     scenario: {
-      title: "What Mission Intelligence does",
-      description: "Mission Intelligence turns plain-English material questions into suggested materials, environments, timelines, reports, posters and opportunity scans.",
-      next: "Type a real-world scenario, run the simulation, then export or send the result into Future Simulation.",
+      title: "Scenario Builder",
+      description: "Turn a real-world material situation into environment settings, risk factors, time horizon and next actions.",
+      next: "Choose a material, choose a scenario, then run the forecast.",
     },
     welldriller: {
       title: "What Resource Discovery Lab does",
@@ -573,21 +573,15 @@ const ELEMENTOS_PRODUCTION_AUDIT = {
 };
 
 function PageMicroDataBar({ page = "dashboard", setPage }) {
-  const d = pageDataFor(page);
-  const primaryMetric = d.metrics?.[0] || "Simulation output";
-  const secondMetric = d.metrics?.[1] || "Guided action";
+  const g = guidanceForPage(page);
   return (
-    <div className="rounded-[1.25rem] border border-cyan-300/15 bg-slate-950/78 p-3 shadow-[0_0_28px_rgba(8,145,178,.08)] backdrop-blur-xl">
+    <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/70 p-3 backdrop-blur-xl">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-200">{pageLabel(page)} · subscriber-ready data</div>
-          <div className="mt-1 truncate text-sm font-bold text-slate-100">{d.example}</div>
+        <div>
+          <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-200">{pageLabel(page)}</div>
+          <div className="mt-1 text-sm text-slate-300">{g.next}</div>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-300">
-          <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1">{primaryMetric}</span>
-          <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1">{secondMetric}</span>
-          <button type="button" onClick={() => setPage?.("compare")} className="rounded-full bg-cyan-300 px-3 py-1 font-black text-slate-950">Generate Discovery</button>
-        </div>
+        <button type="button" onClick={() => setPage?.("copilot")} className="rounded-full bg-cyan-300 px-3 py-2 text-xs font-black text-slate-950">Open Research Director</button>
       </div>
     </div>
   );
@@ -618,21 +612,18 @@ function ProductionReadinessPanel({ compact = false }) {
 function GuidePanel({ page = "dashboard", compact = false }) {
   const g = guidanceForPage(page);
   return (
-    <Panel className={compact ? "p-4" : ""}>
+    <Panel className={`${compact ? "p-4" : ""} border-white/10 bg-white/[0.035]`}>
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <Pill gold><Sparkles size={12}/> guided mode</Pill>
+        <div className="max-w-3xl">
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">What this page does</div>
           <h2 className="mt-3 text-3xl font-black">{g.title}</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">{g.description}</p>
+          <p className="mt-3 text-sm leading-7 text-slate-300">{g.description}</p>
         </div>
         <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
-          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Recommended next action</div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Do this next</div>
           <div className="mt-2">{g.next}</div>
         </div>
       </div>
-      <PageDataPanel page={page} compact={compact} />
-      <ScoreMeaningPanel page={page} />
-      <ProductionReadinessPanel compact={compact} />
     </Panel>
   );
 }
@@ -734,6 +725,37 @@ function PageHelpStrip({ page = "dashboard" }) {
     </div>
   );
 }
+
+function CoreLoopPanel({ setPage }) {
+  const steps = [
+    ["1", "Choose material", "Pick an element, pairing or real-world question.", "explorer"],
+    ["2", "Run analysis", "Compare, forecast or build a scenario.", "compare"],
+    ["3", "Understand result", "Read the executive summary and score meaning.", "reports"],
+    ["4", "Export or save", "Create a report, poster or workspace item.", "viralcards"],
+  ];
+  return (
+    <Panel className="border-cyan-300/20 bg-cyan-300/[0.045]">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Start here</div>
+          <h2 className="mt-3 text-3xl font-black">One workflow. Every page supports it.</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">ElementOS is simplest when every tool supports the same loop: choose a material, run analysis, understand the result, then export or save it.</p>
+        </div>
+        <Button onClick={() => setPage?.("copilot")} variant="primary">Open Research Director</Button>
+      </div>
+      <div className="mt-6 grid gap-3 md:grid-cols-4">
+        {steps.map(([num, title, body, target]) => (
+          <button key={title} onClick={() => setPage?.(target)} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-300/10">
+            <div className="text-xs font-black text-cyan-200">{num}</div>
+            <div className="mt-2 text-lg font-black text-white">{title}</div>
+            <div className="mt-2 text-xs leading-5 text-slate-400">{body}</div>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
 
 const miModules = [
   { name: "Diamonds", icon: Gem, gradient: "from-cyan-300/20 to-blue-500/10", status: "Active", signal: 92 },
@@ -1445,28 +1467,28 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 const PAGE_LABELS = {
   landing: "Home",
   dashboard: "Dashboard",
-  copilot: "Ask ElementOS",
+  copilot: "Research Director",
   mission: "Mission Intelligence",
-  discover: "Discovery Feed",
-  explorer: "Explore",
-  compare: "Compare Materials",
-  periodic: "Periodic Map",
+  discover: "Discoveries",
+  explorer: "Element Explorer",
+  compare: "Material Comparison",
+  periodic: "Element Map",
   atlas: "Material Interaction Atlas",
   graph: "Element Relationships",
   universe: "Element Relationships",
-  scenario: "Mission Intelligence",
+  scenario: "Scenario Builder",
   visualization: "Advanced Visuals",
   calculations: "Calculation Studio",
-  timemachine: "Future Simulation",
+  timemachine: "Time Machine",
   seismo: "Wave Intelligence",
   welldriller: "Resource Discovery Lab",
   isotopes: "Isotope Lab",
   matterlab: "Advanced Material Analysis",
   publicdiscovery: "Public Discovery Page",
   simreports: "Reports",
-  viralcards: "Poster Studio",
+  viralcards: "Reports & Media",
   reports: "Reports",
-  lab: "Saved Discoveries",
+  lab: "Workspace",
   beta: "Create Account",
   login: "Login",
 };
@@ -2479,55 +2501,49 @@ function Sidebar({ page, setPage }) {
 
   const primaryItems = [
     ["landing", "Home", Sparkles],
+    ["copilot", "Research Director", Bot],
     ["dashboard", "Dashboard", Home],
-    ["copilot", "AI Copilot", Sparkles],
-    ["mission", "Mission Intelligence", CheckCircle2],
   ];
 
   const groups = [
     {
       id: "research",
-      label: "Research Tools",
+      label: "Material Intelligence",
       icon: Search,
       items: [
         ["explorer", "Element Explorer", Search],
-        ["compare", "Compare Materials", BarChart3],
-        ["isotopes", "Isotope Lab", Atom],
-        ["periodic", "Periodic Map", Layers],
+        ["compare", "Material Comparison", BarChart3],
+        ["periodic", "Element Map", Layers],
         ["atlas", "Material Interaction Atlas", Radar],
-        ["universe", "Element Relationships", Network],
+        ["universe", "Relationship Explorer", Network],
       ],
     },
     {
       id: "simulations",
-      label: "Simulations",
-      icon: BarChart3,
+      label: "Future Simulation",
+      icon: Clock3,
       items: [
         ["scenario", "Scenario Builder", FileText],
-        ["visualization", "Visual Engine", BarChart3],
-        ["calculations", "Calculation Studio", Calculator],
+        ["timemachine", "Time Machine", Clock3],
       ],
     },
     {
-      id: "advanced",
-      label: "Advanced Labs",
-      icon: Radar,
+      id: "calculations",
+      label: "Calculation Studio",
+      icon: Calculator,
       items: [
-        ["matterlab", "★ Advanced Material Analysis", Globe2],
-        ["timemachine", "Future Simulation", Clock3],
-        ["seismo", "Wave Intelligence", Network],
-        ["welldriller", "Resource Discovery Lab", Radar],
+        ["calculations", "Calculator & Equations", Calculator],
       ],
     },
     {
       id: "publishing",
-      label: "Publishing",
+      label: "Reports & Media",
       icon: BookOpen,
       items: [
-        ["discover", "Discovery Feed", Sparkles],
-        ["simreports", "Simulation Dossiers", BookOpen],
+        ["discover", "Discoveries", Sparkles],
+        ["reports", "Executive Reports", BookOpen],
         ["viralcards", "Poster Studio", Sparkles],
-        ["reports", "Research Reports", BookOpen],
+        ["simreports", "Simulation Dossiers", BookOpen],
       ],
     },
     {
@@ -2536,7 +2552,19 @@ function Sidebar({ page, setPage }) {
       icon: Save,
       items: [
         ["lab", "Workspace", Save],
-        ["beta", "Explorer Launch", UserPlus],
+        ["beta", "Create Account", UserPlus],
+      ],
+    },
+    {
+      id: "advanced",
+      label: "Advanced Labs",
+      icon: Radar,
+      items: [
+        ["matterlab", "Opportunity Intelligence", Globe2],
+        ["welldriller", "Resource Discovery", Radar],
+        ["seismo", "Wave Intelligence", Network],
+        ["isotopes", "Isotope Lab", Atom],
+        ["visualization", "Advanced Visuals", BarChart3],
       ],
     },
   ];
@@ -2646,8 +2674,9 @@ function Sidebar({ page, setPage }) {
 
 
 function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
-  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal research preview wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Generate Discovery", "compare", FileText], ["Advanced Material Analysis", "matterlab", Globe2], ["Ask ElementOS", "copilot", Sparkles], ["Mission Intelligence", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Future Simulation", "timemachine", Clock3], ["Resource Discovery Lab", "welldriller", Radar], ["Wave Intelligence", "seismo", Network], ["Reports", "simreports", BookOpen], ["Poster Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Saved Discoveries", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Material Interaction Atlas", "atlas", Radar], ["Explorer Launch", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Create Free Explorer Account</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, vault, PDF/JSON/SVG exports, media tools and AI Copilot through Stripe Checkout.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Access Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["6", "clear behaviour layers"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
+  return <><DiscoveryCommandCenter setPage={setPage} compare={["Al", "Fe", "Ti", "Hf"]} /><MissionProgressPanel setPage={setPage} /><Panel className="grid gap-8 xl:grid-cols-[1.15fr_.85fr]"><div><Pill gold><Sparkles size={12}/> production preview</Pill><h1 className="mt-4 text-5xl font-black sm:text-7xl">ElementOS <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence Platform</span></h1><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Explore, compare and publish material behaviour. ElementOS now feels like a subscriber-ready research workspace: accounts, live simulation, visual comparison, graph intelligence and exportable reports.</p><Info title="Positioning upgrade">Public language has been cleaned up. The product now leads with material intelligence, simulation, research reports and workspace value instead of internal research preview wording.</Info></div><Panel><h2 className="text-2xl font-black">Start Here</h2>{[["Generate Discovery", "compare", FileText], ["Advanced Material Analysis", "matterlab", Globe2], ["Research Director", "copilot", Sparkles], ["Mission Intelligence", "mission", CheckCircle2], ["Discovery Feed", "discover", Sparkles], ["Compare Materials", "compare", BarChart3], ["Isotope Lab", "isotopes", Atom], ["Future Simulation", "timemachine", Clock3], ["Resource Discovery Lab", "welldriller", Radar], ["Wave Intelligence", "seismo", Network], ["Reports", "simreports", BookOpen], ["Poster Studio", "viralcards", Sparkles], ["Calculation Studio", "calculations", Calculator], ["Saved Discoveries", "lab", Save], ["Visual Engine", "visualization", BarChart3], ["Material Interaction Atlas", "atlas", Radar], ["Explorer Launch", "beta", UserPlus], ["Research Reports", "reports", FileText]].map(([label, id, Icon], i) => <Button key={id} onClick={() => setPage(id)} className="mt-3 w-full" variant={i === 1 ? "primary" : "ghost"}><Icon className="inline" size={16}/> {label}</Button>)}{session && <div className="mt-4 grid gap-3"><Button onClick={saveWorkspace} variant="primary" className="w-full"><Save size={16} className="inline"/> Save Workspace</Button><Button onClick={loadWorkspace} className="w-full">Restore Workspace</Button></div>}{!session && <Button onClick={() => setPage("login")} variant="primary" className="mt-4 w-full"><UserPlus size={16} className="inline"/> Create Free Explorer Account</Button>}{session && !isPro && <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4"><div className="mb-3 text-xs font-black uppercase tracking-[.18em] text-amber-100">Billing</div><Button onClick={startCheckout} variant="primary" className="w-full"><Sparkles size={16} className="inline"/> Upgrade to Pro Researcher</Button><p className="mt-3 text-xs leading-5 text-amber-100/80">Unlock reports, vault, PDF/JSON/SVG exports, media tools and AI Copilot through Stripe Checkout.</p></div>}{session && isPro && <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm font-bold text-emerald-100"><CheckCircle2 size={16} className="mr-2 inline"/> Pro Access Active</div>}</Panel></Panel><div className="grid gap-6 xl:grid-cols-4">{[["118", "elements"], ["6", "clear behaviour layers"], ["4", "export modes"], ["Live", "simulation layer"]].map(([a,b]) => <Panel key={b}><div className="text-4xl font-black text-cyan-100">{a}</div><div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">{b}</div></Panel>)}</div>
 <GuidePanel page="dashboard" />
+      <CoreLoopPanel setPage={setPage} />
       <DiscoveryNetworkSubscriberEdition setPage={setPage} />
       <SubscriberWorkspaceVault setPage={setPage} />
       <SubscriberRecommendedNextStep setPage={setPage} />
@@ -6758,11 +6787,11 @@ function CopilotEverywhereBar({ page, setPage }) {
     <div className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-r from-cyan-300/10 via-slate-950/80 to-blue-400/10 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <div className="text-xs uppercase tracking-[.22em] text-cyan-200">AI Copilot Everywhere</div>
+          <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Research Director</div>
           <div className="mt-1 text-sm text-slate-300">Ask why this matters, generate a report summary, explain it simply, or suggest the next experiment.</div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={() => setPage("copilot")} variant="primary" className="px-3 py-2 text-xs">Ask Copilot</Button>
+          <Button onClick={() => setPage("copilot")} variant="primary" className="px-3 py-2 text-xs">Open Research Director</Button>
           <Button onClick={() => setPage("simreports")} className="px-3 py-2 text-xs">One-click Report</Button>
         </div>
       </div>
@@ -8907,7 +8936,7 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
             AI Copilot <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Command Center</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Ask ElementOS what to explore. The Copilot turns plain-language goals into material recommendations, simulations, reports, viral cards and next actions.
+            Research Director what to explore. The Copilot turns plain-language goals into material recommendations, simulations, reports, viral cards and next actions.
           </p>
           <Info title="Why this matters">
             This gives the platform an intelligent operating-system feel. Instead of users wondering where to click, they can type a goal and ElementOS guides them to the strongest workflow.
@@ -9175,7 +9204,7 @@ function MobileBottomNav({ page, setPage }) {
 
   const moreItems = [
     ["compare", "Compare Materials", "Main workflow"],
-    ["copilot", "Ask ElementOS", "AI assistant"],
+    ["copilot", "Research Director", "AI assistant"],
     ["mission", "Mission Intelligence", "Guided path"],
     ["scenario", "Scenario Builder", "Plain-English scenarios"],
     ["viralcards", "Poster Studio", "Shareable exports"],
@@ -11187,7 +11216,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         onClick={() => setCommandOpen(true)}
         className="eos-live-pulse fixed bottom-[156px] right-4 z-50 rounded-2xl border border-cyan-300/25 bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(34,211,238,.35)] lg:bottom-6"
       >
-        Ask ElementOS
+        Research Director
       </button>
 
       <main className="relative z-10 space-y-5 p-3 pb-44 lg:ml-[306px] lg:p-4 lg:pb-8 xl:p-5">
@@ -11215,13 +11244,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
-        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <PageMicroDataBar page={page} setPage={setPage} />}
-        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <div className="hidden lg:block">
-          <PageHelpStrip page={page} />
-        </div>}
-        {page !== "landing" && page !== "beta" && page !== "login" && page !== "copilot" && <div className="hidden lg:block">
-          <CopilotEverywhereBar page={page} setPage={setPage} />
-        </div>}
+        {/* Global guide strips removed in V126 so each page can focus on its primary workflow. */}
         <div key={page} className="eos-page-stage animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
       </main>
 
