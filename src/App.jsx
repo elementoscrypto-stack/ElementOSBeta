@@ -11501,11 +11501,10 @@ const startCheckout = async (planName = "Pro Researcher") => {
         />
       ),
       explorer: (
-        <MaterialExplorerV57
+        <Explorer
           selected={selected}
           setSelected={setSelected}
           setCompare={setCompare}
-          setPage={setPage}
         />
       ),
       periodic: (
