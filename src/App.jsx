@@ -2163,15 +2163,21 @@ function ElementOSThemeSkin() {
       }
 
 
-      /* V131: normal-resolution interface.
-         The app should look correct at 100% browser zoom.
-         Density is handled by grids and spacing, not browser-style scaling. */
+      /* V132: 70% research-workspace desktop scale.
+         Desktop behaves like the browser is zoomed to 70%, while mobile stays readable. */
       .eos-app-scale { --eos-ui-scale: 1; zoom: 1; transform: none; width: 100%; min-height: 100vh; }
+      @media (min-width: 1024px) {
+        .eos-app-scale { --eos-ui-scale: .70; zoom: .70; width: 142.857%; min-height: 142.857vh; }
+        .eos-topbar { max-width: calc(100vw / .70 - 2rem); }
+        .eos-command-modal { zoom: 1.18; }
+      }
       @supports not (zoom: 1) {
-        .eos-app-scale { transform: none; width: 100%; min-height: 100vh; }
+        @media (min-width: 1024px) {
+          .eos-app-scale { transform: scale(.70); transform-origin: top left; width: 142.857%; min-height: 142.857vh; }
+        }
       }
       @media (max-width: 1023px) {
-        .eos-app-scale { zoom: 1; }
+        .eos-app-scale { zoom: 1; transform: none; width: 100%; min-height: 100vh; }
         html, body, #root { width: 100%; max-width: 100%; overflow-x: hidden; }
         .eos-page-stage, .eos-panel, .eos-data-card, .poster-card, .poster-card-gold { max-width: 100%; }
         .eos-page-stage { overflow-x: hidden; }
@@ -10110,8 +10116,8 @@ function ToastCenter() {
 
 function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startCheckout, setSupportOpen, plan = "Explorer" }) {
   return (
-    <div className="eos-topbar sticky top-4 z-20 mb-6 hidden items-center justify-between gap-4 rounded-2xl px-4 py-3 backdrop-blur-2xl lg:flex">
-      <div className="flex min-w-0 items-center gap-3">
+    <div className="eos-topbar sticky top-4 z-20 mb-6 hidden w-full items-center justify-between gap-4 rounded-2xl px-4 py-3 backdrop-blur-2xl lg:flex">
+      <div className="flex min-w-0 shrink-0 items-center gap-3">
         <div className="rounded-xl border border-blue-400/25 bg-blue-500/10 px-3 py-2 text-xs font-black uppercase tracking-[.22em] text-cyan-100">
           {pageLabel(page)}
         </div>
@@ -10120,13 +10126,13 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
 
       <button
         onClick={() => setCommandOpen(true)}
-        className="flex min-w-[420px] items-center justify-between rounded-xl border border-[#17365f] bg-[#040c17]/90 px-4 py-2 text-left text-sm text-slate-400 transition hover:border-cyan-300/40"
+        className="flex min-w-0 flex-1 items-center justify-between rounded-xl border border-[#17365f] bg-[#040c17]/90 px-4 py-2 text-left text-sm text-slate-400 transition hover:border-cyan-300/40"
       >
         <span className="flex items-center gap-2"><Search size={16} /> Search elements, reactions, reports, data...</span>
         <span className="rounded-md border border-white/10 bg-black/30 px-2 py-1 text-[10px] font-black text-slate-300">CTRL K</span>
       </button>
 
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <button onClick={() => setSupportOpen?.(true)} className="rounded-xl border border-[#17365f] bg-[#06101d]/80 px-3 py-2 text-xs font-black text-cyan-100">Need Help?</button>
         <button onClick={() => setPage("discover")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">🌐</button>
         {!session && <Button onClick={() => setPage("login")} className="py-2">Login</Button>}
