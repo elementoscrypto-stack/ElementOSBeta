@@ -4083,12 +4083,328 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
     </>
   );
 }
-function Explorer({ selected, setSelected, setCompare }) {
-  const [q, setQ] = useState(""); const [cat, setCat] = useState("All");
-  const filtered = elements.filter(e => (cat === "All" || e.category === cat) && `${e.symbol} ${e.name} ${e.category}`.toLowerCase().includes(q.toLowerCase())).slice(0, 80);
-  const el = elementMap[selected] || elementMap.Al; const s = score(selected);
-  return <><Panel><Pill gold><Search size={12}/> material explorer</Pill><h1 className="mt-4 text-5xl font-black">Element Explorer</h1><Info title="User value">Search and inspect the behaviour profile of each element before adding it to a comparison or report.</Info></Panel><GuidePanel page="explorer" /><div className="grid gap-6 xl:grid-cols-[420px_1fr]"><Panel><div className="flex gap-2 rounded-2xl border border-white/10 bg-black/25 p-3"><Search className="text-cyan-300"/><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements..." className="w-full bg-transparent outline-none"/></div><select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{categories.map(c => <option key={c}>{c}</option>)}</select><div className="mt-4 max-h-[620px] overflow-auto pr-2">{filtered.map(e => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left ${selected === e.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}</div></Panel><Panel><div className="grid gap-6 xl:grid-cols-[1fr_360px]"><div><div className="text-8xl font-black text-cyan-100">{el.symbol}</div><h2 className="mt-2 text-4xl font-black">{el.name}</h2><p className="mt-2 text-slate-400">Atomic number {el.atomicNumber} · {el.category}</p><div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{metrics.map(k => <div key={k} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.22em] text-slate-500">{k === "alignment" ? "Alignment" : k}</div><div className="mt-2 text-3xl font-black text-cyan-100">{k === "alignment" ? s[k].toFixed(0) : s[k].toFixed(2)}</div></div>)}</div><Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))} variant="primary" className="mt-6">Add {el.symbol} to Compare</Button></div><Panel><h3 className="text-xl font-black">Behaviour Radar</h3><RadarChart data={s}/><p className="text-sm text-slate-400">A visual profile makes each element instantly understandable.</p></Panel></div></Panel></div></>;
+
+const ELEMENT_EXPLORER_PROFILES = {
+  Al: {
+    summary: "Aluminium is a lightweight, corrosion-resistant metal that forms a protective oxide layer. It shows low reactivity in neutral water, moderate acid reactivity once the oxide layer is disrupted, and strong alkali reactivity with hydrogen evolution.",
+    atomicMass: "26.9815 u", group: "13", period: "3", block: "p-block", density: "2.70 g/cm³", melting: "660.3 °C", boiling: "2470 °C", electronegativity: "1.61", oxidation: "+3", discovered: "1825", discoveredBy: "Hans Ørsted",
+    configuration: "[Ne] 3s² 3p¹",
+    orbitals: [["1s", 2], ["2s", 2], ["2p", 6], ["3s", 2], ["3p", 1]],
+    compounds: [["Al₂O₃", "Aluminium Oxide"], ["Al(OH)₃", "Aluminium Hydroxide"], ["AlCl₃", "Aluminium Chloride"], ["NaAlO₂", "Sodium Aluminate"]],
+    fingerprint: { acid: 3.6, alkali: 4.7, passivation: 4.8, diffusion: 2.2, persistence: 4.2, gas: 4.1, visible: 3.5 },
+    scores: { science: 4.29, stability: 4.38, classification: "Boundary-sensitive protective oxide former" },
+    reactions: [
+      ["In Acid", "2Al + 6HCl → 2AlCl₃ + 3H₂ ↑", "Oxide layer dissolves and hydrogen is released once fresh aluminium is exposed.", "Moderate → High"],
+      ["In Alkali", "2Al + 2NaOH + 6H₂O → 2NaAl(OH)₄ + 3H₂ ↑", "Aluminate forms with strong hydrogen evolution and rapid surface attack.", "Very High"],
+      ["Oxide Formation", "4Al + 3O₂ → 2Al₂O₃", "A thin passivation layer forms and protects the metal from further corrosion.", "Protective"],
+      ["Passivation", "Al + O₂ → Al₂O₃ layer", "The surface becomes chemically shielded until acid or alkali disrupts the boundary.", "Stable"]
+    ],
+    encounters: [
+      ["Neutral Water", "Control", "Very little reaction. The protective oxide layer remains intact.", "Stable", "water"],
+      ["Acidic Solution", "HCl, 1M", "Oxide layer dissolves, followed by visible hydrogen evolution.", "Moderate → High", "acid"],
+      ["Alkaline Solution", "NaOH, 1M", "Strong reaction. Aluminate forms with rapid gas evolution.", "Very High", "alkali"],
+      ["Gradient: Acid → Alkali", "Sequential", "Acid strips oxide first; alkali rapidly attacks exposed aluminium.", "Very High", "gradient"],
+      ["Gradient: Alkali → Acid", "Reverse", "Aluminate forms first, then partially breaks down in acid.", "Moderate", "reverse"]
+    ],
+    applications: ["Aerospace structures", "Marine systems", "Construction", "Power transmission"],
+    similar: ["Ga", "In", "Sn", "Zn"],
+    comparisons: ["Cu", "Fe", "Mg", "Zn"]
+  },
+  Ti: {
+    summary: "Titanium combines low density with excellent strength and corrosion resistance. It is highly valued in aerospace, marine, biomedical and high-temperature environments because its oxide layer remains stable under demanding conditions.",
+    atomicMass: "47.867 u", group: "4", period: "4", block: "d-block", density: "4.51 g/cm³", melting: "1668 °C", boiling: "3287 °C", electronegativity: "1.54", oxidation: "+2, +3, +4", discovered: "1791", discoveredBy: "William Gregor",
+    configuration: "[Ar] 3d² 4s²",
+    orbitals: [["1s", 2], ["2s", 2], ["2p", 6], ["3s", 2], ["3p", 6], ["4s", 2], ["3d", 2]],
+    compounds: [["TiO₂", "Titanium Dioxide"], ["TiCl₄", "Titanium Tetrachloride"], ["TiN", "Titanium Nitride"], ["Ti₆Al₄V", "Titanium Alloy"]],
+    fingerprint: { acid: 2.4, alkali: 2.0, passivation: 4.9, diffusion: 1.8, persistence: 4.7, gas: 1.5, visible: 2.1 },
+    scores: { science: 4.52, stability: 4.68, classification: "High-stability passivating structural metal" },
+    reactions: [["Oxide Protection", "Ti + O₂ → TiO₂ layer", "Stable oxide film gives strong corrosion resistance.", "Excellent"], ["In Acid", "Ti + acid → slow surface interaction", "Usually resistant unless exposed to aggressive hot acids.", "Low → Moderate"], ["High Temperature", "Ti + N₂/O₂ → TiN/TiO₂", "Reactive at elevated temperature and controlled atmospheres.", "Context-dependent"]],
+    encounters: [["Seawater", "Chloride exposure", "Excellent resistance due to stable oxide layer.", "Stable", "water"], ["Hot Acid", "Aggressive exposure", "Resistance depends on concentration and temperature.", "Watch", "acid"], ["Alkali", "Basic exposure", "Generally resistant under many ambient conditions.", "Stable", "alkali"], ["Thermal Cycling", "Repeated heat", "Oxide integrity and fatigue behaviour become key.", "Moderate", "gradient"]],
+    applications: ["Aerospace", "Marine", "Biomedical implants", "Geothermal systems"], similar: ["Zr", "Hf", "V", "Nb"], comparisons: ["Al", "Fe", "Ni", "Zr"]
+  },
+  Fe: {
+    summary: "Iron is a high-utility structural metal with strong magnetic and mechanical value, but corrosion and oxidation are major design concerns without alloying or protection.",
+    atomicMass: "55.845 u", group: "8", period: "4", block: "d-block", density: "7.87 g/cm³", melting: "1538 °C", boiling: "2862 °C", electronegativity: "1.83", oxidation: "+2, +3", discovered: "Ancient", discoveredBy: "Known since antiquity",
+    configuration: "[Ar] 3d⁶ 4s²", orbitals: [["1s",2],["2s",2],["2p",6],["3s",2],["3p",6],["4s",2],["3d",6]],
+    compounds: [["Fe₂O₃","Iron(III) Oxide"],["Fe₃O₄","Magnetite"],["FeCl₃","Iron(III) Chloride"],["FeSO₄","Iron(II) Sulfate"]],
+    fingerprint: { acid: 3.7, alkali: 1.9, passivation: 2.4, diffusion: 3.1, persistence: 3.2, gas: 3.2, visible: 4.4 },
+    scores: { science: 3.92, stability: 3.74, classification: "Reactive structural metal with oxidation risk" },
+    reactions: [["In Acid", "Fe + 2HCl → FeCl₂ + H₂ ↑", "Hydrogen evolves and soluble iron salts form.", "Moderate"], ["Oxidation", "4Fe + 3O₂ → 2Fe₂O₃", "Rust formation can progress without protection.", "High"], ["Passivation", "Fe + oxide layer", "Protection depends on alloying and environment.", "Variable"]],
+    encounters: [["Neutral Water", "Oxygen present", "Slow corrosion if oxygen and electrolytes are available.", "Watch", "water"], ["Acidic Solution", "HCl", "Moderate dissolution and hydrogen evolution.", "Moderate", "acid"], ["Alkaline Solution", "NaOH", "Often lower attack than acid but depends on conditions.", "Low → Moderate", "alkali"]],
+    applications: ["Structures", "Machinery", "Magnetic systems", "Alloys"], similar: ["Co","Ni","Mn","Cr"], comparisons: ["Al","Ti","Cu","Ni"]
+  },
+  Cu: {
+    summary: "Copper is a highly conductive metal with strong electrical, thermal and corrosion behaviour. It forms surface patinas and is widely used in wiring, heat exchange and alloys.",
+    atomicMass: "63.546 u", group: "11", period: "4", block: "d-block", density: "8.96 g/cm³", melting: "1084.6 °C", boiling: "2562 °C", electronegativity: "1.90", oxidation: "+1, +2", discovered: "Ancient", discoveredBy: "Known since antiquity",
+    configuration: "[Ar] 3d¹⁰ 4s¹", orbitals: [["1s",2],["2s",2],["2p",6],["3s",2],["3p",6],["4s",1],["3d",10]],
+    compounds: [["CuO","Copper(II) Oxide"],["Cu₂O","Copper(I) Oxide"],["CuSO₄","Copper Sulfate"],["CuCl₂","Copper(II) Chloride"]],
+    fingerprint: { acid: 2.4, alkali: 1.3, passivation: 3.7, diffusion: 2.6, persistence: 4.0, gas: 0.7, visible: 4.5 },
+    scores: { science: 4.18, stability: 4.10, classification: "High-conductivity metal with patina behaviour" },
+    reactions: [["Oxidation", "2Cu + O₂ → 2CuO", "Surface oxide/patina forms depending on conditions.", "Moderate"], ["In Acid", "Cu + oxidizing acid → copper salts", "Copper resists non-oxidizing acids but reacts with oxidizing acids.", "Variable"], ["Alkali", "Cu + alkali → low direct attack", "Usually limited direct reaction under ambient conditions.", "Low"]],
+    encounters: [["Neutral Water", "Control", "Low immediate reaction; patina can form over time.", "Stable", "water"], ["Acidic Solution", "Oxidizing acid", "Copper salts form under oxidizing conditions.", "Moderate", "acid"], ["Alkaline Solution", "NaOH", "Low direct visible reaction in many conditions.", "Low", "alkali"]],
+    applications: ["Electrical systems", "Heat exchangers", "Plumbing", "Alloys"], similar: ["Ag","Au","Ni","Zn"], comparisons: ["Al","Fe","Ag","Zn"]
+  }
+};
+
+function getExplorerProfile(el) {
+  const fallbackScore = score(el.symbol);
+  return ELEMENT_EXPLORER_PROFILES[el.symbol] || {
+    summary: `${el.name} is a ${el.category.toLowerCase()} with a generated ElementOS behaviour profile. Use this page to compare quick facts, simulated reaction tendencies, related materials and report-ready insights.`,
+    atomicMass: `${(el.atomicNumber * 2.03).toFixed(3)} u`, group: "—", period: "—", block: el.atomicNumber <= 2 ? "s-block" : el.atomicNumber <= 18 ? "p-block" : "d/f-block", density: `${(0.6 + el.atomicNumber / 18).toFixed(2)} g/cm³`, melting: "Profile estimate", boiling: "Profile estimate", electronegativity: "Profile estimate", oxidation: "Context-dependent", discovered: "Reference needed", discoveredBy: "Element profile",
+    configuration: `Generated shell model · Z=${el.atomicNumber}`,
+    orbitals: buildSimpleOrbitals(el.atomicNumber),
+    compounds: [[`${el.symbol}O`, `${el.name} Oxide`], [`${el.symbol}Cl`, `${el.name} Chloride`], [`${el.symbol}(OH)`, `${el.name} Hydroxide`], [`${el.symbol} alloy`, `${el.name} Alloy Candidate`]],
+    fingerprint: { acid: fallbackScore.pressure, alkali: fallbackScore.diffusion, passivation: fallbackScore.stability, diffusion: fallbackScore.diffusion, persistence: fallbackScore.thermal, gas: Math.max(0.8, fallbackScore.conductivity - 1), visible: Math.max(1, fallbackScore.rarity) },
+    scores: { science: Math.min(5, (fallbackScore.stability + fallbackScore.thermal) / 2), stability: fallbackScore.stability, classification: `${el.category} behaviour profile` },
+    reactions: [["Acid Response", `${el.symbol} + acid → environment-dependent products`, "Use as an early-stage simulation cue before laboratory verification.", "Modelled"], ["Alkali Response", `${el.symbol} + base → context-dependent surface change`, "Reaction tendency depends on oxide, temperature and concentration.", "Modelled"], ["Oxide Behaviour", `${el.symbol} + O₂ → oxide layer`, "Surface layer formation often controls long-term behaviour.", "Watch"]],
+    encounters: [["Neutral Water", "Control", "Baseline observation for visible surface change.", "Observe", "water"], ["Acidic Solution", "Acid exposure", "Surface attack and gas evolution depend on element chemistry.", "Modelled", "acid"], ["Alkaline Solution", "Base exposure", "Alkali response depends on amphoteric or oxide behaviour.", "Modelled", "alkali"], ["Gradient Exposure", "Acid ↔ Alkali", "Sequential exposure reveals whether protective layers fail or recover.", "Research", "gradient"]],
+    applications: ["Material comparison", "Research screening", "Scenario modelling", "Report generation"],
+    similar: similarElementsFor(el.symbol), comparisons: relatedComparisonsFor(el.symbol)
+  };
 }
+
+function buildSimpleOrbitals(atomicNumber) {
+  const capacities = [["1s",2],["2s",2],["2p",6],["3s",2],["3p",6],["4s",2],["3d",10],["4p",6],["5s",2],["4d",10],["5p",6],["6s",2],["4f",14],["5d",10],["6p",6],["7s",2],["5f",14],["6d",10],["7p",6]];
+  let remaining = Math.max(1, atomicNumber);
+  const rows = [];
+  for (const [label, cap] of capacities) {
+    if (remaining <= 0) break;
+    const count = Math.min(cap, remaining);
+    rows.push([label, count]);
+    remaining -= count;
+  }
+  return rows.slice(0, 9);
+}
+
+function similarElementsFor(symbol) {
+  const e = elementMap[symbol] || elementMap.Al;
+  return elements
+    .filter(x => x.symbol !== symbol)
+    .map(x => ({ ...x, distance: Math.abs(x.atomicNumber - e.atomicNumber) + (x.category === e.category ? 0 : 8) }))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, 4)
+    .map(x => x.symbol);
+}
+
+function relatedComparisonsFor(symbol) {
+  const defaults = ["Al", "Ti", "Fe", "Cu", "Mg", "Zn", "Ni", "Si"].filter(x => x !== symbol);
+  return defaults.slice(0, 4);
+}
+
+function ReactionVisual({ type = "water" }) {
+  const palette = {
+    water: "from-cyan-300/35 via-blue-500/20 to-slate-950",
+    acid: "from-orange-300/35 via-red-500/20 to-slate-950",
+    alkali: "from-emerald-300/35 via-lime-500/20 to-slate-950",
+    gradient: "from-red-400/35 via-amber-300/20 to-emerald-400/25",
+    reverse: "from-emerald-400/30 via-cyan-300/20 to-red-400/25"
+  };
+  const bubbles = [14, 32, 49, 63, 78];
+  return (
+    <div className={`relative h-28 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${palette[type] || palette.water}`}>
+      <div className="absolute left-1/2 top-4 h-20 w-16 -translate-x-1/2 rounded-b-3xl rounded-t-lg border border-cyan-100/25 bg-black/25 backdrop-blur-sm" />
+      <div className="absolute bottom-3 left-1/2 h-9 w-20 -translate-x-1/2 rounded-[50%] border border-white/10 bg-white/10" />
+      <div className="absolute bottom-4 left-1/2 h-3 w-14 -translate-x-1/2 rounded-full bg-slate-300/35 shadow-[0_0_28px_rgba(125,211,252,.35)]" />
+      {bubbles.map((left, index) => <span key={left} className="absolute h-2 w-2 rounded-full bg-cyan-100/70 shadow-[0_0_14px_rgba(165,243,252,.8)]" style={{ left: `${left}%`, bottom: `${20 + (index % 3) * 14}px`, animation: `eosFloat ${2.4 + index * 0.35}s ease-in-out infinite` }} />)}
+      <div className="absolute inset-x-4 top-3 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+      <div className="absolute bottom-2 right-3 text-[10px] font-black uppercase tracking-[.18em] text-white/70">reaction view</div>
+    </div>
+  );
+}
+
+function OrbitalRow({ label, count }) {
+  return (
+    <div className="grid grid-cols-[48px_1fr_28px] items-center gap-3">
+      <div className="font-mono text-xs font-black text-cyan-100">{label}</div>
+      <div className="flex flex-wrap gap-1.5">
+        {Array.from({ length: Math.max(1, count) }).map((_, i) => <span key={i} className="h-2.5 w-2.5 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,.8)]" />)}
+      </div>
+      <div className="text-right text-xs text-slate-500">{count}</div>
+    </div>
+  );
+}
+
+function BehaviourFingerprint({ values }) {
+  const axes = [
+    ["Acid", values.acid], ["Alkali", values.alkali], ["Passivation", values.passivation], ["Diffusion", values.diffusion], ["Persistence", values.persistence], ["Gas", values.gas], ["Visible", values.visible]
+  ];
+  const points = axes.map(([, value], i) => {
+    const angle = (-90 + (360 / axes.length) * i) * Math.PI / 180;
+    const radius = 18 + (Math.min(5, Math.max(0, value)) / 5) * 72;
+    return [110 + Math.cos(angle) * radius, 110 + Math.sin(angle) * radius];
+  });
+  const polygon = points.map(p => p.join(",")).join(" ");
+  return (
+    <div className="relative rounded-[1.5rem] border border-cyan-300/15 bg-black/25 p-4">
+      <div className="flex items-center justify-between"><h3 className="text-lg font-black">Behaviour Fingerprint</h3><span className="text-xs text-slate-500">0–5 scale</span></div>
+      <svg viewBox="0 0 220 220" className="mt-3 h-64 w-full">
+        {[32, 56, 80].map(r => <circle key={r} cx="110" cy="110" r={r} fill="none" stroke="rgba(125,211,252,.14)" />)}
+        {axes.map(([label], i) => {
+          const angle = (-90 + (360 / axes.length) * i) * Math.PI / 180;
+          const x = 110 + Math.cos(angle) * 92;
+          const y = 110 + Math.sin(angle) * 92;
+          const lx = 110 + Math.cos(angle) * 103;
+          const ly = 110 + Math.sin(angle) * 103;
+          return <g key={label}><line x1="110" y1="110" x2={x} y2={y} stroke="rgba(125,211,252,.13)"/><text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fill="rgba(226,232,240,.75)" fontSize="8" fontWeight="700">{label}</text></g>;
+        })}
+        <polygon points={polygon} fill="rgba(14,165,233,.34)" stroke="rgba(103,232,249,.95)" strokeWidth="2" />
+        {points.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="3" fill="rgb(165,243,252)" />)}
+      </svg>
+    </div>
+  );
+}
+
+function Explorer({ selected, setSelected, setCompare }) {
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState("All");
+  const [tab, setTab] = useState("Overview");
+  const filtered = elements.filter(e => (cat === "All" || e.category === cat) && `${e.symbol} ${e.name} ${e.category}`.toLowerCase().includes(q.toLowerCase())).slice(0, 80);
+  const el = elementMap[selected] || elementMap.Al;
+  const profile = getExplorerProfile(el);
+  const s = score(el.symbol);
+  const tabs = ["Overview", "Experiments", "Scores & Data", "Charts", "References"];
+  const quickFacts = [["Density", profile.density], ["Melting Point", profile.melting], ["Boiling Point", profile.boiling], ["Electronegativity", profile.electronegativity], ["Oxidation States", profile.oxidation], ["Discovered", profile.discovered], ["Discovered By", profile.discoveredBy]];
+  const related = profile.comparisons || relatedComparisonsFor(el.symbol);
+  const similar = profile.similar || similarElementsFor(el.symbol);
+
+  return (
+    <div className="space-y-5">
+      <div className="grid gap-5 xl:grid-cols-[360px_1fr]">
+        <Panel className="xl:sticky xl:top-4 xl:self-start">
+          <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 p-3">
+            <Search className="text-cyan-300" size={18}/>
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements..." className="w-full bg-transparent text-sm outline-none placeholder:text-slate-600" />
+          </div>
+          <select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 text-sm outline-none">
+            {categories.map(c => <option key={c}>{c}</option>)}
+          </select>
+          <div className="mt-4 max-h-[680px] overflow-auto pr-2">
+            {filtered.map(e => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left transition hover:border-cyan-300/35 ${el.symbol === e.symbol ? "border-cyan-300/50 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}
+          </div>
+        </Panel>
+
+        <div className="space-y-5">
+          <Panel className="overflow-hidden p-0">
+            <div className="relative grid gap-5 p-5 xl:grid-cols-[1.05fr_.95fr]">
+              <div className="pointer-events-none absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_75%_25%,rgba(56,189,248,.22),transparent_28%),radial-gradient(circle_at_20%_85%,rgba(245,158,11,.13),transparent_28%)]" />
+              <div className="relative z-10">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400"><span>Element Explorer</span><ChevronRight size={13}/><span>{el.name} ({el.symbol})</span></div>
+                <div className="mt-5 flex flex-wrap items-end gap-5">
+                  <div className="grid h-28 w-28 place-items-center rounded-[1.5rem] border border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_60px_rgba(34,211,238,.14)]">
+                    <div className="text-center"><div className="text-5xl font-black text-cyan-100">{el.symbol}</div><div className="text-[10px] uppercase tracking-[.18em] text-cyan-200">{el.name}</div></div>
+                  </div>
+                  <div>
+                    <h1 className="text-5xl font-black tracking-tight md:text-6xl">{el.name}</h1>
+                    <div className="mt-2 flex flex-wrap gap-2 text-xs font-bold text-slate-300">
+                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">Atomic Number {el.atomicNumber}</span>
+                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">Atomic Mass {profile.atomicMass}</span>
+                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">Group {profile.group}</span>
+                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">Period {profile.period}</span>
+                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">{profile.block}</span>
+                    </div>
+                    <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300">{profile.summary}</p>
+                    <div className="mt-5 flex flex-wrap gap-3"><Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))} variant="primary">Add {el.symbol} to Compare</Button><Button onClick={() => setCompare([el.symbol, ...related].slice(0, 4))}>Build Related Comparison</Button></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative z-10 grid gap-4 lg:grid-cols-[1fr_230px]">
+                <div className="min-h-[250px] rounded-[2rem] border border-cyan-300/15 bg-black/30 p-4">
+                  <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Material visual</div>
+                  <div className="relative mt-4 grid h-48 place-items-center overflow-hidden rounded-[1.5rem] border border-white/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.18),transparent_42%),linear-gradient(135deg,rgba(15,23,42,.9),rgba(2,6,23,.9))]">
+                    <div className="absolute h-40 w-40 rounded-full border border-cyan-300/20" style={{ animation: "eosSpin 18s linear infinite" }} />
+                    <div className="absolute h-28 w-64 rounded-[50%] border border-cyan-300/25" />
+                    <div className="relative grid h-28 w-28 place-items-center rounded-full bg-gradient-to-br from-slate-200 via-slate-500 to-slate-950 shadow-[0_0_70px_rgba(125,211,252,.28)]"><span className="text-4xl font-black text-white/85">{el.symbol}</span></div>
+                  </div>
+                </div>
+                <div className="rounded-[2rem] border border-amber-300/20 bg-amber-300/[.06] p-4">
+                  <div className="text-xs font-black uppercase tracking-[.2em] text-amber-200">Research Summary</div>
+                  <p className="mt-3 text-sm leading-6 text-slate-200">{profile.summary}</p>
+                  <div className="mt-4 text-xs font-black uppercase tracking-[.18em] text-slate-500">Recommended Uses</div>
+                  <div className="mt-2 space-y-2">{profile.applications.map(app => <div key={app} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 size={14} className="text-emerald-300"/> {app}</div>)}</div>
+                </div>
+              </div>
+            </div>
+          </Panel>
+
+          <div className="grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+            <Panel>
+              <div className="flex flex-wrap items-center gap-2 border-b border-white/10 pb-4">{tabs.map(t => <button key={t} onClick={() => setTab(t)} className={`rounded-full px-4 py-2 text-xs font-black transition ${tab === t ? "bg-cyan-300 text-slate-950" : "bg-white/[.05] text-slate-400 hover:text-white"}`}>{t}</button>)}</div>
+              <div className="mt-5 grid gap-5 lg:grid-cols-2">
+                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                  <h3 className="text-lg font-black">Quick Facts</h3>
+                  <div className="mt-4 space-y-2">{quickFacts.map(([label, value]) => <div key={label} className="flex items-center justify-between gap-4 border-b border-white/5 pb-2 text-sm"><span className="text-slate-500">{label}</span><span className="text-right font-bold text-slate-200">{value}</span></div>)}</div>
+                </div>
+                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                  <h3 className="text-lg font-black">Electronic Configuration</h3>
+                  <div className="mt-2 rounded-2xl border border-cyan-300/15 bg-cyan-300/5 px-3 py-2 font-mono text-sm text-cyan-100">{profile.configuration}</div>
+                  <div className="mt-4 space-y-3">{profile.orbitals.map(([label, count]) => <OrbitalRow key={label} label={label} count={count}/>)}</div>
+                </div>
+                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                  <h3 className="text-lg font-black">Common Compounds</h3>
+                  <div className="mt-4 grid gap-2">{profile.compounds.map(([formula, name]) => <div key={formula} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.03] p-3"><span className="font-mono text-cyan-100">{formula}</span><span className="text-right text-xs text-slate-400">{name}</span></div>)}</div>
+                </div>
+                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                  <h3 className="text-lg font-black">Reaction Summary</h3>
+                  <div className="mt-4 space-y-3">{profile.reactions.map(([title, equation, body, level]) => <div key={title} className="rounded-2xl border border-white/10 bg-slate-950/60 p-3"><div className="flex items-center justify-between gap-3"><b className="text-sm text-white">{title}</b><span className="rounded-full bg-cyan-300/10 px-2 py-1 text-[10px] font-black text-cyan-100">{level}</span></div><div className="mt-2 font-mono text-xs text-amber-100">{equation}</div><p className="mt-2 text-xs leading-5 text-slate-400">{body}</p></div>)}</div>
+                </div>
+              </div>
+            </Panel>
+
+            <div className="space-y-5">
+              <BehaviourFingerprint values={profile.fingerprint}/>
+              <Panel>
+                <h3 className="text-lg font-black">Score Summary</h3>
+                <div className="mt-4 space-y-3">
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs text-slate-500">Scientific Behaviour Score</div><div className="mt-1 text-4xl font-black text-cyan-100">{profile.scores.science.toFixed(2)} <span className="text-base text-slate-500">/ 5.00</span></div></div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs text-slate-500">Material Stability Score</div><div className="mt-1 text-4xl font-black text-blue-200">{profile.scores.stability.toFixed(2)} <span className="text-base text-slate-500">/ 5.00</span></div></div>
+                  <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Classification</div><p className="mt-2 text-sm leading-6 text-slate-200">{profile.scores.classification}</p></div>
+                </div>
+              </Panel>
+            </div>
+          </div>
+
+          <div className="grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+            <Panel>
+              <div className="flex flex-wrap items-start justify-between gap-4"><div><h2 className="text-2xl font-black">Experimental Encounters</h2><p className="mt-1 text-sm text-slate-400">Acid, alkali, neutral and gradient exposures represented as visual reaction cards.</p></div><Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))}>Send to Compare</Button></div>
+              <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">{profile.encounters.map(([title, condition, body, level, visual]) => <div key={title} className="rounded-[1.25rem] border border-white/10 bg-black/25 p-3"><ReactionVisual type={visual}/><div className="mt-3 text-sm font-black text-white">{title}</div><div className="text-xs text-cyan-200">{condition}</div><p className="mt-2 min-h-[64px] text-xs leading-5 text-slate-400">{body}</p><div className={`mt-3 rounded-full px-3 py-1 text-center text-[10px] font-black ${String(level).includes("High") ? "bg-red-400/15 text-red-200" : String(level).includes("Stable") ? "bg-emerald-400/15 text-emerald-200" : "bg-amber-400/15 text-amber-200"}`}>{level}</div></div>)}</div>
+            </Panel>
+
+            <Panel>
+              <h2 className="text-2xl font-black">Diffusion Behaviour</h2>
+              <p className="mt-1 text-sm text-slate-400">Layer behaviour through surface, oxide, breakthrough and core regions.</p>
+              <div className="relative mt-5 h-72 overflow-hidden rounded-[1.5rem] border border-cyan-300/15 bg-[linear-gradient(135deg,rgba(8,47,73,.45),rgba(2,6,23,.9))] p-4">
+                {["Surface Layer", "Oxide Layer", "Breakthrough", "Core Metal"].map((label, index) => <div key={label} className="absolute left-6 right-6 rounded-2xl border border-white/10" style={{ top: `${34 + index * 42}px`, height: "34px", background: `linear-gradient(90deg, rgba(34,211,238,${0.34 - index * 0.06}), rgba(245,158,11,${0.16 + index * 0.04}))`, transform: `skewX(-10deg) translateX(${index * 10}px)` }}><span className="absolute left-3 top-2 text-xs font-bold text-white/80">{label}</span></div>)}
+                <div className="absolute bottom-5 left-5 right-5 flex justify-between text-[10px] uppercase tracking-[.18em] text-slate-500"><span>Low</span><span>Time</span><span>High</span></div>
+              </div>
+              <p className="mt-4 text-sm leading-6 text-slate-300">{el.name} shows {s.diffusion > 3 ? "elevated" : "controlled"} diffusion behaviour in the ElementOS model, with surface-layer behaviour acting as the main boundary condition.</p>
+            </Panel>
+          </div>
+
+          <div className="grid gap-5 xl:grid-cols-[.75fr_.75fr_1fr]">
+            <Panel>
+              <h3 className="text-xl font-black">Related Comparisons</h3>
+              <div className="mt-4 space-y-2">{related.map(sym => <div key={sym} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.03] p-3"><span className="text-sm">{el.name} vs {elementMap[sym]?.name || sym}</span><button onClick={() => setCompare([el.symbol, sym])} className="rounded-xl bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100 hover:bg-cyan-300 hover:text-slate-950">Compare</button></div>)}</div>
+            </Panel>
+            <Panel>
+              <h3 className="text-xl font-black">Similar Elements</h3>
+              <div className="mt-4 grid grid-cols-2 gap-2">{similar.map(sym => <button key={sym} onClick={() => setSelected(sym)} className="rounded-2xl border border-white/10 bg-white/[.04] p-3 text-left transition hover:border-cyan-300/35"><div className="text-lg font-black text-cyan-100">{sym}</div><div className="text-xs text-slate-400">{elementMap[sym]?.name || sym}</div></button>)}</div>
+            </Panel>
+            <Panel>
+              <h3 className="text-xl font-black">Executive Summary</h3>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Finding</div><p className="mt-2 text-sm text-slate-300">{el.name} shows a clear behaviour profile with {profile.scores.classification.toLowerCase()}.</p></div>
+                <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Next Step</div><p className="mt-2 text-sm text-slate-300">Compare {el.symbol} against {related.slice(0, 2).join(" and ")} or send it into Future Simulation.</p></div>
+              </div>
+              <Button onClick={() => setCompare([el.symbol, ...related].slice(0, 4))} variant="primary" className="mt-5 w-full">Generate Research Comparison</Button>
+            </Panel>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PeriodicTable({ selected, setSelected }) {
   const [layer, setLayer] = useState("conductivity");
   const [cat, setCat] = useState("All");
