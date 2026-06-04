@@ -289,7 +289,7 @@ function guidanceForPage(page) {
     landing: {
       title: "What ElementOS does",
       description: "ElementOS is an AI-native material intelligence platform for exploring elements, comparing behaviours, simulating future states, building real-world scenarios and exporting research-ready reports.",
-      next: "Start with the demo, open Future Simulation or create a free account when you are ready to save work.",
+      next: "Start with the platform, open Future Simulation or create a free account when you are ready to save work.",
     },
     beta: {
       title: "What Explorer Launch does",
@@ -594,17 +594,17 @@ function PageMicroDataBar({ page = "dashboard", setPage }) {
 }
 
 function ProductionReadinessPanel({ compact = false }) {
-  const checks = [
-    ["Pricing", ELEMENTOS_PRODUCTION_AUDIT.pricing],
-    ["Button handlers", `${ELEMENTOS_PRODUCTION_AUDIT.buttonComponentsWithHandlers}/${ELEMENTOS_PRODUCTION_AUDIT.buttonComponentsScanned} React buttons and ${ELEMENTOS_PRODUCTION_AUDIT.nativeButtonsWithHandlers}/${ELEMENTOS_PRODUCTION_AUDIT.nativeButtonsScanned} native buttons have click handlers.`],
-    ["Export locks", ELEMENTOS_PRODUCTION_AUDIT.exportLocking],
-    ["Mobile", ELEMENTOS_PRODUCTION_AUDIT.mobile],
+  const unlocks = [
+    ["Reports", "Generate executive research reports from discoveries and simulations."],
+    ["Exports", "Download PDF, JSON and SVG files for professional use."],
+    ["Saved workspace", "Save discoveries, reports and research paths in one place."],
+    ["Media", "Create posters and shareable discovery cards for LinkedIn, X and presentations."],
   ];
   return (
     <div className={`${compact ? "mt-4" : "mt-6"} rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.055] p-4`}>
-      <div className="text-xs font-black uppercase tracking-[.22em] text-emerald-200">Paid subscriber readiness</div>
+      <div className="text-xs font-black uppercase tracking-[.22em] text-emerald-200">What Pro unlocks here</div>
       <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {checks.map(([label, value]) => (
+        {unlocks.map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-white/10 bg-black/20 p-3">
             <div className="text-sm font-black text-white">{label}</div>
             <div className="mt-1 text-xs leading-5 text-slate-400">{value}</div>
@@ -1546,7 +1546,7 @@ function setElementOSPlan(plan) {
 }
 
 function getStripePriceForPlan(planName = "Pro Researcher") {
-  const env = import.meta?.env || {};
+  const env = import.meta.env || {};
   if (planName === "Pro Lab") return env.VITE_STRIPE_PROLAB_PRICE || "";
   if (planName === "Pro Researcher") return env.VITE_STRIPE_RESEARCHER_PRICE || "";
   return "";
@@ -1734,10 +1734,29 @@ function makeExportSvg({ title = "ElementOS Export", summary = "", payload = {},
 </svg>`;
 }
 
+function normalizeExportSections(sections = []) {
+  return (Array.isArray(sections) ? sections : []).map((section, index) => {
+    if (Array.isArray(section)) {
+      return {
+        heading: section[0] || `Section ${index + 1}`,
+        text: section[1] || "",
+      };
+    }
+    if (!section || typeof section !== "object") {
+      return { heading: `Section ${index + 1}`, text: String(section || "") };
+    }
+    return {
+      heading: section.heading || section.title || section.label || `Section ${index + 1}`,
+      text: section.text || section.value || (Array.isArray(section.lines) ? section.lines.join("\n") : ""),
+    };
+  });
+}
+
 function exportAllFormats({ baseName = "elementos-export", title = "ElementOS Export", summary = "", payload = {}, sections = [], customSvg = null }) {
   if (!guardProAction("Export PDF / SVG / JSON")) return;
   const slug = slugifyExportName(baseName);
   const now = new Date().toLocaleString();
+  const normalizedSections = normalizeExportSections(sections);
   const normalizedPayload = {
     title,
     summary,
@@ -1753,7 +1772,7 @@ function exportAllFormats({ baseName = "elementos-export", title = "ElementOS Ex
 
   const narrative = [
     summary,
-    ...sections.map((section) => section.text || section.value || ""),
+    ...normalizedSections.map((section) => section.text || ""),
   ].filter(Boolean).join("\n\n") || "ElementOS generated this export as a research-ready intelligence asset.";
 
   const pdf = new jsPDF("p", "mm", "a4");
@@ -1883,15 +1902,15 @@ function exportAllFormats({ baseName = "elementos-export", title = "ElementOS Ex
     y += Math.ceil(Math.min(metricEntries.length, 8) / 2) * 24 + 8;
   }
 
-  if (sections.length) {
+  if (normalizedSections.length) {
     pdf.setTextColor(...cyan);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(11);
     pdf.text("Export Sections", margin, y);
     y += 7;
-    sections.slice(0, 10).forEach((section, index) => {
-      const heading = section.heading || section.label || `Section ${index + 1}`;
-      const body = section.text || section.value || "";
+    normalizedSections.slice(0, 10).forEach((section, index) => {
+      const heading = section.heading || `Section ${index + 1}`;
+      const body = section.text || "";
       const bodyLines = pdf.splitTextToSize(String(body), contentWidth - 12).slice(0, 7);
       const h = Math.max(24, 14 + bodyLines.length * 5);
       ensureSpace(h + 8);
@@ -2807,7 +2826,7 @@ function makePublishableDiscoveries(limit = 12) {
 }
 
 function createDiscoveryUrl(discovery) {
-  if (!discovery?.publicId) return "";
+  if (!discovery?.publicId || typeof window === "undefined") return "";
   return `${window.location.origin}${window.location.pathname}?discovery=${discovery.publicId}`;
 }
 
@@ -3836,8 +3855,8 @@ function TimeMachine({ selected, setSelected, setPage }) {
 
 function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
   const [email, setEmail] = useState("researcher@elementos.ai");
-  const [password, setPassword] = useState("");
   const [name, setName] = useState("Paul Roper");
+  const [password, setPassword] = useState("");
   const [plan, setPlan] = useState("Explorer");
   const [message, setMessage] = useState("");
 
@@ -6338,7 +6357,6 @@ function MyLab({ session, selected, compare, setPage }) {
 function BetaLaunch({ session, setPage, startCheckout }) {
   const [name, setName] = useState(session?.user?.user_metadata?.name || "");
   const [email, setEmail] = useState(session?.user?.email || "");
-  const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [notice, setNotice] = useState("");
 
@@ -6416,10 +6434,6 @@ function BetaLaunch({ session, setPage, startCheckout }) {
                 <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
                   Email
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
-                </label>
-                <label className="grid gap-2 text-xs font-black uppercase tracking-[.16em] text-slate-500">
-                  Password
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password" className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm normal-case tracking-normal text-white outline-none" />
                 </label>
                 {notice && <div className="rounded-2xl border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">{notice}</div>}
                 <Button onClick={createExplorerAccount} variant="primary" className="w-full py-4">Create Account</Button>
@@ -9294,8 +9308,8 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const currentCompare = Array.isArray(compare) ? compare : [];
   const normalizedQuery = query.toLowerCase().trim();
   const supportEmail =
-    import.meta?.env?.VITE_SUPPORT_EMAIL ||
-    import.meta?.env?.SUPPORT_EMAIL ||
+    import.meta.env?.VITE_SUPPORT_EMAIL ||
+    import.meta.env?.SUPPORT_EMAIL ||
     "elementoscryto@gmail.com";
 
   const aliases = {
@@ -9448,7 +9462,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
       ["restore", "Restore Access", "Refresh account access after checkout."],
       ["founding", "Show Founding Researcher Offer", "View founding $19 pricing and future $35 pricing."],
       ["billing", "Billing Help", "Open support for billing and subscription help."],
-    ].forEach(([key, title, description]) => add({ id: `account:${key}`, title, description, category: "Account", label: key, execute: () => { if (["upgrade-researcher", "upgrade-prolab", "checkout"].includes(key)) startCheckout?.(key.includes("prolab") ? "prolab" : "researcher"); else if (key === "billing") setSupportOpen?.(true); else setPage("beta"); emitToast(title); onClose(); } }));
+    ].forEach(([key, title, description]) => add({ id: `account:${key}`, title, description, category: "Account", label: key, execute: () => { if (["upgrade-researcher", "upgrade-prolab", "checkout"].includes(key)) startCheckout?.(key.includes("prolab") ? "Pro Lab" : "Pro Researcher"); else if (key === "billing") setSupportOpen?.(true); else setPage("beta"); emitToast(title); onClose(); } }));
 
     [
       ["calculator", "Open Calculator", "Enter values and get answers."],
@@ -9557,7 +9571,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   }, [filtered.length]);
 
   const commandTitleById = useMemo(() => {
-    const map = new Map();
+    const map = new globalThis.Map();
     candidateCommands.forEach((command) => map.set(command.id, command.title));
     return map;
   }, [candidateCommands]);
@@ -10648,8 +10662,8 @@ function SubscriptionUpgradeModal({ open, reason, plan, setPlan, onClose, startC
 
 function SupportCenterModal({ open, onClose }) {
   const SUPPORT_INBOX =
-    import.meta?.env?.VITE_SUPPORT_EMAIL ||
-    import.meta?.env?.SUPPORT_EMAIL ||
+    import.meta.env?.VITE_SUPPORT_EMAIL ||
+    import.meta.env?.SUPPORT_EMAIL ||
     "elementoscryto@gmail.com";
 
   const [created, setCreated] = useState(false);
