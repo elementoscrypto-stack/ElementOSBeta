@@ -2163,21 +2163,26 @@ function ElementOSThemeSkin() {
       }
 
 
-      /* V132: 70% research-workspace desktop scale.
-         Desktop behaves like the browser is zoomed to 70%, while mobile stays readable. */
+      /* V133: high-density desktop workspace without global transform.
+         This gives a 70%-style information density while keeping windows/layouts stable. */
       .eos-app-scale { --eos-ui-scale: 1; zoom: 1; transform: none; width: 100%; min-height: 100vh; }
-      @media (min-width: 1024px) {
-        .eos-app-scale { --eos-ui-scale: .70; zoom: .70; width: 142.857%; min-height: 142.857vh; }
-        .eos-topbar { max-width: calc(100vw / .70 - 2rem); }
-        .eos-command-modal { zoom: 1.18; }
-      }
       @supports not (zoom: 1) {
-        @media (min-width: 1024px) {
-          .eos-app-scale { transform: scale(.70); transform-origin: top left; width: 142.857%; min-height: 142.857vh; }
-        }
+        .eos-app-scale { transform: none; width: 100%; min-height: 100vh; }
+      }
+      @media (min-width: 1024px) {
+        html { font-size: 13px; }
+        .eos-page-stage { padding-top: .65rem; }
+        .eos-page-stage .eos-panel, .eos-page-stage .eos-data-card { padding: 1.15rem; }
+        .eos-page-stage .space-y-8 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.2rem; }
+        .eos-page-stage .gap-8 { gap: 1.15rem; }
+        .eos-page-stage .gap-6 { gap: 1rem; }
+      }
+      @media (min-width: 1536px) {
+        html { font-size: 12px; }
       }
       @media (max-width: 1023px) {
-        .eos-app-scale { zoom: 1; transform: none; width: 100%; min-height: 100vh; }
+        html { font-size: 16px; }
+        .eos-app-scale { zoom: 1; }
         html, body, #root { width: 100%; max-width: 100%; overflow-x: hidden; }
         .eos-page-stage, .eos-panel, .eos-data-card, .poster-card, .poster-card-gold { max-width: 100%; }
         .eos-page-stage { overflow-x: hidden; }
@@ -2191,7 +2196,7 @@ function ElementOSThemeSkin() {
       *::-webkit-scrollbar { width: 10px; height: 10px; }
       *::-webkit-scrollbar-track { background: rgba(2,6,13,.8); }
       *::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#0b63ff,#08b4ff); border-radius: 999px; border: 2px solid rgba(2,6,13,.85); }
-      /* V131 Element Explorer: normal browser zoom, professional dashboard density. */
+      /* V133 Element Explorer: full-width search with compact professional dashboard density. */
       @media (min-width: 1280px) {
         .eos-page-stage .element-explorer-grid { gap: 1.1rem; }
       }
@@ -4270,16 +4275,26 @@ function Explorer({ selected, setSelected, setCompare }) {
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-5 2xl:grid-cols-[340px_1fr] xl:grid-cols-[300px_1fr]">
-        <Panel className="xl:sticky xl:top-4 xl:self-start">
-          <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 p-3">
-            <Search className="text-cyan-300" size={18}/>
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements..." className="w-full bg-transparent text-sm outline-none placeholder:text-slate-600" />
+      <Panel className="p-4">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
+          <div className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-cyan-300/20 bg-black/35 px-4 py-3 shadow-[0_0_35px_rgba(34,211,238,.08)]">
+            <Search className="shrink-0 text-cyan-300" size={19}/>
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search all elements by name, symbol or category..." className="min-w-0 flex-1 bg-transparent text-sm font-bold outline-none placeholder:text-slate-600" />
           </div>
-          <select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 text-sm outline-none">
+          <select value={cat} onChange={(e) => setCat(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950 p-3 text-sm font-bold outline-none xl:w-[280px]">
             {categories.map(c => <option key={c}>{c}</option>)}
           </select>
-          <div className="mt-4 max-h-[620px] overflow-auto pr-2">
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+          <span>{filtered.length} visible elements · current focus: <b className="text-cyan-100">{el.name} ({el.symbol})</b></span>
+          <span className="rounded-full border border-white/10 bg-white/[.04] px-3 py-1">Explorer search spans the full workspace</span>
+        </div>
+      </Panel>
+
+      <div className="grid gap-5 2xl:grid-cols-[300px_1fr] xl:grid-cols-[270px_1fr]">
+        <Panel className="xl:sticky xl:top-4 xl:self-start">
+          <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Element List</div>
+          <div className="mt-3 max-h-[620px] overflow-auto pr-2">
             {filtered.map(e => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left transition hover:border-cyan-300/35 ${el.symbol === e.symbol ? "border-cyan-300/50 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}
           </div>
         </Panel>
@@ -10116,8 +10131,8 @@ function ToastCenter() {
 
 function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startCheckout, setSupportOpen, plan = "Explorer" }) {
   return (
-    <div className="eos-topbar sticky top-4 z-20 mb-6 hidden w-full items-center justify-between gap-4 rounded-2xl px-4 py-3 backdrop-blur-2xl lg:flex">
-      <div className="flex min-w-0 shrink-0 items-center gap-3">
+    <div className="eos-topbar sticky top-4 z-20 mb-6 hidden items-center justify-between gap-4 rounded-2xl px-4 py-3 backdrop-blur-2xl lg:flex">
+      <div className="flex min-w-0 items-center gap-3">
         <div className="rounded-xl border border-blue-400/25 bg-blue-500/10 px-3 py-2 text-xs font-black uppercase tracking-[.22em] text-cyan-100">
           {pageLabel(page)}
         </div>
@@ -10126,13 +10141,13 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
 
       <button
         onClick={() => setCommandOpen(true)}
-        className="flex min-w-0 flex-1 items-center justify-between rounded-xl border border-[#17365f] bg-[#040c17]/90 px-4 py-2 text-left text-sm text-slate-400 transition hover:border-cyan-300/40"
+        className="flex min-w-[420px] items-center justify-between rounded-xl border border-[#17365f] bg-[#040c17]/90 px-4 py-2 text-left text-sm text-slate-400 transition hover:border-cyan-300/40"
       >
         <span className="flex items-center gap-2"><Search size={16} /> Search elements, reactions, reports, data...</span>
         <span className="rounded-md border border-white/10 bg-black/30 px-2 py-1 text-[10px] font-black text-slate-300">CTRL K</span>
       </button>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex items-center gap-2">
         <button onClick={() => setSupportOpen?.(true)} className="rounded-xl border border-[#17365f] bg-[#06101d]/80 px-3 py-2 text-xs font-black text-cyan-100">Need Help?</button>
         <button onClick={() => setPage("discover")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">🌐</button>
         {!session && <Button onClick={() => setPage("login")} className="py-2">Login</Button>}
