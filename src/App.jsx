@@ -2163,35 +2163,12 @@ function ElementOSThemeSkin() {
       }
 
 
-      /* V128: High-density research workspace.
-         Desktop/laptop is zoomed out about 15% more than V111.
-         Mobile/tablet remains full-size for readability and tap targets. */
-      .eos-app-scale { --eos-ui-scale: 1; }
-      @media (min-width: 1024px) and (max-width: 1535px) {
-        .eos-app-scale { zoom: .70; }
-      }
-      @media (min-width: 1536px) {
-        .eos-app-scale { zoom: .75; }
-      }
-      @media (min-width: 1024px) and (max-height: 760px) {
-        .eos-app-scale { zoom: .65; }
-      }
+      /* V131: normal-resolution interface.
+         The app should look correct at 100% browser zoom.
+         Density is handled by grids and spacing, not browser-style scaling. */
+      .eos-app-scale { --eos-ui-scale: 1; zoom: 1; transform: none; width: 100%; min-height: 100vh; }
       @supports not (zoom: 1) {
-        @media (min-width: 1024px) {
-          .eos-app-scale {
-            transform: scale(.70);
-            transform-origin: top left;
-            width: calc(100% / .70);
-            min-height: calc(100vh / .70);
-          }
-        }
-        @media (min-width: 1536px) {
-          .eos-app-scale {
-            transform: scale(.75);
-            width: calc(100% / .75);
-            min-height: calc(100vh / .75);
-          }
-        }
+        .eos-app-scale { transform: none; width: 100%; min-height: 100vh; }
       }
       @media (max-width: 1023px) {
         .eos-app-scale { zoom: 1; }
@@ -2208,6 +2185,11 @@ function ElementOSThemeSkin() {
       *::-webkit-scrollbar { width: 10px; height: 10px; }
       *::-webkit-scrollbar-track { background: rgba(2,6,13,.8); }
       *::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#0b63ff,#08b4ff); border-radius: 999px; border: 2px solid rgba(2,6,13,.85); }
+      /* V131 Element Explorer: normal browser zoom, professional dashboard density. */
+      @media (min-width: 1280px) {
+        .eos-page-stage .element-explorer-grid { gap: 1.1rem; }
+      }
+
       .eos-shell { background: radial-gradient(circle at 50% 0%, rgba(0,145,255,.08), transparent 38%), var(--eos-bg); }
       .eos-panel { box-shadow: 0 0 0 1px rgba(0,160,255,.05), 0 22px 90px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.04); }
       .eos-panel:hover { border-color: rgba(0, 174, 255, .34); box-shadow: 0 0 0 1px rgba(0,160,255,.08), 0 24px 95px rgba(0,0,0,.5), 0 0 34px rgba(0,126,255,.08), inset 0 1px 0 rgba(255,255,255,.06); }
@@ -2383,11 +2365,8 @@ function ElementOSThemeSkin() {
           radial-gradient(circle at 88% 8%, rgba(250,204,21,.10), transparent 24%),
           linear-gradient(135deg, rgba(2,6,13,.98), rgba(7,20,38,.96) 56%, rgba(2,6,13,.98));
       }
-      /* V125: command modal should feel full-size even when the main app uses desktop zoom-out. */
-      @media (min-width: 1024px) and (max-width: 1279px) { .eos-command-reset { zoom: 1.42; } }
-      @media (min-width: 1280px) and (max-width: 1799px) { .eos-command-reset { zoom: 1.34; } }
-      @media (min-width: 1800px) { .eos-command-reset { zoom: 1.22; } }
-      @media (max-width: 767px) { .eos-command-reset { zoom: 1; } }
+      /* V131: command modal no longer needs zoom compensation. */
+      .eos-command-reset { zoom: 1; }
 
 
 
@@ -4104,7 +4083,10 @@ const ELEMENT_EXPLORER_PROFILES = {
       ["Acidic Solution", "HCl, 1M", "Oxide layer dissolves, followed by visible hydrogen evolution.", "Moderate → High", "acid"],
       ["Alkaline Solution", "NaOH, 1M", "Strong reaction. Aluminate forms with rapid gas evolution.", "Very High", "alkali"],
       ["Gradient: Acid → Alkali", "Sequential", "Acid strips oxide first; alkali rapidly attacks exposed aluminium.", "Very High", "gradient"],
-      ["Gradient: Alkali → Acid", "Reverse", "Aluminate forms first, then partially breaks down in acid.", "Moderate", "reverse"]
+      ["Gradient: Alkali → Acid", "Reverse", "Aluminate forms first, then partially breaks down in acid.", "Moderate", "reverse"],
+      ["Salt Water", "Chloride exposure", "Protective oxide remains important, but pitting risk increases under chloride exposure.", "Watch", "water"],
+      ["Heat Exposure", "Thermal load", "Oxide stability and thermal expansion become the dominant performance signals.", "Moderate", "gradient"],
+      ["Pressure Exposure", "Load condition", "Structural response depends on alloy state, geometry and boundary conditions.", "Stable", "reverse"]
     ],
     applications: ["Aerospace structures", "Marine systems", "Construction", "Power transmission"],
     similar: ["Ga", "In", "Sn", "Zn"],
@@ -4112,7 +4094,7 @@ const ELEMENT_EXPLORER_PROFILES = {
   },
   Ti: {
     summary: "Titanium combines low density with excellent strength and corrosion resistance. It is highly valued in aerospace, marine, biomedical and high-temperature environments because its oxide layer remains stable under demanding conditions.",
-    atomicMass: "47.867 u", group: "4", period: "4", block: "d-block", density: "4.51 g/cm³", melting: "1668 °C", boiling: "3287 °C", electronegativity: "1.54", oxidation: "+2, +3, +4", discovered: "1791", discoveredBy: "William Gregor",
+    atomicMass: "47.867 u", group: "4", period: "4", block: "d-block", density: "4.51 g/cm³", melting: "1668 °C", boiling: "3287 °C", electronegativity: "1.54", oxidation: "+2, +3, +4", crystal: "Hexagonal close-packed", conductivityType: "Moderate electrical", thermalExpansion: "8.6 µm/m·K", corrosionProfile: "Exceptional oxide stability", discovered: "1791", discoveredBy: "William Gregor",
     configuration: "[Ar] 3d² 4s²",
     orbitals: [["1s", 2], ["2s", 2], ["2p", 6], ["3s", 2], ["3p", 6], ["4s", 2], ["3d", 2]],
     compounds: [["TiO₂", "Titanium Dioxide"], ["TiCl₄", "Titanium Tetrachloride"], ["TiN", "Titanium Nitride"], ["Ti₆Al₄V", "Titanium Alloy"]],
@@ -4124,7 +4106,7 @@ const ELEMENT_EXPLORER_PROFILES = {
   },
   Fe: {
     summary: "Iron is a high-utility structural metal with strong magnetic and mechanical value, but corrosion and oxidation are major design concerns without alloying or protection.",
-    atomicMass: "55.845 u", group: "8", period: "4", block: "d-block", density: "7.87 g/cm³", melting: "1538 °C", boiling: "2862 °C", electronegativity: "1.83", oxidation: "+2, +3", discovered: "Ancient", discoveredBy: "Known since antiquity",
+    atomicMass: "55.845 u", group: "8", period: "4", block: "d-block", density: "7.87 g/cm³", melting: "1538 °C", boiling: "2862 °C", electronegativity: "1.83", oxidation: "+2, +3", crystal: "Body-centred cubic", conductivityType: "Moderate electrical", thermalExpansion: "11.8 µm/m·K", corrosionProfile: "Rust risk without protection", discovered: "Ancient", discoveredBy: "Known since antiquity",
     configuration: "[Ar] 3d⁶ 4s²", orbitals: [["1s",2],["2s",2],["2p",6],["3s",2],["3p",6],["4s",2],["3d",6]],
     compounds: [["Fe₂O₃","Iron(III) Oxide"],["Fe₃O₄","Magnetite"],["FeCl₃","Iron(III) Chloride"],["FeSO₄","Iron(II) Sulfate"]],
     fingerprint: { acid: 3.7, alkali: 1.9, passivation: 2.4, diffusion: 3.1, persistence: 3.2, gas: 3.2, visible: 4.4 },
@@ -4135,7 +4117,7 @@ const ELEMENT_EXPLORER_PROFILES = {
   },
   Cu: {
     summary: "Copper is a highly conductive metal with strong electrical, thermal and corrosion behaviour. It forms surface patinas and is widely used in wiring, heat exchange and alloys.",
-    atomicMass: "63.546 u", group: "11", period: "4", block: "d-block", density: "8.96 g/cm³", melting: "1084.6 °C", boiling: "2562 °C", electronegativity: "1.90", oxidation: "+1, +2", discovered: "Ancient", discoveredBy: "Known since antiquity",
+    atomicMass: "63.546 u", group: "11", period: "4", block: "d-block", density: "8.96 g/cm³", melting: "1084.6 °C", boiling: "2562 °C", electronegativity: "1.90", oxidation: "+1, +2", crystal: "Face-centred cubic", conductivityType: "Excellent electrical + thermal", thermalExpansion: "16.5 µm/m·K", corrosionProfile: "Patina-forming protection", discovered: "Ancient", discoveredBy: "Known since antiquity",
     configuration: "[Ar] 3d¹⁰ 4s¹", orbitals: [["1s",2],["2s",2],["2p",6],["3s",2],["3p",6],["4s",1],["3d",10]],
     compounds: [["CuO","Copper(II) Oxide"],["Cu₂O","Copper(I) Oxide"],["CuSO₄","Copper Sulfate"],["CuCl₂","Copper(II) Chloride"]],
     fingerprint: { acid: 2.4, alkali: 1.3, passivation: 3.7, diffusion: 2.6, persistence: 4.0, gas: 0.7, visible: 4.5 },
@@ -4150,7 +4132,7 @@ function getExplorerProfile(el) {
   const fallbackScore = score(el.symbol);
   return ELEMENT_EXPLORER_PROFILES[el.symbol] || {
     summary: `${el.name} is a ${el.category.toLowerCase()} with a generated ElementOS behaviour profile. Use this page to compare quick facts, simulated reaction tendencies, related materials and report-ready insights.`,
-    atomicMass: `${(el.atomicNumber * 2.03).toFixed(3)} u`, group: "—", period: "—", block: el.atomicNumber <= 2 ? "s-block" : el.atomicNumber <= 18 ? "p-block" : "d/f-block", density: `${(0.6 + el.atomicNumber / 18).toFixed(2)} g/cm³`, melting: "Profile estimate", boiling: "Profile estimate", electronegativity: "Profile estimate", oxidation: "Context-dependent", discovered: "Reference needed", discoveredBy: "Element profile",
+    atomicMass: `${(el.atomicNumber * 2.03).toFixed(3)} u`, group: "—", period: "—", block: el.atomicNumber <= 2 ? "s-block" : el.atomicNumber <= 18 ? "p-block" : "d/f-block", density: `${(0.6 + el.atomicNumber / 18).toFixed(2)} g/cm³`, melting: "Profile estimate", boiling: "Profile estimate", electronegativity: "Profile estimate", oxidation: "Context-dependent", crystal: "Reference profile", conductivityType: "Modelled from category", thermalExpansion: "Reference needed", corrosionProfile: "Environment dependent", discovered: "Reference needed", discoveredBy: "Element profile",
     configuration: `Generated shell model · Z=${el.atomicNumber}`,
     orbitals: buildSimpleOrbitals(el.atomicNumber),
     compounds: [[`${el.symbol}O`, `${el.name} Oxide`], [`${el.symbol}Cl`, `${el.name} Chloride`], [`${el.symbol}(OH)`, `${el.name} Hydroxide`], [`${el.symbol} alloy`, `${el.name} Alloy Candidate`]],
@@ -4224,6 +4206,19 @@ function OrbitalRow({ label, count }) {
   );
 }
 
+
+function ExplorerInfoTip({ title, children }) {
+  return (
+    <span className="group relative inline-flex items-center gap-1 align-middle">
+      <span className="grid h-4 w-4 place-items-center rounded-full border border-cyan-300/30 bg-cyan-300/10 text-[10px] font-black text-cyan-100">i</span>
+      <span className="pointer-events-none absolute left-1/2 top-6 z-30 hidden w-64 -translate-x-1/2 rounded-2xl border border-cyan-300/20 bg-slate-950/95 p-3 text-left text-xs leading-5 text-slate-300 shadow-2xl shadow-cyan-950/40 backdrop-blur-xl group-hover:block">
+        <b className="mb-1 block text-cyan-100">{title}</b>
+        {children}
+      </span>
+    </span>
+  );
+}
+
 function BehaviourFingerprint({ values }) {
   const axes = [
     ["Acid", values.acid], ["Alkali", values.alkali], ["Passivation", values.passivation], ["Diffusion", values.diffusion], ["Persistence", values.persistence], ["Gas", values.gas], ["Visible", values.visible]
@@ -4263,13 +4258,13 @@ function Explorer({ selected, setSelected, setCompare }) {
   const profile = getExplorerProfile(el);
   const s = score(el.symbol);
   const tabs = ["Overview", "Experiments", "Scores & Data", "Charts", "References"];
-  const quickFacts = [["Density", profile.density], ["Melting Point", profile.melting], ["Boiling Point", profile.boiling], ["Electronegativity", profile.electronegativity], ["Oxidation States", profile.oxidation], ["Discovered", profile.discovered], ["Discovered By", profile.discoveredBy]];
+  const quickFacts = [["Density", profile.density], ["Melting Point", profile.melting], ["Boiling Point", profile.boiling], ["Electronegativity", profile.electronegativity], ["Oxidation States", profile.oxidation], ["Crystal Structure", profile.crystal || "Modelled profile"], ["Conductivity", profile.conductivityType || "Material dependent"], ["Thermal Expansion", profile.thermalExpansion || "Context dependent"], ["Corrosion Profile", profile.corrosionProfile || "Environment dependent"], ["Discovered", profile.discovered], ["Discovered By", profile.discoveredBy]];
   const related = profile.comparisons || relatedComparisonsFor(el.symbol);
   const similar = profile.similar || similarElementsFor(el.symbol);
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-5 xl:grid-cols-[360px_1fr]">
+      <div className="grid gap-5 2xl:grid-cols-[340px_1fr] xl:grid-cols-[300px_1fr]">
         <Panel className="xl:sticky xl:top-4 xl:self-start">
           <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 p-3">
             <Search className="text-cyan-300" size={18}/>
@@ -4278,7 +4273,7 @@ function Explorer({ selected, setSelected, setCompare }) {
           <select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 text-sm outline-none">
             {categories.map(c => <option key={c}>{c}</option>)}
           </select>
-          <div className="mt-4 max-h-[680px] overflow-auto pr-2">
+          <div className="mt-4 max-h-[620px] overflow-auto pr-2">
             {filtered.map(e => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left transition hover:border-cyan-300/35 ${el.symbol === e.symbol ? "border-cyan-300/50 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}
           </div>
         </Panel>
@@ -4327,6 +4322,33 @@ function Explorer({ selected, setSelected, setCompare }) {
             </div>
           </Panel>
 
+          <Panel className="border-cyan-300/20 bg-cyan-300/[.045]">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">What can I do next?</div>
+                <p className="mt-2 text-sm leading-6 text-slate-300">Use this element as a launch point: compare it, simulate future behaviour, create a report, or explore similar materials.</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))} variant="primary">Compare this Element</Button>
+                <Button onClick={() => setCompare([el.symbol, ...related].slice(0, 4))}>Find Similar Materials</Button>
+                <Button onClick={() => setCompare([el.symbol, ...related].slice(0, 3))}>Create Report Preview</Button>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {[
+                ["Passivation", "A protective surface film that can reduce corrosion and slow reaction."],
+                ["Diffusion", "How atoms, ions or surface effects move through a boundary over time."],
+                ["Oxidation", "Reaction with oxygen or oxidising conditions that changes the surface state."],
+                ["Electronegativity", "How strongly atoms attract electrons in chemical bonding."]
+              ].map(([title, body]) => (
+                <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-xs leading-5 text-slate-400">
+                  <div className="flex items-center gap-2 font-black uppercase tracking-[.16em] text-cyan-100">{title}<ExplorerInfoTip title={title}>{body}</ExplorerInfoTip></div>
+                  <div className="mt-2">{body}</div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+
           <div className="grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
             <Panel>
               <div className="flex flex-wrap items-center gap-2 border-b border-white/10 pb-4">{tabs.map(t => <button key={t} onClick={() => setTab(t)} className={`rounded-full px-4 py-2 text-xs font-black transition ${tab === t ? "bg-cyan-300 text-slate-950" : "bg-white/[.05] text-slate-400 hover:text-white"}`}>{t}</button>)}</div>
@@ -4342,7 +4364,7 @@ function Explorer({ selected, setSelected, setCompare }) {
                 </div>
                 <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
                   <h3 className="text-lg font-black">Common Compounds</h3>
-                  <div className="mt-4 grid gap-2">{profile.compounds.map(([formula, name]) => <div key={formula} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.03] p-3"><span className="font-mono text-cyan-100">{formula}</span><span className="text-right text-xs text-slate-400">{name}</span></div>)}</div>
+                  <div className="mt-4 grid gap-2">{profile.compounds.map(([formula, name, note]) => <div key={formula} className="rounded-2xl border border-white/10 bg-white/[.03] p-3"><div className="flex items-center justify-between gap-3"><span className="font-mono text-cyan-100">{formula}</span><span className="text-right text-xs font-bold text-slate-300">{name}</span></div><div className="mt-1 text-[11px] leading-4 text-slate-500">{note || "Common reference compound used to understand this element's surface or reaction behaviour."}</div></div>)}</div>
                 </div>
                 <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
                   <h3 className="text-lg font-black">Reaction Summary</h3>
@@ -4384,7 +4406,7 @@ function Explorer({ selected, setSelected, setCompare }) {
           <div className="grid gap-5 xl:grid-cols-[.75fr_.75fr_1fr]">
             <Panel>
               <h3 className="text-xl font-black">Related Comparisons</h3>
-              <div className="mt-4 space-y-2">{related.map(sym => <div key={sym} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.03] p-3"><span className="text-sm">{el.name} vs {elementMap[sym]?.name || sym}</span><button onClick={() => setCompare([el.symbol, sym])} className="rounded-xl bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100 hover:bg-cyan-300 hover:text-slate-950">Compare</button></div>)}</div>
+              <div className="mt-4 space-y-2">{related.map(sym => <div key={sym} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.03] p-3"><span><span className="text-sm font-bold">{el.name} vs {elementMap[sym]?.name || sym}</span><div className="text-xs text-slate-500">Behaviour-neighbour comparison for substitution, corrosion and thermal screening.</div></span><button onClick={() => setCompare([el.symbol, sym])} className="rounded-xl bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100 hover:bg-cyan-300 hover:text-slate-950">Compare</button></div>)}</div>
             </Panel>
             <Panel>
               <h3 className="text-xl font-black">Similar Elements</h3>
