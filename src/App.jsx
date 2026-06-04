@@ -8,6 +8,26 @@ import {
   Activity, Bot, BriefcaseBusiness, ClipboardList, Compass, Database, Dna, Gem, Globe2, LineChart, Map, Settings, Share2, Target, Users, Waves, Zap, Crown
 } from "lucide-react";
 
+function scrollElementOSToTop() {
+  if (typeof window === "undefined") return;
+  try {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  } catch (_error) {
+    window.scrollTo(0, 0);
+  }
+  try {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    document.querySelectorAll(".eos-scroll-root, .eos-page-stage, main").forEach((node) => {
+      if (node && typeof node.scrollTo === "function") node.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      else if (node) node.scrollTop = 0;
+    });
+  } catch (_error) {
+    // Best-effort only. Never block navigation if the browser refuses scroll access.
+  }
+}
+
+
 // =====================================================
 // ELEMENTOS V101 FULL SITE DEBUG PASS
 // Preserves the existing site, but reduces visible clutter,
@@ -2137,33 +2157,39 @@ function ElementOSThemeSkin() {
       html { background: var(--eos-bg); }
       body { background: var(--eos-bg); color: var(--eos-text); overflow-x: hidden; }
 
-      /* V111: Natural desktop zoom-out without affecting mobile readability.
-         Desktop/laptop gets a denser 82% interface, similar to manually zooming out.
-         Large monitors are slightly less compressed, mobile remains full-size. */
+      @media (min-width: 1024px) {
+        .eos-page-stage { padding-top: 1rem; }
+        .eos-panel, .eos-data-card { box-shadow: 0 0 34px rgba(15,23,42,.16); }
+      }
+
+
+      /* V128: High-density research workspace.
+         Desktop/laptop is zoomed out about 15% more than V111.
+         Mobile/tablet remains full-size for readability and tap targets. */
       .eos-app-scale { --eos-ui-scale: 1; }
       @media (min-width: 1024px) and (max-width: 1535px) {
-        .eos-app-scale { zoom: .82; }
+        .eos-app-scale { zoom: .70; }
       }
       @media (min-width: 1536px) {
-        .eos-app-scale { zoom: .88; }
+        .eos-app-scale { zoom: .75; }
       }
       @media (min-width: 1024px) and (max-height: 760px) {
-        .eos-app-scale { zoom: .76; }
+        .eos-app-scale { zoom: .65; }
       }
       @supports not (zoom: 1) {
         @media (min-width: 1024px) {
           .eos-app-scale {
-            transform: scale(.82);
+            transform: scale(.70);
             transform-origin: top left;
-            width: calc(100% / .82);
-            min-height: calc(100vh / .82);
+            width: calc(100% / .70);
+            min-height: calc(100vh / .70);
           }
         }
         @media (min-width: 1536px) {
           .eos-app-scale {
-            transform: scale(.88);
-            width: calc(100% / .88);
-            min-height: calc(100vh / .88);
+            transform: scale(.75);
+            width: calc(100% / .75);
+            min-height: calc(100vh / .75);
           }
         }
       }
@@ -2358,9 +2384,9 @@ function ElementOSThemeSkin() {
           linear-gradient(135deg, rgba(2,6,13,.98), rgba(7,20,38,.96) 56%, rgba(2,6,13,.98));
       }
       /* V125: command modal should feel full-size even when the main app uses desktop zoom-out. */
-      @media (min-width: 1024px) and (max-width: 1279px) { .eos-command-reset { zoom: 1.18; } }
-      @media (min-width: 1280px) and (max-width: 1799px) { .eos-command-reset { zoom: 1.25; } }
-      @media (min-width: 1800px) { .eos-command-reset { zoom: 1.12; } }
+      @media (min-width: 1024px) and (max-width: 1279px) { .eos-command-reset { zoom: 1.42; } }
+      @media (min-width: 1280px) and (max-width: 1799px) { .eos-command-reset { zoom: 1.34; } }
+      @media (min-width: 1800px) { .eos-command-reset { zoom: 1.22; } }
       @media (max-width: 767px) { .eos-command-reset { zoom: 1; } }
 
 
@@ -10896,6 +10922,24 @@ export default function App() {
   const [upgradeReason, setUpgradeReason] = useState("");
   const [supportOpen, setSupportOpen] = useState(false);
 
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "manual";
+      }
+    } catch (_error) {
+      // Non-critical browser compatibility guard.
+    }
+    requestAnimationFrame(scrollElementOSToTop);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    requestAnimationFrame(scrollElementOSToTop);
+  }, [page]);
+
 useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
     setSession(data.session);
@@ -11219,7 +11263,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         Research Director
       </button>
 
-      <main className="relative z-10 space-y-5 p-3 pb-44 lg:ml-[306px] lg:p-4 lg:pb-8 xl:p-5">
+      <main className="eos-scroll-root relative z-10 space-y-5 p-3 pb-44 lg:ml-[306px] lg:p-4 lg:pb-8 xl:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3 lg:hidden">
           <div>
             <div className="text-2xl font-black tracking-[.18em] text-cyan-100">
