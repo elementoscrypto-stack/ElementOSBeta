@@ -3648,6 +3648,16 @@ function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
           <h1 className="mt-4 text-5xl font-black sm:text-7xl">Time Machine <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Future Lab</span></h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A cinematic future-state lab that lets users fast-forward a material through years of pressure, heat, corrosion, fatigue and radiation, then see the decision in plain English.</p>
           <Info title="What this does">Choose a material, choose an environment, drag the future horizon and ElementOS turns the forecast into stability, risk, degradation drivers, confidence and recommended next steps.</Info>
+          {forecastRequest && (
+            <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4">
+              <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Auto-populated from Explorer</div>
+              <div className="mt-2 grid gap-3 text-sm font-bold text-slate-200 sm:grid-cols-3">
+                <div><span className="text-slate-500">Material:</span> {base.name} ({base.symbol})</div>
+                <div><span className="text-slate-500">Horizon:</span> {selectedYear} years</div>
+                <div><span className="text-slate-500">Environment:</span> {environment}</div>
+              </div>
+            </div>
+          )}
           <div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Time PDF/JSON/SVG</Button><Button onClick={() => setPage("scenario")}>Send to Scenario Builder</Button><Button onClick={() => setPage("matterlab")}>Open Advanced Material Analysis</Button></div>
         </div>
         <Panel>
@@ -5099,74 +5109,38 @@ function elementPictureDataUri(el, compact = false) {
   const [a, b, c] = elementPicturePalette(safe);
   const scene = elementPictureScene(safe);
   const n = Number(safe.atomicNumber || 1);
-  const symbol = String(safe.symbol || "El");
-  const name = String(safe.name || "Element");
-  const category = String(safe.category || "Material");
-  const useCase = elementArtworkUseCase(safe);
+  const symbol = String(safe.symbol || "El").replace(/[<>&]/g, "");
   const seed = n || 1;
-  const dots = Array.from({ length: compact ? 16 : 46 }, (_, i) => {
-    const x = 20 + ((seed * (i + 5) * 17) % 760);
-    const y = 20 + ((seed * (i + 9) * 23) % 500);
-    const r = 1 + ((seed + i) % 4);
-    const op = 0.18 + (((seed + i) % 7) / 10);
+  const W = compact ? 320 : 900;
+  const H = compact ? 320 : 640;
+  const cx = W / 2;
+  const cy = H / 2;
+  const stars = Array.from({ length: compact ? 18 : 70 }, (_, i) => {
+    const x = 16 + ((seed * (i + 5) * 17) % (W - 32));
+    const y = 16 + ((seed * (i + 9) * 23) % (H - 32));
+    const r = compact ? 1 + ((seed + i) % 3) : 1 + ((seed + i) % 5);
+    const op = 0.12 + (((seed + i) % 7) / 12);
     return `<circle cx="${x}" cy="${y}" r="${r}" fill="white" opacity="${op.toFixed(2)}"/>`;
   }).join("");
-  const orbit = Array.from({ length: compact ? 2 : 5 }, (_, i) => {
-    const rx = 110 + i * 36;
-    const ry = 42 + i * 16;
+  const orbitCount = compact ? 2 : 5;
+  const orbits = Array.from({ length: orbitCount }, (_, i) => {
+    const rx = (compact ? 58 : 150) + i * (compact ? 20 : 42);
+    const ry = (compact ? 24 : 62) + i * (compact ? 8 : 18);
     const rot = (seed * 7 + i * 31) % 180;
-    return `<ellipse cx="400" cy="270" rx="${rx}" ry="${ry}" fill="none" stroke="${a}" stroke-opacity="0.32" stroke-width="2" transform="rotate(${rot} 400 270)"/>`;
+    return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="${a}" stroke-opacity="0.34" stroke-width="${compact ? 2 : 3}" transform="rotate(${rot} ${cx} ${cy})"/>`;
   }).join("");
-  const baseCrystal = scene === "diamond" || scene === "crystal" || scene === "mineral" ? `
-    <polygon points="400,112 520,238 475,410 400,475 325,410 280,238" fill="url(#shine)" stroke="white" stroke-opacity="0.52" stroke-width="3"/>
-    <polyline points="400,112 400,475 280,238 520,238 400,112 325,410 475,410 400,112" fill="none" stroke="white" stroke-opacity="0.30" stroke-width="2"/>
-  ` : "";
-  const metal = ["alloy","aerospace","steel","chrome","silver","gold","dense","corrosion","heat","turbine"].includes(scene) ? `
-    <ellipse cx="400" cy="398" rx="210" ry="62" fill="black" opacity="0.35"/>
-    <path d="M215 340 C290 245 495 235 586 340 C548 420 258 425 215 340Z" fill="url(#metal)" stroke="white" stroke-opacity="0.22" stroke-width="3"/>
-    <path d="M270 328 C335 288 468 286 532 326" fill="none" stroke="white" stroke-opacity="0.38" stroke-width="8" stroke-linecap="round"/>
-  ` : "";
-  const circuit = scene === "circuit" || scene === "wafer" || scene === "electronics" || scene === "screen" ? `
-    <rect x="235" y="135" width="330" height="300" rx="38" fill="url(#chip)" stroke="${a}" stroke-opacity="0.55" stroke-width="4"/>
-    ${Array.from({ length: 8 }, (_, i) => `<path d="M${255 + i*40} 135 V92 M${255 + i*40} 435 V478" stroke="${b}" stroke-width="5" stroke-linecap="round"/>`).join("")}
-    ${Array.from({ length: 6 }, (_, i) => `<path d="M235 ${175 + i*42} H185 M565 ${175 + i*42} H615" stroke="${b}" stroke-width="5" stroke-linecap="round"/>`).join("")}
-    <circle cx="400" cy="285" r="78" fill="black" opacity="0.35" stroke="white" stroke-opacity="0.28"/>
-  ` : "";
-  const gas = scene === "gas" || scene === "plasma" ? `
-    <circle cx="400" cy="270" r="175" fill="url(#gas)" opacity="0.72"/>
-    <circle cx="350" cy="230" r="64" fill="white" opacity="0.10"/>
-    <circle cx="455" cy="330" r="92" fill="${a}" opacity="0.16"/>
-  ` : "";
-  const nuclear = scene === "nuclear" || scene === "radio" || scene === "glow" || scene === "neutron" ? `
-    <circle cx="400" cy="270" r="165" fill="url(#nuclear)" stroke="${a}" stroke-opacity="0.58" stroke-width="4"/>
-    <path d="M400 142 L430 240 L535 240 L450 302 L482 405 L400 342 L318 405 L350 302 L265 240 L370 240Z" fill="${b}" opacity="0.24" stroke="white" stroke-opacity="0.25"/>
-  ` : "";
-  const battery = scene === "battery" ? `
-    <rect x="270" y="170" width="260" height="220" rx="30" fill="url(#metal)" stroke="white" stroke-opacity="0.35" stroke-width="4"/>
-    <rect x="370" y="130" width="60" height="42" rx="10" fill="${a}"/>
-    <path d="M405 205 L360 285 H407 L376 365 L455 260 H408Z" fill="${b}" stroke="white" stroke-opacity="0.4" stroke-width="3"/>
-  ` : "";
-  const sceneLayer = baseCrystal + metal + circuit + gas + nuclear + battery || baseCrystal;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="560" viewBox="0 0 800 560">
-    <defs>
-      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c}"/><stop offset="0.45" stop-color="#0f172a"/><stop offset="1" stop-color="${a}" stop-opacity="0.32"/></linearGradient>
-      <radialGradient id="gas" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="white" stop-opacity="0.34"/><stop offset="0.45" stop-color="${a}" stop-opacity="0.42"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>
-      <radialGradient id="nuclear" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="${b}" stop-opacity="0.68"/><stop offset="0.55" stop-color="${a}" stop-opacity="0.24"/><stop offset="1" stop-color="black" stop-opacity="0.1"/></radialGradient>
-      <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="white" stop-opacity="0.72"/><stop offset="0.45" stop-color="${a}" stop-opacity="0.55"/><stop offset="1" stop-color="${b}" stop-opacity="0.22"/></linearGradient>
-      <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="white" stop-opacity="0.65"/><stop offset="0.35" stop-color="${a}" stop-opacity="0.75"/><stop offset="1" stop-color="black" stop-opacity="0.45"/></linearGradient>
-      <linearGradient id="chip" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}" stop-opacity="0.42"/><stop offset="1" stop-color="black" stop-opacity="0.62"/></linearGradient>
-      <filter id="glow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    </defs>
-    <rect width="800" height="560" rx="42" fill="url(#bg)"/>
-    <g opacity="0.16">${Array.from({ length: 12 }, (_, i) => `<path d="M0 ${60+i*40} H800" stroke="white"/><path d="M${60+i*62} 0 V560" stroke="white"/>`).join("")}</g>
-    <circle cx="400" cy="270" r="235" fill="none" stroke="${a}" stroke-opacity="0.12" stroke-width="2"/>
-    ${dots}
-    <g filter="url(#glow)">${orbit}</g>
-    <g filter="url(#glow)">${sceneLayer}</g>
-    <circle cx="400" cy="270" r="86" fill="black" opacity="0.42" stroke="white" stroke-opacity="0.22" stroke-width="3"/>
-    <text x="400" y="296" text-anchor="middle" dominant-baseline="middle" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="900" fill="white">${symbol}</text>
-  </svg>`;
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  const crystal = `<polygon points="${cx},${cy-178} ${cx+135},${cy-42} ${cx+86},${cy+152} ${cx},${cy+222} ${cx-86},${cy+152} ${cx-135},${cy-42}" fill="url(#shine)" stroke="white" stroke-opacity="0.46" stroke-width="4"/><polyline points="${cx},${cy-178} ${cx},${cy+222} ${cx-135},${cy-42} ${cx+135},${cy-42} ${cx},${cy-178} ${cx-86},${cy+152} ${cx+86},${cy+152} ${cx},${cy-178}" fill="none" stroke="white" stroke-opacity="0.26" stroke-width="2.5"/>`;
+  const metal = `<ellipse cx="${cx}" cy="${cy+156}" rx="250" ry="72" fill="black" opacity="0.34"/><path d="M${cx-228} ${cy+86} C${cx-130} ${cy-34} ${cx+118} ${cy-45} ${cx+230} ${cy+86} C${cx+180} ${cy+183} ${cx-180} ${cy+188} ${cx-228} ${cy+86}Z" fill="url(#metal)" stroke="white" stroke-opacity="0.28" stroke-width="4"/><path d="M${cx-155} ${cy+67} C${cx-75} ${cy+18} ${cx+82} ${cy+16} ${cx+160} ${cy+64}" fill="none" stroke="white" stroke-opacity="0.45" stroke-width="10" stroke-linecap="round"/>`;
+  const circuit = `<rect x="${cx-190}" y="${cy-170}" width="380" height="340" rx="44" fill="url(#chip)" stroke="${a}" stroke-opacity="0.62" stroke-width="5"/>${Array.from({ length: 8 }, (_, i) => `<path d="M${cx-150 + i*43} ${cy-170} V${cy-220} M${cx-150 + i*43} ${cy+170} V${cy+220}" stroke="${b}" stroke-width="6" stroke-linecap="round"/>`).join("")}${Array.from({ length: 6 }, (_, i) => `<path d="M${cx-190} ${cy-120 + i*48} H${cx-245} M${cx+190} ${cy-120 + i*48} H${cx+245}" stroke="${b}" stroke-width="6" stroke-linecap="round"/>`).join("")}<circle cx="${cx}" cy="${cy}" r="88" fill="black" opacity="0.35" stroke="white" stroke-opacity="0.30" stroke-width="4"/>`;
+  const gas = `<circle cx="${cx}" cy="${cy}" r="210" fill="url(#gas)" opacity="0.76"/><circle cx="${cx-64}" cy="${cy-54}" r="76" fill="white" opacity="0.11"/><circle cx="${cx+82}" cy="${cy+88}" r="105" fill="${a}" opacity="0.16"/>`;
+  const nuclear = `<circle cx="${cx}" cy="${cy}" r="190" fill="url(#nuclear)" stroke="${a}" stroke-opacity="0.62" stroke-width="5"/><path d="M${cx} ${cy-150} L${cx+35} ${cy-32} L${cx+150} ${cy-32} L${cx+58} ${cy+36} L${cx+94} ${cy+154} L${cx} ${cy+82} L${cx-94} ${cy+154} L${cx-58} ${cy+36} L${cx-150} ${cy-32} L${cx-35} ${cy-32}Z" fill="${b}" opacity="0.25" stroke="white" stroke-opacity="0.28"/>`;
+  const battery = `<rect x="${cx-150}" y="${cy-140}" width="300" height="260" rx="34" fill="url(#metal)" stroke="white" stroke-opacity="0.38" stroke-width="5"/><rect x="${cx-36}" y="${cy-190}" width="72" height="50" rx="10" fill="${a}"/><path d="M${cx+5} ${cy-92} L${cx-52} ${cy+5} H${cx+10} L${cx-28} ${cy+104} L${cx+70} ${cy-18} H${cx+14}Z" fill="${b}" stroke="white" stroke-opacity="0.44" stroke-width="4"/>`;
+  const sceneMap = { diamond: crystal, crystal, mineral: crystal, salt: crystal, powder: crystal, alloy: metal, aerospace: metal, steel: metal, chrome: metal, silver: metal, gold: metal, dense: metal, corrosion: metal, heat: metal, turbine: metal, circuit, wafer: circuit, electronics: circuit, screen: circuit, gas, plasma: gas, nuclear, radio: nuclear, glow: nuclear, neutron: nuclear, battery, magnet: metal, catalyst: circuit, capacitor: circuit, solder: metal, shield: metal, synthetic: nuclear, optic: crystal, laser: crystal, fiber: crystal, phosphor: gas, thermo: circuit, cladding: metal, superconductor: circuit, mirror: metal, liquid: gas, clock: circuit, solar: circuit, medical: crystal, scintillator: crystal };
+  const sceneLayer = sceneMap[scene] || crystal;
+  const fontSize = compact ? 58 : 94;
+  const badgeSize = compact ? 114 : 168;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c}"/><stop offset="0.45" stop-color="#0f172a"/><stop offset="1" stop-color="${a}" stop-opacity="0.38"/></linearGradient><radialGradient id="gas" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="white" stop-opacity="0.34"/><stop offset="0.45" stop-color="${a}" stop-opacity="0.42"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient><radialGradient id="nuclear" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="${b}" stop-opacity="0.70"/><stop offset="0.55" stop-color="${a}" stop-opacity="0.25"/><stop offset="1" stop-color="black" stop-opacity="0.12"/></radialGradient><linearGradient id="shine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="white" stop-opacity="0.76"/><stop offset="0.45" stop-color="${a}" stop-opacity="0.58"/><stop offset="1" stop-color="${b}" stop-opacity="0.25"/></linearGradient><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="white" stop-opacity="0.68"/><stop offset="0.35" stop-color="${a}" stop-opacity="0.78"/><stop offset="1" stop-color="black" stop-opacity="0.48"/></linearGradient><linearGradient id="chip" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}" stop-opacity="0.46"/><stop offset="1" stop-color="black" stop-opacity="0.64"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="7" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><clipPath id="cardClip"><rect width="${W}" height="${H}" rx="46"/></clipPath></defs><g clip-path="url(#cardClip)"><rect width="${W}" height="${H}" fill="url(#bg)"/><g opacity="0.12">${Array.from({ length: 14 }, (_, i) => `<path d="M0 ${48+i*44} H${W}" stroke="white"/><path d="M${48+i*64} 0 V${H}" stroke="white"/>`).join("")}</g><circle cx="${cx}" cy="${cy}" r="${compact ? 132 : 270}" fill="none" stroke="${a}" stroke-opacity="0.12" stroke-width="3"/>${stars}<g filter="url(#glow)">${orbits}</g><g filter="url(#glow)">${sceneLayer}</g><circle cx="${cx}" cy="${cy}" r="${badgeSize/2}" fill="black" opacity="0.48" stroke="white" stroke-opacity="0.26" stroke-width="4"/><text x="${cx}" y="${cy + (compact ? 4 : 6)}" text-anchor="middle" dominant-baseline="middle" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="900" fill="white">${symbol}</text></g></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
 function ElementPicture({ el, compact = false }) {
@@ -5291,6 +5265,28 @@ function ElementArtwork({ el, profile, crystal, compact = false }) {
 
 function ElementVisualCard({ el, profile, crystal }) {
   return <ElementPicture el={el} />;
+}
+
+function ForecastContextCard({ years = 50, elementName = "this element" }) {
+  const band = years <= 10 ? "Short Term" : years <= 50 ? "Medium Term" : years <= 100 ? "Long Term" : "Extreme";
+  const checks = ["Corrosion", "Thermal Stability", "Structural Integrity", "Environmental Resistance"];
+  return (
+    <div className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.055] p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Forecast context</div>
+          <div className="mt-1 text-2xl font-black text-white">{years} Year Forecast</div>
+          <div className="mt-1 text-xs font-bold text-amber-100">{band} horizon · {elementName}</div>
+        </div>
+        <div className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-black text-amber-100">Explorer → Time Machine</div>
+      </div>
+      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        {checks.map((check) => (
+          <div key={check} className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm font-bold text-slate-200">✓ {check}</div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function Explorer({ selected, setSelected, setCompare, setPage, setForecastRequest }) {
@@ -5501,7 +5497,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
     const request = { id: `${symbol}-${numericYears}-${Date.now()}`, symbol, years: numericYears, environment };
     setSelected?.(symbol);
     setForecastRequest?.(request);
-    const entry = { symbol, years: numericYears, at: Date.now() };
+    const entry = { symbol, name: elementMap[symbol]?.name || symbol, years: numericYears, at: Date.now() };
     const nextHistory = [entry, ...forecastHistory.filter(item => !(item.symbol === symbol && Number(item.years) === numericYears))].slice(0, 8);
     setForecastHistory(nextHistory);
     try {
@@ -5556,7 +5552,12 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
               <Button onClick={() => launchForecast(el.symbol, forecastYears)} variant="primary">Forecast This Element</Button>
               <Button onClick={() => openCompare([intelligence.recommendedCompare])}>Compare With {intelligence.recommendedCompare}</Button>
             </div>
-            <div className="mt-2 text-xs leading-5 text-slate-400">Launches Time Machine with {el.name} and a matched {forecastYears}-year horizon.</div>
+            <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-black sm:grid-cols-4">
+              {[["Short",10],["Medium",50],["Long",100],["Extreme",500]].map(([label, years]) => (
+                <button key={label} onClick={() => setForecastYears(years)} className={`rounded-full border px-3 py-1 ${Number(forecastYears) === years ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{label}</button>
+              ))}
+            </div>
+            <div className="mt-2 text-xs leading-5 text-slate-400">Launches Time Machine with {el.name}, auto-filled material, matched {forecastYears}-year horizon and current default environment.</div>
           </div>
         </div>
 
@@ -5633,6 +5634,9 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
                 <ExplorerMiniStat label="Category" value={el.category} />
                 <ExplorerMiniStat label="Crystal" value={crystal.short} />
                 <ExplorerMiniStat label="Cost" value={cost.relativeCost} />
+              </div>
+              <div className="mt-5">
+                <ForecastContextCard years={forecastYears} elementName={el.name} />
               </div>
             </Panel>
 
