@@ -5098,6 +5098,37 @@ function ElementVisualCard({ el, profile, crystal }) {
   );
 }
 
+
+function ElementPictureThumb({ el, size = "md" }) {
+  const item = el?.symbol ? el : elementMap[el] || elementMap.Al;
+  const n = Number(item?.atomicNumber || 1);
+  const [from, via] = elementVisualTheme(item || {});
+  const dimensions = size === "sm" ? "h-12 w-12" : size === "lg" ? "h-20 w-20" : "h-14 w-14";
+  const orbitOne = 18 + (n % 7);
+  const orbitTwo = 11 + (n % 5);
+  const particles = Array.from({ length: 5 }, (_, i) => {
+    const angle = ((i + 1) * 72 + n * 9) * Math.PI / 180;
+    const radius = 16 + ((n + i) % 6);
+    return {
+      x: 28 + Math.cos(angle) * radius,
+      y: 28 + Math.sin(angle) * radius,
+      r: 1.4 + ((n + i) % 3) * 0.35,
+    };
+  });
+
+  return (
+    <div className={`relative grid ${dimensions} shrink-0 place-items-center overflow-hidden rounded-2xl border border-cyan-300/20 bg-gradient-to-br ${from} ${via} to-slate-950 shadow-[0_0_24px_rgba(34,211,238,.12)]`} title={`${item?.name || "Element"} picture`}>
+      <svg viewBox="0 0 56 56" className="absolute inset-0 h-full w-full opacity-90" aria-hidden="true">
+        <ellipse cx="28" cy="28" rx={orbitOne} ry={orbitTwo} fill="none" stroke="rgba(165,243,252,.35)" strokeWidth="1" transform={`rotate(${n * 3} 28 28)`} />
+        <ellipse cx="28" cy="28" rx={orbitTwo} ry={orbitOne} fill="none" stroke="rgba(255,255,255,.16)" strokeWidth="1" transform={`rotate(${45 + n * 2} 28 28)`} />
+        {particles.map((dot, index) => <circle key={index} cx={dot.x} cy={dot.y} r={dot.r} fill="rgba(255,255,255,.75)" />)}
+        <circle cx="28" cy="28" r="10" fill="rgba(2,6,23,.75)" stroke="rgba(125,211,252,.55)" />
+      </svg>
+      <span className="relative z-10 text-sm font-black text-white drop-shadow-[0_0_12px_rgba(255,255,255,.25)]">{item?.symbol}</span>
+    </div>
+  );
+}
+
 function Explorer({ selected, setSelected, setCompare, setPage, setForecastRequest }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
@@ -5411,7 +5442,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
           <div className="max-h-[760px] overflow-auto pr-2">
             {filtered.map(e => (
               <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-cyan-300/20 to-blue-500/10 text-lg font-black text-cyan-100">{e.symbol}</div>
+                <ElementPictureThumb el={e} size="sm" />
                 <div>
                   <div className="font-black text-white">{e.name}</div>
                   <div className="text-xs text-slate-500">{e.atomicNumber} · {e.category}</div>
@@ -5484,9 +5515,12 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
               <div className="grid gap-3">
                 {substituteCandidates.map((item) => (
                   <div key={item.symbol} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div>
-                      <div className="text-xl font-black text-cyan-100">{item.element.name} <span className="text-slate-500">({item.symbol})</span></div>
-                      <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
+                    <div className="flex min-w-[240px] items-center gap-3">
+                      <ElementPictureThumb el={item.symbol} />
+                      <div>
+                        <div className="text-xl font-black text-cyan-100">{item.element.name} <span className="text-slate-500">({item.symbol})</span></div>
+                        <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
+                      </div>
                     </div>
                     <div className="flex gap-2"><Button onClick={() => openCompare([item.symbol])}>Compare</Button><Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button></div>
                   </div>
@@ -5667,9 +5701,12 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
               <div className="space-y-3">
                 {similar.map(item => (
                   <div key={item.symbol} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div>
-                      <div className="text-xl font-black text-cyan-100">{item.name} <span className="text-slate-500">({item.symbol})</span></div>
-                      <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
+                    <div className="flex min-w-[240px] items-center gap-3">
+                      <ElementPictureThumb el={item.symbol} />
+                      <div>
+                        <div className="text-xl font-black text-cyan-100">{item.name} <span className="text-slate-500">({item.symbol})</span></div>
+                        <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
+                      </div>
                     </div>
                     <div className="flex gap-2"><Button onClick={() => openCompare([item.symbol])}>Compare</Button><Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button></div>
                   </div>
