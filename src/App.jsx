@@ -3426,7 +3426,7 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
 }
 
 
-function TimeMachine({ selected, setSelected, setPage }) {
+function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
   const safeProfiles = (typeof globalThis !== "undefined" && globalThis.timeMachineEnvironmentProfiles) ? globalThis.timeMachineEnvironmentProfiles : {
     "Coastal air": { category: "Marine", label: "Salt-air corrosion and humidity exposure", corrosion: 1.4, heat: 0.7, pressure: 0.6, radiation: 0.2 },
     "Deep ocean": { category: "Marine", label: "High pressure, low temperature and chloride load", corrosion: 1.6, heat: 0.3, pressure: 1.7, radiation: 0.2 },
@@ -3465,10 +3465,10 @@ function TimeMachine({ selected, setSelected, setPage }) {
   };
   const environmentProfiles = { ...safeProfiles, ...extraProfiles };
 
-  const [material, setMaterial] = useState(selected || "H");
+  const [material, setMaterial] = useState(forecastRequest?.material || selected || "H");
   const [environment, setEnvironment] = useState(environmentProfiles["Coastal air"] ? "Coastal air" : Object.keys(environmentProfiles)[0]);
   const [envCategory, setEnvCategory] = useState("All");
-  const [selectedYear, setSelectedYear] = useState(100);
+  const [selectedYear, setSelectedYear] = useState(Number(forecastRequest?.years) || 50);
   const [stress, setStress] = useState(55);
   const [temperature, setTemperature] = useState(35);
   const [pressure, setPressure] = useState(40);
@@ -3477,6 +3477,23 @@ function TimeMachine({ selected, setSelected, setPage }) {
   const [scenarioSearch, setScenarioSearch] = useState("");
   const [scenarioCategory, setScenarioCategory] = useState("All");
   const [selectedScenarioId, setSelectedScenarioId] = useState("SCN-0001");
+
+  useEffect(() => {
+    if (!forecastRequest) return;
+    const nextMaterial = forecastRequest.material || selected || material;
+    const nextYears = Number(forecastRequest.years || forecastRequest.year || selectedYear);
+    if (nextMaterial && elementMap[nextMaterial]) {
+      setMaterial(nextMaterial);
+      setSelected?.(nextMaterial);
+    }
+    if (Number.isFinite(nextYears)) {
+      setSelectedYear(Math.max(1, Math.min(1000, nextYears)));
+    }
+    if (forecastRequest.environment && environmentProfiles[forecastRequest.environment]) {
+      setEnvironment(forecastRequest.environment);
+      setEnvCategory(environmentProfiles[forecastRequest.environment]?.category || "All");
+    }
+  }, [forecastRequest?.requestId]);
 
   const base = elementMap[material] || elementMap.H || elements[0];
   const baseScore = score(material);
@@ -5007,10 +5024,10 @@ function BehaviourFingerprint({ values }) {
 }
 
 
-function Explorer({ selected, setSelected, setCompare, setPage }) {
+
+function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRequest }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
-  const [tab, setTab] = useState("Overview");
   const [favorites, setFavorites] = useState(() => {
     if (typeof window === "undefined") return ["Al", "Ti", "Cu", "Fe"];
     try {
@@ -5027,6 +5044,8 @@ function Explorer({ selected, setSelected, setCompare, setPage }) {
       return ["Al", "Ti", "Fe"];
     }
   });
+  const forecastYearOptions = [1, 5, 10, 25, 50, 100, 250, 500, 1000];
+  const [forecastYears, setForecastYears] = useState(50);
 
   const el = elementMap[selected] || elementMap.Al;
   const profile = getExplorerProfile(el);
@@ -5044,13 +5063,20 @@ function Explorer({ selected, setSelected, setCompare, setPage }) {
   const timeline = explorerTimeline(el);
   const similar = explorerSimilarWithReasons(el, profile.similar);
   const comparisons = explorerRelatedComparisons(el, profile.comparisons);
-  const tabs = ["Overview", "Experiments", "Scores & Data", "Charts", "References"];
 
-  const filtered = elements
-    .filter(e => (cat === "All" || e.category === cat) && `${e.symbol} ${e.name} ${e.category}`.toLowerCase().includes(q.toLowerCase()))
-    .slice(0, 118);
+  const isMetal = el.category.includes("metal") || ["Transition metal", "Lanthanide", "Actinide"].includes(el.category);
+  const isReactive = ["Alkali metal", "Alkaline earth metal", "Halogen"].includes(el.category);
+  const isNoble = el.category === "Noble gas";
+  const isHeavy = el.atomicNumber > 80;
+  const intelligenceScore = Math.max(44, Math.min(99, Math.round(
+    s.stability * 12 +
+    s.pressure * 8 +
+    s.thermal * 7 +
+    s.conductivity * 5 +
+    (isMetal ? 12 : 6) +
+    (isHeavy ? 4 : 0)
+  )));
 
-  const popular = ["Al", "Ti", "Cu", "Fe", "Au", "U", "Li", "Si"].filter(Boolean);
   const quickFacts = [
     ["Atomic Number", el.atomicNumber],
     ["Atomic Mass", profile.atomicMass],
@@ -5070,6 +5096,90 @@ function Explorer({ selected, setSelected, setCompare, setPage }) {
     ["Electrical Conductivity", profile.electricalConductivity || profile.conductivityType || "Material dependent"],
   ];
 
+  const filtered = elements
+    .filter(e => (cat === "All" || e.category === cat) && `${e.symbol} ${e.name} ${e.category}`.toLowerCase().includes(q.toLowerCase()))
+    .slice(0, 118);
+
+  const popular = ["Al", "Ti", "Cu", "Fe", "Au", "U", "Li", "Si"].filter(Boolean);
+
+  const scorecard = [
+    ["Overall Intelligence", intelligenceScore],
+    ["Industrial Value", Math.round(Math.min(98, s.stability * 15 + s.pressure * 9 + (isMetal ? 16 : 6)))],
+    ["Engineering Value", Math.round(Math.min(98, s.thermal * 12 + s.pressure * 12 + s.stability * 8))],
+    ["Scientific Interest", Math.round(Math.min(98, 58 + s.rarity * 7 + (isHeavy ? 10 : 0)))],
+    ["Future Potential", Math.round(Math.min(98, s.thermal * 9 + s.diffusion * 8 + s.pressure * 8 + 22))],
+    ["Supply Security", Math.round(Math.max(25, Math.min(96, 98 - s.rarity * 10 + (cost.relativeCost === "Low" ? 8 : 0))))],
+  ];
+
+  const whyMatters = `${el.name} matters because it sits in the ${el.category.toLowerCase()} family and combines ${intelligence.strengths?.slice(0, 2).join(" with ") || "distinct material behaviour"} with a behaviour profile that can be compared, forecast and converted into professional research outputs.`;
+
+  const substituteCandidates = [
+    { symbol: intelligence.recommendedCompare || "Ti", reason: "Closest recommended comparison path" },
+    { symbol: similar[0]?.symbol || "Al", reason: "Behaviour-neighbouring substitute" },
+    { symbol: similar[1]?.symbol || "Fe", reason: "Engineering comparison candidate" },
+    { symbol: similar[2]?.symbol || "Cu", reason: "Cost, conductivity or structural tradeoff" },
+  ]
+    .filter((item, index, arr) => item.symbol && item.symbol !== el.symbol && arr.findIndex(x => x.symbol === item.symbol) === index)
+    .map(item => ({ ...item, element: elementMap[item.symbol] || { symbol: item.symbol, name: item.symbol } }));
+
+  const exposureScenarios = [
+    ["Marine Environment", "Salt, water and oxygen exposure.", s.stability >= 3.6 ? "Strong candidate" : "Needs protection", Math.round(Math.min(98, s.stability * 16 + s.pressure * 7))],
+    ["Industrial Heat", "Long-duration thermal cycling.", s.thermal >= 3.5 ? "Good heat pathway" : "Moderate heat risk", Math.round(Math.min(98, s.thermal * 19))],
+    ["High Pressure", "Compression, depth or structural load.", s.pressure >= 3.4 ? "Pressure-ready" : "Review carefully", Math.round(Math.min(98, s.pressure * 19))],
+    ["Chemical Plant", "Acid, alkali and oxidizing media.", isReactive ? "High control required" : "Scenario dependent", Math.round(Math.max(18, Math.min(95, s.stability * 14 + (isReactive ? 8 : 22))))],
+    ["Space / Vacuum", "Low atmosphere, radiation and thermal swings.", s.thermal >= 3 ? "Promising scenario" : "Needs simulation", Math.round(Math.min(98, s.thermal * 12 + s.pressure * 8))],
+    ["Arctic / Cryogenic", "Low temperature and brittle-transition review.", s.stability >= 3.2 ? "Stable candidate" : "Material testing advised", Math.round(Math.min(98, s.stability * 15 + s.diffusion * 6))],
+    ["Geothermal", "Heat, pressure and chemical exposure over time.", "Run forecast", Math.round(Math.min(98, s.thermal * 10 + s.pressure * 10 + s.stability * 7))],
+  ];
+
+  const resistanceMatrix = [
+    ["Salt Water", s.stability >= 3.7 ? "Excellent" : s.stability >= 2.8 ? "Moderate" : "Poor", Math.round(s.stability * 19)],
+    ["Acid", isReactive ? "Poor" : s.stability >= 3.5 ? "Good" : "Moderate", Math.round(Math.max(15, s.stability * 15 - (isReactive ? 18 : 0)))],
+    ["Alkali", ["Al", "Zn", "Sn", "Pb"].includes(el.symbol) ? "Poor" : isNoble ? "Excellent" : "Scenario dependent", Math.round(Math.max(12, s.stability * 13 + (isNoble ? 20 : 0)))],
+    ["Heat", s.thermal >= 3.7 ? "Excellent" : s.thermal >= 2.8 ? "Good" : "Moderate", Math.round(s.thermal * 19)],
+    ["Pressure", s.pressure >= 3.7 ? "Excellent" : s.pressure >= 2.8 ? "Good" : "Moderate", Math.round(s.pressure * 19)],
+    ["Radiation", isHeavy || ["Hf", "W", "Ta", "Pb", "B"].includes(el.symbol) ? "Good" : "Specialist review", Math.round(Math.min(96, s.pressure * 13 + s.rarity * 5))],
+  ];
+
+  const engineeringSnapshot = [
+    ["Strength", Math.round(Math.min(99, s.pressure * 19))],
+    ["Weight", Math.round(Math.max(12, Math.min(98, 110 - el.atomicNumber * 0.55)))],
+    ["Thermal", Math.round(Math.min(99, s.thermal * 19))],
+    ["Conductivity", Math.round(Math.min(99, s.conductivity * 19))],
+    ["Corrosion", Math.round(Math.min(99, s.stability * 19))],
+  ];
+
+  const riskProfile = [
+    ["Supply Risk", cost.supplyStability === "High" ? "Low" : cost.relativeCost === "Extreme" ? "High" : "Medium"],
+    ["Environmental Risk", isReactive || isHeavy ? "Review required" : "Low"],
+    ["Processing Difficulty", cost.relativeCost === "High" || cost.relativeCost === "Extreme" ? "High" : "Medium"],
+    ["Cost Risk", cost.relativeCost],
+    ["Strategic Importance", cost.strategicImportance],
+  ];
+
+  const familyTree = ["Matter", isMetal ? "Metal" : "Non-metal / specialist", el.category, el.name];
+
+  const discoveryOpportunities = [
+    { pair: `${el.symbol} + ${substituteCandidates[0]?.symbol || "Ti"}`, title: "Structural comparison opportunity", uses: ["Aerospace", "Marine", "Energy"] },
+    { pair: `${el.symbol} + ${substituteCandidates[1]?.symbol || "Al"}`, title: "Substitute material pathway", uses: ["Cost reduction", "Durability review", "Forecasting"] },
+    { pair: `${el.symbol} + ${substituteCandidates[2]?.symbol || "Cu"}`, title: "Conductive or thermal pathway", uses: ["Electronics", "Thermal systems", "Industrial design"] },
+  ];
+
+  const recommendedInvestigations = [
+    ["Compare", `Compare ${el.name} with ${elementMap[intelligence.recommendedCompare]?.name || intelligence.recommendedCompare}`, () => openCompare([intelligence.recommendedCompare])],
+    ["Forecast", `Run ${forecastYears}-year forecast for ${el.name}`, () => launchForecast(el.symbol, forecastYears)],
+    ["Dossier", "Generate Material Intelligence Dossier", () => generateExplorerReport()],
+    ["Poster", "Create shareable material poster", () => setPage?.("viralcards")],
+  ];
+
+  function fitLabel(value) {
+    if (value >= 90) return "Exceptional Fit";
+    if (value >= 78) return "Excellent Fit";
+    if (value >= 64) return "Good Fit";
+    if (value >= 45) return "Specialist Fit";
+    return "Limited Fit";
+  }
+
   function chooseElement(sym) {
     setSelected(sym);
     const nextRecent = [sym, ...recent.filter(x => x !== sym)].slice(0, 6);
@@ -5085,9 +5195,32 @@ function Explorer({ selected, setSelected, setCompare, setPage }) {
   }
 
   function openCompare(symbols = []) {
-    const next = Array.from(new Set([el.symbol, ...symbols])).slice(0, 6);
+    const next = Array.from(new Set([el.symbol, ...symbols].filter(Boolean))).slice(0, 6);
     setCompare?.(next);
     setPage?.("compare");
+  }
+
+  function launchForecast(symbol = el.symbol, years = forecastYears) {
+    const cleanYears = Math.max(1, Math.min(1000, Number(years) || 50));
+    setSelected?.(symbol);
+    setTimeMachineRequest?.({
+      material: symbol,
+      years: cleanYears,
+      source: "Element Explorer",
+      requestId: Date.now(),
+    });
+    try {
+      const history = JSON.parse(localStorage.getItem("elementosForecastHistory") || "[]");
+      const entry = {
+        symbol,
+        name: elementMap[symbol]?.name || symbol,
+        years: cleanYears,
+        createdAt: new Date().toISOString(),
+      };
+      const next = [entry, ...history.filter((item) => !(item.symbol === symbol && item.years === cleanYears))].slice(0, 8);
+      localStorage.setItem("elementosForecastHistory", JSON.stringify(next));
+    } catch (_error) {}
+    setPage?.("timemachine");
   }
 
   function generateExplorerReport() {
@@ -5095,17 +5228,50 @@ function Explorer({ selected, setSelected, setCompare, setPage }) {
     setPage?.("reports");
   }
 
+  const StatusBar = ({ label, value, tone = "cyan" }) => (
+    <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
+      <div className="flex items-center justify-between gap-3 text-xs font-black text-slate-300">
+        <span>{label}</span>
+        <span className={tone === "amber" ? "text-amber-100" : tone === "emerald" ? "text-emerald-100" : "text-cyan-100"}>{value}%</span>
+      </div>
+      <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-900">
+        <div className={`h-full rounded-full ${tone === "amber" ? "bg-gradient-to-r from-amber-300 to-orange-300" : tone === "emerald" ? "bg-gradient-to-r from-emerald-300 to-cyan-300" : "bg-gradient-to-r from-cyan-300 to-blue-300"}`} style={{ width: `${Math.max(5, Math.min(100, value))}%` }} />
+      </div>
+    </div>
+  );
+
+  const SectionTitle = ({ eyebrow, title, body }) => (
+    <div className="mb-5">
+      <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">{eyebrow}</div>
+      <h2 className="mt-2 text-3xl font-black text-white">{title}</h2>
+      {body && <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{body}</p>}
+    </div>
+  );
+
   return (
-    <div className="space-y-6 pb-24">
+    <div className="space-y-6 pb-28">
       <Panel className="eos-hero-panel overflow-hidden p-6 md:p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <Pill gold><Search size={12}/> element explorer</Pill>
             <h1 className="mt-3 text-5xl font-black sm:text-7xl">Element <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Explorer</span></h1>
-            <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">Search any element and open a complete material intelligence profile: facts, compounds, reactions, encounters, industry fit, crystal structure, isotope intelligence, comparisons and research notes.</p>
+            <p className="mt-4 max-w-5xl text-sm leading-7 text-slate-300">Search any element and open a complete material intelligence workstation: scorecard, substitutes, tradeoffs, exposure scenarios, resistance matrix, engineering snapshot, opportunities and dossier-ready notes.</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={() => setPage?.("timemachine")} variant="primary">Forecast This Element</Button>
+          <div className="grid min-w-[300px] gap-3 rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+            <div>
+              <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Forecast horizon</div>
+              <div className="mt-2 grid grid-cols-[1fr_auto] gap-2">
+                <select
+                  value={forecastYears}
+                  onChange={(event) => setForecastYears(Number(event.target.value))}
+                  className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-black text-white outline-none"
+                >
+                  {forecastYearOptions.map((year) => <option key={year} value={year}>{year} Year{year === 1 ? "" : "s"}</option>)}
+                </select>
+                <Button onClick={() => launchForecast(el.symbol, forecastYears)} variant="primary">Forecast</Button>
+              </div>
+              <div className="mt-2 text-xs leading-5 text-slate-400">{forecastYears}-year forecast examines corrosion, thermal stability, structural integrity and environmental resistance.</div>
+            </div>
             <Button onClick={() => openCompare([intelligence.recommendedCompare])}>Compare With {intelligence.recommendedCompare}</Button>
           </div>
         </div>
@@ -5113,7 +5279,7 @@ function Explorer({ selected, setSelected, setCompare, setPage }) {
         <div className="mt-6 grid gap-4 xl:grid-cols-[1fr_260px]">
           <div className="eos-explorer-search flex w-full items-center gap-3 rounded-[1.5rem] border p-4 shadow-[0_0_35px_rgba(34,211,238,.055)]">
             <Search className="shrink-0 text-cyan-300" size={22}/>
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements, symbols, compounds, reactions..." className="w-full bg-transparent text-base font-bold outline-none placeholder:text-slate-600" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements, symbols, compounds, reactions, substitutes..." className="w-full bg-transparent text-base font-bold outline-none placeholder:text-slate-600" />
           </div>
           <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-[1.5rem] border border-white/10 bg-slate-950 p-4 text-sm font-bold outline-none">
             {categories.map(c => <option key={c}>{c}</option>)}
@@ -5122,16 +5288,16 @@ function Explorer({ selected, setSelected, setCompare, setPage }) {
 
         <div className="mt-4 grid gap-3 lg:grid-cols-3">
           <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">Recent</div>
+            <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Recent</div>
             <div className="mt-2 flex flex-wrap gap-2">{recent.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100">{sym}</button>)}</div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">Popular</div>
+            <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Popular</div>
             <div className="mt-2 flex flex-wrap gap-2">{popular.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-black text-slate-200">{elementMap[sym]?.name || sym}</button>)}</div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
             <div className="flex items-center justify-between">
-              <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">Favourites</div>
+              <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Favourites</div>
               <button onClick={() => toggleFavorite(el.symbol)} className="text-xs font-black text-amber-100">{favorites.includes(el.symbol) ? "Remove" : "Add"} {el.symbol}</button>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">{favorites.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-black text-amber-100">{sym}</button>)}</div>
@@ -5155,266 +5321,330 @@ function Explorer({ selected, setSelected, setCompare, setPage }) {
         </Panel>
 
         <div className="space-y-6">
-          <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-slate-950">
-            <div className="grid gap-6 2xl:grid-cols-[.95fr_1.05fr]">
-              <div>
-                <Pill gold><Sparkles size={12}/> material intelligence brief</Pill>
-                <div className="mt-5 flex flex-wrap items-end gap-5">
-                  <div className="text-8xl font-black tracking-[-.08em] text-cyan-100 sm:text-9xl">{el.symbol}</div>
-                  <div>
-                    <h2 className="text-4xl font-black text-white">{el.name}</h2>
-                    <div className="mt-2 text-sm font-bold text-slate-400">{el.category} · Atomic Number {el.atomicNumber}</div>
+          <div className="grid gap-6 2xl:grid-cols-[1.1fr_.9fr]">
+            <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-slate-950">
+              <Pill gold><Sparkles size={12}/> material intelligence brief</Pill>
+              <div className="mt-5 flex flex-wrap items-end gap-5">
+                <div className="text-8xl font-black tracking-[-.08em] text-cyan-100 sm:text-9xl">{el.symbol}</div>
+                <div>
+                  <h2 className="text-4xl font-black text-white">{el.name}</h2>
+                  <div className="mt-2 text-sm font-bold text-slate-400">{el.category} · Atomic Number {el.atomicNumber}</div>
+                </div>
+              </div>
+              <p className="mt-6 max-w-4xl text-sm leading-7 text-slate-300">{intelligence.overview}</p>
+              <div className="mt-6 grid gap-3 md:grid-cols-3">
+                <ExplorerMiniStat label="Category" value={el.category} />
+                <ExplorerMiniStat label="Crystal" value={crystal.short} />
+                <ExplorerMiniStat label="Cost" value={cost.relativeCost} />
+              </div>
+            </Panel>
+
+            <Panel className="bg-white/[0.03]">
+              <SectionTitle eyebrow="scorecard" title="Material Intelligence Scorecard" body="A single executive view of industrial value, engineering value, scientific interest, future potential and supply security." />
+              <div className="grid gap-3 md:grid-cols-2">
+                {scorecard.map(([label, value], index) => <StatusBar key={label} label={label} value={value} tone={index === 0 ? "emerald" : index > 3 ? "amber" : "cyan"} />)}
+              </div>
+            </Panel>
+          </div>
+
+          <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+            <Panel>
+              <SectionTitle eyebrow="why it matters" title={`Why ${el.name} matters`} />
+              <p className="text-sm leading-7 text-slate-300">{whyMatters}</p>
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
+                <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.06] p-4">
+                  <div className="text-sm font-black text-emerald-100">Advantages</div>
+                  <div className="mt-3 space-y-2 text-sm text-slate-300">{(intelligence.strengths || ["Useful material profile", "Research-ready comparison", "Scenario modelling candidate"]).slice(0, 4).map(x => <div key={x}>✓ {x}</div>)}</div>
+                </div>
+                <div className="rounded-2xl border border-amber-300/15 bg-amber-300/[0.06] p-4">
+                  <div className="text-sm font-black text-amber-100">Tradeoffs</div>
+                  <div className="mt-3 space-y-2 text-sm text-slate-300">{(intelligence.limitations || ["Application dependent", "Requires scenario review", "Compare before deployment"]).slice(0, 4).map(x => <div key={x}>✕ {x}</div>)}</div>
+                </div>
+              </div>
+            </Panel>
+
+            <Panel>
+              <SectionTitle eyebrow="industry examples" title="Used in real-world decision areas" body="These examples connect the element profile to practical engineering, research and commercial contexts." />
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {(intelligence.industries || ["Aerospace", "Energy", "Research", "Industrial"]).slice(0, 6).map((item, index) => (
+                  <div key={item} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="text-lg font-black text-white">{item}</div>
+                    <div className="mt-2 text-xs leading-5 text-slate-400">{index % 2 === 0 ? "High-value application area for material selection, comparison and report generation." : "Useful for forecasting exposure, lifecycle risk and substitute materials."}</div>
                   </div>
-                </div>
-                <p className="mt-6 max-w-3xl text-sm leading-7 text-slate-300">{intelligence.overview}</p>
-                <div className="mt-6 grid gap-3 md:grid-cols-3">
-                  <ExplorerMiniStat label="Category" value={el.category} />
-                  <ExplorerMiniStat label="Crystal" value={crystal.short} />
-                  <ExplorerMiniStat label="Cost" value={cost.relativeCost} />
-                </div>
+                ))}
               </div>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.06] p-4">
-                  <div className="text-xs font-black uppercase tracking-[.2em] text-emerald-200">Best Uses</div>
-                  <div className="mt-3 space-y-2">{intelligence.bestUses.map(x => <div key={x} className="text-sm font-bold text-emerald-50">✓ {x}</div>)}</div>
-                </div>
-                <div className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.06] p-4">
-                  <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Strengths</div>
-                  <div className="mt-3 space-y-2">{intelligence.strengths.map(x => <div key={x} className="text-sm font-bold text-cyan-50">✓ {x}</div>)}</div>
-                </div>
-                <div className="rounded-[1.5rem] border border-amber-300/15 bg-amber-300/[0.06] p-4">
-                  <div className="text-xs font-black uppercase tracking-[.2em] text-amber-200">Limitations</div>
-                  <div className="mt-3 space-y-2">{intelligence.limitations.map(x => <div key={x} className="text-sm font-bold text-amber-50">✕ {x}</div>)}</div>
-                </div>
-              </div>
-            </div>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => openCompare([intelligence.recommendedCompare])} variant="primary">Compare with {intelligence.recommendedCompare}</Button>
-              <Button onClick={() => setPage?.("timemachine")}>Run 50-Year Forecast</Button>
-              <Button onClick={generateExplorerReport}>Generate Executive Report</Button>
-            </div>
-          </Panel>
-
-          <div className="flex flex-wrap gap-2">
-            {tabs.map(t => <button key={t} onClick={() => setTab(t)} className={`rounded-full px-4 py-2 text-xs font-black transition ${tab === t ? "bg-cyan-300 text-slate-950" : "border border-white/10 bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]"}`}>{t}</button>)}
+            </Panel>
           </div>
 
-          <div className="grid gap-5 2xl:grid-cols-[1.05fr_.95fr]">
+          <div className="grid gap-6 xl:grid-cols-[.95fr_1.05fr]">
             <Panel>
-              <Pill><Target size={12}/> industry suitability</Pill>
-              <h2 className="mt-3 text-3xl font-black">Industry Suitability Matrix</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-400">Scores are modelled from the element category, physical profile and ElementOS behaviour engine.</p>
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
-                {industrySuitability.map(([label, value]) => <ExplorerProgressBar key={label} label={label} value={value} />)}
+              <SectionTitle eyebrow="substitutes" title="Material substitutes" body="Engineers rarely ask only what a material is. They ask what else could work." />
+              <div className="grid gap-3">
+                {substituteCandidates.map((item) => (
+                  <div key={item.symbol} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div>
+                      <div className="text-xl font-black text-cyan-100">{item.element.name} <span className="text-slate-500">({item.symbol})</span></div>
+                      <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2">
+                      <Button onClick={() => openCompare([item.symbol])}>Compare</Button>
+                      <Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button>
+                    </div>
+                      <Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </Panel>
 
             <Panel>
-              <Pill><BarChart3 size={12}/> material fingerprint</Pill>
-              <h2 className="mt-3 text-3xl font-black">Engineer-Readable Fingerprint</h2>
-              <div className="mt-5">
-                <ExplorerFingerprint2 values={fingerprint2} />
+              <SectionTitle eyebrow="environment" title="Environmental resistance matrix" body="A quick-read view of how this element may behave under real-world exposure categories." />
+              <div className="grid gap-3 md:grid-cols-2">
+                {resistanceMatrix.map(([label, verdict, value]) => (
+                  <div key={label} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="font-black text-white">{label}</div>
+                      <div className="text-xs font-black text-cyan-100">{verdict}</div>
+                    </div>
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-900">
+                      <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${Math.max(8, Math.min(100, value))}%` }} />
+                    </div>
+                  </div>
+                ))}
               </div>
             </Panel>
           </div>
 
           <Panel>
-            <Pill><Database size={12}/> expanded facts</Pill>
-            <h2 className="mt-3 text-3xl font-black">Quick Facts</h2>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {quickFacts.map(([label, value]) => <ExplorerMiniStat key={label} label={label} value={value} />)}
-            </div>
-          </Panel>
-
-          <Panel>
-            <Pill gold><BookOpen size={12}/> research summary</Pill>
-            <h2 className="mt-3 text-4xl font-black">Research Summary</h2>
-            <div className="mt-5 grid gap-4 lg:grid-cols-5">
-              <div className="lg:col-span-2 rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Overview</div>
-                <p className="mt-3 text-sm leading-7 text-slate-300">{intelligence.overview}</p>
-              </div>
-              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                <div className="text-xs font-black uppercase tracking-[.2em] text-emerald-200">Applications</div>
-                <div className="mt-3 space-y-2">{intelligence.bestUses.map(x => <div key={x} className="text-sm text-slate-200">✓ {x}</div>)}</div>
-              </div>
-              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Advantages</div>
-                <div className="mt-3 space-y-2">{intelligence.strengths.map(x => <div key={x} className="text-sm text-slate-200">✓ {x}</div>)}</div>
-              </div>
-              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                <div className="text-xs font-black uppercase tracking-[.2em] text-amber-200">Limitations</div>
-                <div className="mt-3 space-y-2">{intelligence.limitations.map(x => <div key={x} className="text-sm text-slate-200">✕ {x}</div>)}</div>
-              </div>
-            </div>
-            <div className="mt-4 rounded-[1.5rem] border border-purple-300/15 bg-purple-300/[0.06] p-4">
-              <div className="text-xs font-black uppercase tracking-[.2em] text-purple-200">Industries</div>
-              <div className="mt-3 flex flex-wrap gap-2">{intelligence.industries.map(x => <span key={x} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs font-black text-white">{x}</span>)}</div>
-            </div>
-          </Panel>
-
-          <Panel>
-            <Pill><Dna size={12}/> electronic structure</Pill>
-            <h2 className="mt-3 text-3xl font-black">Electronic Configuration</h2>
-            <div className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.06] p-4 font-mono text-sm font-black text-cyan-50">{profile.configuration}</div>
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
-              {(profile.orbitals || []).map(([label, count]) => <OrbitalRow key={label} label={label} count={count} />)}
-            </div>
-          </Panel>
-
-          <Panel>
-            <Pill><Layers size={12}/> common compounds</Pill>
-            <h2 className="mt-3 text-3xl font-black">Common Compounds</h2>
-            <div className="mt-5 overflow-hidden rounded-[1.5rem] border border-white/10">
-              <div className="grid grid-cols-[.7fr_1fr_1.25fr_1.5fr] bg-white/[0.05] text-xs font-black uppercase tracking-[.16em] text-slate-400">
-                <div className="p-3">Formula</div><div className="p-3">Name</div><div className="p-3">Uses</div><div className="p-3">Importance</div>
-              </div>
-              {compounds.map((c) => (
-                <div key={`${c.formula}-${c.name}`} className="grid grid-cols-[.7fr_1fr_1.25fr_1.5fr] border-t border-white/10 text-sm">
-                  <div className="p-3 font-mono font-black text-cyan-100">{c.formula}</div>
-                  <div className="p-3 font-bold text-white">{c.name}</div>
-                  <div className="p-3 text-slate-300">{c.uses}</div>
-                  <div className="p-3 text-slate-400">{c.importance}</div>
+            <SectionTitle eyebrow="real-world scenarios" title="Exposure scenarios" body="Send any of these directly into Future Simulation later: marine, heat, pressure, chemical, space, cryogenic or geothermal exposure." />
+            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
+              {exposureScenarios.map(([title, body, verdict, value]) => (
+                <div key={title} className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4">
+                  <div className="text-lg font-black text-white">{title}</div>
+                  <p className="mt-2 min-h-[48px] text-sm leading-6 text-slate-400">{body}</p>
+                  <div className="mt-4 text-xs font-black uppercase tracking-[.18em] text-cyan-100">{verdict}</div>
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div>
                 </div>
               ))}
             </div>
           </Panel>
 
-          <div className="grid gap-5 2xl:grid-cols-[1fr_.85fr]">
+          <div className="grid gap-6 xl:grid-cols-[.85fr_1.15fr]">
             <Panel>
-              <Pill gold><Activity size={12}/> experimental encounters</Pill>
-              <h2 className="mt-3 text-4xl font-black">Experimental Encounters 2.0</h2>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each card explains what happens when {el.name} is exposed to different environments.</p>
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
-                {encounters.map(encounter => <ExplorerEncounterCard key={encounter.title} encounter={encounter} />)}
-              </div>
+              <SectionTitle eyebrow="engineering" title="Engineering snapshot" body="Five quick numbers that make the element usable for technical comparison." />
+              <div className="space-y-3">{engineeringSnapshot.map(([label, value]) => <StatusBar key={label} label={label} value={value} />)}</div>
             </Panel>
 
             <Panel>
-              <Pill><Waves size={12}/> reaction flows</Pill>
-              <h2 className="mt-3 text-4xl font-black">Reaction Flow Diagrams</h2>
-              <div className="mt-5 space-y-4">
-                {flows.map(flow => <ExplorerFlowCard key={flow.title} flow={flow} />)}
-              </div>
-            </Panel>
-          </div>
-
-          <div className="grid gap-5 2xl:grid-cols-3">
-            <Panel>
-              <Pill><Layers size={12}/> crystal structure</Pill>
-              <h2 className="mt-3 text-3xl font-black">Crystal Structure Intelligence</h2>
-              <div className="mt-5 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.06] p-5">
-                <div className="text-5xl font-black text-cyan-100">{crystal.short}</div>
-                <div className="mt-2 text-lg font-black text-white">{crystal.full}</div>
-                <div className="mt-4 space-y-2">{crystal.properties.map(x => <div key={x} className="text-sm font-bold text-slate-300">✓ {x}</div>)}</div>
-              </div>
-            </Panel>
-
-            <Panel>
-              <Pill><Database size={12}/> mining & production</Pill>
-              <h2 className="mt-3 text-3xl font-black">Mining & Production</h2>
-              <div className="mt-5 grid gap-3">
-                <ExplorerMiniStat label="Abundance" value={production.abundance} />
-                <ExplorerMiniStat label="Mining Difficulty" value={production.miningDifficulty} />
-                <ExplorerMiniStat label="Refining Difficulty" value={production.refiningDifficulty} />
-                <ExplorerMiniStat label="Recyclability" value={production.recyclability} />
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">{production.producers.map(x => <span key={x} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-200">{x}</span>)}</div>
-            </Panel>
-
-            <Panel>
-              <Pill><Crown size={12}/> cost intelligence</Pill>
-              <h2 className="mt-3 text-3xl font-black">Cost Intelligence</h2>
-              <div className="mt-5 grid gap-3">
-                <ExplorerMiniStat label="Relative Cost" value={cost.relativeCost} />
-                <ExplorerMiniStat label="Availability" value={cost.availability} />
-                <ExplorerMiniStat label="Supply Stability" value={cost.supplyStability} />
-                <ExplorerMiniStat label="Strategic Importance" value={cost.strategicImportance} />
-              </div>
-            </Panel>
-          </div>
-
-          <div className="grid gap-5 2xl:grid-cols-[.8fr_1.2fr]">
-            <Panel>
-              <Pill><Orbit size={12}/> isotope intelligence</Pill>
-              <h2 className="mt-3 text-3xl font-black">Isotope Summary</h2>
-              <div className="mt-5 grid gap-3">
-                <ExplorerMiniStat label="Stable Isotopes" value={isotope.stable} />
-                <ExplorerMiniStat label="Radioactive Isotopes" value={isotope.radioactive} />
-                <ExplorerMiniStat label="Half-Life Information" value={isotope.halfLife} />
-              </div>
-              <div className="mt-4 grid gap-3">
-                {isotope.featured.map(([name, body]) => <div key={name} className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="font-black text-cyan-100">{name}</div><div className="mt-1 text-xs text-slate-400">{body}</div></div>)}
-              </div>
-            </Panel>
-
-            <Panel>
-              <Pill><Clock3 size={12}/> timeline</Pill>
-              <h2 className="mt-3 text-3xl font-black">Explorer Timeline</h2>
-              <div className="mt-6 grid gap-3 md:grid-cols-4">
-                {timeline.map(([year, event]) => (
-                  <div key={`${year}-${event}`} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                    <div className="text-2xl font-black text-cyan-100">{year}</div>
-                    <div className="mt-2 text-sm font-bold text-white">{event}</div>
+              <SectionTitle eyebrow="applications" title="Industry suitability matrix" body="Percentages are model-based fit indicators designed for comparison and research direction." />
+              <div className="grid gap-3 md:grid-cols-2">
+                {industrySuitability.map(([name, value]) => (
+                  <div key={name} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-black text-white">{name}</div>
+                        <div className="text-xs text-slate-500">{fitLabel(value)}</div>
+                      </div>
+                      <div className="text-xl font-black text-cyan-100">{value}%</div>
+                    </div>
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-amber-200" style={{ width: `${value}%` }} /></div>
                   </div>
                 ))}
               </div>
             </Panel>
           </div>
 
-          <div className="grid gap-5 2xl:grid-cols-2">
+          <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
             <Panel>
-              <Pill><Network size={12}/> similar elements</Pill>
-              <h2 className="mt-3 text-3xl font-black">Similar Elements With Reasons</h2>
-              <div className="mt-5 grid gap-3 md:grid-cols-2">
+              <SectionTitle eyebrow="facts" title="Expanded quick facts" />
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                {quickFacts.map(([label, value]) => <ExplorerMiniStat key={label} label={label} value={value} />)}
+              </div>
+            </Panel>
+
+            <Panel>
+              <SectionTitle eyebrow="family tree" title="Material family tree" body="A clearer educational hierarchy for the current element." />
+              <div className="space-y-3">
+                {familyTree.map((item, index) => (
+                  <div key={`${item}-${index}`} className="flex items-center gap-3">
+                    <div className="grid h-9 w-9 place-items-center rounded-full border border-cyan-300/20 bg-cyan-300/10 text-xs font-black text-cyan-100">{index + 1}</div>
+                    <div className="flex-1 rounded-2xl border border-white/10 bg-black/20 p-3 text-sm font-black text-white">{item}</div>
+                  </div>
+                ))}
+              </div>
+            </Panel>
+          </div>
+
+          <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+            <Panel>
+              <SectionTitle eyebrow="crystal structure" title={crystal.title} body={crystal.description} />
+              <div className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.055] p-5">
+                <div className="text-5xl font-black text-cyan-100">{crystal.short}</div>
+                <div className="mt-4 grid gap-2">{crystal.properties.map(x => <div key={x} className="rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-slate-300">✓ {x}</div>)}</div>
+              </div>
+            </Panel>
+
+            <Panel>
+              <SectionTitle eyebrow="compounds" title="Compound intelligence" body="Each compound is shown with its use and why it matters." />
+              <div className="grid gap-3">
+                {compounds.map((c) => (
+                  <div key={`${c.formula}-${c.name}`} className="grid gap-3 rounded-2xl border border-white/10 bg-black/20 p-4 md:grid-cols-[140px_1fr_1fr]">
+                    <div>
+                      <div className="text-2xl font-black text-cyan-100">{c.formula}</div>
+                      <div className="text-xs text-slate-500">{c.name}</div>
+                    </div>
+                    <div><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Uses</div><div className="mt-1 text-sm text-slate-300">{c.uses}</div></div>
+                    <div><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Importance</div><div className="mt-1 text-sm text-slate-300">{c.importance}</div></div>
+                  </div>
+                ))}
+              </div>
+            </Panel>
+          </div>
+
+          <Panel>
+            <SectionTitle eyebrow="encounters" title="Visual encounter simulator" body="A more useful version of acid, alkali, salt water and heat encounters: each mini-card behaves like a practical lab note." />
+            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+              {encounters.map((encounter) => <ExplorerEncounterCard key={encounter.title} encounter={encounter} />)}
+            </div>
+          </Panel>
+
+          <div className="grid gap-6 xl:grid-cols-[.85fr_1.15fr]">
+            <ExplorerFingerprint2 values={fingerprint2} />
+            <Panel>
+              <SectionTitle eyebrow="reaction flows" title="Reaction flow diagrams" body="Clean scientific flow cards showing the material, exposure and likely products." />
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {flows.map((flow) => <ExplorerFlowCard key={flow.title} flow={flow} />)}
+              </div>
+            </Panel>
+          </div>
+
+          <div className="grid gap-6 xl:grid-cols-3">
+            <Panel>
+              <SectionTitle eyebrow="production" title="Mining & production" />
+              <div className="space-y-3">
+                {[
+                  ["Abundance", production.abundance],
+                  ["Mining Difficulty", production.miningDifficulty],
+                  ["Refining Difficulty", production.refiningDifficulty],
+                  ["Recyclability", production.recyclability],
+                ].map(([label, value]) => <ExplorerMiniStat key={label} label={label} value={value} />)}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">{production.regions.map(region => <span key={region} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-200">{region}</span>)}</div>
+            </Panel>
+
+            <Panel>
+              <SectionTitle eyebrow="risk profile" title="Material risk profile" />
+              <div className="space-y-3">{riskProfile.map(([label, value]) => <ExplorerMiniStat key={label} label={label} value={value} />)}</div>
+            </Panel>
+
+            <Panel>
+              <SectionTitle eyebrow="isotopes" title="Isotope intelligence" />
+              <div className="space-y-3">
+                {[
+                  ["Stable Isotopes", isotope.stable],
+                  ["Radioactive Isotopes", isotope.radioactive],
+                  ["Half-Life Information", isotope.halfLife],
+                  ["Applications", isotope.applications],
+                ].map(([label, value]) => <ExplorerMiniStat key={label} label={label} value={value} />)}
+              </div>
+            </Panel>
+          </div>
+
+          <Panel>
+            <SectionTitle eyebrow="opportunities" title="Discovery opportunities" body="AI-style pairings that help users move from reference data into a real workflow." />
+            <div className="grid gap-4 md:grid-cols-3">
+              {discoveryOpportunities.map((op) => (
+                <div key={op.pair} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.055] p-4">
+                  <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{op.title}</div>
+                  <div className="mt-2 text-3xl font-black text-white">{op.pair}</div>
+                  <div className="mt-4 flex flex-wrap gap-2">{op.uses.map(x => <span key={x} className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-xs font-bold text-slate-300">{x}</span>)}</div>
+                  <Button onClick={() => openCompare([op.pair.split(" + ")[1]])} className="mt-4 w-full">Open Comparison</Button>
+                </div>
+              ))}
+            </div>
+          </Panel>
+
+          <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+            <Panel>
+              <SectionTitle eyebrow="similar elements" title="Similar elements with reasons" />
+              <div className="space-y-3">
                 {similar.map(item => (
-                  <button key={item.symbol} onClick={() => chooseElement(item.symbol)} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.05] p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/40">
-                    <div className="text-3xl font-black text-cyan-100">{item.symbol}</div>
-                    <div className="mt-1 font-black text-white">{item.name}</div>
-                    <div className="mt-2 text-sm text-slate-400">{item.reason}</div>
-                  </button>
+                  <div key={item.symbol} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div>
+                      <div className="text-xl font-black text-cyan-100">{item.name} <span className="text-slate-500">({item.symbol})</span></div>
+                      <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
+                    </div>
+                    <Button onClick={() => openCompare([item.symbol])}>Compare</Button>
+                  </div>
                 ))}
               </div>
             </Panel>
 
             <Panel>
-              <Pill><BarChart3 size={12}/> related comparisons</Pill>
-              <h2 className="mt-3 text-3xl font-black">Related Comparisons With Context</h2>
-              <div className="mt-5 space-y-3">
-                {comparisons.map(item => (
-                  <button key={item.symbol} onClick={() => openCompare([item.symbol])} className="w-full rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10">
-                    <div className="text-lg font-black text-white">{item.title}</div>
-                    <div className="mt-2 text-xs font-black uppercase tracking-[.18em] text-cyan-200">Why compare?</div>
-                    <div className="mt-2 flex flex-wrap gap-2">{item.why.map(x => <span key={x} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-300">{x}</span>)}</div>
+              <SectionTitle eyebrow="related comparisons" title="Related comparisons with context" />
+              <div className="grid gap-3">
+                {comparisons.map(c => (
+                  <button key={c.symbol} onClick={() => openCompare([c.symbol])} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+                    <div className="text-xl font-black text-white">{el.name} vs {c.name}</div>
+                    <div className="mt-2 flex flex-wrap gap-2">{c.why.map(x => <span key={x} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-300">{x}</span>)}</div>
                   </button>
                 ))}
               </div>
             </Panel>
           </div>
 
-          <ResearchNotesCard el={el} profile={profile} intelligence={intelligence} />
+          <div className="grid gap-6 xl:grid-cols-[1fr_.9fr]">
+            <Panel>
+              <SectionTitle eyebrow="timeline" title="Explorer timeline" body="Discovery, commercialization, industrial adoption, modern use and future potential." />
+              <div className="grid gap-3 md:grid-cols-5">
+                {timeline.map(([year, label, body]) => (
+                  <div key={`${year}-${label}`} className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+                    <div className="text-2xl font-black text-cyan-100">{year}</div>
+                    <div className="mt-2 text-sm font-black text-white">{label}</div>
+                    <div className="mt-2 text-xs leading-5 text-slate-400">{body}</div>
+                  </div>
+                ))}
+              </div>
+            </Panel>
 
-          <div className="eos-sticky-actions sticky bottom-4 z-30 rounded-[1.5rem] border border-white/10 bg-slate-950/92 p-3 shadow-[0_0_40px_rgba(8,145,178,.16)] backdrop-blur-xl">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <ResearchNotesCard el={el} profile={profile} intelligence={intelligence} />
+          </div>
+
+          <Panel className="border-amber-300/20 bg-amber-300/[0.055]">
+            <SectionTitle eyebrow="dossier" title="Material Intelligence Dossier" body="One-click executive package containing summary, quick facts, industry fit, risk profile, compounds, encounters, timeline, forecast link and research notes." />
+            <div className="grid gap-4 md:grid-cols-3">
+              {["Executive Summary", "Risk Profile", "Forecast Link", "Compounds", "Encounters", "Research Notes"].map(item => <div key={item} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm font-black text-white">✓ {item}</div>)}
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Button onClick={generateExplorerReport} variant="primary">Generate Dossier</Button>
+              <Button onClick={() => setPage?.("viralcards")}>Create Poster</Button>
+              <Button onClick={() => launchForecast(el.symbol, forecastYears)}>Forecast {forecastYears} Years</Button>
+            </div>
+          </Panel>
+
+          <Panel className="sticky bottom-4 z-20 border-cyan-300/20 bg-slate-950/90 p-4 shadow-[0_0_50px_rgba(2,6,23,.8)] backdrop-blur-2xl">
+            <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
               <div>
-                <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Explorer Actions</div>
-                <div className="text-sm text-slate-400">Turn {el.name} into a workflow.</div>
+                <div className="text-sm font-black text-white">Recommended next investigation</div>
+                <div className="text-xs text-slate-400">Move {el.name} directly into a comparison, forecast, report or poster workflow.</div>
               </div>
               <div className="flex flex-wrap gap-2">
-                <Button onClick={() => openCompare([intelligence.recommendedCompare])} variant="primary">Compare Element</Button>
-                <Button onClick={() => setTab("References")}>Find Similar Elements</Button>
-                <Button onClick={() => setPage?.("timemachine")}>Forecast This Element</Button>
-                <Button onClick={generateExplorerReport}>Generate Report</Button>
-                <Button onClick={() => setPage?.("viralcards")}>Create Poster</Button>
-                <Button onClick={() => setPage?.("lab")}>Save Discovery</Button>
+                {recommendedInvestigations.map(([label, body, action]) => (
+                  <button key={label} onClick={action} className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-left text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+                    <span className="block text-cyan-100">{label}</span>
+                    <span className="block max-w-[220px] truncate font-medium text-slate-400">{body}</span>
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
+          </Panel>
         </div>
       </div>
     </div>
   );
 }
+
 
 
 function PeriodicTable({ selected, setSelected }) {
@@ -12250,6 +12480,12 @@ export default function App() {
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [upgradeReason, setUpgradeReason] = useState("");
   const [supportOpen, setSupportOpen] = useState(false);
+  const [timeMachineRequest, setTimeMachineRequest] = useState(() => ({
+    material: "Al",
+    years: 50,
+    source: "Explorer",
+    requestId: 0,
+  }));
 
 
   useEffect(() => {
@@ -12495,7 +12731,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       ),
       discover: <Discover setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
       publicdiscovery: <PublicDiscoveryPage discovery={publicDiscovery} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
-      timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} />,
+      timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} forecastRequest={timeMachineRequest} />,
       matterlab: <MatterIntelligenceLab />,
       scenario: <ScenarioBuilderSafe selected={selected} setSelected={setSelected} setPage={setPage} />,
       lab: <DiscoveryVaultV57 session={session} selected={selected} compare={compare} setPage={setPage} />,
@@ -12519,6 +12755,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
           setSelected={setSelected}
           setCompare={setCompare}
           setPage={setPage}
+          setTimeMachineRequest={setTimeMachineRequest}
         />
       ),
       periodic: (
@@ -12556,7 +12793,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       calculations: <CalculationCore />,
       reports: <Reports compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} />,
     }),
-    [page, selected, compare, session, isPro]
+    [page, selected, compare, session, isPro, timeMachineRequest]
   );
 
   if (publicReportRequested) {
