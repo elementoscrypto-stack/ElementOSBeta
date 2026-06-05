@@ -5030,103 +5030,103 @@ function BehaviourFingerprint({ values }) {
 
 function elementVisualTheme(el) {
   const families = {
-    "Alkali metal": ["from-rose-300/30", "via-orange-300/10", "to-slate-950", "Reactive metal"],
-    "Alkaline earth metal": ["from-amber-300/30", "via-yellow-300/10", "to-slate-950", "Earth metal"],
-    "Transition metal": ["from-cyan-300/30", "via-blue-300/10", "to-slate-950", "Engineered metal"],
-    "Post-transition metal": ["from-sky-300/30", "via-indigo-300/10", "to-slate-950", "Structural metal"],
-    "Metalloid": ["from-violet-300/30", "via-fuchsia-300/10", "to-slate-950", "Boundary element"],
-    "Nonmetal": ["from-emerald-300/30", "via-lime-300/10", "to-slate-950", "Reactive nonmetal"],
-    "Halogen": ["from-fuchsia-300/30", "via-rose-300/10", "to-slate-950", "Halogen system"],
-    "Noble gas": ["from-blue-300/30", "via-cyan-300/10", "to-slate-950", "Inert atmosphere"],
-    "Lanthanide": ["from-teal-300/30", "via-emerald-300/10", "to-slate-950", "Rare earth"],
-    "Actinide": ["from-lime-300/30", "via-amber-300/10", "to-slate-950", "Nuclear material"],
-    "Unknown": ["from-slate-300/25", "via-cyan-300/10", "to-slate-950", "Synthetic frontier"],
+    "Alkali metal": ["from-rose-300/30", "via-orange-300/10", "to-slate-950", "Reactive metal", "Molten alkali energy", "sparks"],
+    "Alkaline earth metal": ["from-amber-300/30", "via-yellow-300/10", "to-slate-950", "Earth metal", "Mineral glow formation", "strata"],
+    "Transition metal": ["from-cyan-300/30", "via-blue-300/10", "to-slate-950", "Engineered metal", "Aerospace alloy core", "forged"],
+    "Post-transition metal": ["from-sky-300/30", "via-indigo-300/10", "to-slate-950", "Structural metal", "Soft structural matrix", "sheet"],
+    "Metalloid": ["from-violet-300/30", "via-fuchsia-300/10", "to-slate-950", "Boundary element", "Semiconductor crystal", "facets"],
+    "Nonmetal": ["from-emerald-300/30", "via-lime-300/10", "to-slate-950", "Reactive nonmetal", "Molecular field cloud", "molecule"],
+    "Halogen": ["from-fuchsia-300/30", "via-rose-300/10", "to-slate-950", "Halogen system", "Reactive plasma vessel", "halogen"],
+    "Noble gas": ["from-blue-300/30", "via-cyan-300/10", "to-slate-950", "Inert atmosphere", "Contained spectral gas", "gas"],
+    "Lanthanide": ["from-teal-300/30", "via-emerald-300/10", "to-slate-950", "Rare earth", "Rare-earth resonance lattice", "rareearth"],
+    "Actinide": ["from-lime-300/30", "via-amber-300/10", "to-slate-950", "Nuclear material", "Shielded atomic core", "nuclear"],
+    "Unknown": ["from-slate-300/25", "via-cyan-300/10", "to-slate-950", "Synthetic frontier", "Synthetic frontier sample", "synthetic"],
   };
-  return families[el?.category] || ["from-cyan-300/30", "via-blue-300/10", "to-slate-950", "Material sample"];
+  return families[el?.category] || ["from-cyan-300/30", "via-blue-300/10", "to-slate-950", "Material sample", "ElementOS material artwork", "forged"];
+}
+
+function elementArtworkUseCase(el) {
+  const bySymbol = {
+    H: "Fuel cell / plasma research", He: "Cryogenics / balloons / superconductors", Li: "Battery cores", Be: "Aerospace structures", B: "Borosilicate / armour", C: "Diamond / graphene / carbon fibre", N: "Atmosphere / fertilizer", O: "Life support / oxidation", F: "High-reactivity chemistry", Ne: "Lighting / lasers", Na: "Reactive salts", Mg: "Lightweight alloys", Al: "Aerospace skins", Si: "Semiconductor wafers", P: "Fertilizer / phosphors", S: "Industrial chemistry", Cl: "Water treatment", Ar: "Shielding gas", K: "Biology / fertilizers", Ca: "Bone / cement systems", Sc: "Aerospace alloy booster", Ti: "Aerospace / marine / medical", V: "High-strength steel", Cr: "Stainless protection", Mn: "Steel hardening", Fe: "Structural steel", Co: "Magnets / superalloys", Ni: "Superalloys / batteries", Cu: "Conductive pathways", Zn: "Galvanized protection", Ga: "Semiconductors", Ge: "Optics / electronics", As: "Compound semiconductors", Se: "Photovoltaics", Br: "Specialty chemistry", Kr: "Lighting / lasers", Rb: "Atomic clocks", Sr: "Ceramics / signals", Y: "Lasers / ceramics", Zr: "Nuclear cladding", Nb: "Superconducting alloys", Mo: "High-temp alloys", Tc: "Medical imaging", Ru: "Catalysts", Rh: "Catalysts / mirrors", Pd: "Hydrogen catalysts", Ag: "High conductivity", Cd: "Specialty coatings", In: "Touchscreens", Sn: "Solders", Sb: "Flame retardants", Te: "Thermoelectrics", I: "Medical / halogen chemistry", Xe: "Lighting / propulsion", Cs: "Atomic clocks", Ba: "Drilling / imaging", La: "Optics / batteries", Ce: "Polishing / catalysts", Pr: "Magnets / glass", Nd: "Powerful magnets", Pm: "Radioisotope systems", Sm: "High-temp magnets", Eu: "Red phosphors", Gd: "MRI contrast / magnets", Tb: "Green phosphors", Dy: "High-temp magnets", Ho: "Lasers", Er: "Fibre optics", Tm: "Lasers", Yb: "Fibre lasers", Lu: "Scintillators", Hf: "High-temp control", Ta: "Capacitors / implants", W: "Extreme heat", Re: "Jet turbines", Os: "Dense alloys", Ir: "Extreme corrosion resistance", Pt: "Catalysts / jewellery", Au: "Luxury conductors", Hg: "Liquid metal systems", Tl: "Specialty electronics", Pb: "Shielding", Bi: "Low-toxicity heavy metal", Po: "Radioisotope heat", At: "Medical alpha research", Rn: "Noble gas radiation", Fr: "Frontier alkali research", Ra: "Historical radioluminescence", Ac: "Alpha therapy research", Th: "Advanced nuclear fuel", Pa: "Nuclear research", U: "Nuclear fuel", Np: "Actinide research", Pu: "Nuclear energy research", Am: "Smoke detectors / isotopes", Cm: "Space isotope research", Bk: "Actinide synthesis", Cf: "Neutron sources", Es: "Synthetic actinide", Fm: "Synthetic actinide", Md: "Synthetic actinide", No: "Synthetic actinide", Lr: "Synthetic actinide", Rf: "Synthetic frontier", Db: "Synthetic frontier", Sg: "Synthetic frontier", Bh: "Synthetic frontier", Hs: "Synthetic frontier", Mt: "Synthetic frontier", Ds: "Synthetic frontier", Rg: "Synthetic frontier", Cn: "Synthetic frontier", Nh: "Synthetic frontier", Fl: "Synthetic frontier", Mc: "Synthetic frontier", Lv: "Synthetic frontier", Ts: "Synthetic halogen frontier", Og: "Synthetic noble frontier"
+  };
+  return bySymbol[el?.symbol] || "Material intelligence artwork";
+}
+
+function ElementArtwork({ el, profile, crystal, compact = false }) {
+  const [from, via, to, label, scene, motif] = elementVisualTheme(el || {});
+  const n = Number(el?.atomicNumber || 1);
+  const symbol = el?.symbol || "El";
+  const orbits = Array.from({ length: compact ? 2 : 4 }, (_, i) => i);
+  const stars = Array.from({ length: compact ? 10 : 30 }, (_, i) => ({
+    left: 5 + ((n * (i + 11) * 13) % 90),
+    top: 6 + ((n * (i + 7) * 19) % 84),
+    size: compact ? 1 + ((n + i) % 3) : 2 + ((n + i) % 5),
+    opacity: 0.2 + (((n + i) % 8) / 10),
+  }));
+  const facets = Array.from({ length: compact ? 4 : 9 }, (_, i) => i);
+  const useCase = elementArtworkUseCase(el);
+  const pattern = motif === "gas" ? "rounded-full" : motif === "facets" ? "clip-path-polygon" : "rounded-[35%]";
+
+  return (
+    <div className={`relative overflow-hidden rounded-[${compact ? "1rem" : "2rem"}] border border-white/10 bg-gradient-to-br ${from} ${via} ${to} ${compact ? "h-16 w-16 p-1" : "min-h-[520px] p-5 shadow-[0_0_90px_rgba(34,211,238,.16)]"}`}>
+      <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px)", backgroundSize: compact ? "14px 14px" : "38px 38px" }} />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_20%,rgba(255,255,255,.22),transparent_20%),radial-gradient(circle_at_72%_78%,rgba(34,211,238,.18),transparent_30%)]" />
+      {stars.map((d, i) => <span key={i} className="absolute rounded-full bg-white shadow-[0_0_18px_rgba(255,255,255,.45)]" style={{ left: `${d.left}%`, top: `${d.top}%`, width: d.size, height: d.size, opacity: d.opacity }} />)}
+
+      <div className={`relative z-10 grid ${compact ? "h-full place-items-center" : "min-h-[390px] place-items-center rounded-[1.6rem] border border-white/10 bg-black/25 backdrop-blur-sm"}`}>
+        {!compact && <div className="absolute left-5 top-5 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.2em] text-cyan-100">ElementOS AI Artwork</div>}
+        {!compact && <div className="absolute right-5 top-5 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-right"><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">Atomic</div><div className="text-3xl font-black text-cyan-100">{n}</div></div>}
+
+        <div className={`relative grid place-items-center ${compact ? "h-12 w-12" : "h-72 w-72"}`}>
+          {orbits.map((i) => (
+            <div
+              key={i}
+              className="absolute rounded-full border border-cyan-200/25"
+              style={{
+                width: compact ? 34 + i * 8 : 150 + i * 42,
+                height: compact ? 16 + i * 5 : 70 + i * 24,
+                transform: `rotate(${(i * 37 + n) % 180}deg)`,
+                boxShadow: compact ? "none" : "0 0 25px rgba(34,211,238,.12)",
+              }}
+            />
+          ))}
+
+          {!compact && motif === "forged" && <div className="absolute bottom-8 h-16 w-52 rounded-full bg-cyan-200/10 blur-xl" />}
+          {!compact && motif === "strata" && <div className="absolute bottom-8 h-24 w-64 overflow-hidden rounded-[50%] border border-amber-200/20 bg-black/30"><div className="mt-4 h-2 bg-amber-200/30" /><div className="mt-4 h-2 bg-white/20" /><div className="mt-4 h-2 bg-cyan-200/20" /></div>}
+          {!compact && motif === "molecule" && facets.map((i) => <div key={i} className="absolute rounded-full border border-emerald-200/30 bg-emerald-200/10" style={{ width: 18 + (i % 3) * 10, height: 18 + (i % 3) * 10, left: `${18 + ((i * 17 + n) % 60)}%`, top: `${18 + ((i * 23 + n) % 58)}%` }} />)}
+          {!compact && motif === "nuclear" && <div className="absolute h-56 w-56 rounded-full border border-lime-200/20 bg-[radial-gradient(circle,rgba(190,242,100,.22),transparent_58%)] shadow-[0_0_60px_rgba(190,242,100,.12)]" />}
+          {!compact && motif === "facets" && facets.map((i) => <div key={i} className="absolute border border-fuchsia-200/25 bg-fuchsia-200/10" style={{ width: 60 + (i % 3) * 18, height: 46 + (i % 2) * 15, transform: `rotate(${i * 23 + n}deg) skew(${(i % 3) * 6}deg)`, left: `${20 + ((i * 13 + n) % 44)}%`, top: `${20 + ((i * 19 + n) % 42)}%` }} />)}
+
+          <div className={`${compact ? "h-10 w-10 text-base" : "h-36 w-36 text-6xl"} relative grid place-items-center rounded-[2rem] border border-white/15 bg-black/45 font-black text-white shadow-[0_0_60px_rgba(255,255,255,.14)] backdrop-blur-xl`}>
+            <div className="absolute inset-1 rounded-[1.65rem] border border-cyan-200/20" />
+            {symbol}
+          </div>
+        </div>
+      </div>
+
+      {!compact && (
+        <div className="relative z-10 mt-5">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-100">{scene}</div>
+              <div className="mt-2 text-4xl font-black text-white">{el?.name}</div>
+              <div className="mt-2 text-sm leading-6 text-slate-300">{label} · {useCase}</div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm font-black text-cyan-100">{profile?.phase || phaseForElement(el?.symbol)}</div>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-3"><div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Artwork lens</div><div className="mt-1 text-sm font-black text-white">{scene}</div></div>
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-3"><div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Crystal</div><div className="mt-1 text-sm font-black text-white">{crystal?.short || profile?.crystal || "Material lattice"}</div></div>
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-3"><div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Use case</div><div className="mt-1 text-sm font-black text-white">{useCase}</div></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function ElementVisualCard({ el, profile, crystal }) {
-  const [from, via, to, label] = elementVisualTheme(el || {});
-  const n = Number(el?.atomicNumber || 1);
-  const dots = Array.from({ length: 18 }, (_, i) => ({
-    left: 10 + ((n * (i + 3) * 17) % 78),
-    top: 12 + ((n * (i + 5) * 11) % 70),
-    size: 3 + ((n + i) % 6),
-    opacity: 0.18 + (((n + i) % 7) / 10),
-  }));
-  const lattice = Array.from({ length: 9 }, (_, i) => i);
-  return (
-    <div className={`relative min-h-[420px] overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br ${from} ${via} ${to} p-5 shadow-[0_0_80px_rgba(34,211,238,.12)]`}>
-      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px)", backgroundSize: "34px 34px" }} />
-      {dots.map((d, i) => (
-        <span key={i} className="absolute rounded-full bg-cyan-100 shadow-[0_0_18px_rgba(165,243,252,.45)]" style={{ left: `${d.left}%`, top: `${d.top}%`, width: d.size, height: d.size, opacity: d.opacity }} />
-      ))}
-      <div className="relative z-10 flex items-start justify-between gap-4">
-        <div>
-          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-100">Element visual reference</div>
-          <div className="mt-4 text-8xl font-black tracking-[-.08em] text-white drop-shadow-[0_0_30px_rgba(255,255,255,.16)]">{el?.symbol}</div>
-          <div className="mt-1 text-2xl font-black text-cyan-100">{el?.name}</div>
-          <div className="mt-2 text-sm text-slate-300">{label} · {profile?.phase || phaseForElement(el?.symbol)}</div>
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-right backdrop-blur-xl">
-          <div className="text-xs uppercase tracking-[.18em] text-slate-500">Atomic</div>
-          <div className="text-4xl font-black text-cyan-100">{el?.atomicNumber}</div>
-        </div>
-      </div>
-      <div className="relative z-10 mt-8 grid grid-cols-3 gap-3">
-        {lattice.map((i) => (
-          <div key={i} className="grid aspect-square place-items-center rounded-2xl border border-white/10 bg-black/25 backdrop-blur-sm">
-            <div className="h-5 w-5 rounded-full border border-cyan-200/50 bg-cyan-200/20 shadow-[0_0_22px_rgba(34,211,238,.28)]" />
-          </div>
-        ))}
-      </div>
-      <div className="relative z-10 mt-5 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
-          <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Sample</div>
-          <div className="mt-1 text-sm font-black text-white">{label}</div>
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
-          <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Crystal</div>
-          <div className="mt-1 text-sm font-black text-white">{crystal?.short || profile?.crystal || "Material lattice"}</div>
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
-          <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Use lens</div>
-          <div className="mt-1 text-sm font-black text-white">Explorer-ready</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-function ElementPictureThumb({ el, size = "md" }) {
-  const item = el?.symbol ? el : elementMap[el] || elementMap.Al;
-  const n = Number(item?.atomicNumber || 1);
-  const [from, via] = elementVisualTheme(item || {});
-  const dimensions = size === "sm" ? "h-12 w-12" : size === "lg" ? "h-20 w-20" : "h-14 w-14";
-  const orbitOne = 18 + (n % 7);
-  const orbitTwo = 11 + (n % 5);
-  const particles = Array.from({ length: 5 }, (_, i) => {
-    const angle = ((i + 1) * 72 + n * 9) * Math.PI / 180;
-    const radius = 16 + ((n + i) % 6);
-    return {
-      x: 28 + Math.cos(angle) * radius,
-      y: 28 + Math.sin(angle) * radius,
-      r: 1.4 + ((n + i) % 3) * 0.35,
-    };
-  });
-
-  return (
-    <div className={`relative grid ${dimensions} shrink-0 place-items-center overflow-hidden rounded-2xl border border-cyan-300/20 bg-gradient-to-br ${from} ${via} to-slate-950 shadow-[0_0_24px_rgba(34,211,238,.12)]`} title={`${item?.name || "Element"} picture`}>
-      <svg viewBox="0 0 56 56" className="absolute inset-0 h-full w-full opacity-90" aria-hidden="true">
-        <ellipse cx="28" cy="28" rx={orbitOne} ry={orbitTwo} fill="none" stroke="rgba(165,243,252,.35)" strokeWidth="1" transform={`rotate(${n * 3} 28 28)`} />
-        <ellipse cx="28" cy="28" rx={orbitTwo} ry={orbitOne} fill="none" stroke="rgba(255,255,255,.16)" strokeWidth="1" transform={`rotate(${45 + n * 2} 28 28)`} />
-        {particles.map((dot, index) => <circle key={index} cx={dot.x} cy={dot.y} r={dot.r} fill="rgba(255,255,255,.75)" />)}
-        <circle cx="28" cy="28" r="10" fill="rgba(2,6,23,.75)" stroke="rgba(125,211,252,.55)" />
-      </svg>
-      <span className="relative z-10 text-sm font-black text-white drop-shadow-[0_0_12px_rgba(255,255,255,.25)]">{item?.symbol}</span>
-    </div>
-  );
+  return <ElementArtwork el={el} profile={profile} crystal={crystal} />;
 }
 
 function Explorer({ selected, setSelected, setCompare, setPage, setForecastRequest }) {
@@ -5442,7 +5442,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
           <div className="max-h-[760px] overflow-auto pr-2">
             {filtered.map(e => (
               <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
-                <ElementPictureThumb el={e} size="sm" />
+                <ElementArtwork el={e} profile={getExplorerProfile(e)} crystal={explorerCrystalIntelligence(e)} compact />
                 <div>
                   <div className="font-black text-white">{e.name}</div>
                   <div className="text-xs text-slate-500">{e.atomicNumber} · {e.category}</div>
@@ -5515,12 +5515,9 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
               <div className="grid gap-3">
                 {substituteCandidates.map((item) => (
                   <div key={item.symbol} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div className="flex min-w-[240px] items-center gap-3">
-                      <ElementPictureThumb el={item.symbol} />
-                      <div>
-                        <div className="text-xl font-black text-cyan-100">{item.element.name} <span className="text-slate-500">({item.symbol})</span></div>
-                        <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
-                      </div>
+                    <div>
+                      <div className="text-xl font-black text-cyan-100">{item.element.name} <span className="text-slate-500">({item.symbol})</span></div>
+                      <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
                     </div>
                     <div className="flex gap-2"><Button onClick={() => openCompare([item.symbol])}>Compare</Button><Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button></div>
                   </div>
@@ -5701,12 +5698,9 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
               <div className="space-y-3">
                 {similar.map(item => (
                   <div key={item.symbol} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div className="flex min-w-[240px] items-center gap-3">
-                      <ElementPictureThumb el={item.symbol} />
-                      <div>
-                        <div className="text-xl font-black text-cyan-100">{item.name} <span className="text-slate-500">({item.symbol})</span></div>
-                        <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
-                      </div>
+                    <div>
+                      <div className="text-xl font-black text-cyan-100">{item.name} <span className="text-slate-500">({item.symbol})</span></div>
+                      <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
                     </div>
                     <div className="flex gap-2"><Button onClick={() => openCompare([item.symbol])}>Compare</Button><Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button></div>
                   </div>
