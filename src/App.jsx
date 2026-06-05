@@ -3465,7 +3465,7 @@ function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
   };
   const environmentProfiles = { ...safeProfiles, ...extraProfiles };
 
-  const [material, setMaterial] = useState(forecastRequest?.material || selected || "H");
+  const [material, setMaterial] = useState(forecastRequest?.symbol || selected || "H");
   const [environment, setEnvironment] = useState(environmentProfiles["Coastal air"] ? "Coastal air" : Object.keys(environmentProfiles)[0]);
   const [envCategory, setEnvCategory] = useState("All");
   const [selectedYear, setSelectedYear] = useState(Number(forecastRequest?.years) || 50);
@@ -3480,20 +3480,21 @@ function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
 
   useEffect(() => {
     if (!forecastRequest) return;
-    const nextMaterial = forecastRequest.material || selected || material;
-    const nextYears = Number(forecastRequest.years || forecastRequest.year || selectedYear);
-    if (nextMaterial && elementMap[nextMaterial]) {
-      setMaterial(nextMaterial);
-      setSelected?.(nextMaterial);
-    }
-    if (Number.isFinite(nextYears)) {
-      setSelectedYear(Math.max(1, Math.min(1000, nextYears)));
-    }
+    const nextSymbol = forecastRequest.symbol || selected || material || "Al";
+    const nextYears = Number(forecastRequest.years) || 50;
+    setMaterial(nextSymbol);
+    setSelected?.(nextSymbol);
+    setSelectedYear(nextYears);
     if (forecastRequest.environment && environmentProfiles[forecastRequest.environment]) {
       setEnvironment(forecastRequest.environment);
       setEnvCategory(environmentProfiles[forecastRequest.environment]?.category || "All");
     }
-  }, [forecastRequest?.requestId]);
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("elementosLastForecast", JSON.stringify({ symbol: nextSymbol, years: nextYears, at: Date.now() }));
+      }
+    } catch (_error) {}
+  }, [forecastRequest?.id]);
 
   const base = elementMap[material] || elementMap.H || elements[0];
   const baseScore = score(material);
@@ -5025,7 +5026,78 @@ function BehaviourFingerprint({ values }) {
 
 
 
-function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRequest }) {
+
+function elementVisualTheme(el) {
+  const families = {
+    "Alkali metal": ["from-rose-300/30", "via-orange-300/10", "to-slate-950", "Reactive metal"],
+    "Alkaline earth metal": ["from-amber-300/30", "via-yellow-300/10", "to-slate-950", "Earth metal"],
+    "Transition metal": ["from-cyan-300/30", "via-blue-300/10", "to-slate-950", "Engineered metal"],
+    "Post-transition metal": ["from-sky-300/30", "via-indigo-300/10", "to-slate-950", "Structural metal"],
+    "Metalloid": ["from-violet-300/30", "via-fuchsia-300/10", "to-slate-950", "Boundary element"],
+    "Nonmetal": ["from-emerald-300/30", "via-lime-300/10", "to-slate-950", "Reactive nonmetal"],
+    "Halogen": ["from-fuchsia-300/30", "via-rose-300/10", "to-slate-950", "Halogen system"],
+    "Noble gas": ["from-blue-300/30", "via-cyan-300/10", "to-slate-950", "Inert atmosphere"],
+    "Lanthanide": ["from-teal-300/30", "via-emerald-300/10", "to-slate-950", "Rare earth"],
+    "Actinide": ["from-lime-300/30", "via-amber-300/10", "to-slate-950", "Nuclear material"],
+    "Unknown": ["from-slate-300/25", "via-cyan-300/10", "to-slate-950", "Synthetic frontier"],
+  };
+  return families[el?.category] || ["from-cyan-300/30", "via-blue-300/10", "to-slate-950", "Material sample"];
+}
+
+function ElementVisualCard({ el, profile, crystal }) {
+  const [from, via, to, label] = elementVisualTheme(el || {});
+  const n = Number(el?.atomicNumber || 1);
+  const dots = Array.from({ length: 18 }, (_, i) => ({
+    left: 10 + ((n * (i + 3) * 17) % 78),
+    top: 12 + ((n * (i + 5) * 11) % 70),
+    size: 3 + ((n + i) % 6),
+    opacity: 0.18 + (((n + i) % 7) / 10),
+  }));
+  const lattice = Array.from({ length: 9 }, (_, i) => i);
+  return (
+    <div className={`relative min-h-[420px] overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br ${from} ${via} ${to} p-5 shadow-[0_0_80px_rgba(34,211,238,.12)]`}>
+      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px)", backgroundSize: "34px 34px" }} />
+      {dots.map((d, i) => (
+        <span key={i} className="absolute rounded-full bg-cyan-100 shadow-[0_0_18px_rgba(165,243,252,.45)]" style={{ left: `${d.left}%`, top: `${d.top}%`, width: d.size, height: d.size, opacity: d.opacity }} />
+      ))}
+      <div className="relative z-10 flex items-start justify-between gap-4">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-100">Element visual reference</div>
+          <div className="mt-4 text-8xl font-black tracking-[-.08em] text-white drop-shadow-[0_0_30px_rgba(255,255,255,.16)]">{el?.symbol}</div>
+          <div className="mt-1 text-2xl font-black text-cyan-100">{el?.name}</div>
+          <div className="mt-2 text-sm text-slate-300">{label} · {profile?.phase || phaseForElement(el?.symbol)}</div>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-right backdrop-blur-xl">
+          <div className="text-xs uppercase tracking-[.18em] text-slate-500">Atomic</div>
+          <div className="text-4xl font-black text-cyan-100">{el?.atomicNumber}</div>
+        </div>
+      </div>
+      <div className="relative z-10 mt-8 grid grid-cols-3 gap-3">
+        {lattice.map((i) => (
+          <div key={i} className="grid aspect-square place-items-center rounded-2xl border border-white/10 bg-black/25 backdrop-blur-sm">
+            <div className="h-5 w-5 rounded-full border border-cyan-200/50 bg-cyan-200/20 shadow-[0_0_22px_rgba(34,211,238,.28)]" />
+          </div>
+        ))}
+      </div>
+      <div className="relative z-10 mt-5 grid gap-3 sm:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
+          <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Sample</div>
+          <div className="mt-1 text-sm font-black text-white">{label}</div>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
+          <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Crystal</div>
+          <div className="mt-1 text-sm font-black text-white">{crystal?.short || profile?.crystal || "Material lattice"}</div>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
+          <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Use lens</div>
+          <div className="mt-1 text-sm font-black text-white">Explorer-ready</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Explorer({ selected, setSelected, setCompare, setPage, setForecastRequest }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
   const [favorites, setFavorites] = useState(() => {
@@ -5044,8 +5116,24 @@ function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRe
       return ["Al", "Ti", "Fe"];
     }
   });
-  const forecastYearOptions = [1, 5, 10, 25, 50, 100, 250, 500, 1000];
-  const [forecastYears, setForecastYears] = useState(50);
+  const forecastOptions = [1, 5, 10, 25, 50, 100, 250, 500, 1000];
+  const [forecastYears, setForecastYears] = useState(() => {
+    if (typeof window === "undefined") return 50;
+    try {
+      const stored = JSON.parse(localStorage.getItem("elementosLastForecast") || "null");
+      return Number(stored?.years) || 50;
+    } catch (_error) {
+      return 50;
+    }
+  });
+  const [forecastHistory, setForecastHistory] = useState(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      return JSON.parse(localStorage.getItem("elementosForecastHistory") || "[]");
+    } catch (_error) {
+      return [];
+    }
+  });
 
   const el = elementMap[selected] || elementMap.Al;
   const profile = getExplorerProfile(el);
@@ -5167,7 +5255,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRe
 
   const recommendedInvestigations = [
     ["Compare", `Compare ${el.name} with ${elementMap[intelligence.recommendedCompare]?.name || intelligence.recommendedCompare}`, () => openCompare([intelligence.recommendedCompare])],
-    ["Forecast", `Run ${forecastYears}-year forecast for ${el.name}`, () => launchForecast(el.symbol, forecastYears)],
+    ["Forecast", `Run ${forecastYears}-year Time Machine forecast`, () => launchForecast(el.symbol, forecastYears)],
     ["Dossier", "Generate Material Intelligence Dossier", () => generateExplorerReport()],
     ["Poster", "Create shareable material poster", () => setPage?.("viralcards")],
   ];
@@ -5200,25 +5288,19 @@ function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRe
     setPage?.("compare");
   }
 
-  function launchForecast(symbol = el.symbol, years = forecastYears) {
-    const cleanYears = Math.max(1, Math.min(1000, Number(years) || 50));
+  function launchForecast(symbol = el.symbol, years = forecastYears, environment = "Coastal air") {
+    const numericYears = Number(years) || 50;
+    const request = { id: `${symbol}-${numericYears}-${Date.now()}`, symbol, years: numericYears, environment };
     setSelected?.(symbol);
-    setTimeMachineRequest?.({
-      material: symbol,
-      years: cleanYears,
-      source: "Element Explorer",
-      requestId: Date.now(),
-    });
+    setForecastRequest?.(request);
+    const entry = { symbol, years: numericYears, at: Date.now() };
+    const nextHistory = [entry, ...forecastHistory.filter(item => !(item.symbol === symbol && Number(item.years) === numericYears))].slice(0, 8);
+    setForecastHistory(nextHistory);
     try {
-      const history = JSON.parse(localStorage.getItem("elementosForecastHistory") || "[]");
-      const entry = {
-        symbol,
-        name: elementMap[symbol]?.name || symbol,
-        years: cleanYears,
-        createdAt: new Date().toISOString(),
-      };
-      const next = [entry, ...history.filter((item) => !(item.symbol === symbol && item.years === cleanYears))].slice(0, 8);
-      localStorage.setItem("elementosForecastHistory", JSON.stringify(next));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("elementosLastForecast", JSON.stringify(entry));
+        localStorage.setItem("elementosForecastHistory", JSON.stringify(nextHistory));
+      }
     } catch (_error) {}
     setPage?.("timemachine");
   }
@@ -5257,22 +5339,16 @@ function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRe
             <h1 className="mt-3 text-5xl font-black sm:text-7xl">Element <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Explorer</span></h1>
             <p className="mt-4 max-w-5xl text-sm leading-7 text-slate-300">Search any element and open a complete material intelligence workstation: scorecard, substitutes, tradeoffs, exposure scenarios, resistance matrix, engineering snapshot, opportunities and dossier-ready notes.</p>
           </div>
-          <div className="grid min-w-[300px] gap-3 rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-            <div>
-              <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Forecast horizon</div>
-              <div className="mt-2 grid grid-cols-[1fr_auto] gap-2">
-                <select
-                  value={forecastYears}
-                  onChange={(event) => setForecastYears(Number(event.target.value))}
-                  className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-black text-white outline-none"
-                >
-                  {forecastYearOptions.map((year) => <option key={year} value={year}>{year} Year{year === 1 ? "" : "s"}</option>)}
-                </select>
-                <Button onClick={() => launchForecast(el.symbol, forecastYears)} variant="primary">Forecast</Button>
-              </div>
-              <div className="mt-2 text-xs leading-5 text-slate-400">{forecastYears}-year forecast examines corrosion, thermal stability, structural integrity and environmental resistance.</div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-3 backdrop-blur-xl">
+            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">Forecast horizon</div>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <select value={forecastYears} onChange={(e) => setForecastYears(Number(e.target.value))} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-black text-white outline-none">
+                {forecastOptions.map(year => <option key={year} value={year}>{year} Year{year === 1 ? "" : "s"}</option>)}
+              </select>
+              <Button onClick={() => launchForecast(el.symbol, forecastYears)} variant="primary">Forecast This Element</Button>
+              <Button onClick={() => openCompare([intelligence.recommendedCompare])}>Compare With {intelligence.recommendedCompare}</Button>
             </div>
-            <Button onClick={() => openCompare([intelligence.recommendedCompare])}>Compare With {intelligence.recommendedCompare}</Button>
+            <div className="mt-2 text-xs leading-5 text-slate-400">Launches Time Machine with {el.name} and a matched {forecastYears}-year horizon.</div>
           </div>
         </div>
 
@@ -5303,6 +5379,18 @@ function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRe
             <div className="mt-2 flex flex-wrap gap-2">{favorites.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-black text-amber-100">{sym}</button>)}</div>
           </div>
         </div>
+        {forecastHistory.length > 0 && (
+          <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Recent forecasts</div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {forecastHistory.map((item, index) => (
+                <button key={`${item.symbol}-${item.years}-${index}`} onClick={() => launchForecast(item.symbol, item.years)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+                  {item.symbol} · {item.years}y
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </Panel>
 
       <div className="grid gap-6 xl:grid-cols-[320px_1fr] 2xl:grid-cols-[360px_1fr]">
@@ -5321,7 +5409,8 @@ function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRe
         </Panel>
 
         <div className="space-y-6">
-          <div className="grid gap-6 2xl:grid-cols-[1.1fr_.9fr]">
+          <div className="grid gap-6 2xl:grid-cols-[.9fr_1.1fr]">
+            <ElementVisualCard el={el} profile={profile} crystal={crystal} />
             <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-slate-950">
               <Pill gold><Sparkles size={12}/> material intelligence brief</Pill>
               <div className="mt-5 flex flex-wrap items-end gap-5">
@@ -5386,13 +5475,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRe
                       <div className="text-xl font-black text-cyan-100">{item.element.name} <span className="text-slate-500">({item.symbol})</span></div>
                       <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      <div className="flex flex-wrap gap-2">
-                      <Button onClick={() => openCompare([item.symbol])}>Compare</Button>
-                      <Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button>
-                    </div>
-                      <Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button>
-                    </div>
+                    <div className="flex gap-2"><Button onClick={() => openCompare([item.symbol])}>Compare</Button><Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button></div>
                   </div>
                 ))}
               </div>
@@ -5575,7 +5658,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRe
                       <div className="text-xl font-black text-cyan-100">{item.name} <span className="text-slate-500">({item.symbol})</span></div>
                       <div className="mt-1 text-sm text-slate-400">{item.reason}</div>
                     </div>
-                    <Button onClick={() => openCompare([item.symbol])}>Compare</Button>
+                    <div className="flex gap-2"><Button onClick={() => openCompare([item.symbol])}>Compare</Button><Button onClick={() => launchForecast(item.symbol, forecastYears)}>Forecast</Button></div>
                   </div>
                 ))}
               </div>
@@ -5619,7 +5702,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setTimeMachineRe
             <div className="mt-5 flex flex-wrap gap-2">
               <Button onClick={generateExplorerReport} variant="primary">Generate Dossier</Button>
               <Button onClick={() => setPage?.("viralcards")}>Create Poster</Button>
-              <Button onClick={() => launchForecast(el.symbol, forecastYears)}>Forecast {forecastYears} Years</Button>
+              <Button onClick={() => launchForecast(el.symbol, forecastYears)}>Forecast {forecastYears} Year{forecastYears === 1 ? "" : "s"}</Button>
             </div>
           </Panel>
 
@@ -12480,12 +12563,7 @@ export default function App() {
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [upgradeReason, setUpgradeReason] = useState("");
   const [supportOpen, setSupportOpen] = useState(false);
-  const [timeMachineRequest, setTimeMachineRequest] = useState(() => ({
-    material: "Al",
-    years: 50,
-    source: "Explorer",
-    requestId: 0,
-  }));
+  const [forecastRequest, setForecastRequest] = useState(null);
 
 
   useEffect(() => {
@@ -12731,7 +12809,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       ),
       discover: <Discover setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
       publicdiscovery: <PublicDiscoveryPage discovery={publicDiscovery} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
-      timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} forecastRequest={timeMachineRequest} />,
+      timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} forecastRequest={forecastRequest} />,
       matterlab: <MatterIntelligenceLab />,
       scenario: <ScenarioBuilderSafe selected={selected} setSelected={setSelected} setPage={setPage} />,
       lab: <DiscoveryVaultV57 session={session} selected={selected} compare={compare} setPage={setPage} />,
@@ -12755,7 +12833,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
           setSelected={setSelected}
           setCompare={setCompare}
           setPage={setPage}
-          setTimeMachineRequest={setTimeMachineRequest}
+          setForecastRequest={setForecastRequest}
         />
       ),
       periodic: (
@@ -12793,7 +12871,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       calculations: <CalculationCore />,
       reports: <Reports compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} />,
     }),
-    [page, selected, compare, session, isPro, timeMachineRequest]
+    [page, selected, compare, session, isPro, forecastRequest]
   );
 
   if (publicReportRequested) {
