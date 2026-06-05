@@ -4732,8 +4732,8 @@ function explorerAvailabilityScore(el) {
   return 3.4;
 }
 
-function explorerCrystalIntelligence(el, profile) {
-  const crystal = profile.crystal || categoryCrystalStructure(el);
+function explorerCrystalIntelligence(el, profile = {}) {
+  const crystal = profile?.crystal || categoryCrystalStructure(el);
   const lower = String(crystal).toLowerCase();
   let full = crystal;
   let properties = ["Material structure affects strength, ductility and thermal response.", "Performance depends on temperature, impurities and processing route.", "Use comparison tools to evaluate practical engineering behaviour."];
@@ -5442,7 +5442,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
           <div className="max-h-[760px] overflow-auto pr-2">
             {filtered.map(e => (
               <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
-                <ElementArtwork el={e} profile={getExplorerProfile(e)} crystal={explorerCrystalIntelligence(e)} compact />
+                <ElementArtwork el={e} profile={getExplorerProfile(e)} crystal={explorerCrystalIntelligence(e, getExplorerProfile(e))} compact />
                 <div>
                   <div className="font-black text-white">{e.name}</div>
                   <div className="text-xs text-slate-500">{e.atomicNumber} · {e.category}</div>
