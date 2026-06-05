@@ -4416,6 +4416,599 @@ function OrbitalRow({ label, count }) {
 }
 
 
+
+function explorerIsMetal(el) {
+  return String(el?.category || "").toLowerCase().includes("metal") || ["Transition metal", "Lanthanide", "Actinide"].includes(el?.category);
+}
+
+function explorerUseProfile(el) {
+  const cat = String(el?.category || "");
+  const n = Number(el?.atomicNumber || 0);
+  if (el.symbol === "Al") return {
+    overview: "Aluminium is a lightweight structural metal with excellent corrosion resistance due to formation of a passive oxide layer. It is widely used where low weight, conductivity and recyclability matter.",
+    bestUses: ["Aerospace", "Construction", "Power Transmission", "Marine Components"],
+    strengths: ["Lightweight", "Corrosion resistant", "Conductive", "Recyclable"],
+    limitations: ["Lower strength than titanium", "Can react strongly with alkalis", "Lower high-temperature capability than refractory metals"],
+    industries: ["Aerospace", "Energy", "Marine", "Construction"],
+    recommendedCompare: "Ti",
+  };
+  if (el.symbol === "Ti") return {
+    overview: "Titanium is a high-value engineering metal known for strength-to-weight performance, exceptional corrosion resistance and a highly stable oxide layer in marine and biomedical environments.",
+    bestUses: ["Aerospace", "Marine", "Medical", "Geothermal Systems"],
+    strengths: ["High strength-to-weight ratio", "Corrosion resistant", "Temperature resistant", "Biocompatible"],
+    limitations: ["Higher cost", "Difficult machining", "Fabrication complexity"],
+    industries: ["Aerospace", "Marine", "Medical", "Energy"],
+    recommendedCompare: "Al",
+  };
+  if (el.symbol === "Fe") return {
+    overview: "Iron is a foundational structural metal with high industrial importance, strong alloy potential and magnetic usefulness. Its main limitation is corrosion unless protected or alloyed.",
+    bestUses: ["Construction", "Machinery", "Transport", "Magnetic Systems"],
+    strengths: ["High structural utility", "Abundant", "Magnetic", "Excellent alloy base"],
+    limitations: ["Rust risk", "High density", "Requires coatings or alloying in harsh environments"],
+    industries: ["Construction", "Automotive", "Infrastructure", "Energy"],
+    recommendedCompare: "Ti",
+  };
+  if (el.symbol === "Cu") return {
+    overview: "Copper is a premium conductive metal used for electrical transmission, thermal systems and corrosion-resistant components. Its value comes from exceptional conductivity and useful alloy behaviour.",
+    bestUses: ["Electronics", "Power Systems", "Heat Exchange", "Plumbing"],
+    strengths: ["Excellent electrical conductivity", "Excellent thermal conductivity", "Corrosion resistant", "Antimicrobial surface behaviour"],
+    limitations: ["Higher density than aluminium", "Cost-sensitive", "Can form patina in exposed environments"],
+    industries: ["Electronics", "Energy", "Construction", "Industrial Systems"],
+    recommendedCompare: "Al",
+  };
+  if (el.symbol === "Au") return {
+    overview: "Gold is a dense noble metal valued for chemical stability, corrosion resistance, electrical reliability and strategic use in electronics, finance, medical devices and advanced coatings.",
+    bestUses: ["Electronics", "Precision Contacts", "Medical", "Investment"],
+    strengths: ["Excellent corrosion resistance", "Reliable conductor", "Noble metal stability", "High strategic value"],
+    limitations: ["Extreme cost", "Soft in pure form", "Supply and ethical sourcing concerns"],
+    industries: ["Electronics", "Medical", "Finance", "Aerospace"],
+    recommendedCompare: "Cu",
+  };
+  if (el.symbol === "U") return {
+    overview: "Uranium is a dense actinide with major strategic importance in nuclear energy, isotope science and advanced research. Its value comes from nuclear behaviour rather than conventional structural use.",
+    bestUses: ["Nuclear Energy", "Research", "Defense-regulated contexts", "Isotope Science"],
+    strengths: ["Very high energy density", "Strategic material", "Important isotope behaviour", "Dense metal"],
+    limitations: ["Radioactive", "Strictly regulated", "Complex refining and safety requirements"],
+    industries: ["Energy", "Research", "Government", "Nuclear Engineering"],
+    recommendedCompare: "Th",
+  };
+  if (cat === "Noble gas") return {
+    overview: `${el.name} is a noble gas with very low chemical reactivity. It is useful in controlled atmospheres, lighting, cryogenic or specialist technical environments depending on the element.`,
+    bestUses: ["Controlled Atmospheres", "Lighting", "Scientific Instruments", "Cryogenic Systems"],
+    strengths: ["Chemically inert", "Stable", "Useful protective atmosphere", "Specialist optical behaviour"],
+    limitations: ["Limited structural use", "Gas handling required", "Availability varies"],
+    industries: ["Research", "Electronics", "Lighting", "Industrial Processing"],
+    recommendedCompare: "Ar",
+  };
+  if (cat === "Halogen") return {
+    overview: `${el.name} is a reactive halogen. It is chemically powerful, useful in compounds and industrial chemistry, but requires careful handling because of strong reactivity.`,
+    bestUses: ["Chemical Processing", "Disinfection", "Polymers", "Pharmaceutical Chemistry"],
+    strengths: ["High chemical activity", "Forms important salts", "Industrial compound utility", "Strong reaction signature"],
+    limitations: ["Handling risk", "Corrosive chemistry", "Limited structural material use"],
+    industries: ["Chemical", "Medical", "Water Treatment", "Materials Processing"],
+    recommendedCompare: "Cl",
+  };
+  if (cat === "Alkali metal") return {
+    overview: `${el.name} is a highly reactive alkali metal with strong electron-donation behaviour. It is valuable in batteries, specialty chemistry or research but reacts strongly with water and air.`,
+    bestUses: ["Battery Chemistry", "Research", "Specialty Reagents", "Energy Systems"],
+    strengths: ["High reactivity", "Low density trend", "Strong electrochemical behaviour", "Useful compound chemistry"],
+    limitations: ["Very reactive", "Air and water sensitivity", "Special storage required"],
+    industries: ["Energy", "Research", "Chemical", "Battery Materials"],
+    recommendedCompare: "Na",
+  };
+  if (cat === "Alkaline earth metal") return {
+    overview: `${el.name} is an alkaline earth metal with important compound chemistry, structural or biological relevance depending on the element. It usually forms stable +2 compounds.`,
+    bestUses: ["Alloys", "Minerals", "Chemical Processing", "Structural or biological systems"],
+    strengths: ["Useful +2 chemistry", "Common mineral forms", "Industrial compound utility", "Moderate reactivity"],
+    limitations: ["Oxidation sensitivity", "Reactivity varies strongly by element", "Often used as compounds rather than pure metal"],
+    industries: ["Construction", "Chemical", "Energy", "Materials"],
+    recommendedCompare: "Mg",
+  };
+  if (cat === "Lanthanide") return {
+    overview: `${el.name} is a lanthanide rare-earth element used in magnets, optics, catalysts, polishing, lasers or high-performance electronics depending on its electronic behaviour.`,
+    bestUses: ["Magnets", "Optics", "Catalysts", "Advanced Electronics"],
+    strengths: ["Specialized electronic behaviour", "High-value compounds", "Strategic material", "Useful in precision technologies"],
+    limitations: ["Separation difficulty", "Supply concentration", "Processing complexity"],
+    industries: ["Electronics", "Energy", "Defense", "Advanced Materials"],
+    recommendedCompare: "Nd",
+  };
+  if (cat === "Actinide") return {
+    overview: `${el.name} is an actinide element with nuclear, research or specialized strategic relevance. Many actinides are radioactive and require controlled handling.`,
+    bestUses: ["Nuclear Research", "Energy Science", "Isotope Studies", "Strategic Materials"],
+    strengths: ["Important nuclear behaviour", "High density", "Research value", "Complex isotope chemistry"],
+    limitations: ["Radioactivity", "Regulatory controls", "Complex handling", "Limited general commercial use"],
+    industries: ["Research", "Energy", "Government", "Nuclear Science"],
+    recommendedCompare: "U",
+  };
+  if (cat === "Metalloid") return {
+    overview: `${el.name} is a metalloid with mixed metallic and nonmetallic behaviour. It is useful where semiconducting, glass, alloying or chemical boundary properties matter.`,
+    bestUses: ["Semiconductors", "Glass/Ceramics", "Alloys", "Chemical Processing"],
+    strengths: ["Boundary electronic behaviour", "Useful compounds", "Technology relevance", "Controlled conductivity"],
+    limitations: ["Brittleness common", "Toxicity varies", "Often context-dependent"],
+    industries: ["Electronics", "Materials", "Chemical", "Energy"],
+    recommendedCompare: "Si",
+  };
+  if (cat === "Nonmetal") return {
+    overview: `${el.name} is a nonmetal with important molecular, biological, atmospheric or compound behaviour. It is usually most valuable through chemical systems rather than pure structural use.`,
+    bestUses: ["Chemistry", "Life Science", "Atmospheric Systems", "Energy Materials"],
+    strengths: ["Important compound chemistry", "High scientific relevance", "Often essential to life or environment", "Strong molecular behaviour"],
+    limitations: ["Limited structural use", "Phase and handling vary", "Reactivity can be high"],
+    industries: ["Research", "Chemical", "Energy", "Environmental"],
+    recommendedCompare: "C",
+  };
+  if (explorerIsMetal(el)) return {
+    overview: `${el.name} is a metallic element with structural, conductive, thermal or alloy relevance. Its material value depends on strength, corrosion behaviour, availability and processing cost.`,
+    bestUses: ["Alloys", "Industrial Components", "Energy Systems", "Advanced Materials"],
+    strengths: ["Metallic bonding", "Useful alloy behaviour", "Engineering relevance", "Thermal or electrical utility"],
+    limitations: ["Corrosion and oxidation depend on environment", "Processing cost varies", "Performance depends on alloy state"],
+    industries: ["Industrial", "Energy", "Transport", "Materials Engineering"],
+    recommendedCompare: "Al",
+  };
+  return {
+    overview: `${el.name} has a specialized ElementOS material profile based on periodic position, category behaviour and generated material-intelligence modelling.`,
+    bestUses: ["Research", "Specialty Materials", "Chemical Systems", "Reference Analysis"],
+    strengths: ["Scientific relevance", "Periodic behaviour signature", "Compound potential", "Comparative material value"],
+    limitations: ["Limited bulk use", "Data confidence varies", "Specialized handling may be required"],
+    industries: ["Research", "Materials", "Chemical", "Education"],
+    recommendedCompare: "Al",
+  };
+}
+
+function explorerIndustrySuitability(el, profile, s) {
+  const use = explorerUseProfile(el);
+  const base = {
+    Aerospace: 35, Marine: 35, Construction: 35, Energy: 35, Medical: 25, Electronics: 35, Automotive: 35
+  };
+  const cat = el.category;
+  if (explorerIsMetal(el)) {
+    base.Aerospace += 20 + s.stability * 8;
+    base.Marine += 14 + s.pressure * 7;
+    base.Construction += 25 + s.rarity * 3;
+    base.Energy += 15 + s.thermal * 7;
+    base.Automotive += 20 + s.conductivity * 5;
+    base.Electronics += 12 + s.conductivity * 8;
+    base.Medical += 10 + s.stability * 4;
+  }
+  if (el.symbol === "Al") Object.assign(base, { Aerospace: 94, Marine: 88, Construction: 96, Energy: 82, Medical: 41, Electronics: 74, Automotive: 90 });
+  if (el.symbol === "Ti") Object.assign(base, { Aerospace: 96, Marine: 94, Construction: 72, Energy: 88, Medical: 91, Electronics: 54, Automotive: 84 });
+  if (el.symbol === "Cu") Object.assign(base, { Aerospace: 56, Marine: 74, Construction: 78, Energy: 94, Medical: 46, Electronics: 98, Automotive: 82 });
+  if (el.symbol === "Fe") Object.assign(base, { Aerospace: 58, Marine: 51, Construction: 96, Energy: 86, Medical: 32, Electronics: 44, Automotive: 95 });
+  if (el.symbol === "Au") Object.assign(base, { Aerospace: 64, Marine: 70, Construction: 20, Energy: 52, Medical: 78, Electronics: 94, Automotive: 28 });
+  if (el.symbol === "U") Object.assign(base, { Aerospace: 18, Marine: 20, Construction: 12, Energy: 96, Medical: 28, Electronics: 20, Automotive: 10 });
+  return Object.entries(base).map(([label, value]) => [label, Math.max(8, Math.min(99, Math.round(value)))]);
+}
+
+function explorerCompoundObjects(el, profile) {
+  const raw = Array.isArray(profile.compounds) ? profile.compounds : [];
+  const enriched = raw.map((item, index) => {
+    if (Array.isArray(item)) {
+      const formula = item[0] || `${el.symbol} compound`;
+      const name = item[1] || `${el.name} compound`;
+      return {
+        formula,
+        name,
+        uses: compoundUseFor(formula, name, el),
+        importance: compoundImportanceFor(formula, name, el, index),
+      };
+    }
+    return {
+      formula: item.formula || `${el.symbol} compound`,
+      name: item.name || `${el.name} compound`,
+      uses: item.uses || compoundUseFor(item.formula, item.name, el),
+      importance: item.importance || compoundImportanceFor(item.formula, item.name, el, index),
+    };
+  });
+  if (enriched.length >= 4) return enriched.slice(0, 6);
+  return [
+    ...enriched,
+    { formula: `${el.symbol}O`, name: `${el.name} Oxide`, uses: "Surface chemistry, ceramics or oxidation studies", importance: "Shows oxygen bonding and corrosion/passivation behaviour." },
+    { formula: `${el.symbol}Cl`, name: `${el.name} Chloride`, uses: "Chemical synthesis and salt chemistry", importance: "Useful for understanding acid/chloride encounter behaviour." },
+    { formula: `${el.symbol}(OH)x`, name: `${el.name} Hydroxide`, uses: "Water chemistry and precipitation behaviour", importance: "Shows how the element behaves in alkaline conditions." },
+    { formula: `${el.symbol} alloy`, name: `${el.name} Alloy System`, uses: "Engineering materials and comparison studies", importance: "Connects pure element behaviour to real-world material use." },
+  ].slice(0, 6);
+}
+
+function compoundUseFor(formula = "", name = "", el = {}) {
+  const value = `${formula} ${name}`.toLowerCase();
+  if (value.includes("oxide")) return "Ceramics, coatings, passivation studies";
+  if (value.includes("hydroxide")) return "Water treatment, precipitation, alkaline chemistry";
+  if (value.includes("chloride")) return "Catalysis, synthesis, chloride exposure studies";
+  if (value.includes("sulfate")) return "Industrial chemistry, solution chemistry";
+  if (value.includes("nitrate")) return "Laboratory reagent, oxidation chemistry";
+  if (value.includes("alloy")) return "Engineering materials, strength and durability tuning";
+  if (value.includes("nitride")) return "Hard coatings, thermal and wear resistance";
+  return explorerIsMetal(el) ? "Alloying, coatings or industrial chemistry" : "Chemical reference, research and compound behaviour";
+}
+
+function compoundImportanceFor(formula = "", name = "", el = {}, index = 0) {
+  const value = `${formula} ${name}`.toLowerCase();
+  if (value.includes("oxide")) return "Connects directly to corrosion, passivation and high-temperature surface behaviour.";
+  if (value.includes("hydroxide")) return "Reveals alkaline response and water-system chemistry.";
+  if (value.includes("chloride")) return "Important for acid exposure, salt environments and industrial reaction pathways.";
+  if (value.includes("alloy")) return "Shows how the element becomes useful in practical engineering systems.";
+  return [
+    "Useful reference compound for behaviour modelling.",
+    "Helps explain solution, surface or industrial chemistry.",
+    "Connects elemental identity to real-world applications.",
+  ][index % 3];
+}
+
+function explorerEncounters(el, profile, s) {
+  const metal = explorerIsMetal(el);
+  const passivation = profile?.fingerprint?.passivation || s.stability;
+  const acidLevel = profile?.fingerprint?.acid || s.pressure;
+  const alkaliLevel = profile?.fingerprint?.alkali || s.diffusion;
+  const neutralRisk = metal ? "Low" : "Context dependent";
+  return [
+    {
+      title: "Neutral Water",
+      reagent: "H₂O",
+      visualType: "water",
+      reactionSpeed: passivation > 4 ? "Very Low" : "Low",
+      gasProduction: "None",
+      corrosionRisk: neutralRisk,
+      visualChange: passivation > 4 ? "None / stable surface" : "Subtle surface change",
+      temperatureImpact: "Low at ambient conditions",
+      suitability: passivation > 3.5 ? "Excellent" : "Moderate",
+      flow: [el.name, "Neutral Water", passivation > 4 ? "Protected surface / minimal products" : "Slow surface interaction"],
+    },
+    {
+      title: "Hydrochloric Acid",
+      reagent: "HCl",
+      visualType: "acid",
+      reactionSpeed: acidLevel > 3.8 ? "High" : acidLevel > 2.4 ? "Moderate" : "Low",
+      gasProduction: metal ? (acidLevel > 3 ? "High hydrogen potential" : "Limited hydrogen potential") : "Compound dependent",
+      corrosionRisk: acidLevel > 3.4 ? "High" : "Moderate",
+      visualChange: acidLevel > 3 ? "Bubbling / surface attack" : "Limited visible change",
+      temperatureImpact: "Warmer acid usually increases reaction intensity",
+      suitability: acidLevel > 3.2 ? "Poor" : "Watch",
+      flow: [el.name, "Hydrochloric Acid", `${el.name} chloride + hydrogen / solution products`],
+    },
+    {
+      title: "Sodium Hydroxide",
+      reagent: "NaOH",
+      visualType: "alkali",
+      reactionSpeed: alkaliLevel > 3.8 ? "High" : alkaliLevel > 2.5 ? "Moderate" : "Low",
+      gasProduction: metal && alkaliLevel > 3 ? "High hydrogen evolution possible" : "Low / condition dependent",
+      corrosionRisk: alkaliLevel > 3.2 ? "High surface attack" : "Low to moderate",
+      visualChange: alkaliLevel > 3 ? "Bubbling / surface darkening" : "Small or delayed change",
+      temperatureImpact: "Heat can accelerate alkaline attack",
+      suitability: alkaliLevel > 3.2 ? "Poor" : "Moderate",
+      flow: [el.name, "Sodium Hydroxide", `${el.name} hydroxide/aluminate-style products`],
+    },
+    {
+      title: "Salt Water",
+      reagent: "NaCl + H₂O",
+      visualType: "water",
+      reactionSpeed: "Slow but persistent",
+      gasProduction: "None",
+      corrosionRisk: passivation > 4 ? "Low to moderate pitting risk" : "Moderate to high corrosion risk",
+      visualChange: "Surface staining or pitting risk over time",
+      temperatureImpact: "Warm salt water increases corrosion stress",
+      suitability: passivation > 4 ? "High marine suitability" : "Needs protection",
+      flow: [el.name, "Chloride Solution", "Pitting risk / oxide stress / salt products"],
+    },
+    {
+      title: "Heat Exposure",
+      reagent: "Thermal load",
+      visualType: "gradient",
+      reactionSpeed: "Temperature controlled",
+      gasProduction: "None unless decomposition/oxidation gases occur",
+      corrosionRisk: "Oxidation and expansion become dominant",
+      visualChange: "Oxide colour, scaling or structural change",
+      temperatureImpact: "Primary variable",
+      suitability: s.thermal > 3.7 ? "Strong" : "Use caution",
+      flow: [el.name, "Heat + Oxygen", `${el.name} oxide / thermal expansion response`],
+    },
+  ];
+}
+
+function explorerReactionFlows(el, profile) {
+  const reactions = Array.isArray(profile.reactions) ? profile.reactions.slice(0, 4) : [];
+  const flows = reactions.map((r) => {
+    if (Array.isArray(r)) {
+      const label = r[0] || "Reaction";
+      const equation = r[1] || `${el.symbol} → products`;
+      return {
+        title: label,
+        steps: [el.name, label, equation.replace("→", "→")],
+        detail: r[2] || "Reaction pathway explains the observed experimental encounter.",
+        intensity: r[3] || "Context dependent",
+      };
+    }
+    return r;
+  });
+  if (flows.length >= 3) return flows;
+  return [
+    ...flows,
+    { title: "Oxidation", steps: [el.name, "Oxygen", `${el.name} oxide / surface layer`], detail: "Oxide behaviour controls corrosion, passivation and high-temperature response.", intensity: "Surface dependent" },
+    { title: "Acid encounter", steps: [el.name, "Acid", `${el.name} salt + possible hydrogen`], detail: "Acid conditions test surface stability and dissolution behaviour.", intensity: "Environment dependent" },
+    { title: "Alkali encounter", steps: [el.name, "Alkali", `${el.name} hydroxide / complex products`], detail: "Alkaline conditions reveal amphoteric or surface-attack behaviour.", intensity: "Environment dependent" },
+  ].slice(0, 5);
+}
+
+function explorerMaterialFingerprint(el, profile, s) {
+  const metal = explorerIsMetal(el);
+  const cost = explorerCostIntelligence(el, profile).relativeCost;
+  const costScore = cost === "Low" ? 4.6 : cost === "Medium" ? 3.6 : cost === "High" ? 2.4 : 1.2;
+  const weightScore = (() => {
+    const d = parseFloat(String(profile.density || "").replace(/[^\d.]/g, ""));
+    if (!d) return 3;
+    if (d < 2) return 4.8;
+    if (d < 5) return 4.1;
+    if (d < 9) return 2.8;
+    return 1.8;
+  })();
+  return [
+    ["Strength", Math.min(5, 2.2 + s.stability * 0.62)],
+    ["Weight", weightScore],
+    ["Corrosion", Math.min(5, profile?.fingerprint?.passivation || s.stability)],
+    ["Conductivity", Math.min(5, s.conductivity)],
+    ["Thermal", Math.min(5, s.thermal)],
+    ["Cost", costScore],
+    ["Availability", explorerAvailabilityScore(el)],
+  ];
+}
+
+function explorerAvailabilityScore(el) {
+  if (["Al","Fe","C","O","Si","Ca","Na","Mg","K","Cu","Zn"].includes(el.symbol)) return 4.7;
+  if (["Au","Pt","Pd","Rh","Ir","Os","Re"].includes(el.symbol)) return 1.6;
+  if (el.atomicNumber > 92) return 0.7;
+  if (["Li","Co","Ni","Nd","Dy","Tb","U"].includes(el.symbol)) return 2.5;
+  return 3.4;
+}
+
+function explorerCrystalIntelligence(el, profile) {
+  const crystal = profile.crystal || categoryCrystalStructure(el);
+  const lower = String(crystal).toLowerCase();
+  let full = crystal;
+  let properties = ["Material structure affects strength, ductility and thermal response.", "Performance depends on temperature, impurities and processing route.", "Use comparison tools to evaluate practical engineering behaviour."];
+  if (lower.includes("hcp") || lower.includes("hexagonal")) {
+    full = "Hexagonal Close Packed";
+    properties = ["High strength potential", "Good fatigue resistance", "Excellent temperature stability"];
+  } else if (lower.includes("fcc") || lower.includes("face")) {
+    full = "Face Centered Cubic";
+    properties = ["Excellent formability", "Good ductility", "Strong corrosion performance"];
+  } else if (lower.includes("bcc") || lower.includes("body")) {
+    full = "Body Centered Cubic";
+    properties = ["Strong structural behaviour", "Useful high-temperature phase behaviour", "Important alloy engineering pathway"];
+  } else if (lower.includes("cubic")) {
+    full = "Cubic / specialist lattice";
+    properties = ["Symmetric lattice behaviour", "Useful electronic or structural interpretation", "Strong reference value for comparison"];
+  }
+  return { short: crystal, full, properties };
+}
+
+function explorerMiningProduction(el, profile) {
+  const cat = el.category;
+  if (["O","N","H","He","Ne","Ar","Kr","Xe","Rn","F","Cl"].includes(el.symbol)) {
+    return {
+      abundance: el.symbol === "O" || el.symbol === "N" ? "Very High" : "Atmospheric / specialist",
+      miningDifficulty: "Extraction/process dependent",
+      refiningDifficulty: "Separation technology required",
+      recyclability: "Capture/reuse depends on gas system",
+      producers: ["Air separation plants", "Industrial gas suppliers", "Regional chemical producers", "Research suppliers"],
+    };
+  }
+  if (el.atomicNumber > 92) {
+    return {
+      abundance: "Synthetic / extremely limited",
+      miningDifficulty: "Not mined commercially",
+      refiningDifficulty: "Advanced nuclear chemistry",
+      recyclability: "Specialist laboratory recovery only",
+      producers: ["Research laboratories", "National labs", "Nuclear research facilities", "Regulated suppliers"],
+    };
+  }
+  if (el.symbol === "Al") return { abundance: "High", miningDifficulty: "Medium", refiningDifficulty: "High energy refining", recyclability: "Excellent", producers: ["Australia", "China", "Brazil", "Canada"] };
+  if (el.symbol === "Ti") return { abundance: "Medium", miningDifficulty: "Medium", refiningDifficulty: "Difficult", recyclability: "Good", producers: ["Australia", "South Africa", "Canada", "China"] };
+  if (el.symbol === "Fe") return { abundance: "Very High", miningDifficulty: "Low to Medium", refiningDifficulty: "Mature industrial process", recyclability: "Excellent", producers: ["Australia", "Brazil", "China", "India"] };
+  if (el.symbol === "Cu") return { abundance: "Medium", miningDifficulty: "Medium", refiningDifficulty: "Mature but energy intensive", recyclability: "Excellent", producers: ["Chile", "Peru", "China", "United States"] };
+  if (el.symbol === "Au") return { abundance: "Low", miningDifficulty: "High", refiningDifficulty: "High", recyclability: "Excellent", producers: ["China", "Australia", "Russia", "Canada"] };
+  if (el.symbol === "U") return { abundance: "Low to Medium", miningDifficulty: "High / regulated", refiningDifficulty: "Regulated nuclear fuel cycle", recyclability: "Specialist", producers: ["Kazakhstan", "Canada", "Australia", "Namibia"] };
+  return {
+    abundance: explorerIsMetal(el) ? (el.atomicNumber < 40 ? "Medium to High" : "Medium to Low") : "Variable",
+    miningDifficulty: explorerIsMetal(el) ? "Medium" : "Source dependent",
+    refiningDifficulty: el.category === "Lanthanide" ? "High separation difficulty" : explorerIsMetal(el) ? "Medium to High" : "Process dependent",
+    recyclability: explorerIsMetal(el) ? "Good where collection streams exist" : "Context dependent",
+    producers: explorerIsMetal(el) ? ["China", "Australia", "Canada", "United States"] : ["Regional producers", "Chemical suppliers", "Research suppliers", "Industrial processors"],
+  };
+}
+
+function explorerCostIntelligence(el, profile) {
+  let relativeCost = "Medium";
+  if (["Al","Fe","C","O","Si","Ca","Na","Mg","S","Cl"].includes(el.symbol)) relativeCost = "Low";
+  if (["Cu","Ni","Zn","Ti","Li","Co","W","Mo","Zr"].includes(el.symbol)) relativeCost = "Medium";
+  if (["Ag","Pt","Pd","Au","Rh","Ir","Os","Re","Sc","Dy","Tb"].includes(el.symbol)) relativeCost = "Extreme";
+  if (el.atomicNumber > 92) relativeCost = "Extreme";
+  if (el.symbol === "Ti") relativeCost = "High";
+  const availability = explorerAvailabilityScore(el) > 4 ? "High" : explorerAvailabilityScore(el) > 2.7 ? "Medium" : "Limited";
+  const supplyStability = relativeCost === "Low" ? "High" : relativeCost === "Medium" ? "Medium" : "Strategic / volatile";
+  const strategic = ["Li","Co","Ni","Cu","U","Ti","W","Nd","Dy","Tb","Ga","Ge"].includes(el.symbol) ? "High" : relativeCost === "Extreme" ? "High" : "Medium";
+  return { relativeCost, availability, supplyStability, strategicImportance: strategic };
+}
+
+function explorerIsotopeIntelligence(el) {
+  if (el.symbol === "U") return {
+    stable: "No stable isotopes",
+    radioactive: "U-234, U-235, U-238",
+    halfLife: "U-238 ~4.5 billion years; U-235 ~704 million years",
+    applications: ["Nuclear fuel cycle", "Research", "Geochronology", "Regulated strategic uses"],
+    featured: [["U-235", "Fissile fuel"], ["U-238", "Breeding material / geochronology"]],
+  };
+  if (el.symbol === "C") return {
+    stable: "C-12, C-13",
+    radioactive: "C-14",
+    halfLife: "C-14 ~5,730 years",
+    applications: ["Radiocarbon dating", "Biochemistry", "Materials science"],
+    featured: [["C-12", "Reference isotope"], ["C-14", "Dating isotope"]],
+  };
+  if (el.symbol === "H") return {
+    stable: "¹H, ²H",
+    radioactive: "³H",
+    halfLife: "Tritium ~12.3 years",
+    applications: ["Water tracing", "Fusion research", "NMR reference"],
+    featured: [["Deuterium", "Heavy water / research"], ["Tritium", "Specialist regulated isotope"]],
+  };
+  if (el.atomicNumber > 83) return {
+    stable: "None or limited depending on isotope",
+    radioactive: "Radioactive isotope family",
+    halfLife: "Ranges from seconds to geologic timescales depending on isotope",
+    applications: ["Nuclear science", "Radiochemistry", "Specialist research"],
+    featured: [[`${el.symbol} isotope`, "Radiochemical research"], [`${el.symbol} isotope family`, "Half-life analysis"]],
+  };
+  return {
+    stable: "One or more stable/naturally occurring isotopes depending on element",
+    radioactive: "Radioisotopes exist for research or tracing",
+    halfLife: "Radioisotope half-lives vary by isotope",
+    applications: ["Materials tracing", "Scientific measurement", "Industrial or medical research where applicable"],
+    featured: [[`${el.symbol} stable isotope`, "Natural abundance reference"], [`${el.symbol} radioisotope`, "Specialist research use"]],
+  };
+}
+
+function explorerTimeline(el) {
+  if (el.symbol === "Al") return [["1825", "Discovered"], ["1886", "Commercial extraction"], ["1950", "Aerospace adoption"], ["Today", "Global industrial material"]];
+  if (el.symbol === "Ti") return [["1791", "Discovered"], ["1910", "Pure titanium isolated"], ["1950", "Aerospace expansion"], ["Today", "Marine, medical and energy material"]];
+  if (el.symbol === "Fe") return [["Ancient", "Human use begins"], ["Industrial era", "Steel transforms infrastructure"], ["20th century", "Mass manufacturing"], ["Today", "Global structural backbone"]];
+  if (el.symbol === "Cu") return [["Ancient", "Early metal use"], ["Bronze Age", "Alloy revolution"], ["Electrical age", "Wiring and power systems"], ["Today", "Electrification-critical metal"]];
+  if (el.atomicNumber > 92) return [["Modern era", "Laboratory synthesis"], ["Nuclear age", "Advanced isotope research"], ["Today", "Specialist regulated research"], ["Future", "High-control scientific applications"]];
+  return [["Discovery", "Historical identification"], ["Industrial use", "Material or compound adoption"], ["Modern science", "Reference and application expansion"], ["Today", "ElementOS comparison and simulation profile"]];
+}
+
+function explorerSimilarWithReasons(el, similar = []) {
+  return (similar.length ? similar : similarElementsFor(el.symbol)).slice(0, 5).map((sym, index) => {
+    const other = elementMap[sym] || { symbol: sym, name: sym, category: "Reference" };
+    let reason = "Behavioural similarity";
+    if (other.category === el.category) reason = "Category similarity";
+    if (Math.abs((other.atomicNumber || 0) - el.atomicNumber) <= 4) reason = "Atomic neighbourhood";
+    if (index === 0) reason = other.category === el.category ? "Group/category similarity" : "Closest behaviour neighbour";
+    if (explorerIsMetal(el) && explorerIsMetal(other)) reason = index % 2 ? "Engineering substitute" : reason;
+    if (el.symbol === "Al" && sym === "Ti") reason = "Structural substitute";
+    if (el.symbol === "Al" && sym === "Mg") reason = "Lightweight engineering substitute";
+    if (el.symbol === "Al" && sym === "Ga") reason = "Group similarity";
+    if (el.symbol === "Al" && sym === "In") reason = "Electronic similarity";
+    return { ...other, reason };
+  });
+}
+
+function explorerRelatedComparisons(el, related = []) {
+  return (related.length ? related : relatedComparisonsFor(el.symbol)).slice(0, 5).map((sym) => {
+    const other = elementMap[sym] || { symbol: sym, name: sym };
+    const why = [];
+    if (explorerIsMetal(el) && explorerIsMetal(other)) why.push("Weight vs strength", "Corrosion and durability", "Cost difference");
+    if (["Al","Cu"].includes(el.symbol) || ["Al","Cu"].includes(sym)) why.push("Conductivity comparison");
+    if (["Ti","Al"].includes(el.symbol) || ["Ti","Al"].includes(sym)) why.push("Marine durability", "High temperature performance");
+    if (!why.length) why.push("Category behaviour", "Reactivity difference", "Application fit");
+    return { symbol: sym, name: other.name || sym, title: `${el.name} vs ${other.name || sym}`, why: Array.from(new Set(why)).slice(0, 4) };
+  });
+}
+
+function ExplorerProgressBar({ label, value }) {
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3 text-xs font-bold">
+        <span className="text-slate-300">{label}</span>
+        <span className="text-cyan-100">{value}%</span>
+      </div>
+      <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-900">
+        <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-amber-200 shadow-[0_0_18px_rgba(34,211,238,.35)]" style={{ width: `${value}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function ExplorerMiniStat({ label, value }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
+      <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">{label}</div>
+      <div className="mt-1 text-sm font-black text-white">{value}</div>
+    </div>
+  );
+}
+
+function ExplorerFlowCard({ flow }) {
+  const steps = flow.steps || [];
+  return (
+    <div className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.055] p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="text-sm font-black text-cyan-100">{flow.title}</div>
+        <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] text-slate-300">{flow.intensity}</span>
+      </div>
+      <div className="mt-4 flex flex-col items-center gap-2 text-center">
+        {steps.map((step, index) => (
+          <React.Fragment key={`${flow.title}-${step}-${index}`}>
+            <div className="w-full rounded-2xl border border-white/10 bg-black/25 px-3 py-2 text-sm font-bold text-white">{step}</div>
+            {index < steps.length - 1 && <ChevronRight className="rotate-90 text-cyan-200" size={18} />}
+          </React.Fragment>
+        ))}
+      </div>
+      <p className="mt-4 text-xs leading-5 text-slate-400">{flow.detail}</p>
+    </div>
+  );
+}
+
+function ExplorerEncounterCard({ encounter }) {
+  const rows = [
+    ["Reaction Speed", encounter.reactionSpeed],
+    ["Gas Production", encounter.gasProduction],
+    ["Corrosion Risk", encounter.corrosionRisk],
+    ["Visual Change", encounter.visualChange],
+    ["Temperature Impact", encounter.temperatureImpact],
+    ["Suitability", encounter.suitability],
+  ];
+  return (
+    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4">
+      <ReactionVisual type={encounter.visualType} />
+      <div className="mt-4 flex items-start justify-between gap-3">
+        <div>
+          <div className="text-lg font-black text-white">{encounter.title}</div>
+          <div className="mt-1 text-xs font-bold text-cyan-100">{encounter.reagent}</div>
+        </div>
+        <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] text-cyan-100">{encounter.suitability}</span>
+      </div>
+      <div className="mt-4 grid gap-2">
+        {rows.map(([label, value]) => (
+          <div key={label} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs">
+            <span className="font-bold text-slate-400">{label}</span>
+            <span className="text-right font-black text-slate-100">{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ExplorerFingerprint2({ values }) {
+  return (
+    <div className="rounded-[1.5rem] border border-cyan-300/15 bg-black/25 p-4">
+      <div className="flex items-center justify-between"><h3 className="text-lg font-black">Material Fingerprint 2.0</h3><span className="text-xs text-slate-500">engineer-readable</span></div>
+      <div className="mt-4 space-y-3">
+        {values.map(([label, raw]) => <ExplorerProgressBar key={label} label={label} value={Math.max(8, Math.min(99, Math.round((raw / 5) * 100)))} />)}
+      </div>
+    </div>
+  );
+}
+
+function ResearchNotesCard({ el, profile, intelligence }) {
+  return (
+    <Panel>
+      <Pill gold><BookOpen size={12}/> subscriber research notes</Pill>
+      <h2 className="mt-3 text-4xl font-black">Research Notes</h2>
+      <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">{profile.summary || intelligence.overview}</p>
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        <div className="rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.06] p-4">
+          <div className="text-xs font-black uppercase tracking-[.2em] text-emerald-200">Recommended For</div>
+          <div className="mt-3 grid gap-2">{intelligence.bestUses.slice(0, 5).map(x => <div key={x} className="text-sm font-bold text-emerald-50">✓ {x}</div>)}</div>
+        </div>
+        <div className="rounded-[1.5rem] border border-amber-300/15 bg-amber-300/[0.06] p-4">
+          <div className="text-xs font-black uppercase tracking-[.2em] text-amber-200">Use Caution</div>
+          <div className="mt-3 grid gap-2">{intelligence.limitations.slice(0, 5).map(x => <div key={x} className="text-sm font-bold text-amber-50">✕ {x}</div>)}</div>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+
 function ExplorerInfoTip({ title, children }) {
   return (
     <span className="group relative inline-flex items-center gap-1 align-middle">
@@ -4458,183 +5051,416 @@ function BehaviourFingerprint({ values }) {
   );
 }
 
-function Explorer({ selected, setSelected, setCompare }) {
+
+function Explorer({ selected, setSelected, setCompare, setPage }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
   const [tab, setTab] = useState("Overview");
-  const filtered = elements.filter(e => (cat === "All" || e.category === cat) && `${e.symbol} ${e.name} ${e.category}`.toLowerCase().includes(q.toLowerCase())).slice(0, 80);
+  const [favorites, setFavorites] = useState(() => {
+    if (typeof window === "undefined") return ["Al", "Ti", "Cu", "Fe"];
+    try {
+      return JSON.parse(localStorage.getItem("elementosExplorerFavorites") || '["Al","Ti","Cu","Fe"]');
+    } catch (_error) {
+      return ["Al", "Ti", "Cu", "Fe"];
+    }
+  });
+  const [recent, setRecent] = useState(() => {
+    if (typeof window === "undefined") return ["Al", "Ti", "Fe"];
+    try {
+      return JSON.parse(localStorage.getItem("elementosExplorerRecent") || '["Al","Ti","Fe"]');
+    } catch (_error) {
+      return ["Al", "Ti", "Fe"];
+    }
+  });
+
   const el = elementMap[selected] || elementMap.Al;
   const profile = getExplorerProfile(el);
   const s = score(el.symbol);
+  const intelligence = explorerUseProfile(el);
+  const industrySuitability = explorerIndustrySuitability(el, profile, s);
+  const compounds = explorerCompoundObjects(el, profile);
+  const encounters = explorerEncounters(el, profile, s);
+  const flows = explorerReactionFlows(el, profile);
+  const fingerprint2 = explorerMaterialFingerprint(el, profile, s);
+  const crystal = explorerCrystalIntelligence(el, profile);
+  const production = explorerMiningProduction(el, profile);
+  const cost = explorerCostIntelligence(el, profile);
+  const isotope = explorerIsotopeIntelligence(el);
+  const timeline = explorerTimeline(el);
+  const similar = explorerSimilarWithReasons(el, profile.similar);
+  const comparisons = explorerRelatedComparisons(el, profile.comparisons);
   const tabs = ["Overview", "Experiments", "Scores & Data", "Charts", "References"];
-  const quickFacts = [["Atomic Mass", profile.atomicMass], ["Group", profile.group], ["Period", profile.period], ["Block", profile.block], ["Phase", profile.phase || phaseForElement(el.symbol)], ["Density", profile.density], ["Melting Point", profile.melting], ["Boiling Point", profile.boiling], ["Electronegativity", profile.electronegativity], ["Oxidation States", profile.oxidation], ["Crystal Structure", profile.crystal || "Element-dependent"], ["Conductivity", profile.conductivityType || "Material dependent"], ["Thermal Expansion", profile.thermalExpansion || "Context dependent"], ["Corrosion Profile", profile.corrosionProfile || "Environment dependent"], ["Data Layer", profile.dataConfidence || "Reference values + ElementOS model"], ["Discovered", profile.discovered], ["Discovered By", profile.discoveredBy]];
-  const related = profile.comparisons || relatedComparisonsFor(el.symbol);
-  const similar = profile.similar || similarElementsFor(el.symbol);
+
+  const filtered = elements
+    .filter(e => (cat === "All" || e.category === cat) && `${e.symbol} ${e.name} ${e.category}`.toLowerCase().includes(q.toLowerCase()))
+    .slice(0, 118);
+
+  const popular = ["Al", "Ti", "Cu", "Fe", "Au", "U", "Li", "Si"].filter(Boolean);
+  const quickFacts = [
+    ["Atomic Number", el.atomicNumber],
+    ["Atomic Mass", profile.atomicMass],
+    ["Group", profile.group],
+    ["Period", profile.period],
+    ["Block", profile.block],
+    ["Density", profile.density],
+    ["Melting Point", profile.melting],
+    ["Boiling Point", profile.boiling],
+    ["Electronegativity", profile.electronegativity],
+    ["Crystal Structure", profile.crystal || crystal.short],
+    ["Phase", profile.phase || phaseForElement(el.symbol)],
+    ["Oxidation States", profile.oxidation],
+    ["Electron Affinity", profile.electronAffinity || "Element-specific reference"],
+    ["Atomic Radius", profile.atomicRadius || "Periodic model derived"],
+    ["Thermal Conductivity", profile.thermalConductivity || `${Math.round(s.thermal * 48)} W/m·K model`],
+    ["Electrical Conductivity", profile.electricalConductivity || profile.conductivityType || "Material dependent"],
+  ];
+
+  function chooseElement(sym) {
+    setSelected(sym);
+    const nextRecent = [sym, ...recent.filter(x => x !== sym)].slice(0, 6);
+    setRecent(nextRecent);
+    try { localStorage.setItem("elementosExplorerRecent", JSON.stringify(nextRecent)); } catch (_error) {}
+    scrollElementOSToTop();
+  }
+
+  function toggleFavorite(sym) {
+    const next = favorites.includes(sym) ? favorites.filter(x => x !== sym) : [sym, ...favorites].slice(0, 8);
+    setFavorites(next);
+    try { localStorage.setItem("elementosExplorerFavorites", JSON.stringify(next)); } catch (_error) {}
+  }
+
+  function openCompare(symbols = []) {
+    const next = Array.from(new Set([el.symbol, ...symbols])).slice(0, 6);
+    setCompare?.(next);
+    setPage?.("compare");
+  }
+
+  function generateExplorerReport() {
+    setCompare?.([el.symbol, intelligence.recommendedCompare].filter(Boolean).slice(0, 4));
+    setPage?.("reports");
+  }
 
   return (
-    <div className="space-y-5">
-      <div className="grid gap-5 2xl:grid-cols-[340px_1fr] xl:grid-cols-[300px_1fr]">
-        <Panel className="xl:sticky xl:top-4 xl:self-start">
-          <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 p-3">
-            <Search className="text-cyan-300" size={18}/>
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements..." className="w-full bg-transparent text-sm outline-none placeholder:text-slate-600" />
+    <div className="space-y-5 pb-24">
+      <Panel className="overflow-hidden border-cyan-300/20 bg-gradient-to-br from-cyan-300/[0.08] via-slate-950 to-blue-950/30">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><Search size={12}/> element explorer</Pill>
+            <h1 className="mt-3 text-5xl font-black sm:text-7xl">Element <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Explorer</span></h1>
+            <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">Search any element and open a complete material intelligence profile: facts, compounds, reactions, encounters, industry fit, crystal structure, isotope intelligence, comparisons and research notes.</p>
           </div>
-          <select value={cat} onChange={(e) => setCat(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 text-sm outline-none">
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => setPage?.("timemachine")} variant="primary">Forecast This Element</Button>
+            <Button onClick={() => openCompare([intelligence.recommendedCompare])}>Compare With {intelligence.recommendedCompare}</Button>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 xl:grid-cols-[1fr_240px]">
+          <div className="flex items-center gap-3 rounded-[1.5rem] border border-cyan-300/20 bg-black/30 p-4 shadow-[0_0_35px_rgba(34,211,238,.08)]">
+            <Search className="shrink-0 text-cyan-300" size={22}/>
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search Element... symbol, name or category" className="w-full bg-transparent text-base font-bold outline-none placeholder:text-slate-600" />
+          </div>
+          <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-[1.5rem] border border-white/10 bg-slate-950 p-4 text-sm font-bold outline-none">
             {categories.map(c => <option key={c}>{c}</option>)}
           </select>
-          <div className="mt-4 max-h-[620px] overflow-auto pr-2">
-            {filtered.map(e => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className={`mb-2 flex w-full items-center justify-between rounded-2xl border p-3 text-left transition hover:border-cyan-300/35 ${el.symbol === e.symbol ? "border-cyan-300/50 bg-cyan-300/10" : "border-white/10 bg-white/[.03]"}`}><span><b>{e.symbol}</b> · {e.name}<div className="text-xs text-slate-500">{e.category}</div></span><ChevronRight size={15}/></button>)}
+        </div>
+
+        <div className="mt-4 grid gap-3 lg:grid-cols-3">
+          <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
+            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">Recent</div>
+            <div className="mt-2 flex flex-wrap gap-2">{recent.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100">{sym}</button>)}</div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
+            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">Popular</div>
+            <div className="mt-2 flex flex-wrap gap-2">{popular.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-black text-slate-200">{elementMap[sym]?.name || sym}</button>)}</div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
+            <div className="flex items-center justify-between">
+              <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">Favourites</div>
+              <button onClick={() => toggleFavorite(el.symbol)} className="text-xs font-black text-amber-100">{favorites.includes(el.symbol) ? "Remove" : "Add"} {el.symbol}</button>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">{favorites.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-black text-amber-100">{sym}</button>)}</div>
+          </div>
+        </div>
+      </Panel>
+
+      <div className="grid gap-5 xl:grid-cols-[330px_1fr]">
+        <Panel className="xl:sticky xl:top-4 xl:self-start">
+          <div className="max-h-[760px] overflow-auto pr-2">
+            {filtered.map(e => (
+              <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
+                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-cyan-300/20 to-blue-500/10 text-lg font-black text-cyan-100">{e.symbol}</div>
+                <div>
+                  <div className="font-black text-white">{e.name}</div>
+                  <div className="text-xs text-slate-500">{e.atomicNumber} · {e.category}</div>
+                </div>
+              </button>
+            ))}
           </div>
         </Panel>
 
         <div className="space-y-5">
-          <Panel className="overflow-hidden p-0">
-            <div className="relative grid gap-5 p-5 xl:grid-cols-[1.05fr_.95fr]">
-              <div className="pointer-events-none absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_75%_25%,rgba(56,189,248,.22),transparent_28%),radial-gradient(circle_at_20%_85%,rgba(245,158,11,.13),transparent_28%)]" />
-              <div className="relative z-10">
-                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400"><span>Element Explorer</span><ChevronRight size={13}/><span>{el.name} ({el.symbol})</span></div>
+          <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-slate-950">
+            <div className="grid gap-6 2xl:grid-cols-[.95fr_1.05fr]">
+              <div>
+                <Pill gold><Sparkles size={12}/> material intelligence brief</Pill>
                 <div className="mt-5 flex flex-wrap items-end gap-5">
-                  <div className="grid h-28 w-28 place-items-center rounded-[1.5rem] border border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_60px_rgba(34,211,238,.14)]">
-                    <div className="text-center"><div className="text-5xl font-black text-cyan-100">{el.symbol}</div><div className="text-[10px] uppercase tracking-[.18em] text-cyan-200">{el.name}</div></div>
-                  </div>
+                  <div className="text-8xl font-black tracking-[-.08em] text-cyan-100 sm:text-9xl">{el.symbol}</div>
                   <div>
-                    <h1 className="text-5xl font-black tracking-tight md:text-6xl">{el.name}</h1>
-                    <div className="mt-2 flex flex-wrap gap-2 text-xs font-bold text-slate-300">
-                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">Atomic Number {el.atomicNumber}</span>
-                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">Atomic Mass {profile.atomicMass}</span>
-                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">Group {profile.group}</span>
-                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">Period {profile.period}</span>
-                      <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1">{profile.block}</span>
-                    </div>
-                    <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300">{profile.summary}</p>
-                    <div className="mt-5 flex flex-wrap gap-3"><Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))} variant="primary">Add {el.symbol} to Compare</Button><Button onClick={() => setCompare([el.symbol, ...related].slice(0, 4))}>Build Related Comparison</Button></div>
+                    <h2 className="text-4xl font-black text-white">{el.name}</h2>
+                    <div className="mt-2 text-sm font-bold text-slate-400">{el.category} · Atomic Number {el.atomicNumber}</div>
                   </div>
                 </div>
-              </div>
-
-              <div className="relative z-10 grid gap-4 lg:grid-cols-[1fr_230px]">
-                <div className="min-h-[250px] rounded-[2rem] border border-cyan-300/15 bg-black/30 p-4">
-                  <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Material visual</div>
-                  <div className="relative mt-4 grid h-48 place-items-center overflow-hidden rounded-[1.5rem] border border-white/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.18),transparent_42%),linear-gradient(135deg,rgba(15,23,42,.9),rgba(2,6,23,.9))]">
-                    <div className="absolute h-40 w-40 rounded-full border border-cyan-300/20" style={{ animation: "eosSpin 18s linear infinite" }} />
-                    <div className="absolute h-28 w-64 rounded-[50%] border border-cyan-300/25" />
-                    <div className="relative grid h-28 w-28 place-items-center rounded-full bg-gradient-to-br from-slate-200 via-slate-500 to-slate-950 shadow-[0_0_70px_rgba(125,211,252,.28)]"><span className="text-4xl font-black text-white/85">{el.symbol}</span></div>
-                  </div>
-                </div>
-                <div className="rounded-[2rem] border border-amber-300/20 bg-amber-300/[.06] p-4">
-                  <div className="text-xs font-black uppercase tracking-[.2em] text-amber-200">Research Summary</div>
-                  <p className="mt-3 text-sm leading-6 text-slate-200">{profile.summary}</p>
-                  <div className="mt-4 text-xs font-black uppercase tracking-[.18em] text-slate-500">Recommended Uses</div>
-                  <div className="mt-2 space-y-2">{profile.applications.map(app => <div key={app} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 size={14} className="text-emerald-300"/> {app}</div>)}</div>
+                <p className="mt-6 max-w-3xl text-sm leading-7 text-slate-300">{intelligence.overview}</p>
+                <div className="mt-6 grid gap-3 md:grid-cols-3">
+                  <ExplorerMiniStat label="Category" value={el.category} />
+                  <ExplorerMiniStat label="Crystal" value={crystal.short} />
+                  <ExplorerMiniStat label="Cost" value={cost.relativeCost} />
                 </div>
               </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.06] p-4">
+                  <div className="text-xs font-black uppercase tracking-[.2em] text-emerald-200">Best Uses</div>
+                  <div className="mt-3 space-y-2">{intelligence.bestUses.map(x => <div key={x} className="text-sm font-bold text-emerald-50">✓ {x}</div>)}</div>
+                </div>
+                <div className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.06] p-4">
+                  <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Strengths</div>
+                  <div className="mt-3 space-y-2">{intelligence.strengths.map(x => <div key={x} className="text-sm font-bold text-cyan-50">✓ {x}</div>)}</div>
+                </div>
+                <div className="rounded-[1.5rem] border border-amber-300/15 bg-amber-300/[0.06] p-4">
+                  <div className="text-xs font-black uppercase tracking-[.2em] text-amber-200">Limitations</div>
+                  <div className="mt-3 space-y-2">{intelligence.limitations.map(x => <div key={x} className="text-sm font-bold text-amber-50">✕ {x}</div>)}</div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button onClick={() => openCompare([intelligence.recommendedCompare])} variant="primary">Compare with {intelligence.recommendedCompare}</Button>
+              <Button onClick={() => setPage?.("timemachine")}>Run 50-Year Forecast</Button>
+              <Button onClick={generateExplorerReport}>Generate Executive Report</Button>
             </div>
           </Panel>
 
-          <Panel className="border-cyan-300/20 bg-cyan-300/[.045]">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">What can I do next?</div>
-                <p className="mt-2 text-sm leading-6 text-slate-300">Use this element as a launch point: compare it, simulate future behaviour, create a report, or explore similar materials.</p>
+          <div className="flex flex-wrap gap-2">
+            {tabs.map(t => <button key={t} onClick={() => setTab(t)} className={`rounded-full px-4 py-2 text-xs font-black transition ${tab === t ? "bg-cyan-300 text-slate-950" : "border border-white/10 bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]"}`}>{t}</button>)}
+          </div>
+
+          <div className="grid gap-5 2xl:grid-cols-[1.05fr_.95fr]">
+            <Panel>
+              <Pill><Target size={12}/> industry suitability</Pill>
+              <h2 className="mt-3 text-3xl font-black">Industry Suitability Matrix</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-400">Scores are modelled from the element category, physical profile and ElementOS behaviour engine.</p>
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                {industrySuitability.map(([label, value]) => <ExplorerProgressBar key={label} label={label} value={value} />)}
               </div>
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))} variant="primary">Compare this Element</Button>
-                <Button onClick={() => setCompare([el.symbol, ...related].slice(0, 4))}>Find Similar Materials</Button>
-                <Button onClick={() => setCompare([el.symbol, ...related].slice(0, 3))}>Create Report Preview</Button>
+            </Panel>
+
+            <Panel>
+              <Pill><BarChart3 size={12}/> material fingerprint</Pill>
+              <h2 className="mt-3 text-3xl font-black">Engineer-Readable Fingerprint</h2>
+              <div className="mt-5">
+                <ExplorerFingerprint2 values={fingerprint2} />
+              </div>
+            </Panel>
+          </div>
+
+          <Panel>
+            <Pill><Database size={12}/> expanded facts</Pill>
+            <h2 className="mt-3 text-3xl font-black">Quick Facts</h2>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {quickFacts.map(([label, value]) => <ExplorerMiniStat key={label} label={label} value={value} />)}
+            </div>
+          </Panel>
+
+          <Panel>
+            <Pill gold><BookOpen size={12}/> research summary</Pill>
+            <h2 className="mt-3 text-4xl font-black">Research Summary</h2>
+            <div className="mt-5 grid gap-4 lg:grid-cols-5">
+              <div className="lg:col-span-2 rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Overview</div>
+                <p className="mt-3 text-sm leading-7 text-slate-300">{intelligence.overview}</p>
+              </div>
+              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                <div className="text-xs font-black uppercase tracking-[.2em] text-emerald-200">Applications</div>
+                <div className="mt-3 space-y-2">{intelligence.bestUses.map(x => <div key={x} className="text-sm text-slate-200">✓ {x}</div>)}</div>
+              </div>
+              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Advantages</div>
+                <div className="mt-3 space-y-2">{intelligence.strengths.map(x => <div key={x} className="text-sm text-slate-200">✓ {x}</div>)}</div>
+              </div>
+              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                <div className="text-xs font-black uppercase tracking-[.2em] text-amber-200">Limitations</div>
+                <div className="mt-3 space-y-2">{intelligence.limitations.map(x => <div key={x} className="text-sm text-slate-200">✕ {x}</div>)}</div>
               </div>
             </div>
-            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              {[
-                ["Passivation", "A protective surface film that can reduce corrosion and slow reaction."],
-                ["Diffusion", "How atoms, ions or surface effects move through a boundary over time."],
-                ["Oxidation", "Reaction with oxygen or oxidising conditions that changes the surface state."],
-                ["Electronegativity", "How strongly atoms attract electrons in chemical bonding."]
-              ].map(([title, body]) => (
-                <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-xs leading-5 text-slate-400">
-                  <div className="flex items-center gap-2 font-black uppercase tracking-[.16em] text-cyan-100">{title}<ExplorerInfoTip title={title}>{body}</ExplorerInfoTip></div>
-                  <div className="mt-2">{body}</div>
+            <div className="mt-4 rounded-[1.5rem] border border-purple-300/15 bg-purple-300/[0.06] p-4">
+              <div className="text-xs font-black uppercase tracking-[.2em] text-purple-200">Industries</div>
+              <div className="mt-3 flex flex-wrap gap-2">{intelligence.industries.map(x => <span key={x} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs font-black text-white">{x}</span>)}</div>
+            </div>
+          </Panel>
+
+          <Panel>
+            <Pill><Dna size={12}/> electronic structure</Pill>
+            <h2 className="mt-3 text-3xl font-black">Electronic Configuration</h2>
+            <div className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.06] p-4 font-mono text-sm font-black text-cyan-50">{profile.configuration}</div>
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              {(profile.orbitals || []).map(([label, count]) => <OrbitalRow key={label} label={label} count={count} />)}
+            </div>
+          </Panel>
+
+          <Panel>
+            <Pill><Layers size={12}/> common compounds</Pill>
+            <h2 className="mt-3 text-3xl font-black">Common Compounds</h2>
+            <div className="mt-5 overflow-hidden rounded-[1.5rem] border border-white/10">
+              <div className="grid grid-cols-[.7fr_1fr_1.25fr_1.5fr] bg-white/[0.05] text-xs font-black uppercase tracking-[.16em] text-slate-400">
+                <div className="p-3">Formula</div><div className="p-3">Name</div><div className="p-3">Uses</div><div className="p-3">Importance</div>
+              </div>
+              {compounds.map((c) => (
+                <div key={`${c.formula}-${c.name}`} className="grid grid-cols-[.7fr_1fr_1.25fr_1.5fr] border-t border-white/10 text-sm">
+                  <div className="p-3 font-mono font-black text-cyan-100">{c.formula}</div>
+                  <div className="p-3 font-bold text-white">{c.name}</div>
+                  <div className="p-3 text-slate-300">{c.uses}</div>
+                  <div className="p-3 text-slate-400">{c.importance}</div>
                 </div>
               ))}
             </div>
           </Panel>
 
-          <div className="grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+          <div className="grid gap-5 2xl:grid-cols-[1fr_.85fr]">
             <Panel>
-              <div className="flex flex-wrap items-center gap-2 border-b border-white/10 pb-4">{tabs.map(t => <button key={t} onClick={() => setTab(t)} className={`rounded-full px-4 py-2 text-xs font-black transition ${tab === t ? "bg-cyan-300 text-slate-950" : "bg-white/[.05] text-slate-400 hover:text-white"}`}>{t}</button>)}</div>
-              <div className="mt-5 grid gap-5 lg:grid-cols-2">
-                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                  <h3 className="text-lg font-black">Quick Facts</h3>
-                  <div className="mt-4 space-y-2">{quickFacts.map(([label, value]) => <div key={label} className="flex items-center justify-between gap-4 border-b border-white/5 pb-2 text-sm"><span className="text-slate-500">{label}</span><span className="text-right font-bold text-slate-200">{value}</span></div>)}</div>
-                </div>
-                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                  <h3 className="text-lg font-black">Electronic Configuration</h3>
-                  <div className="mt-2 rounded-2xl border border-cyan-300/15 bg-cyan-300/5 px-3 py-2 font-mono text-sm text-cyan-100">{profile.configuration}</div>
-                  <div className="mt-4 space-y-3">{profile.orbitals.map(([label, count]) => <OrbitalRow key={label} label={label} count={count}/>)}</div>
-                </div>
-                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                  <h3 className="text-lg font-black">Common Compounds</h3>
-                  <div className="mt-4 grid gap-2">{profile.compounds.map(([formula, name, note]) => <div key={formula} className="rounded-2xl border border-white/10 bg-white/[.03] p-3"><div className="flex items-center justify-between gap-3"><span className="font-mono text-cyan-100">{formula}</span><span className="text-right text-xs font-bold text-slate-300">{name}</span></div><div className="mt-1 text-[11px] leading-4 text-slate-500">{note || "Common reference compound used to understand this element's surface or reaction behaviour."}</div></div>)}</div>
-                </div>
-                <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
-                  <h3 className="text-lg font-black">Reaction Summary</h3>
-                  <div className="mt-4 space-y-3">{profile.reactions.map(([title, equation, body, level]) => <div key={title} className="rounded-2xl border border-white/10 bg-slate-950/60 p-3"><div className="flex items-center justify-between gap-3"><b className="text-sm text-white">{title}</b><span className="rounded-full bg-cyan-300/10 px-2 py-1 text-[10px] font-black text-cyan-100">{level}</span></div><div className="mt-2 font-mono text-xs text-amber-100">{equation}</div><p className="mt-2 text-xs leading-5 text-slate-400">{body}</p></div>)}</div>
-                </div>
+              <Pill gold><Activity size={12}/> experimental encounters</Pill>
+              <h2 className="mt-3 text-4xl font-black">Experimental Encounters 2.0</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Each card explains what happens when {el.name} is exposed to different environments.</p>
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                {encounters.map(encounter => <ExplorerEncounterCard key={encounter.title} encounter={encounter} />)}
               </div>
             </Panel>
 
-            <div className="space-y-5">
-              <BehaviourFingerprint values={profile.fingerprint}/>
-              <Panel>
-                <h3 className="text-lg font-black">Score Summary</h3>
-                <div className="mt-4 space-y-3">
-                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs text-slate-500">Scientific Behaviour Score</div><div className="mt-1 text-4xl font-black text-cyan-100">{profile.scores.science.toFixed(2)} <span className="text-base text-slate-500">/ 5.00</span></div></div>
-                  <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs text-slate-500">Material Stability Score</div><div className="mt-1 text-4xl font-black text-blue-200">{profile.scores.stability.toFixed(2)} <span className="text-base text-slate-500">/ 5.00</span></div></div>
-                  <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Classification</div><p className="mt-2 text-sm leading-6 text-slate-200">{profile.scores.classification}</p></div>
-                </div>
-              </Panel>
+            <Panel>
+              <Pill><Waves size={12}/> reaction flows</Pill>
+              <h2 className="mt-3 text-4xl font-black">Reaction Flow Diagrams</h2>
+              <div className="mt-5 space-y-4">
+                {flows.map(flow => <ExplorerFlowCard key={flow.title} flow={flow} />)}
+              </div>
+            </Panel>
+          </div>
+
+          <div className="grid gap-5 2xl:grid-cols-3">
+            <Panel>
+              <Pill><Layers size={12}/> crystal structure</Pill>
+              <h2 className="mt-3 text-3xl font-black">Crystal Structure Intelligence</h2>
+              <div className="mt-5 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.06] p-5">
+                <div className="text-5xl font-black text-cyan-100">{crystal.short}</div>
+                <div className="mt-2 text-lg font-black text-white">{crystal.full}</div>
+                <div className="mt-4 space-y-2">{crystal.properties.map(x => <div key={x} className="text-sm font-bold text-slate-300">✓ {x}</div>)}</div>
+              </div>
+            </Panel>
+
+            <Panel>
+              <Pill><Database size={12}/> mining & production</Pill>
+              <h2 className="mt-3 text-3xl font-black">Mining & Production</h2>
+              <div className="mt-5 grid gap-3">
+                <ExplorerMiniStat label="Abundance" value={production.abundance} />
+                <ExplorerMiniStat label="Mining Difficulty" value={production.miningDifficulty} />
+                <ExplorerMiniStat label="Refining Difficulty" value={production.refiningDifficulty} />
+                <ExplorerMiniStat label="Recyclability" value={production.recyclability} />
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">{production.producers.map(x => <span key={x} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-200">{x}</span>)}</div>
+            </Panel>
+
+            <Panel>
+              <Pill><Crown size={12}/> cost intelligence</Pill>
+              <h2 className="mt-3 text-3xl font-black">Cost Intelligence</h2>
+              <div className="mt-5 grid gap-3">
+                <ExplorerMiniStat label="Relative Cost" value={cost.relativeCost} />
+                <ExplorerMiniStat label="Availability" value={cost.availability} />
+                <ExplorerMiniStat label="Supply Stability" value={cost.supplyStability} />
+                <ExplorerMiniStat label="Strategic Importance" value={cost.strategicImportance} />
+              </div>
+            </Panel>
+          </div>
+
+          <div className="grid gap-5 2xl:grid-cols-[.8fr_1.2fr]">
+            <Panel>
+              <Pill><Orbit size={12}/> isotope intelligence</Pill>
+              <h2 className="mt-3 text-3xl font-black">Isotope Summary</h2>
+              <div className="mt-5 grid gap-3">
+                <ExplorerMiniStat label="Stable Isotopes" value={isotope.stable} />
+                <ExplorerMiniStat label="Radioactive Isotopes" value={isotope.radioactive} />
+                <ExplorerMiniStat label="Half-Life Information" value={isotope.halfLife} />
+              </div>
+              <div className="mt-4 grid gap-3">
+                {isotope.featured.map(([name, body]) => <div key={name} className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="font-black text-cyan-100">{name}</div><div className="mt-1 text-xs text-slate-400">{body}</div></div>)}
+              </div>
+            </Panel>
+
+            <Panel>
+              <Pill><Clock3 size={12}/> timeline</Pill>
+              <h2 className="mt-3 text-3xl font-black">Explorer Timeline</h2>
+              <div className="mt-6 grid gap-3 md:grid-cols-4">
+                {timeline.map(([year, event]) => (
+                  <div key={`${year}-${event}`} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                    <div className="text-2xl font-black text-cyan-100">{year}</div>
+                    <div className="mt-2 text-sm font-bold text-white">{event}</div>
+                  </div>
+                ))}
+              </div>
+            </Panel>
+          </div>
+
+          <div className="grid gap-5 2xl:grid-cols-2">
+            <Panel>
+              <Pill><Network size={12}/> similar elements</Pill>
+              <h2 className="mt-3 text-3xl font-black">Similar Elements With Reasons</h2>
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
+                {similar.map(item => (
+                  <button key={item.symbol} onClick={() => chooseElement(item.symbol)} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.05] p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/40">
+                    <div className="text-3xl font-black text-cyan-100">{item.symbol}</div>
+                    <div className="mt-1 font-black text-white">{item.name}</div>
+                    <div className="mt-2 text-sm text-slate-400">{item.reason}</div>
+                  </button>
+                ))}
+              </div>
+            </Panel>
+
+            <Panel>
+              <Pill><BarChart3 size={12}/> related comparisons</Pill>
+              <h2 className="mt-3 text-3xl font-black">Related Comparisons With Context</h2>
+              <div className="mt-5 space-y-3">
+                {comparisons.map(item => (
+                  <button key={item.symbol} onClick={() => openCompare([item.symbol])} className="w-full rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10">
+                    <div className="text-lg font-black text-white">{item.title}</div>
+                    <div className="mt-2 text-xs font-black uppercase tracking-[.18em] text-cyan-200">Why compare?</div>
+                    <div className="mt-2 flex flex-wrap gap-2">{item.why.map(x => <span key={x} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-300">{x}</span>)}</div>
+                  </button>
+                ))}
+              </div>
+            </Panel>
+          </div>
+
+          <ResearchNotesCard el={el} profile={profile} intelligence={intelligence} />
+
+          <div className="sticky bottom-4 z-30 rounded-[1.5rem] border border-cyan-300/20 bg-slate-950/90 p-3 shadow-[0_0_40px_rgba(8,145,178,.25)] backdrop-blur-xl">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Explorer Actions</div>
+                <div className="text-sm text-slate-400">Turn {el.name} into a workflow.</div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => openCompare([intelligence.recommendedCompare])} variant="primary">Compare Element</Button>
+                <Button onClick={() => setTab("References")}>Find Similar Elements</Button>
+                <Button onClick={() => setPage?.("timemachine")}>Forecast This Element</Button>
+                <Button onClick={generateExplorerReport}>Generate Report</Button>
+                <Button onClick={() => setPage?.("viralcards")}>Create Poster</Button>
+                <Button onClick={() => setPage?.("lab")}>Save Discovery</Button>
+              </div>
             </div>
-          </div>
-
-          <div className="grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
-            <Panel>
-              <div className="flex flex-wrap items-start justify-between gap-4"><div><h2 className="text-2xl font-black">Experimental Encounters</h2><p className="mt-1 text-sm text-slate-400">Acid, alkali, neutral and gradient exposures represented as visual reaction cards.</p></div><Button onClick={() => setCompare(x => x.includes(el.symbol) ? x : [...x, el.symbol].slice(0, 8))}>Send to Compare</Button></div>
-              <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">{profile.encounters.map(([title, condition, body, level, visual]) => <div key={title} className="rounded-[1.25rem] border border-white/10 bg-black/25 p-3"><ReactionVisual type={visual}/><div className="mt-3 text-sm font-black text-white">{title}</div><div className="text-xs text-cyan-200">{condition}</div><p className="mt-2 min-h-[64px] text-xs leading-5 text-slate-400">{body}</p><div className={`mt-3 rounded-full px-3 py-1 text-center text-[10px] font-black ${String(level).includes("High") ? "bg-red-400/15 text-red-200" : String(level).includes("Stable") ? "bg-emerald-400/15 text-emerald-200" : "bg-amber-400/15 text-amber-200"}`}>{level}</div></div>)}</div>
-            </Panel>
-
-            <Panel>
-              <h2 className="text-2xl font-black">Diffusion Behaviour</h2>
-              <p className="mt-1 text-sm text-slate-400">Layer behaviour through surface, oxide, breakthrough and core regions.</p>
-              <div className="relative mt-5 h-72 overflow-hidden rounded-[1.5rem] border border-cyan-300/15 bg-[linear-gradient(135deg,rgba(8,47,73,.45),rgba(2,6,23,.9))] p-4">
-                {["Surface Layer", "Oxide Layer", "Breakthrough", "Core Metal"].map((label, index) => <div key={label} className="absolute left-6 right-6 rounded-2xl border border-white/10" style={{ top: `${34 + index * 42}px`, height: "34px", background: `linear-gradient(90deg, rgba(34,211,238,${0.34 - index * 0.06}), rgba(245,158,11,${0.16 + index * 0.04}))`, transform: `skewX(-10deg) translateX(${index * 10}px)` }}><span className="absolute left-3 top-2 text-xs font-bold text-white/80">{label}</span></div>)}
-                <div className="absolute bottom-5 left-5 right-5 flex justify-between text-[10px] uppercase tracking-[.18em] text-slate-500"><span>Low</span><span>Time</span><span>High</span></div>
-              </div>
-              <p className="mt-4 text-sm leading-6 text-slate-300">{el.name} shows {s.diffusion > 3 ? "elevated" : "controlled"} diffusion behaviour in the ElementOS model, with surface-layer behaviour acting as the main boundary condition.</p>
-            </Panel>
-          </div>
-
-          <div className="grid gap-5 xl:grid-cols-[.75fr_.75fr_1fr]">
-            <Panel>
-              <h3 className="text-xl font-black">Related Comparisons</h3>
-              <div className="mt-4 space-y-2">{related.map(sym => <div key={sym} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.03] p-3"><span><span className="text-sm font-bold">{el.name} vs {elementMap[sym]?.name || sym}</span><div className="text-xs text-slate-500">Behaviour-neighbour comparison for substitution, corrosion and thermal screening.</div></span><button onClick={() => setCompare([el.symbol, sym])} className="rounded-xl bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100 hover:bg-cyan-300 hover:text-slate-950">Compare</button></div>)}</div>
-            </Panel>
-            <Panel>
-              <h3 className="text-xl font-black">Similar Elements</h3>
-              <div className="mt-4 grid grid-cols-2 gap-2">{similar.map(sym => <button key={sym} onClick={() => setSelected(sym)} className="rounded-2xl border border-white/10 bg-white/[.04] p-3 text-left transition hover:border-cyan-300/35"><div className="text-lg font-black text-cyan-100">{sym}</div><div className="text-xs text-slate-400">{elementMap[sym]?.name || sym}</div></button>)}</div>
-            </Panel>
-            <Panel>
-              <h3 className="text-xl font-black">Executive Summary</h3>
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Finding</div><p className="mt-2 text-sm text-slate-300">{el.name} shows a clear behaviour profile with {profile.scores.classification.toLowerCase()}.</p></div>
-                <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Next Step</div><p className="mt-2 text-sm text-slate-300">Compare {el.symbol} against {related.slice(0, 2).join(" and ")} or send it into Future Simulation.</p></div>
-              </div>
-              <Button onClick={() => setCompare([el.symbol, ...related].slice(0, 4))} variant="primary" className="mt-5 w-full">Generate Research Comparison</Button>
-            </Panel>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 function PeriodicTable({ selected, setSelected }) {
   const [layer, setLayer] = useState("conductivity");
@@ -11736,6 +12562,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
           selected={selected}
           setSelected={setSelected}
           setCompare={setCompare}
+          setPage={setPage}
         />
       ),
       periodic: (
