@@ -5164,12 +5164,7 @@ function elementPictureDataUri(el, compact = false) {
     <g filter="url(#glow)">${orbit}</g>
     <g filter="url(#glow)">${sceneLayer}</g>
     <circle cx="400" cy="270" r="86" fill="black" opacity="0.42" stroke="white" stroke-opacity="0.22" stroke-width="3"/>
-    <text x="400" y="296" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="900" fill="white">${symbol}</text>
-    <rect x="36" y="36" width="360" height="82" rx="24" fill="black" opacity="0.28"/>
-    <text x="56" y="68" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="900" fill="white" opacity="0.92">${name.length > 24 ? name.slice(0, 21) + "..." : name}</text>
-    <text x="56" y="96" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="800" fill="${a}" opacity="0.95">Atomic #${n} · ${category.length > 26 ? category.slice(0, 23) + "..." : category}</text>
-    <rect x="36" y="474" width="420" height="48" rx="18" fill="black" opacity="0.26"/>
-    <text x="56" y="505" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="900" fill="white" opacity="0.84">${useCase.length > 42 ? useCase.slice(0, 39) + "..." : useCase}</text>
+    <text x="400" y="296" text-anchor="middle" dominant-baseline="middle" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="900" fill="white">${symbol}</text>
   </svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
@@ -5191,23 +5186,30 @@ function ElementPicture({ el, compact = false }) {
   }
   return (
     <Panel className="overflow-hidden border-cyan-300/25 bg-black/30 p-0">
-      <div className="relative overflow-hidden rounded-[2rem]">
+      <div className="overflow-hidden rounded-t-[2rem] bg-slate-950">
         <img
           src={src}
-          alt={`${safe.name} generated element picture`}
-          className="block h-[440px] w-full object-cover md:h-[520px]"
+          alt={`${safe.name} element picture`}
+          className="block h-[380px] w-full object-cover md:h-[480px]"
           loading="eager"
         />
-        <div className="absolute left-4 top-4 max-w-[calc(100%-2rem)] truncate rounded-full border border-cyan-300/25 bg-slate-950/80 px-3 py-2 text-[9px] font-black uppercase tracking-[.14em] text-cyan-100 backdrop-blur-xl sm:left-5 sm:top-5 sm:px-4 sm:text-[10px]">
-          ElementOS picture
+      </div>
+      <div className="border-t border-white/10 bg-slate-950/80 p-4 sm:p-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="min-w-0">
+            <div className="truncate text-2xl font-black text-white sm:text-3xl">
+              {safe.name} <span className="text-cyan-100">{safe.symbol}</span>
+            </div>
+            <div className="mt-1 text-xs font-bold uppercase tracking-[.18em] text-cyan-200">
+              Atomic #{safe.atomicNumber} · {safe.category}
+            </div>
+          </div>
+          <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] text-cyan-100">
+            Element picture
+          </div>
         </div>
-        <div className="absolute bottom-4 left-4 right-4 max-w-[calc(100%-2rem)] overflow-hidden rounded-[1.25rem] border border-white/10 bg-slate-950/80 p-3 backdrop-blur-xl sm:bottom-5 sm:left-5 sm:right-5 sm:p-4">
-          <div className="truncate text-2xl font-black text-white sm:text-3xl">
-            {safe.name} <span className="text-cyan-100">{safe.symbol}</span>
-          </div>
-          <div className="mt-1 line-clamp-2 text-xs leading-5 text-slate-300 sm:text-sm">
-            {elementArtworkUseCase(safe)} · Atomic #{safe.atomicNumber}
-          </div>
+        <div className="mt-3 text-sm leading-6 text-slate-300">
+          {elementArtworkUseCase(safe)}
         </div>
       </div>
     </Panel>
