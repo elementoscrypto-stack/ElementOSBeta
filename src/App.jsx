@@ -5052,6 +5052,161 @@ function elementArtworkUseCase(el) {
   return bySymbol[el?.symbol] || "Material intelligence artwork";
 }
 
+
+function elementPicturePalette(el) {
+  const palettes = {
+    "Alkali metal": ["#fb7185", "#f97316", "#1f2937"],
+    "Alkaline earth metal": ["#fbbf24", "#fde68a", "#1e293b"],
+    "Transition metal": ["#67e8f9", "#60a5fa", "#0f172a"],
+    "Post-transition metal": ["#93c5fd", "#a5b4fc", "#111827"],
+    "Metalloid": ["#c084fc", "#f0abfc", "#111827"],
+    "Nonmetal": ["#86efac", "#bef264", "#052e16"],
+    "Halogen": ["#f0abfc", "#fb7185", "#111827"],
+    "Noble gas": ["#7dd3fc", "#38bdf8", "#020617"],
+    "Lanthanide": ["#5eead4", "#34d399", "#052e2b"],
+    "Actinide": ["#bef264", "#fbbf24", "#1a2e05"],
+    "Unknown": ["#cbd5e1", "#67e8f9", "#020617"],
+  };
+  return palettes[el?.category] || ["#67e8f9", "#60a5fa", "#020617"];
+}
+
+function elementPictureScene(el) {
+  const symbol = el?.symbol || "El";
+  const special = {
+    H: "plasma", He: "gas", Li: "battery", Be: "aerospace", B: "crystal", C: "diamond", N: "gas", O: "gas", F: "plasma", Ne: "gas",
+    Na: "salt", Mg: "alloy", Al: "aerospace", Si: "wafer", P: "crystal", S: "powder", Cl: "gas", Ar: "gas", K: "salt", Ca: "mineral",
+    Sc: "alloy", Ti: "aerospace", V: "alloy", Cr: "chrome", Mn: "alloy", Fe: "steel", Co: "magnet", Ni: "battery", Cu: "circuit", Zn: "coating",
+    Ga: "wafer", Ge: "wafer", As: "wafer", Se: "solar", Br: "liquid", Kr: "gas", Rb: "clock", Sr: "mineral", Y: "laser", Zr: "cladding",
+    Nb: "superconductor", Mo: "alloy", Tc: "medical", Ru: "catalyst", Rh: "mirror", Pd: "catalyst", Ag: "silver", Cd: "coating", In: "screen", Sn: "solder",
+    Sb: "crystal", Te: "thermo", I: "crystal", Xe: "gas", Cs: "clock", Ba: "mineral", La: "optic", Ce: "catalyst", Pr: "magnet", Nd: "magnet",
+    Pm: "radio", Sm: "magnet", Eu: "phosphor", Gd: "magnet", Tb: "phosphor", Dy: "magnet", Ho: "laser", Er: "fiber", Tm: "laser", Yb: "fiber", Lu: "scintillator",
+    Hf: "alloy", Ta: "capacitor", W: "heat", Re: "turbine", Os: "dense", Ir: "corrosion", Pt: "catalyst", Au: "gold", Hg: "liquid", Tl: "electronics",
+    Pb: "shield", Bi: "crystal", Po: "radio", At: "radio", Rn: "gas", Fr: "radio", Ra: "glow", Ac: "radio", Th: "nuclear", Pa: "nuclear", U: "nuclear", Np: "nuclear", Pu: "nuclear", Am: "radio", Cm: "radio", Bk: "synthetic", Cf: "neutron"
+  };
+  if (special[symbol]) return special[symbol];
+  if (el?.category === "Noble gas") return "gas";
+  if (el?.category === "Halogen") return "plasma";
+  if (el?.category === "Metalloid") return "crystal";
+  if (el?.category === "Lanthanide") return "magnet";
+  if (el?.category === "Actinide") return "nuclear";
+  if (el?.category === "Unknown") return "synthetic";
+  if ((el?.category || "").includes("metal")) return "alloy";
+  return "crystal";
+}
+
+function elementPictureDataUri(el, compact = false) {
+  const safe = el || { symbol: "El", name: "Element", atomicNumber: 0, category: "Unknown" };
+  const [a, b, c] = elementPicturePalette(safe);
+  const scene = elementPictureScene(safe);
+  const n = Number(safe.atomicNumber || 1);
+  const symbol = String(safe.symbol || "El");
+  const name = String(safe.name || "Element");
+  const category = String(safe.category || "Material");
+  const useCase = elementArtworkUseCase(safe);
+  const seed = n || 1;
+  const dots = Array.from({ length: compact ? 16 : 46 }, (_, i) => {
+    const x = 20 + ((seed * (i + 5) * 17) % 760);
+    const y = 20 + ((seed * (i + 9) * 23) % 500);
+    const r = 1 + ((seed + i) % 4);
+    const op = 0.18 + (((seed + i) % 7) / 10);
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="white" opacity="${op.toFixed(2)}"/>`;
+  }).join("");
+  const orbit = Array.from({ length: compact ? 2 : 5 }, (_, i) => {
+    const rx = 110 + i * 36;
+    const ry = 42 + i * 16;
+    const rot = (seed * 7 + i * 31) % 180;
+    return `<ellipse cx="400" cy="270" rx="${rx}" ry="${ry}" fill="none" stroke="${a}" stroke-opacity="0.32" stroke-width="2" transform="rotate(${rot} 400 270)"/>`;
+  }).join("");
+  const baseCrystal = scene === "diamond" || scene === "crystal" || scene === "mineral" ? `
+    <polygon points="400,112 520,238 475,410 400,475 325,410 280,238" fill="url(#shine)" stroke="white" stroke-opacity="0.52" stroke-width="3"/>
+    <polyline points="400,112 400,475 280,238 520,238 400,112 325,410 475,410 400,112" fill="none" stroke="white" stroke-opacity="0.30" stroke-width="2"/>
+  ` : "";
+  const metal = ["alloy","aerospace","steel","chrome","silver","gold","dense","corrosion","heat","turbine"].includes(scene) ? `
+    <ellipse cx="400" cy="398" rx="210" ry="62" fill="black" opacity="0.35"/>
+    <path d="M215 340 C290 245 495 235 586 340 C548 420 258 425 215 340Z" fill="url(#metal)" stroke="white" stroke-opacity="0.22" stroke-width="3"/>
+    <path d="M270 328 C335 288 468 286 532 326" fill="none" stroke="white" stroke-opacity="0.38" stroke-width="8" stroke-linecap="round"/>
+  ` : "";
+  const circuit = scene === "circuit" || scene === "wafer" || scene === "electronics" || scene === "screen" ? `
+    <rect x="235" y="135" width="330" height="300" rx="38" fill="url(#chip)" stroke="${a}" stroke-opacity="0.55" stroke-width="4"/>
+    ${Array.from({ length: 8 }, (_, i) => `<path d="M${255 + i*40} 135 V92 M${255 + i*40} 435 V478" stroke="${b}" stroke-width="5" stroke-linecap="round"/>`).join("")}
+    ${Array.from({ length: 6 }, (_, i) => `<path d="M235 ${175 + i*42} H185 M565 ${175 + i*42} H615" stroke="${b}" stroke-width="5" stroke-linecap="round"/>`).join("")}
+    <circle cx="400" cy="285" r="78" fill="black" opacity="0.35" stroke="white" stroke-opacity="0.28"/>
+  ` : "";
+  const gas = scene === "gas" || scene === "plasma" ? `
+    <circle cx="400" cy="270" r="175" fill="url(#gas)" opacity="0.72"/>
+    <circle cx="350" cy="230" r="64" fill="white" opacity="0.10"/>
+    <circle cx="455" cy="330" r="92" fill="${a}" opacity="0.16"/>
+  ` : "";
+  const nuclear = scene === "nuclear" || scene === "radio" || scene === "glow" || scene === "neutron" ? `
+    <circle cx="400" cy="270" r="165" fill="url(#nuclear)" stroke="${a}" stroke-opacity="0.58" stroke-width="4"/>
+    <path d="M400 142 L430 240 L535 240 L450 302 L482 405 L400 342 L318 405 L350 302 L265 240 L370 240Z" fill="${b}" opacity="0.24" stroke="white" stroke-opacity="0.25"/>
+  ` : "";
+  const battery = scene === "battery" ? `
+    <rect x="270" y="170" width="260" height="220" rx="30" fill="url(#metal)" stroke="white" stroke-opacity="0.35" stroke-width="4"/>
+    <rect x="370" y="130" width="60" height="42" rx="10" fill="${a}"/>
+    <path d="M405 205 L360 285 H407 L376 365 L455 260 H408Z" fill="${b}" stroke="white" stroke-opacity="0.4" stroke-width="3"/>
+  ` : "";
+  const sceneLayer = baseCrystal + metal + circuit + gas + nuclear + battery || baseCrystal;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="560" viewBox="0 0 800 560">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c}"/><stop offset="0.45" stop-color="#0f172a"/><stop offset="1" stop-color="${a}" stop-opacity="0.32"/></linearGradient>
+      <radialGradient id="gas" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="white" stop-opacity="0.34"/><stop offset="0.45" stop-color="${a}" stop-opacity="0.42"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>
+      <radialGradient id="nuclear" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="${b}" stop-opacity="0.68"/><stop offset="0.55" stop-color="${a}" stop-opacity="0.24"/><stop offset="1" stop-color="black" stop-opacity="0.1"/></radialGradient>
+      <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="white" stop-opacity="0.72"/><stop offset="0.45" stop-color="${a}" stop-opacity="0.55"/><stop offset="1" stop-color="${b}" stop-opacity="0.22"/></linearGradient>
+      <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="white" stop-opacity="0.65"/><stop offset="0.35" stop-color="${a}" stop-opacity="0.75"/><stop offset="1" stop-color="black" stop-opacity="0.45"/></linearGradient>
+      <linearGradient id="chip" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}" stop-opacity="0.42"/><stop offset="1" stop-color="black" stop-opacity="0.62"/></linearGradient>
+      <filter id="glow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <rect width="800" height="560" rx="42" fill="url(#bg)"/>
+    <g opacity="0.16">${Array.from({ length: 12 }, (_, i) => `<path d="M0 ${60+i*40} H800" stroke="white"/><path d="M${60+i*62} 0 V560" stroke="white"/>`).join("")}</g>
+    <circle cx="400" cy="270" r="235" fill="none" stroke="${a}" stroke-opacity="0.12" stroke-width="2"/>
+    ${dots}
+    <g filter="url(#glow)">${orbit}</g>
+    <g filter="url(#glow)">${sceneLayer}</g>
+    <circle cx="400" cy="270" r="86" fill="black" opacity="0.42" stroke="white" stroke-opacity="0.22" stroke-width="3"/>
+    <text x="400" y="296" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="900" fill="white">${symbol}</text>
+    <text x="54" y="70" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="900" fill="white" opacity="0.88">${name}</text>
+    <text x="54" y="101" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="${a}" opacity="0.95">Atomic #${n} · ${category}</text>
+    <text x="54" y="494" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="900" fill="white" opacity="0.88">${useCase}</text>
+    <text x="54" y="522" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="800" fill="white" opacity="0.52">Generated ElementOS image · ${scene}</text>
+  </svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+function ElementPicture({ el, compact = false }) {
+  const safe = el || elementMap.Al || elements[0];
+  const src = elementPictureDataUri(safe, compact);
+  if (compact) {
+    return (
+      <img
+        src={src}
+        alt={`${safe.name} generated element picture`}
+        className="h-14 w-14 rounded-2xl border border-white/10 object-cover shadow-[0_0_18px_rgba(34,211,238,.18)]"
+        loading="lazy"
+      />
+    );
+  }
+  return (
+    <Panel className="overflow-hidden border-cyan-300/25 bg-black/30 p-0">
+      <div className="relative">
+        <img
+          src={src}
+          alt={`${safe.name} generated element picture`}
+          className="h-[520px] w-full object-cover"
+          loading="eager"
+        />
+        <div className="absolute left-5 top-5 rounded-full border border-cyan-300/25 bg-slate-950/70 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-cyan-100 backdrop-blur-xl">
+          Generated element picture
+        </div>
+        <div className="absolute bottom-5 left-5 right-5 rounded-[1.5rem] border border-white/10 bg-slate-950/75 p-4 backdrop-blur-xl">
+          <div className="text-3xl font-black text-white">{safe.name} <span className="text-cyan-100">{safe.symbol}</span></div>
+          <div className="mt-1 text-sm text-slate-300">{elementArtworkUseCase(safe)} · Atomic #{safe.atomicNumber}</div>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function ElementArtwork({ el, profile, crystal, compact = false }) {
   const [from, via, to, label, scene, motif] = elementVisualTheme(el || {});
   const n = Number(el?.atomicNumber || 1);
@@ -5126,7 +5281,7 @@ function ElementArtwork({ el, profile, crystal, compact = false }) {
 }
 
 function ElementVisualCard({ el, profile, crystal }) {
-  return <ElementArtwork el={el} profile={profile} crystal={crystal} />;
+  return <ElementPicture el={el} />;
 }
 
 function Explorer({ selected, setSelected, setCompare, setPage, setForecastRequest }) {
@@ -5442,7 +5597,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
           <div className="max-h-[760px] overflow-auto pr-2">
             {filtered.map(e => (
               <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
-                <ElementArtwork el={e} profile={getExplorerProfile(e)} crystal={explorerCrystalIntelligence(e, getExplorerProfile(e))} compact />
+                <ElementPicture el={e} compact />
                 <div>
                   <div className="font-black text-white">{e.name}</div>
                   <div className="text-xs text-slate-500">{e.atomicNumber} · {e.category}</div>
