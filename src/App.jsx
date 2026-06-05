@@ -3499,7 +3499,8 @@ function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
   const base = elementMap[material] || elementMap.H || elements[0];
   const baseScore = score(material);
   const profile = environmentProfiles[environment] || Object.values(environmentProfiles)[0] || { category: "Default", label: "Default exposure", corrosion: 1, heat: 1, pressure: 1, radiation: 1 };
-  const horizons = [0, 1, 5, 10, 25, 50, 100, 250, 500, 1000].includes(selectedYear) ? [0, 1, 5, 10, 25, 50, 100, 250, 500, 1000] : [0, 1, 5, 10, 25, 50, 100, 250, 500, 1000, selectedYear].sort((a, b) => a - b);
+  const baseHorizons = [0, 1, 5, 10, 25, 50, 100, 250, 500, 1000];
+  const horizons = Array.from(new Set([...baseHorizons.filter((year) => year <= selectedYear), selectedYear])).sort((a, b) => a - b);
 
   const resilience = Math.round(Math.min(99, Math.max(8, baseScore.stability * 16 + baseScore.pressure * 7 + baseScore.thermal * 6 - profile.corrosion * 8 - profile.heat * 5 - profile.pressure * 4 - profile.radiation * 6 - stress * 0.06 - humidity * 0.04)));
   const timeline = horizons.map((year) => {
@@ -5103,7 +5104,8 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   const [favorites, setFavorites] = useState(() => {
     if (typeof window === "undefined") return ["Al", "Ti", "Cu", "Fe"];
     try {
-      return JSON.parse(localStorage.getItem("elementosExplorerFavorites") || '["Al","Ti","Cu","Fe"]');
+      const parsed = JSON.parse(localStorage.getItem("elementosExplorerFavorites") || '["Al","Ti","Cu","Fe"]');
+      return Array.isArray(parsed) ? parsed : ["Al", "Ti", "Cu", "Fe"];
     } catch (_error) {
       return ["Al", "Ti", "Cu", "Fe"];
     }
@@ -5111,7 +5113,8 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   const [recent, setRecent] = useState(() => {
     if (typeof window === "undefined") return ["Al", "Ti", "Fe"];
     try {
-      return JSON.parse(localStorage.getItem("elementosExplorerRecent") || '["Al","Ti","Fe"]');
+      const parsed = JSON.parse(localStorage.getItem("elementosExplorerRecent") || '["Al","Ti","Fe"]');
+      return Array.isArray(parsed) ? parsed : ["Al", "Ti", "Fe"];
     } catch (_error) {
       return ["Al", "Ti", "Fe"];
     }
@@ -5129,13 +5132,22 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   const [forecastHistory, setForecastHistory] = useState(() => {
     if (typeof window === "undefined") return [];
     try {
-      return JSON.parse(localStorage.getItem("elementosForecastHistory") || "[]");
+      const parsed = JSON.parse(localStorage.getItem("elementosForecastHistory") || "[]");
+      return Array.isArray(parsed) ? parsed : [];
     } catch (_error) {
       return [];
     }
   });
 
-  const el = elementMap[selected] || elementMap.Al;
+  const el = elementMap[selected] || elementMap.Al || elements[0];
+  if (!el) {
+    return (
+      <Panel>
+        <SectionTitle eyebrow="element explorer" title="Element Explorer" body="Element data is loading. Select an element from the periodic map or return to the dashboard." />
+        <Button onClick={() => setPage?.("dashboard")} variant="primary">Return to Dashboard</Button>
+      </Panel>
+    );
+  }
   const profile = getExplorerProfile(el);
   const s = score(el.symbol);
   const intelligence = explorerUseProfile(el);
@@ -5146,6 +5158,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   const fingerprint2 = explorerMaterialFingerprint(el, profile, s);
   const crystal = explorerCrystalIntelligence(el, profile);
   const production = explorerMiningProduction(el, profile);
+  const productionRegions = Array.isArray(production?.regions) ? production.regions : (Array.isArray(production?.producers) ? production.producers : []);
   const cost = explorerCostIntelligence(el, profile);
   const isotope = explorerIsotopeIntelligence(el);
   const timeline = explorerTimeline(el);
@@ -5613,7 +5626,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
                   ["Recyclability", production.recyclability],
                 ].map(([label, value]) => <ExplorerMiniStat key={label} label={label} value={value} />)}
               </div>
-              <div className="mt-4 flex flex-wrap gap-2">{production.regions.map(region => <span key={region} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-200">{region}</span>)}</div>
+              <div className="mt-4 flex flex-wrap gap-2">{productionRegions.map(region => <span key={region} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-200">{region}</span>)}</div>
             </Panel>
 
             <Panel>
