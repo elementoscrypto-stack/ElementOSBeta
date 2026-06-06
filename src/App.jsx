@@ -2830,7 +2830,7 @@ function Sidebar({ page, setPage }) {
 }
 
 
-function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout }) {
+function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, startCheckout, selected, setSelected, setCompare, setForecastRequest }) {
   const primaryActions = [
     ["Compare Materials", "Compare aluminium, titanium, copper or any material set and generate a ranked insight.", BarChart3, "compare", true],
     ["Forecast Behaviour", "Run heat, pressure, corrosion and time-horizon simulations in Future Simulation.", Clock3, "timemachine", false],
@@ -2859,6 +2859,8 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
       </PageHero>
 
       <SubscriberLoveStrip session={session} isPro={isPro} setPage={setPage} startCheckout={startCheckout} />
+
+      <MissionIntelligencePipelineV151 selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
 
       <div className="eos-card-grid-4">
         {primaryActions.map(([title, body, Icon, target, primary]) => (
@@ -5746,6 +5748,212 @@ function AskElementOSInlineV149({ selected, setSelected, setPage, setForecastReq
   );
 }
 
+
+
+// =====================================================
+// V151 MISSION INTELLIGENCE PIPELINE
+// Turns a plain-language need into a material recommendation,
+// pairings, scenario, forecast handoff and report-ready mission brief.
+// =====================================================
+const V151_NEED_TAGS = [
+  ["lightweight", /light|weight|aircraft|aerospace|space|vehicle|automotive|drone/],
+  ["heat resistant", /heat|thermal|hot|engine|turbine|geothermal|temperature|fire/],
+  ["corrosion resistant", /corrosion|salt|marine|ocean|water|subsea|submarine|chemical/],
+  ["pressure stable", /pressure|deep|load|structural|mining|ocean|subsea|compression/],
+  ["conductive", /conduct|electric|wire|electronics|power|circuit|thermal management/],
+  ["affordable", /cheap|affordable|cost|scale|commercial|mass production/],
+  ["biocompatible", /medical|implant|body|bio|surgical|healthcare/],
+  ["strategic", /defence|defense|nuclear|reactor|critical|strategic|secure/],
+];
+
+function v151InferScenario(text = "") {
+  const q = String(text || "").toLowerCase();
+  const match = V149_SCENARIO_TEMPLATES.find((t) => {
+    const name = t.name.toLowerCase();
+    return q.includes(name) || String(t.needs || "").toLowerCase().split(/\s+/).filter(Boolean).some((word) => q.includes(word) && word.length > 6);
+  });
+  if (match) return match;
+  if (/deep|ocean|marine|salt|subsea|submarine/.test(q)) return V149_SCENARIO_TEMPLATES.find(t => t.name === "Deep Ocean") || V149_SCENARIO_TEMPLATES[0];
+  if (/space|vacuum|orbit|satellite/.test(q)) return V149_SCENARIO_TEMPLATES.find(t => t.name === "Space") || V149_SCENARIO_TEMPLATES[0];
+  if (/medical|implant|bio|surgical/.test(q)) return V149_SCENARIO_TEMPLATES.find(t => t.name === "Medical") || V149_SCENARIO_TEMPLATES[0];
+  if (/aerospace|aircraft|turbine|engine/.test(q)) return V149_SCENARIO_TEMPLATES.find(t => t.name === "Aerospace") || V149_SCENARIO_TEMPLATES[0];
+  return V149_SCENARIO_TEMPLATES.find(t => t.name === "Marine") || V149_SCENARIO_TEMPLATES[0];
+}
+
+function v151ExtractNeeds(text = "") {
+  const q = String(text || "").toLowerCase();
+  const found = V151_NEED_TAGS.filter(([, rx]) => rx.test(q)).map(([label]) => label);
+  return found.length ? found : ["stable", "forecastable", "report-ready"];
+}
+
+function v151MissionBuild(input = "", fallbackSymbol = "Ti") {
+  const raw = String(input || "").trim() || "Find a lightweight, corrosion-resistant material for marine use over 50 years";
+  const parsed = v149ParseMission(raw, fallbackSymbol);
+  const needs = v151ExtractNeeds(raw);
+  const ranked = v149RankByNeed(`${raw} ${needs.join(" ")}`);
+  const selectedCandidate = ranked.find(r => r.symbol === parsed.symbol) || ranked[0] || elementMap[parsed.symbol] || elementMap.Ti || elements[0];
+  const symbol = selectedCandidate?.symbol || parsed.symbol || fallbackSymbol || "Ti";
+  const el = elementMap[symbol] || selectedCandidate || elementMap.Ti || elements[0];
+  const s = score(symbol);
+  const profile = getExplorerProfile(el);
+  const intelligence = explorerUseProfile(el);
+  const material = v149MaterialProfile(el, profile, intelligence, s);
+  const scenario = v151InferScenario(raw);
+  const years = parsed.years || scenario?.years || 50;
+  const environment = parsed.environment && parsed.environment !== "Current Default" ? parsed.environment : (scenario?.environment || "Current Default");
+  const pairings = (material.pairings || similarElementsFor(symbol)).filter(Boolean).filter(x => x !== symbol).slice(0, 3);
+  const recommendations = ranked.slice(0, 4).map((r) => ({
+    symbol: r.symbol,
+    name: r.name,
+    category: r.category,
+    score: r.recommendationScore || Math.round(v149ScorePair(symbol, r.symbol) * .86),
+  }));
+  const missionScore = Math.max(45, Math.min(99, Math.round(
+    material.discoveryPotential * 0.45 +
+    (recommendations[0]?.score || 80) * 0.25 +
+    Number(s.stability || 3) * 6 +
+    Number(s.thermal || 3) * 5 +
+    Number(s.pressure || 3) * 5
+  )));
+  return {
+    id: `mission-${Date.now()}`,
+    input: raw,
+    symbol,
+    elementName: el.name,
+    category: el.category,
+    years,
+    environment,
+    scenarioName: scenario?.name || "Custom Mission",
+    needs,
+    material,
+    pairings,
+    recommendations,
+    missionScore,
+    reportTitle: `${el.name} ${years}-Year ${scenario?.name || "Material"} Mission`,
+    summary: `${el.name} is recommended for this mission because it matches ${needs.slice(0, 3).join(", ")} requirements while maintaining a ${material.discoveryPotential}% discovery potential score inside ElementOS.`,
+  };
+}
+
+function v151PersistMissionBrief(brief) {
+  if (typeof window === "undefined" || !brief) return;
+  try {
+    const existing = safeParseJSON(localStorage.getItem("elementosMissionBriefs"), []);
+    const list = Array.isArray(existing) ? existing : [];
+    localStorage.setItem("elementosMissionBriefs", JSON.stringify([brief, ...list].slice(0, 12)));
+    localStorage.setItem("elementosActiveMissionBrief", JSON.stringify(brief));
+  } catch (_error) {
+    // Mission brief saving is a convenience only; never block the UI.
+  }
+}
+
+function MissionResultCardV151({ mission, setSelected, setCompare, setPage, setForecastRequest }) {
+  if (!mission) return null;
+  const openExplorer = () => {
+    setSelected?.(mission.symbol);
+    v151PersistMissionBrief(mission);
+    setPage?.("explorer");
+  };
+  const runForecast = () => {
+    setSelected?.(mission.symbol);
+    v151PersistMissionBrief(mission);
+    setForecastRequest?.({
+      id: `v151-${Date.now()}`,
+      symbol: mission.symbol,
+      years: mission.years,
+      environment: mission.environment,
+      source: "Mission Intelligence Pipeline",
+      mission,
+    });
+    setPage?.("timemachine");
+  };
+  const openReport = () => {
+    const nextCompare = [mission.symbol, ...mission.pairings].filter(Boolean).slice(0, 4);
+    setSelected?.(mission.symbol);
+    setCompare?.(nextCompare);
+    v151PersistMissionBrief(mission);
+    setPage?.("reports");
+  };
+  return (
+    <div className="rounded-[1.75rem] border border-emerald-300/20 bg-emerald-300/[0.055] p-5">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-emerald-200">mission brief ready</div>
+          <h3 className="mt-2 text-3xl font-black text-white">{mission.reportTitle}</h3>
+          <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-300">{mission.summary}</p>
+        </div>
+        <div className="text-right">
+          <div className="text-5xl font-black text-emerald-100">{mission.missionScore}%</div>
+          <div className="text-xs uppercase tracking-[.18em] text-slate-500">mission score</div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-4">
+        <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">Material</div><div className="mt-1 text-xl font-black text-white">{mission.elementName}</div></div>
+        <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">Scenario</div><div className="mt-1 text-xl font-black text-white">{mission.scenarioName}</div></div>
+        <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">Horizon</div><div className="mt-1 text-xl font-black text-white">{mission.years} years</div></div>
+        <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">Environment</div><div className="mt-1 text-xl font-black text-white">{mission.environment}</div></div>
+      </div>
+
+      <div className="mt-5 grid gap-4 xl:grid-cols-[.95fr_1.05fr]">
+        <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.055] p-4">
+          <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">Recommended pairings</div>
+          <div className="mt-3 flex flex-wrap gap-2">{mission.pairings.map(sym => <span key={sym} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200">{mission.symbol} + {sym}</span>)}</div>
+        </div>
+        <div className="rounded-2xl border border-amber-300/15 bg-amber-300/[0.055] p-4">
+          <div className="text-xs font-black uppercase tracking-[.2em] text-amber-200">Decision needs detected</div>
+          <div className="mt-3 flex flex-wrap gap-2">{mission.needs.map(n => <span key={n} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200">✓ {n}</span>)}</div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-3">
+        <Button onClick={openExplorer} variant="primary">Open Material Brief</Button>
+        <Button onClick={runForecast}>Run Forecast</Button>
+        <Button onClick={openReport}>Generate Report Draft</Button>
+      </div>
+    </div>
+  );
+}
+
+function MissionIntelligencePipelineV151({ selected, setSelected, setCompare, setPage, setForecastRequest }) {
+  const [missionInput, setMissionInput] = useState("Find me a lightweight, corrosion-resistant material for marine use over 50 years");
+  const [mission, setMission] = useState(() => v151MissionBuild("Find me a lightweight, corrosion-resistant material for marine use over 50 years", selected || "Ti"));
+  const analyze = () => {
+    const next = v151MissionBuild(missionInput, selected || "Ti");
+    setMission(next);
+    setSelected?.(next.symbol);
+    setCompare?.([next.symbol, ...next.pairings].filter(Boolean).slice(0, 4));
+    setForecastRequest?.({ id: `v151-preview-${Date.now()}`, symbol: next.symbol, years: next.years, environment: next.environment, source: "Mission Intelligence Pipeline", mission: next });
+    v151PersistMissionBrief(next);
+  };
+  const presets = [
+    "Lightweight heat-resistant alloy for aerospace turbines over 50 years",
+    "Corrosion-resistant material for deep ocean geothermal hardware over 100 years",
+    "Affordable conductive material for scalable power systems over 25 years",
+    "Biocompatible stable material for medical implants over 25 years",
+  ];
+  return (
+    <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-300/[0.08] via-emerald-300/[0.045] to-slate-950">
+      <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
+        <div>
+          <Pill gold><Bot size={12}/> V151 mission intelligence pipeline</Pill>
+          <h2 className="mt-4 text-4xl font-black text-white">Tell ElementOS what you need. It builds the workflow.</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">The next paid-product loop: natural-language requirement → recommended material → pairings → scenario → forecast horizon → report-ready mission brief.</p>
+          <textarea
+            value={missionInput}
+            onChange={(e) => setMissionInput(e.target.value)}
+            className="mt-5 min-h-[132px] w-full rounded-[1.25rem] border border-white/10 bg-slate-950/85 p-4 text-sm font-bold text-white outline-none placeholder:text-slate-600"
+            placeholder="Example: Find a lightweight, corrosion-resistant material for marine use over 50 years"
+          />
+          <div className="mt-3 flex flex-wrap gap-2">
+            {presets.map((p) => <button key={p} onClick={() => setMissionInput(p)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-300 hover:border-cyan-300/35 hover:bg-cyan-300/10">{p}</button>)}
+          </div>
+          <Button onClick={analyze} variant="primary" className="mt-5 w-full">Analyze Mission</Button>
+        </div>
+        <MissionResultCardV151 mission={mission} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
+      </div>
+    </Panel>
+  );
+}
 function SubscriberFeatureMatrixV149({ startCheckout }) {
   const tiers = [
     ["Pro Researcher", "$19/month", ["Reports", "AI Briefs", "Discovery Engine", "Forecast History", "Workspaces"]],
@@ -13613,6 +13821,10 @@ const startCheckout = async (planName = "Pro Researcher") => {
           session={session}
           isPro={isPro}
           startCheckout={startCheckout}
+          selected={selected}
+          setSelected={setSelected}
+          setCompare={setCompare}
+          setForecastRequest={setForecastRequest}
         />
       ),
       discover: <Discover setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
