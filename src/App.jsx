@@ -5323,6 +5323,418 @@ function ElementVisualCard({ el, profile, crystal }) {
   return <ElementArtwork el={safe} profile={profile} crystal={crystal} />;
 }
 
+
+
+// =====================================================
+// V149 MATERIAL INTELLIGENCE UPGRADE LAYER
+// Adds AI-style material briefs, applications database,
+// opportunity scoring, scenario templates and Ask ElementOS.
+// =====================================================
+const V149_MATERIAL_INTELLIGENCE_DB = {
+  Ti: {
+    brief: "Titanium demonstrates exceptional thermal stability, corrosion resistance and strength-to-weight performance. ElementOS ranks it as a premium candidate for marine, medical and aerospace systems where long-term environmental resistance matters.",
+    applications: ["Jet engines", "Aircraft frames", "Medical implants", "Submarines", "Heat exchangers", "Geothermal hardware"],
+    industries: ["Aerospace", "Marine", "Medical", "Energy"],
+    advantages: ["High strength-to-weight ratio", "Excellent corrosion resistance", "Biocompatible surface behaviour", "Strong thermal performance"],
+    limitations: ["Higher cost", "Machining complexity", "Specialist fabrication", "Supply chain sensitivity"],
+    pairings: ["Al", "Hf", "Zr"],
+    heroScene: "jet turbine · aerospace alloy · blue metallic crystal",
+    opportunityUse: "High-temperature aerospace and deep-ocean structural systems",
+  },
+  Al: {
+    brief: "Aluminium is a lightweight, recyclable engineering metal with strong corrosion resistance and excellent commercial scalability. ElementOS ranks it as a high-utility base material for transport, construction, energy and aerospace comparison workflows.",
+    applications: ["Aircraft skins", "EV frames", "Power lines", "Marine panels", "Construction systems", "Heat sinks"],
+    industries: ["Aerospace", "Automotive", "Construction", "Energy"],
+    advantages: ["Very lightweight", "Recyclable", "Good conductivity", "Oxide-layer corrosion resistance"],
+    limitations: ["Lower strength than titanium", "Can react in strong alkali", "Fatigue review needed", "Lower high-temperature margin"],
+    pairings: ["Ti", "Mg", "Si"],
+    heroScene: "silver aerospace panel · lightweight alloy · reflective oxide surface",
+    opportunityUse: "Lightweight structural systems and recyclable transport platforms",
+  },
+  Cu: {
+    brief: "Copper is a premium conductive metal with exceptional electrical and thermal value. ElementOS ranks it highly for power systems, electronics, heat transfer and industrial infrastructure where conductivity is the main decision driver.",
+    applications: ["Electrical wiring", "Circuit boards", "Heat exchangers", "Motors", "Plumbing", "Renewable energy systems"],
+    industries: ["Electronics", "Energy", "Construction", "Industrial systems"],
+    advantages: ["Excellent electrical conductivity", "Excellent thermal conductivity", "Patina-forming corrosion behaviour", "Strong alloy usefulness"],
+    limitations: ["Cost-sensitive", "Higher density", "Oxidation/patina changes appearance", "Theft and supply risk"],
+    pairings: ["Ag", "Al", "Au"],
+    heroScene: "electric pathways · copper lattice · thermal circuit glow",
+    opportunityUse: "High-conductivity electrical and thermal management systems",
+  },
+  Au: {
+    brief: "Gold is a chemically stable noble metal with exceptional corrosion resistance and high reliability in precision electronics. ElementOS ranks it as a specialist high-value material where reliability matters more than cost.",
+    applications: ["Precision contacts", "Aerospace electronics", "Medical devices", "Coatings", "Bullion", "Sensors"],
+    industries: ["Electronics", "Medical", "Aerospace", "Finance"],
+    advantages: ["Excellent corrosion resistance", "Reliable conductor", "Noble metal stability", "High strategic value"],
+    limitations: ["Very high cost", "Soft in pure form", "Ethical sourcing concerns", "Limited structural use"],
+    pairings: ["Cu", "Ag", "Pt"],
+    heroScene: "gold vein · bullion · luxury electronics",
+    opportunityUse: "Precision electronics and corrosion-proof contact systems",
+  },
+  U: {
+    brief: "Uranium is a dense actinide with strategic nuclear-energy and isotope-science importance. ElementOS treats it as a regulated research material, valuable for energy-density modelling rather than ordinary structural design.",
+    applications: ["Nuclear fuel", "Isotope research", "Shielding research", "Energy systems", "Advanced physics", "Government-regulated analysis"],
+    industries: ["Energy", "Research", "Government", "Nuclear engineering"],
+    advantages: ["Very high energy density", "Important isotope behaviour", "Dense metal", "Strategic research value"],
+    limitations: ["Radioactive", "Strict regulation", "Complex safety requirements", "Specialist handling only"],
+    pairings: ["Th", "Pu", "Pb"],
+    heroScene: "reactor core · actinide lattice · controlled energy glow",
+    opportunityUse: "Regulated nuclear-energy and isotope-behaviour research",
+  },
+  C: {
+    brief: "Carbon is a foundational nonmetal with extraordinary forms ranging from graphite to diamond. ElementOS ranks it as a platform material for conductivity, strength, composites, life chemistry and crystalline structures.",
+    applications: ["Diamond lattice", "Graphite electrodes", "Carbon fibre", "Composites", "Batteries", "Semiconducting materials"],
+    industries: ["Aerospace", "Energy storage", "Electronics", "Advanced materials"],
+    advantages: ["Multiple allotropes", "Exceptional diamond hardness", "Graphite conductivity", "Composite reinforcement"],
+    limitations: ["Behaviour depends heavily on form", "Processing-specific performance", "Oxidation at high temperature", "Purity matters"],
+    pairings: ["Si", "Ti", "Fe"],
+    heroScene: "diamond crystal lattice · graphite plane · carbon fibre weave",
+    opportunityUse: "Advanced composites, crystal lattices and high-performance structures",
+  },
+};
+
+const V149_SCENARIO_TEMPLATES = [
+  { name: "Aerospace", years: 50, environment: "High heat + vibration", needs: "lightweight heat resistant corrosion resistant" },
+  { name: "Marine", years: 50, environment: "Salt water + pressure", needs: "corrosion resistant pressure stable marine" },
+  { name: "Medical", years: 25, environment: "Biocompatible long-term exposure", needs: "biocompatible stable corrosion resistant" },
+  { name: "Automotive", years: 10, environment: "Thermal cycling + impact", needs: "lightweight structural affordable" },
+  { name: "Mining", years: 25, environment: "Abrasive pressure + chemical exposure", needs: "pressure resistant durable corrosion resistant" },
+  { name: "Space", years: 100, environment: "Vacuum + radiation + thermal extremes", needs: "lightweight thermal stable low outgassing" },
+  { name: "Defence", years: 50, environment: "Impact + heat + strategic reliability", needs: "high strength heat resistant strategic" },
+  { name: "Deep Ocean", years: 100, environment: "Pressure + chloride + cold exposure", needs: "corrosion resistant pressure stable long term" },
+];
+
+function v149MaterialProfile(el, profile = {}, intelligence = {}, s = {}) {
+  const safe = el || elementMap.Al || elements[0];
+  const curated = V149_MATERIAL_INTELLIGENCE_DB[safe.symbol] || {};
+  const category = String(safe.category || "Material");
+  const generatedApps = Array.isArray(profile?.applications) ? profile.applications : [];
+  const generatedIndustries = Array.isArray(intelligence?.industries) ? intelligence.industries : [];
+  const generatedAdvantages = Array.isArray(intelligence?.strengths) ? intelligence.strengths : [];
+  const generatedLimitations = Array.isArray(intelligence?.limitations) ? intelligence.limitations : [];
+  const fallbackPairings = (Array.isArray(profile?.similar) ? profile.similar : similarElementsFor(safe.symbol)).slice(0, 3);
+  const applications = (curated.applications || generatedApps || []).filter(Boolean).slice(0, 6);
+  const industries = (curated.industries || generatedIndustries || []).filter(Boolean).slice(0, 4);
+  const advantages = (curated.advantages || generatedAdvantages || []).filter(Boolean).slice(0, 4);
+  const limitations = (curated.limitations || generatedLimitations || []).filter(Boolean).slice(0, 4);
+  const pairings = (curated.pairings || [intelligence?.recommendedCompare, ...fallbackPairings]).filter(Boolean).filter(sym => sym !== safe.symbol).slice(0, 3);
+  const discoveryPotential = Math.max(42, Math.min(99, Math.round(
+    (Number(s.stability || 3) * 15) +
+    (Number(s.thermal || 3) * 13) +
+    (Number(s.pressure || 3) * 12) +
+    (Number(s.rarity || 2) * 6) +
+    (Number(s.conductivity || 2) * 5) +
+    (explorerIsMetal(safe) ? 10 : 4)
+  )));
+  const confidence = Math.max(55, Math.min(99, Math.round(discoveryPotential * 0.82 + (profile?.dataConfidence?.includes?.("Curated") ? 12 : 6))));
+  const brief = curated.brief || `${safe.name} is a ${category.toLowerCase()} with a material profile suited to comparison, forecasting and scenario modelling. ElementOS ranks it through stability, thermal behaviour, pressure response, diffusion, rarity and conductivity to help users decide where it may fit.`;
+  return {
+    brief,
+    applications: applications.length ? applications : ["Research comparison", "Scenario modelling", "Material education", "Substitute screening"],
+    industries: industries.length ? industries : ["Research", "Industrial", "Materials science", "Education"],
+    advantages: advantages.length ? advantages : ["Useful comparison profile", "Scenario-ready metrics", "Report-friendly material data", "Forecastable behaviour"],
+    limitations: limitations.length ? limitations : ["Application dependent", "Requires context", "Needs validation", "Compare before deployment"],
+    pairings: pairings.length ? pairings : similarElementsFor(safe.symbol).slice(0, 3),
+    heroScene: curated.heroScene || `${category.toLowerCase()} field · atomic lattice · ElementOS material surface`,
+    opportunityUse: curated.opportunityUse || "Material selection, substitute discovery and future-state forecasting",
+    discoveryPotential,
+    confidence,
+  };
+}
+
+function v149ScorePair(a, b) {
+  if (!a || !b) return 72;
+  try { return compatibilityScore(a, b); } catch (_error) { return 72; }
+}
+
+function v149RankByNeed(input = "") {
+  const query = String(input || "").toLowerCase();
+  const weights = {
+    lightweight: /light|weight|air|space|automotive|aerospace/.test(query),
+    heat: /heat|thermal|hot|geothermal|engine|turbine/.test(query),
+    corrosion: /corrosion|marine|ocean|salt|water|medical/.test(query),
+    conductivity: /conduct|electric|wire|power|electronics|thermal/.test(query),
+    pressure: /pressure|deep|load|structural|mining|submarine/.test(query),
+    cost: /cheap|affordable|cost|scale|commercial/.test(query),
+  };
+  return elements
+    .map((e) => {
+      const s = score(e.symbol);
+      const metalBoost = explorerIsMetal(e) ? 10 : 0;
+      let value = 40 + metalBoost;
+      if (weights.lightweight) value += Math.max(0, 28 - e.atomicNumber * 0.22);
+      if (weights.heat) value += s.thermal * 9;
+      if (weights.corrosion) value += s.stability * 8;
+      if (weights.conductivity) value += s.conductivity * 9;
+      if (weights.pressure) value += s.pressure * 8;
+      if (weights.cost) value += Math.max(0, 18 - s.rarity * 2.5);
+      if (!Object.values(weights).some(Boolean)) value += s.stability * 5 + s.thermal * 4 + s.pressure * 4;
+      return { ...e, recommendationScore: Math.max(1, Math.min(99, Math.round(value))) };
+    })
+    .sort((a, b) => b.recommendationScore - a.recommendationScore)
+    .slice(0, 4);
+}
+
+function v149ParseMission(input = "", fallbackSymbol = "Ti") {
+  const text = String(input || "").toLowerCase();
+  const found = elements.find(e => text.includes(e.name.toLowerCase()) || new RegExp(`\\b${e.symbol.toLowerCase()}\\b`).test(text));
+  const yearMatch = text.match(/(\d{1,4})\s*year/);
+  let environment = "Current Default";
+  if (/deep ocean|ocean|marine|salt|submarine/.test(text)) environment = "Deep Ocean";
+  else if (/space|vacuum|orbit/.test(text)) environment = "Space";
+  else if (/medical|implant|body/.test(text)) environment = "Medical";
+  else if (/aerospace|engine|turbine|aircraft/.test(text)) environment = "Aerospace";
+  else if (/geothermal|heat|thermal/.test(text)) environment = "Geothermal";
+  return { symbol: found?.symbol || fallbackSymbol, years: yearMatch ? Number(yearMatch[1]) : 50, environment };
+}
+
+function ElementHeroImageV149({ el, material }) {
+  const safe = el || elementMap.Al || elements[0];
+  const s = score(safe.symbol);
+  const isGold = safe.symbol === "Au";
+  const isCopper = safe.symbol === "Cu";
+  const isTitanium = safe.symbol === "Ti";
+  const isUranium = safe.symbol === "U";
+  const isCarbon = safe.symbol === "C";
+  const hueA = isGold ? "rgba(251,191,36,.38)" : isCopper ? "rgba(249,115,22,.34)" : isTitanium ? "rgba(56,189,248,.32)" : isUranium ? "rgba(132,204,22,.30)" : isCarbon ? "rgba(226,232,240,.28)" : "rgba(34,211,238,.28)";
+  const hueB = isGold ? "rgba(180,83,9,.22)" : isCopper ? "rgba(194,65,12,.22)" : isTitanium ? "rgba(30,64,175,.22)" : isUranium ? "rgba(22,163,74,.22)" : isCarbon ? "rgba(15,23,42,.6)" : "rgba(79,70,229,.22)";
+  const nodes = Array.from({ length: 11 }, (_, i) => ({
+    x: 14 + ((safe.atomicNumber * (i + 5)) % 72),
+    y: 18 + ((safe.atomicNumber * (i + 9)) % 58),
+    r: 1.4 + ((i + safe.atomicNumber) % 4) * .45,
+  }));
+  return (
+    <div className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-slate-950 shadow-[0_0_70px_rgba(34,211,238,.12)]">
+      <div className="aspect-[4/3] w-full overflow-hidden">
+        <svg viewBox="0 0 100 75" className="h-full w-full" role="img" aria-label={`${safe.name} generated ElementOS hero image`}>
+          <defs>
+            <radialGradient id={`v149g-${safe.symbol}`} cx="38%" cy="24%" r="70%">
+              <stop offset="0%" stopColor="rgba(255,255,255,.34)" />
+              <stop offset="35%" stopColor={hueA} />
+              <stop offset="100%" stopColor="rgba(2,6,23,1)" />
+            </radialGradient>
+            <linearGradient id={`v149l-${safe.symbol}`} x1="0" x2="1">
+              <stop offset="0%" stopColor={hueA} />
+              <stop offset="100%" stopColor={hueB} />
+            </linearGradient>
+          </defs>
+          <rect width="100" height="75" fill={`url(#v149g-${safe.symbol})`} />
+          <path d="M0 54 C18 38 34 68 55 43 C73 21 83 40 100 18 L100 75 L0 75 Z" fill={hueB} opacity="0.82" />
+          <path d="M8 57 C22 43 33 63 48 49 C63 34 79 46 93 29" fill="none" stroke={`url(#v149l-${safe.symbol})`} strokeWidth="2.4" opacity="0.78" />
+          {isTitanium && <path d="M13 43 L38 24 L71 39 L88 31" fill="none" stroke="rgba(125,211,252,.85)" strokeWidth="3" strokeLinecap="round" />}
+          {isGold && <g opacity=".86"><rect x="53" y="42" width="28" height="9" rx="2" fill="rgba(251,191,36,.78)"/><rect x="43" y="52" width="36" height="9" rx="2" fill="rgba(245,158,11,.72)"/></g>}
+          {isCopper && <g opacity=".88">{[18,28,38,48,58,68,78].map((x,i)=><path key={x} d={`M${x} 16 C${x-8} 29 ${x+8} 41 ${x} 56`} fill="none" stroke="rgba(251,146,60,.75)" strokeWidth={i%2?1.2:1.8}/>)}</g>}
+          {isUranium && <g opacity=".8"><circle cx="58" cy="35" r="16" fill="none" stroke="rgba(190,242,100,.7)" strokeWidth="2"/><circle cx="58" cy="35" r="5" fill="rgba(190,242,100,.65)"/></g>}
+          {isCarbon && <g opacity=".82">{nodes.slice(0,8).map((n,i)=><line key={`c-${i}`} x1={n.x} y1={n.y} x2={nodes[(i+1)%8].x} y2={nodes[(i+1)%8].y} stroke="rgba(226,232,240,.45)" strokeWidth=".8" />)}</g>}
+          {nodes.map((n, i) => <circle key={i} cx={n.x} cy={n.y} r={n.r} fill="rgba(255,255,255,.72)" opacity=".78" />)}
+          <circle cx="18" cy="18" r={7 + (safe.atomicNumber % 7)} fill={hueA} opacity=".85" />
+          <text x="12" y="68" fill="rgba(255,255,255,.92)" fontSize="15" fontWeight="900" fontFamily="Arial, sans-serif">{safe.symbol}</text>
+        </svg>
+      </div>
+      <div className="border-t border-white/10 bg-black/25 p-4">
+        <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Generated element picture</div>
+        <div className="mt-1 text-2xl font-black text-white">{safe.name}</div>
+        <div className="mt-1 text-xs leading-5 text-slate-400">{material?.heroScene || safe.category} · visual decision layer</div>
+      </div>
+    </div>
+  );
+}
+
+function MaterialIntelligenceBriefV149({ el, profile, intelligence, scores, onCompare, onForecast }) {
+  const material = v149MaterialProfile(el, profile, intelligence, scores);
+  const firstPair = material.pairings[0] || intelligence?.recommendedCompare || "Ti";
+  return (
+    <Panel className="overflow-hidden border-emerald-300/20 bg-gradient-to-br from-emerald-300/[0.08] via-cyan-300/[0.05] to-slate-950">
+      <div className="grid gap-6 xl:grid-cols-[.85fr_1.15fr]">
+        <ElementHeroImageV149 el={el} material={material} />
+        <div>
+          <Pill gold><Bot size={12}/> AI material intelligence brief</Pill>
+          <h2 className="mt-4 text-4xl font-black text-white">{el.name}</h2>
+          <p className="mt-4 text-sm leading-7 text-slate-300">{material.brief}</p>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.06] p-4">
+              <div className="text-xs font-black uppercase tracking-[.2em] text-emerald-200">Most associated with</div>
+              <div className="mt-3 space-y-2 text-sm font-bold text-slate-200">{material.industries.map(x => <div key={x}>✓ {x}</div>)}</div>
+            </div>
+            <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.06] p-4">
+              <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">ElementOS confidence</div>
+              <div className="mt-2 text-5xl font-black text-white">{material.confidence}%</div>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-gradient-to-r from-emerald-300 to-cyan-300" style={{ width: `${material.confidence}%` }} /></div>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Recommended pairings</div>
+              <div className="mt-3 flex flex-wrap gap-2">{material.pairings.map(sym => <button key={sym} onClick={() => onCompare?.(sym)} className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-2 text-xs font-black text-cyan-100">✓ {elementMap[sym]?.name || sym}</button>)}</div>
+            </div>
+            <div className="rounded-2xl border border-amber-300/15 bg-amber-300/[0.06] p-4">
+              <div className="text-xs font-black uppercase tracking-[.2em] text-amber-200">Potential risks</div>
+              <div className="mt-3 space-y-2 text-sm font-bold text-slate-200">{material.limitations.slice(0,3).map(x => <div key={x}>✓ {x}</div>)}</div>
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Button onClick={() => onCompare?.(firstPair)} variant="primary">Compare with {elementMap[firstPair]?.name || firstPair}</Button>
+            <Button onClick={() => onForecast?.(el.symbol)}>Forecast {el.name}</Button>
+          </div>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function ApplicationsDatabaseV149({ material }) {
+  return (
+    <Panel>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">applications database</div>
+          <h2 className="mt-2 text-3xl font-black text-white">What this material is actually used for</h2>
+          <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">Applications, industries, advantages and limitations are now first-class Explorer data instead of buried notes.</p>
+        </div>
+        <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-black text-emerald-100">Discovery Potential {material.discoveryPotential}%</div>
+      </div>
+      <div className="mt-6 grid gap-4 xl:grid-cols-4">
+        {[
+          ["Applications", material.applications],
+          ["Industries", material.industries],
+          ["Advantages", material.advantages],
+          ["Limitations", material.limitations],
+        ].map(([title, items]) => (
+          <div key={title} className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+            <div className="text-lg font-black text-white">{title}</div>
+            <div className="mt-3 space-y-2 text-sm text-slate-300">{items.map(x => <div key={x}>✓ {x}</div>)}</div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function DiscoveryOpportunityScanV149({ el, material, onCompare }) {
+  const pairs = material.pairings.map(sym => ({ sym, score: v149ScorePair(el.symbol, sym) })).sort((a,b)=>b.score-a.score);
+  return (
+    <Panel className="border-fuchsia-300/20 bg-fuchsia-300/[0.045]">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-fuchsia-200">opportunity scan</div>
+          <h2 className="mt-2 text-3xl font-black text-white">Discovery opportunities</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Turns the selected element into action: pair, compatibility, use case and next workflow.</p>
+        </div>
+        <div className="text-right"><div className="text-5xl font-black text-fuchsia-100">{material.discoveryPotential}%</div><div className="text-xs uppercase tracking-[.18em] text-slate-500">Discovery score</div></div>
+      </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-3">
+        {pairs.map(({ sym, score }) => (
+          <div key={sym} className="rounded-[1.5rem] border border-fuchsia-300/15 bg-black/25 p-5">
+            <div className="text-xs font-black uppercase tracking-[.18em] text-fuchsia-200">{score}% compatibility</div>
+            <div className="mt-2 text-3xl font-black text-white">{el.symbol} + {sym}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-300">Potential use: {material.opportunityUse}</p>
+            <Button onClick={() => onCompare?.(sym)} className="mt-4 w-full">Open Opportunity</Button>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function ScenarioTemplatesV149({ el, onLaunch }) {
+  return (
+    <Panel>
+      <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">scenario templates</div>
+      <h2 className="mt-2 text-3xl font-black text-white">One-click material missions</h2>
+      <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {V149_SCENARIO_TEMPLATES.map(t => (
+          <button key={t.name} onClick={() => onLaunch?.(t)} className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/10">
+            <div className="text-lg font-black text-white">✓ {t.name}</div>
+            <div className="mt-2 text-xs leading-5 text-slate-400">{t.environment}</div>
+            <div className="mt-3 text-xs font-black text-cyan-100">{t.years} year horizon</div>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function OpportunityEngineV149({ setSelected, setPage }) {
+  const [need, setNeed] = useState("Lightweight heat resistant corrosion resistant");
+  const results = useMemo(() => v149RankByNeed(need), [need]);
+  return (
+    <Panel className="border-emerald-300/20 bg-emerald-300/[0.045]">
+      <div className="grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-emerald-200">opportunity engine</div>
+          <h2 className="mt-2 text-3xl font-black text-white">Tell me what material I should use</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Type the decision need. ElementOS ranks candidate materials from the 118-element model.</p>
+          <textarea value={need} onChange={(e) => setNeed(e.target.value)} className="mt-4 min-h-[110px] w-full rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm font-bold text-white outline-none" />
+        </div>
+        <div className="space-y-3">
+          {results.map((r, index) => (
+            <button key={r.symbol} onClick={() => { setSelected?.(r.symbol); setPage?.("explorer"); }} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-emerald-300/35 hover:bg-emerald-300/10">
+              <div><div className="text-xl font-black text-white">{index + 1}. {r.name}</div><div className="text-xs text-slate-400">{r.symbol} · {r.category}</div></div>
+              <div className="text-3xl font-black text-emerald-100">{r.recommendationScore}%</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function AskElementOSInlineV149({ selected, setSelected, setPage, setForecastRequest, compact = false }) {
+  const [input, setInput] = useState("Investigate titanium for deep ocean geothermal environments over 50 years");
+  const [result, setResult] = useState(null);
+  const run = () => {
+    const parsed = v149ParseMission(input, selected || "Ti");
+    setResult(parsed);
+    setSelected?.(parsed.symbol);
+    setForecastRequest?.({ id: `mission-${Date.now()}`, symbol: parsed.symbol, years: parsed.years, environment: parsed.environment });
+  };
+  const openForecast = () => {
+    const parsed = result || v149ParseMission(input, selected || "Ti");
+    setSelected?.(parsed.symbol);
+    setForecastRequest?.({ id: `mission-${Date.now()}`, symbol: parsed.symbol, years: parsed.years, environment: parsed.environment });
+    setPage?.("timemachine");
+  };
+  return (
+    <div className={`rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.055] ${compact ? "p-3" : "p-4"}`}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Ask ElementOS</div><div className="mt-1 text-sm text-slate-300">Mission Intelligence Console</div></div>
+        <button onClick={run} className="rounded-full bg-cyan-300 px-3 py-2 text-xs font-black text-slate-950">Analyze</button>
+      </div>
+      <textarea value={input} onChange={(e) => setInput(e.target.value)} className="mt-3 min-h-[74px] w-full rounded-2xl border border-white/10 bg-slate-950/80 p-3 text-sm font-bold text-white outline-none" />
+      {result && (
+        <div className="mt-3 grid gap-2 text-xs font-bold sm:grid-cols-3">
+          <div className="rounded-xl border border-white/10 bg-black/25 p-2">Material: {elementMap[result.symbol]?.name || result.symbol}</div>
+          <div className="rounded-xl border border-white/10 bg-black/25 p-2">Horizon: {result.years} years</div>
+          <div className="rounded-xl border border-white/10 bg-black/25 p-2">Environment: {result.environment}</div>
+          <button onClick={openForecast} className="rounded-xl bg-emerald-300 px-3 py-2 font-black text-slate-950 sm:col-span-3">Create Forecast</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SubscriberFeatureMatrixV149({ startCheckout }) {
+  const tiers = [
+    ["Pro Researcher", "$19/month", ["Reports", "AI Briefs", "Discovery Engine", "Forecast History", "Workspaces"]],
+    ["Pro Lab", "$35/month", ["Scenario Builder", "Seismo", "Well Driller", "Matter Lab", "Advanced Exports"]],
+  ];
+  return (
+    <Panel className="border-amber-300/20 bg-amber-300/[0.045]">
+      <div className="text-xs font-black uppercase tracking-[.22em] text-amber-200">subscriber features</div>
+      <h2 className="mt-2 text-3xl font-black text-white">Clearer upgrade path</h2>
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        {tiers.map(([name, price, features]) => (
+          <div key={name} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+            <div className="flex items-center justify-between"><div className="text-2xl font-black text-white">{name}</div><div className="text-xl font-black text-amber-100">{price}</div></div>
+            <div className="mt-4 space-y-2 text-sm text-slate-300">{features.map(x => <div key={x}>✓ {x}</div>)}</div>
+            <Button onClick={() => startCheckout?.(name)} className="mt-5 w-full" variant={name === "Pro Lab" ? "primary" : "default"}>Choose {name}</Button>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
 function ForecastContextCard({ years = 50, elementName = "this element" }) {
   const band = years <= 10 ? "Short Term" : years <= 50 ? "Medium Term" : years <= 100 ? "Long Term" : "Extreme";
   const checks = ["Corrosion", "Thermal Stability", "Structural Integrity", "Environmental Resistance"];
@@ -5398,6 +5810,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   const profile = getExplorerProfile(el);
   const s = score(el.symbol);
   const intelligence = explorerUseProfile(el);
+  const materialV149 = v149MaterialProfile(el, profile, intelligence, s);
   const industrySuitability = explorerIndustrySuitability(el, profile, s);
   const compounds = explorerCompoundObjects(el, profile);
   const encounters = explorerEncounters(el, profile, s);
@@ -5703,6 +6116,20 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
               </div>
             </Panel>
           </div>
+
+          <MaterialIntelligenceBriefV149
+            el={el}
+            profile={profile}
+            intelligence={intelligence}
+            scores={s}
+            onCompare={(sym) => openCompare([sym])}
+            onForecast={(sym) => launchForecast(sym, forecastYears)}
+          />
+          <ApplicationsDatabaseV149 material={materialV149} />
+          <DiscoveryOpportunityScanV149 el={el} material={materialV149} onCompare={(sym) => openCompare([sym])} />
+          <OpportunityEngineV149 setSelected={setSelected} setPage={setPage} />
+          <ScenarioTemplatesV149 el={el} onLaunch={(template) => launchForecast(el.symbol, template.years, template.environment)} />
+          <AskElementOSInlineV149 selected={el.symbol} setSelected={setSelected} setPage={setPage} setForecastRequest={setForecastRequest} />
 
           <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
             <Panel>
@@ -13281,6 +13708,9 @@ const startCheckout = async (planName = "Pro Researcher") => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
+        {page !== "landing" && page !== "login" && (
+          <AskElementOSInlineV149 selected={selected} setSelected={setSelected} setPage={setPage} setForecastRequest={setForecastRequest} compact />
+        )}
         {/* Global guide strips removed in V126 so each page can focus on its primary workflow. */}
         <ElementOSPageErrorBoundary key={page} page={page} setPage={setPage}><div className="eos-page-stage mx-auto w-full max-w-[1850px] animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div></ElementOSPageErrorBoundary>
       </main>
