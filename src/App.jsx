@@ -45,6 +45,15 @@ function safeNumber(value, fallback = 0) {
   return Number.isFinite(next) ? next : fallback;
 }
 
+function showToast(message) {
+  if (typeof window === "undefined") return;
+  try {
+    window.dispatchEvent(new CustomEvent("elementos:toast", { detail: { message } }));
+  } catch (_error) {
+    console.log("ElementOS:", message);
+  }
+}
+
 class ElementOSPageErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -297,6 +306,30 @@ function adaptiveDiscoveryRank(discoveries) {
   return discoveries
     .map((discovery, index) => adaptiveDiscoveryMetrics(discovery, index))
     .sort((a, b) => b.momentum - a.momentum);
+}
+
+
+function makePublishableDiscoveries(limit = 12) {
+  return adaptiveDiscoveryRank(generateDiscoveryEngine(Math.max(1, limit))).map((item, index) => {
+    const publicId = item.publicId || `${item.a}-${item.b}-${String(1047 + index).padStart(4, "0")}`;
+    return {
+      ...item,
+      publicId,
+      code: publicId,
+      title: `${item.a} + ${item.b} Discovery`,
+      pair: `${item.a} + ${item.b}`,
+      summary: item.reason || "High-confidence material compatibility signal.",
+      generatedAt: new Date().toISOString(),
+    };
+  });
+}
+
+function createDiscoveryUrl(discovery) {
+  const id = discovery?.publicId || discovery?.code || discovery?.dna || "AL-TI-1047";
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return `${window.location.origin}/?discovery=${encodeURIComponent(id)}`;
+  }
+  return `https://theelementos.com/?discovery=${encodeURIComponent(id)}`;
 }
 
 
