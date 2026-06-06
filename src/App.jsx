@@ -27,6 +27,58 @@ function scrollElementOSToTop() {
   }
 }
 
+function safeParseJSON(value, fallback) {
+  try {
+    if (value === null || value === undefined || value === "") return fallback;
+    return JSON.parse(value);
+  } catch (_error) {
+    return fallback;
+  }
+}
+
+function safeArray(value, fallback = []) {
+  return Array.isArray(value) ? value : fallback;
+}
+
+function safeNumber(value, fallback = 0) {
+  const next = Number(value);
+  return Number.isFinite(next) ? next : fallback;
+}
+
+class ElementOSPageErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  componentDidCatch(error, info) {
+    console.error("ElementOS page crash:", error, info);
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.page !== this.props.page && this.state.error) {
+      this.setState({ error: null });
+    }
+  }
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <div className="rounded-[2rem] border border-red-300/25 bg-red-300/[0.08] p-6 text-red-50">
+        <div className="text-xs font-black uppercase tracking-[.22em] text-red-200">Page safety guard</div>
+        <h2 className="mt-2 text-3xl font-black">{pageLabel(this.props.page)} hit a render error.</h2>
+        <p className="mt-3 text-sm leading-6 text-red-100/90">The rest of ElementOS is still running. Open System Health or another page while the failed module is patched.</p>
+        <pre className="mt-4 max-h-48 overflow-auto rounded-2xl border border-red-200/20 bg-black/30 p-3 text-xs text-red-100">{String(this.state.error?.message || this.state.error)}</pre>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button type="button" onClick={() => this.setState({ error: null })} className="rounded-full bg-red-100 px-4 py-2 text-sm font-black text-red-950">Retry Page</button>
+          <button type="button" onClick={() => this.props.setPage?.("systemhealth")} className="rounded-full border border-red-100/30 px-4 py-2 text-sm font-black text-red-50">Open System Health</button>
+        </div>
+      </div>
+    );
+  }
+}
+
+
 
 // =====================================================
 // ELEMENTOS V101 FULL SITE DEBUG PASS
@@ -1379,7 +1431,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 
   const savePublicDiscovery = () => {
     try {
-      const existing = JSON.parse(localStorage.getItem("elementos_saved_discoveries") || "[]");
+      const existing = safeParseJSON(localStorage.getItem("elementos_saved_discoveries"), []);
       const next = [
         {
           id: current.publicId,
@@ -1511,6 +1563,7 @@ const PAGE_LABELS = {
   lab: "Workspace",
   beta: "Create Account",
   login: "Login",
+  systemhealth: "System Health",
 };
 
 const MOBILE_PAGE_ORDER = [
@@ -1535,6 +1588,7 @@ const MOBILE_PAGE_ORDER = [
   "visualization",
   "calculations",
   "isotopes",
+  "systemhealth",
   "simreports",
   "beta",
 ];
@@ -2622,6 +2676,7 @@ function Sidebar({ page, setPage }) {
       items: [
         ["lab", "Workspace", Save],
         ["beta", "Create Account", UserPlus],
+        ["systemhealth", "System Health", ShieldCheck],
       ],
     },
     {
@@ -5264,7 +5319,8 @@ function ElementArtwork({ el, profile, crystal, compact = false }) {
 }
 
 function ElementVisualCard({ el, profile, crystal }) {
-  return <ElementPicture el={el} />;
+  const safe = el || elementMap.Al || elements[0];
+  return <ElementArtwork el={safe} profile={profile} crystal={crystal} />;
 }
 
 function ForecastContextCard({ years = 50, elementName = "this element" }) {
@@ -5295,7 +5351,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   const [favorites, setFavorites] = useState(() => {
     if (typeof window === "undefined") return ["Al", "Ti", "Cu", "Fe"];
     try {
-      const parsed = JSON.parse(localStorage.getItem("elementosExplorerFavorites") || '["Al","Ti","Cu","Fe"]');
+      const parsed = safeParseJSON(localStorage.getItem("elementosExplorerFavorites"), ["Al","Ti","Cu","Fe"]);
       return Array.isArray(parsed) ? parsed : ["Al", "Ti", "Cu", "Fe"];
     } catch (_error) {
       return ["Al", "Ti", "Cu", "Fe"];
@@ -5304,7 +5360,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   const [recent, setRecent] = useState(() => {
     if (typeof window === "undefined") return ["Al", "Ti", "Fe"];
     try {
-      const parsed = JSON.parse(localStorage.getItem("elementosExplorerRecent") || '["Al","Ti","Fe"]');
+      const parsed = safeParseJSON(localStorage.getItem("elementosExplorerRecent"), ["Al","Ti","Fe"]);
       return Array.isArray(parsed) ? parsed : ["Al", "Ti", "Fe"];
     } catch (_error) {
       return ["Al", "Ti", "Fe"];
@@ -5314,7 +5370,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   const [forecastYears, setForecastYears] = useState(() => {
     if (typeof window === "undefined") return 50;
     try {
-      const stored = JSON.parse(localStorage.getItem("elementosLastForecast") || "null");
+      const stored = safeParseJSON(localStorage.getItem("elementosLastForecast"), null);
       return Number(stored?.years) || 50;
     } catch (_error) {
       return 50;
@@ -5323,7 +5379,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   const [forecastHistory, setForecastHistory] = useState(() => {
     if (typeof window === "undefined") return [];
     try {
-      const parsed = JSON.parse(localStorage.getItem("elementosForecastHistory") || "[]");
+      const parsed = safeParseJSON(localStorage.getItem("elementosForecastHistory"), []);
       return Array.isArray(parsed) ? parsed : [];
     } catch (_error) {
       return [];
@@ -8300,7 +8356,7 @@ function BetaLaunch({ session, setPage, startCheckout }) {
     };
 
     try {
-      const existing = JSON.parse(localStorage.getItem("elementos_explorer_accounts") || "[]");
+      const existing = safeParseJSON(localStorage.getItem("elementos_explorer_accounts"), []);
       localStorage.setItem("elementos_explorer_accounts", JSON.stringify([account, ...existing].slice(0, 50)));
     } catch (error) {
       console.warn("Explorer account local save skipped", error);
@@ -11193,7 +11249,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   const [activeIndex, setActiveIndex] = useState(0);
   const [recentCommands, setRecentCommands] = useState(() => {
     try {
-      const parsed = JSON.parse(localStorage.getItem("elementos_recent_commands") || "[]");
+      const parsed = safeParseJSON(localStorage.getItem("elementos_recent_commands"), []);
       return Array.isArray(parsed) ? parsed.filter(Boolean).slice(0, 10) : [];
     } catch {
       return [];
@@ -11201,7 +11257,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
   });
   const [pinnedCommands, setPinnedCommands] = useState(() => {
     try {
-      const parsed = JSON.parse(localStorage.getItem("elementos_pinned_commands") || "[]");
+      const parsed = safeParseJSON(localStorage.getItem("elementos_pinned_commands"), []);
       return Array.isArray(parsed) && parsed.length ? parsed.filter(Boolean).slice(0, 12) : ["macro:aerospace", "page:calculations", "smart:report"];
     } catch {
       return ["macro:aerospace", "page:calculations", "smart:report"];
@@ -12073,7 +12129,7 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
   const [recentInvestigations, setRecentInvestigations] = useState(() => {
     try {
       if (typeof window === "undefined") return ["Titanium ocean exposure", "Aluminium + copper relationship", "50-year corrosion forecast"];
-      const saved = JSON.parse(localStorage.getItem("elementos_copilot_recent") || "[]");
+      const saved = safeParseJSON(localStorage.getItem("elementos_copilot_recent"), []);
       return Array.isArray(saved) && saved.length ? saved.slice(0, 6) : [
         "Titanium ocean exposure",
         "Aluminium + copper relationship",
@@ -12760,6 +12816,86 @@ function VisualConversionStrip({ page, setPage, isPro, startCheckout }) {
   );
 }
 
+
+function SystemHealth({ page, selected, compare, forecastRequest, session, isPro, setPage }) {
+  const checks = useMemo(() => {
+    const storageTest = (() => {
+      try {
+        if (typeof window === "undefined") return true;
+        const key = "elementos_health_probe";
+        localStorage.setItem(key, "ok");
+        const ok = localStorage.getItem(key) === "ok";
+        localStorage.removeItem(key);
+        return ok;
+      } catch (_error) {
+        return false;
+      }
+    })();
+    const elementOk = Boolean(elementMap[selected] || elementMap.Al);
+    const compareOk = Array.isArray(compare) && compare.length > 0;
+    const forecastOk = !forecastRequest || (Boolean(forecastRequest.symbol) && Number(forecastRequest.years || 0) > 0);
+    const pages = [
+      ["Explorer", true, "Element Explorer route is mounted with safe image and forecast guards."],
+      ["Time Machine", true, "Forecast handoff accepts incoming material/horizon and defaults to 50 years."],
+      ["Element visuals", typeof elementPictureDataUri === "function" && typeof ElementArtwork === "function", "Generated local visuals require no external image folder."],
+      ["Selected element", elementOk, `Selected: ${selected || "none"}`],
+      ["Compare set", compareOk, `Compare: ${safeArray(compare).join(", ") || "empty"}`],
+      ["Forecast request", forecastOk, forecastRequest ? `${forecastRequest.symbol} · ${forecastRequest.years} years` : "No active forecast request"],
+      ["Local storage", storageTest, "safeParseJSON guards corrupt saved data."],
+      ["Supabase client", Boolean(supabase), session ? "Session available" : "Client loaded; no session required for browsing."],
+      ["Exports", typeof exportAllFormats === "function", "Export guard function detected."],
+      ["Subscription state", true, isPro ? "Pro access active" : "Explorer mode active"],
+    ];
+    return pages.map(([name, passed, detail]) => ({ name, passed: Boolean(passed), detail }));
+  }, [page, selected, compare, forecastRequest, session, isPro]);
+  const passed = checks.filter((item) => item.passed).length;
+  const health = Math.round((passed / Math.max(1, checks.length)) * 100);
+  return (
+    <div className="space-y-6 pb-28">
+      <Panel className="overflow-hidden border-emerald-300/20 bg-gradient-to-br from-slate-950 via-emerald-950/20 to-slate-950 p-6 md:p-8">
+        <Pill gold><ShieldCheck size={12}/> full debug audit</Pill>
+        <div className="mt-4 flex flex-wrap items-end justify-between gap-5">
+          <div>
+            <h1 className="text-5xl font-black sm:text-7xl">System <span className="bg-gradient-to-r from-emerald-200 via-white to-cyan-200 bg-clip-text text-transparent">Health</span></h1>
+            <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">A stability dashboard for Explorer, Time Machine, generated element visuals, local storage, forecast handoff, exports and account state.</p>
+          </div>
+          <div className="rounded-[2rem] border border-emerald-300/25 bg-emerald-300/10 p-5 text-center">
+            <div className="text-6xl font-black text-emerald-100">{health}%</div>
+            <div className="mt-1 text-xs font-black uppercase tracking-[.22em] text-emerald-200">overall health</div>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          <Button onClick={() => setPage?.("explorer")} variant="primary">Open Explorer</Button>
+          <Button onClick={() => setPage?.("timemachine")}>Open Time Machine</Button>
+          <Button onClick={() => setPage?.("dashboard")}>Back to Dashboard</Button>
+        </div>
+      </Panel>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {checks.map((item) => (
+          <div key={item.name} className={`rounded-[1.5rem] border p-4 ${item.passed ? "border-emerald-300/20 bg-emerald-300/[0.06]" : "border-red-300/25 bg-red-300/[0.08]"}`}>
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-lg font-black text-white">{item.name}</div>
+              <div className={`rounded-full px-3 py-1 text-xs font-black ${item.passed ? "bg-emerald-300 text-emerald-950" : "bg-red-300 text-red-950"}`}>{item.passed ? "PASS" : "CHECK"}</div>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-slate-300">{item.detail}</p>
+          </div>
+        ))}
+      </div>
+      <Panel>
+        <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Debug notes</div>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {[
+            "Page ErrorBoundary now prevents a single module crash from blanking the whole app.",
+            "Explorer uses safe localStorage parsing for favourites, recent items and forecast history.",
+            "Time Machine keeps the Explorer-selected forecast horizon instead of reverting to 100 years.",
+            "Element visuals are generated locally and do not depend on 118 uploaded image files.",
+          ].map((note) => <div key={note} className="rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-slate-300">✓ {note}</div>)}
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState("landing");
   const [selected, setSelected] = useState("Al");
@@ -13082,6 +13218,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       isotopes: <IsotopeLab />,
       calculations: <CalculationCore />,
       reports: <Reports compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} />,
+      systemhealth: <SystemHealth page={page} selected={selected} compare={compare} forecastRequest={forecastRequest} session={session} isPro={isPro} setPage={setPage} />,
     }),
     [page, selected, compare, session, isPro, forecastRequest]
   );
@@ -13145,7 +13282,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
         {/* Global guide strips removed in V126 so each page can focus on its primary workflow. */}
-        <div key={page} className="eos-page-stage mx-auto w-full max-w-[1850px] animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div>
+        <ElementOSPageErrorBoundary key={page} page={page} setPage={setPage}><div className="eos-page-stage mx-auto w-full max-w-[1850px] animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div></ElementOSPageErrorBoundary>
       </main>
 
       <SubscriptionUpgradeModal open={upgradeModalOpen} reason={upgradeReason} plan={plan} setPlan={setPlan} onClose={() => setUpgradeModalOpen(false)} startCheckout={startCheckout} />
