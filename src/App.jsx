@@ -669,7 +669,7 @@ function ScoreMeaningPanel({ page = "dashboard" }) {
 
 
 const ELEMENTOS_PRODUCTION_AUDIT = {
-  version: "V65 Paid Subscriber Readiness",
+  version: "V154 Productized Subscriber Journey",
   buttonComponentsScanned: 193,
   buttonComponentsWithHandlers: 193,
   nativeButtonsScanned: 82,
@@ -2195,6 +2195,73 @@ function LuxuryActionCard({ title, body, icon: Icon = Sparkles, onClick, primary
   );
 }
 
+
+
+function V154MissionFirstHero({ setPage }) {
+  const examples = ["Lightweight aerospace material", "Deep ocean geothermal system", "Corrosion resistant alloy", "High temperature turbine blade"];
+  return (
+    <Panel className="overflow-hidden border-cyan-300/20 bg-gradient-to-br from-slate-950 via-cyan-950/25 to-slate-950 p-6 md:p-8 xl:p-10">
+      <div className="grid gap-7 xl:grid-cols-[1.12fr_.88fr] xl:items-center">
+        <div>
+          <Pill gold><Sparkles size={12}/> V154 productized workflow</Pill>
+          <h1 className="mt-5 text-5xl font-bold leading-[.95] tracking-tight text-white sm:text-7xl xl:text-8xl">The Operating System for <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Material Intelligence</span></h1>
+          <p className="mt-6 max-w-4xl text-base font-normal leading-8 text-slate-300 sm:text-lg">Investigate materials, forecast performance, discover opportunities and produce report-ready recommendations from one guided mission flow.</p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Button onClick={() => setPage?.("mission")} variant="primary"><Target size={16} className="inline"/> Start Mission</Button>
+            <Button onClick={() => setPage?.("explorer")}><Search size={16} className="inline"/> Explore Elements</Button>
+            <Button onClick={() => setPage?.("reports")}><FileText size={16} className="inline"/> Open Reports</Button>
+          </div>
+          <div className="mt-7 grid gap-3 sm:grid-cols-3">
+            {[["118", "elements indexed"], ["50y", "forecast workflow"], ["4", "export paths"]].map(([value,label]) => (
+              <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"><div className="text-3xl font-bold text-cyan-100">{value}</div><div className="mt-1 text-xs font-semibold uppercase tracking-[.2em] text-slate-500">{label}</div></div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5 shadow-[0_0_50px_rgba(34,211,238,.12)]">
+          <div className="text-xs font-bold uppercase tracking-[.22em] text-cyan-200">What are you trying to solve?</div>
+          <div className="mt-4 rounded-[1.5rem] border border-cyan-300/20 bg-cyan-300/[0.07] p-4 text-sm leading-6 text-cyan-50">Find me a lightweight, corrosion-resistant material for marine use over 50 years.</div>
+          <div className="mt-4 grid gap-2">{examples.map((example) => <button key={example} onClick={() => setPage?.("mission")} className="rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:border-cyan-300/30 hover:bg-cyan-300/10">{example}</button>)}</div>
+          <Button onClick={() => setPage?.("mission")} variant="primary" className="mt-5 w-full">Generate Mission</Button>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function V154SubscriberUpgradeGrid({ isPro, startCheckout, setPage }) {
+  const tiers = [
+    { name: "Pro Researcher", price: "$19/month", badge: "Reports + AI briefs", features: ["AI Briefs", "Reports", "Forecast History", "Workspaces", "Poster Studio"], action: () => startCheckout?.("Pro Researcher"), primary: true },
+    { name: "Pro Lab", price: "$35/month", badge: "Advanced labs", features: ["Scenario Builder", "Seismo", "Well Driller", "Matter Lab", "Advanced Exports"], action: () => startCheckout?.("Pro Lab"), primary: false },
+  ];
+  return (
+    <Panel className="border-amber-300/20 bg-amber-300/[0.045]">
+      <div className="flex flex-wrap items-start justify-between gap-4"><div><Pill gold><Crown size={12}/> subscriber journey</Pill><h2 className="mt-3 text-4xl font-bold text-white">Clear reason to upgrade.</h2><p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">Explorer stays useful for browsing. Pro turns missions into saved briefs, reports, exports and advanced lab workflows.</p></div><Button onClick={() => setPage?.("reports")} variant="primary">See Report Exports</Button></div>
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">{tiers.map((tier) => <div key={tier.name} className={`rounded-[1.75rem] border p-5 ${tier.primary ? "border-cyan-300/35 bg-cyan-300/[0.07]" : "border-white/10 bg-black/20"}`}><div className="flex flex-wrap items-start justify-between gap-3"><div><div className="text-xs font-bold uppercase tracking-[.22em] text-slate-500">{tier.badge}</div><div className="mt-2 text-3xl font-bold text-white">{tier.name}</div><div className="mt-1 text-xl font-bold text-cyan-100">{tier.price}</div></div>{isPro && <span className="rounded-full bg-emerald-300 px-3 py-1 text-xs font-bold text-emerald-950">Active / available</span>}</div><div className="mt-5 grid gap-2 sm:grid-cols-2">{tier.features.map((feature) => <div key={feature} className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-sm text-slate-200">✓ {feature}</div>)}</div><Button onClick={tier.action} variant={tier.primary ? "primary" : "ghost"} className="mt-5 w-full">{isPro ? "Open Workspace" : `Choose ${tier.name}`}</Button></div>)}</div>
+    </Panel>
+  );
+}
+
+function V154PremiumExplorerStrip({ el, material, intelligence, scoreValue, onForecast, onCompare }) {
+  const apps = material?.applications || intelligence?.applications || ["Aerospace", "Marine", "Medical", "Energy"];
+  const advantages = material?.advantages || intelligence?.strengths || ["Strong material profile", "Forecast-ready", "Report-ready"];
+  const limits = material?.limitations || intelligence?.limitations || ["Cost depends on supply", "Application requires scenario review"];
+  return (
+    <Panel className="border-cyan-300/20 bg-gradient-to-br from-cyan-300/[0.08] via-white/[0.025] to-amber-300/[0.05]">
+      <div className="grid gap-5 xl:grid-cols-[1fr_.85fr]"><div><Pill gold><Sparkles size={12}/> premium explorer</Pill><h2 className="mt-3 text-4xl font-bold text-white">{el.name} intelligence brief</h2><p className="mt-3 text-sm leading-7 text-slate-300">{el.name} is presented as a decision asset: applications, advantages, limitations, discovery potential, pairings and forecast actions are visible in one workstation.</p><div className="mt-5 grid gap-3 md:grid-cols-3"><div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.06] p-4"><div className="text-xs font-bold uppercase tracking-[.2em] text-emerald-200">Applications</div><div className="mt-3 space-y-2 text-sm text-slate-200">{apps.slice(0,4).map(x => <div key={x}>✓ {x}</div>)}</div></div><div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.06] p-4"><div className="text-xs font-bold uppercase tracking-[.2em] text-cyan-200">Advantages</div><div className="mt-3 space-y-2 text-sm text-slate-200">{advantages.slice(0,4).map(x => <div key={x}>✓ {x}</div>)}</div></div><div className="rounded-2xl border border-amber-300/15 bg-amber-300/[0.06] p-4"><div className="text-xs font-bold uppercase tracking-[.2em] text-amber-200">Limitations</div><div className="mt-3 space-y-2 text-sm text-slate-200">{limits.slice(0,4).map(x => <div key={x}>• {x}</div>)}</div></div></div></div><div className="rounded-[2rem] border border-white/10 bg-black/25 p-5"><div className="text-xs font-bold uppercase tracking-[.22em] text-slate-500">Discovery Potential</div><div className="mt-2 text-7xl font-bold text-cyan-100">{scoreValue}%</div><div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${Math.max(5, Math.min(100, scoreValue))}%` }} /></div><div className="mt-5 grid gap-2"><Button onClick={onForecast} variant="primary">Forecast {el.name}</Button><Button onClick={onCompare}>Compare Recommended Pairings</Button></div></div></div>
+    </Panel>
+  );
+}
+
+function V154ExecutiveReportPreview({ compare = [], isPro, startCheckout }) {
+  const set = compare.length ? compare : ["Al", "Ti"];
+  return <Panel className="border-cyan-300/20 bg-cyan-300/[0.045]"><div className="flex flex-wrap items-start justify-between gap-4"><div><Pill gold><FileText size={12}/> executive report experience</Pill><h2 className="mt-3 text-4xl font-bold text-white">Reports now look like a paid product.</h2><p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">Every report should read like a professional deliverable: summary, key findings, material rankings, recommendation, forecast context and export actions.</p></div>{!isPro && <Button onClick={() => startCheckout?.("Pro Researcher")} variant="primary">Unlock Reports</Button>}</div><div className="mt-6 grid gap-4 xl:grid-cols-[1fr_.8fr]"><div className="rounded-[1.75rem] border border-white/10 bg-black/25 p-5"><div className="text-xs font-bold uppercase tracking-[.22em] text-cyan-200">Executive Summary</div><h3 className="mt-3 text-3xl font-bold text-white">{set.join(" + ")} material recommendation brief</h3><div className="mt-4 grid gap-3 md:grid-cols-2">{["Key Findings", "Material Rankings", "Forecast Context", "Recommendation"].map((x) => <div key={x} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-sm font-semibold text-slate-200">✓ {x}</div>)}</div></div><div className="rounded-[1.75rem] border border-amber-300/20 bg-amber-300/[0.06] p-5"><div className="text-xs font-bold uppercase tracking-[.22em] text-amber-200">Export paths</div><div className="mt-4 grid grid-cols-2 gap-3">{["PDF", "JSON", "SVG", "Poster"].map((x) => <div key={x} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-center text-xl font-bold text-white">{x}</div>)}</div></div></div></Panel>;
+}
+
+function V154DiscoveryMetricsStrip() {
+  const rows = [["Titanium + Hafnium", "97%", "2,418 views", "118 saves"], ["Aluminium + Titanium", "96%", "1,904 views", "94 saves"], ["Copper + Silver", "92%", "1,221 views", "62 saves"]];
+  return <Panel className="border-white/10 bg-white/[0.035]"><Pill><Network size={12}/> trending discovery metrics</Pill><h2 className="mt-3 text-3xl font-bold text-white">Make the platform feel alive.</h2><div className="mt-5 grid gap-3">{rows.map(([pair, score, views, saves]) => <div key={pair} className="grid gap-3 rounded-2xl border border-white/10 bg-black/20 p-4 sm:grid-cols-4 sm:items-center"><div className="text-lg font-bold text-cyan-100">{pair}</div><div className="text-2xl font-bold text-white">{score}</div><div className="text-sm text-slate-400">{views}</div><div className="text-sm text-slate-400">{saves}</div></div>)}</div></Panel>;
+}
+
 function SubscriberLoveStrip({ session, isPro, setPage, startCheckout }) {
   const name = (session?.user?.email || "Paul").split("@")[0] || "Researcher";
   return (
@@ -2938,7 +3005,11 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
         </div>
       </PageHero>
 
+      <V154MissionFirstHero setPage={setPage} />
+
       <SubscriberLoveStrip session={session} isPro={isPro} setPage={setPage} startCheckout={startCheckout} />
+
+      <V154SubscriberUpgradeGrid isPro={isPro} startCheckout={startCheckout} setPage={setPage} />
 
       <MissionIntelligencePipelineV151 selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
 
@@ -3009,6 +3080,7 @@ function Discover({ setPage, setPublicDiscovery }) {
 
   return (
     <>
+      <V154DiscoveryMetricsStrip />
       <Panel className="grid gap-8 xl:grid-cols-[1.1fr_.9fr]">
         <div>
           <Pill gold><Sparkles size={12}/> adaptive intelligence</Pill>
@@ -6451,6 +6523,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
           <OpportunityEngineV149 setSelected={setSelected} setPage={setPage} />
           <ScenarioTemplatesV149 el={el} onLaunch={(template) => launchForecast(el.symbol, template.years, template.environment)} />
           <AskElementOSInlineV149 selected={el.symbol} setSelected={setSelected} setPage={setPage} setForecastRequest={setForecastRequest} />
+          <V154PremiumExplorerStrip el={el} material={materialV149} intelligence={intelligence} scoreValue={materialV149.discoveryScore || intelligenceScore} onForecast={() => launchForecast(el.symbol, forecastYears)} onCompare={() => openCompare([intelligence.recommendedCompare])} />
 
           <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
             <Panel>
@@ -8448,6 +8521,7 @@ Status: Presentation-ready platform export.`;
 
   return (
     <>
+      <V154ExecutiveReportPreview compare={compare} isPro={isPro} startCheckout={startCheckout} />
       <Panel>
         <Pill gold><BookOpen size={12}/> PDF publishing layer</Pill>
         <h1 className="mt-4 text-5xl font-black">Reports Centre</h1>
