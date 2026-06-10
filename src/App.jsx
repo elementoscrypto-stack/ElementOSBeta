@@ -90,6 +90,8 @@ class ElementOSPageErrorBoundary extends React.Component {
 
 
 // =====================================================
+// ELEMENTOS V153 TYPOGRAPHY SYSTEM PASS
+// Logo: Playfair Display 700 · UI: Source Sans 3 400/600/700
 // ELEMENTOS V101 FULL SITE DEBUG PASS
 // Preserves the existing site, but reduces visible clutter,
 // simplifies labels, and keeps pricing consistent.
@@ -1786,7 +1788,7 @@ function makeExportSvg({ title = "ElementOS Export", summary = "", payload = {},
     const x = 92 + (index % 3) * 300;
     const y = 830 + Math.floor(index / 3) * 142;
     const accent = [palette.a, palette.b, palette.c, palette.d, "#fb7185", "#60a5fa"][index % 6];
-    return `<g transform="translate(${x} ${y})"><rect width="260" height="118" rx="28" fill="rgba(255,255,255,.065)" stroke="${accent}" stroke-opacity=".48"/><circle cx="218" cy="31" r="28" fill="${accent}" opacity=".18"/><text x="24" y="43" fill="${accent}" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="950" letter-spacing="2.4">${escapeXml(String(key).replace(/([A-Z])/g, " $1").toUpperCase().slice(0, 20))}</text><text x="24" y="87" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="950">${escapeXml(String(value).slice(0, 22))}</text></g>`;
+    return `<g transform="translate(${x} ${y})"><rect width="260" height="118" rx="28" fill="rgba(255,255,255,.065)" stroke="${accent}" stroke-opacity=".48"/><circle cx="218" cy="31" r="28" fill="${accent}" opacity=".18"/><text x="24" y="43" fill="${accent}" font-family="Source Sans 3, Arial, sans-serif" font-size="16" font-weight="950" letter-spacing="2.4">${escapeXml(String(key).replace(/([A-Z])/g, " $1").toUpperCase().slice(0, 20))}</text><text x="24" y="87" fill="#ffffff" font-family="Source Sans 3, Arial, sans-serif" font-size="25" font-weight="950">${escapeXml(String(value).slice(0, 22))}</text></g>`;
   }).join("\n");
   const titleLines = wrapExportLines(normalizedTitle, 18, 3);
   const discoveryId = String(payload?.publicId || payload?.dna || payload?.code || payload?.id || "EOS-1047").slice(0, 24);
@@ -1824,41 +1826,41 @@ function makeExportSvg({ title = "ElementOS Export", summary = "", payload = {},
   <path d="M72 112 C240 40 520 38 1000 82 L1000 230 C620 160 300 165 72 252 Z" fill="#ffffff" opacity=".045"/>
   <rect x="78" y="78" width="924" height="1194" rx="48" fill="rgba(255,255,255,.032)" stroke="rgba(255,255,255,.12)"/>
 
-  <text x="92" y="126" fill="${palette.b}" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="950" letter-spacing="5">ELEMENTOS · LUXURY SCIENCE EXPORT</text>
-  <text x="92" y="164" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="850" letter-spacing="2.2">PDF · JSON · SVG · SOCIAL READY</text>
+  <text x="92" y="126" fill="${palette.b}" font-family="Source Sans 3, Arial, sans-serif" font-size="18" font-weight="950" letter-spacing="5">ELEMENTOS · LUXURY SCIENCE EXPORT</text>
+  <text x="92" y="164" fill="#94a3b8" font-family="Source Sans 3, Arial, sans-serif" font-size="17" font-weight="850" letter-spacing="2.2">PDF · JSON · SVG · SOCIAL READY</text>
 
   <g transform="translate(782 98)">
     <rect x="0" y="0" width="184" height="184" rx="34" fill="rgba(34,211,238,.11)" stroke="${palette.a}" stroke-opacity=".55"/>
     <circle cx="145" cy="39" r="23" fill="${palette.b}" opacity=".35"/>
-    <text x="28" y="47" fill="${palette.a}" font-family="Inter, Arial" font-size="19" font-weight="950">118</text>
-    <text x="30" y="116" fill="#ffffff" font-family="Inter, Arial" font-size="68" font-weight="950">Eo</text>
-    <text x="29" y="149" fill="${palette.a}" font-family="Inter, Arial" font-size="18" font-weight="900">ElementOS</text>
+    <text x="28" y="47" fill="${palette.a}" font-family="Source Sans 3, Arial" font-size="19" font-weight="950">118</text>
+    <text x="30" y="116" fill="#ffffff" font-family="Source Sans 3, Arial" font-size="68" font-weight="950">Eo</text>
+    <text x="29" y="149" fill="${palette.a}" font-family="Source Sans 3, Arial" font-size="18" font-weight="900">ElementOS</text>
   </g>
 
   <text x="92" y="248" fill="${palette.a}" font-family="JetBrains Mono, Consolas, monospace" font-size="31" font-weight="950" letter-spacing="2.5">${escapeXml(discoveryId)}</text>
-  ${titleLines.map((line, index) => `<text x="92" y="${335 + index * 82}" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="950">${escapeXml(line)}</text>`).join("\n")}
-  <text x="92" y="${580 + Math.max(0, titleLines.length - 1) * 26}" fill="#cbd5e1" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="800">${escapeXml(String(pair).slice(0, 54))}</text>
+  ${titleLines.map((line, index) => `<text x="92" y="${335 + index * 82}" fill="#ffffff" font-family="Source Sans 3, Arial, sans-serif" font-size="70" font-weight="950">${escapeXml(line)}</text>`).join("\n")}
+  <text x="92" y="${580 + Math.max(0, titleLines.length - 1) * 26}" fill="#cbd5e1" font-family="Source Sans 3, Arial, sans-serif" font-size="27" font-weight="800">${escapeXml(String(pair).slice(0, 54))}</text>
 
   <g transform="translate(92 628)">
     <rect x="0" y="0" width="896" height="154" rx="38" fill="rgba(34,211,238,.09)" stroke="${palette.a}" stroke-opacity=".42"/>
     <circle cx="812" cy="76" r="55" fill="${palette.b}" opacity=".18"/>
-    <text x="36" y="55" fill="#94a3b8" font-family="Inter, Arial" font-size="18" font-weight="950" letter-spacing="3">DISCOVERY SCORE</text>
-    <text x="36" y="123" fill="#ffffff" font-family="Inter, Arial" font-size="74" font-weight="950">${escapeXml(String(score).replace("%", ""))}%</text>
-    <text x="300" y="72" fill="${palette.b}" font-family="Inter, Arial" font-size="25" font-weight="950">Poster-grade export</text>
-    <text x="300" y="116" fill="#dbeafe" font-family="Inter, Arial" font-size="22" font-weight="760">Designed to look like a polished scientific media asset.</text>
+    <text x="36" y="55" fill="#94a3b8" font-family="Source Sans 3, Arial" font-size="18" font-weight="950" letter-spacing="3">DISCOVERY SCORE</text>
+    <text x="36" y="123" fill="#ffffff" font-family="Source Sans 3, Arial" font-size="74" font-weight="950">${escapeXml(String(score).replace("%", ""))}%</text>
+    <text x="300" y="72" fill="${palette.b}" font-family="Source Sans 3, Arial" font-size="25" font-weight="950">Poster-grade export</text>
+    <text x="300" y="116" fill="#dbeafe" font-family="Source Sans 3, Arial" font-size="22" font-weight="760">Designed to look like a polished scientific media asset.</text>
   </g>
 
   ${metricTiles}
 
   <g transform="translate(94 1098)">
     <rect x="0" y="0" width="892" height="122" rx="36" fill="rgba(15,23,42,.78)" stroke="${palette.b}" stroke-opacity=".34"/>
-    <text x="32" y="34" fill="${palette.b}" font-family="Inter, Arial" font-size="15" font-weight="950" letter-spacing="4">DISCOVERY NARRATIVE</text>
-    ${narrativeLines.slice(0, 2).map((line, index) => `<text x="32" y="${72 + index * 34}" fill="#e2e8f0" font-family="Inter, Arial" font-size="24" font-weight="780">${escapeXml(line)}</text>`).join("\n")}
+    <text x="32" y="34" fill="${palette.b}" font-family="Source Sans 3, Arial" font-size="15" font-weight="950" letter-spacing="4">DISCOVERY NARRATIVE</text>
+    ${narrativeLines.slice(0, 2).map((line, index) => `<text x="32" y="${72 + index * 34}" fill="#e2e8f0" font-family="Source Sans 3, Arial" font-size="24" font-weight="780">${escapeXml(line)}</text>`).join("\n")}
   </g>
 
   <g transform="translate(92 1250)">
-    <text x="0" y="0" fill="${palette.a}" font-family="Inter, Arial" font-size="19" font-weight="950" letter-spacing="3">DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
-    <text x="0" y="36" fill="#94a3b8" font-family="Inter, Arial" font-size="17" font-weight="800">Generated ${generated} · ElementOS Material Intelligence Platform</text>
+    <text x="0" y="0" fill="${palette.a}" font-family="Source Sans 3, Arial" font-size="19" font-weight="950" letter-spacing="3">DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
+    <text x="0" y="36" fill="#94a3b8" font-family="Source Sans 3, Arial" font-size="17" font-weight="800">Generated ${generated} · ElementOS Material Intelligence Platform</text>
   </g>
 </svg>`;
 }
@@ -2274,7 +2276,14 @@ function LivingMotionLayer() {
 function ElementOSThemeSkin() {
   return (
     <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap');
+
       :root {
+        --font-logo: "Playfair Display", Georgia, serif;
+        --font-ui: "Source Sans 3", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --eos-type-title: 700;
+        --eos-type-panel: 600;
+        --eos-type-body: 400;
         --eos-bg: #02060d;
         --eos-panel: rgba(6, 16, 29, .88);
         --eos-panel-2: rgba(8, 22, 40, .92);
@@ -2287,6 +2296,77 @@ function ElementOSThemeSkin() {
       }
       html { background: var(--eos-bg); }
       body { background: var(--eos-bg); color: var(--eos-text); overflow-x: hidden; }
+
+      /* V153 ElementOS typography system
+         Logo: Playfair Display 700
+         Page titles: Source Sans 3 700
+         Panel/section titles: Source Sans 3 600
+         Body/UI copy: Source Sans 3 400 */
+      html, body, #root, .eos-shell {
+        font-family: var(--font-ui);
+        font-weight: var(--eos-type-body);
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .eos-logo-wordmark,
+      .eos-brand-logo,
+      .eos-shell .eos-logo-wordmark,
+      .eos-shell .eos-brand-logo {
+        font-family: var(--font-logo) !important;
+        font-weight: 700 !important;
+        letter-spacing: .01em !important;
+        text-transform: none !important;
+      }
+      .eos-shell h1,
+      .eos-page-title,
+      .eos-shell .eos-page-title {
+        font-family: var(--font-ui) !important;
+        font-weight: 700 !important;
+        letter-spacing: -.035em;
+      }
+      .eos-shell h2,
+      .eos-shell .eos-main-title {
+        font-family: var(--font-ui) !important;
+        font-weight: 700 !important;
+        letter-spacing: -.025em;
+      }
+      .eos-shell h3,
+      .eos-panel-title,
+      .eos-shell .eos-panel-title,
+      .eos-shell .section-title,
+      .eos-shell [data-panel-title="true"] {
+        font-family: var(--font-ui) !important;
+        font-weight: 600 !important;
+        letter-spacing: -.01em;
+      }
+      .eos-shell p,
+      .eos-shell li,
+      .eos-shell input,
+      .eos-shell select,
+      .eos-shell textarea,
+      .eos-shell .eos-body-copy {
+        font-family: var(--font-ui) !important;
+        font-weight: 400 !important;
+      }
+      .eos-shell button,
+      .eos-shell .eos-ui-label,
+      .eos-shell .eos-nav-item,
+      .eos-shell .eos-chip {
+        font-family: var(--font-ui) !important;
+        font-weight: 600;
+      }
+      .eos-shell .eos-metric,
+      .eos-shell .eos-score,
+      .eos-shell .eos-number {
+        font-family: var(--font-ui) !important;
+        font-weight: 700 !important;
+      }
+      .eos-shell .font-black:not(h1):not(h2):not(.eos-logo-wordmark):not(.eos-brand-logo),
+      .eos-shell .font-extrabold:not(h1):not(h2):not(.eos-logo-wordmark):not(.eos-brand-logo) {
+        font-weight: 600;
+      }
+
 
 
       /* V136 Luxury Research OS: unified spacing, wider desktop canvas, softer windows */
@@ -2754,7 +2834,7 @@ function Sidebar({ page, setPage }) {
             <Atom size={24} />
           </div>
           <div>
-            <div className="text-2xl font-black leading-none tracking-[.08em] text-white">ELEMENT OS</div>
+            <div className="eos-logo-wordmark text-2xl leading-none text-white">ElementOS</div>
             <div className="mt-1 text-[10px] uppercase tracking-[.22em] text-slate-400">Material Intelligence Platform</div>
           </div>
         </div>
@@ -9705,7 +9785,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
             <div className="flex items-center gap-3">
               <div className="grid h-12 w-12 place-items-center rounded-xl border border-cyan-300/40 bg-cyan-300/10 text-2xl font-black text-white shadow-[0_0_35px_rgba(34,211,238,.24)]">E</div>
               <div>
-                <div className="text-2xl font-black tracking-[.12em] text-white">Element<span className="poster-cyan">OS</span></div>
+                <div className="eos-logo-wordmark text-2xl text-white">Element<span className="poster-cyan">OS</span></div>
                 <div className="text-[10px] uppercase tracking-[.28em] text-slate-500">Material Intelligence Platform</div>
               </div>
             </div>
@@ -9742,7 +9822,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
                 DISCOVER.<br />SIMULATE.<br /><span className="poster-cyan">UNDERSTAND.</span>
               </div>
 
-              <h1 className="mt-6 text-5xl font-black leading-[.88] tracking-tight sm:text-8xl xl:text-9xl">
+              <h1 className="eos-brand-logo mt-6 text-5xl leading-[.88] tracking-tight sm:text-8xl xl:text-9xl">
                 ELEMENT<span className="poster-cyan">OS</span>
               </h1>
               <p className="mx-auto mt-5 max-w-3xl text-sm font-semibold uppercase tracking-[.35em] text-slate-200 sm:text-lg">
@@ -10912,9 +10992,9 @@ Generated in ElementOS.`,
     <circle r="430" fill="none" stroke="${ringColor}" stroke-opacity=".18" stroke-width="3" stroke-dasharray="18 20"/>
     <line x1="-420" y1="0" x2="420" y2="0" stroke="#67e8f9" stroke-opacity="0.20" stroke-width="4"/>
     <line x1="0" y1="-420" x2="0" y2="420" stroke="#fbbf24" stroke-opacity="0.18" stroke-width="4"/>
-    <text y="-48" fill="#67e8f9" font-family="Inter, Arial, sans-serif" font-size="196" font-weight="950" text-anchor="middle">${safeText(cardData.score)}%</text>
-    <text y="42" fill="#dbeafe" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="900" text-anchor="middle" letter-spacing="4">${safeText(cardData.metric).toUpperCase()}</text>
-    <text y="124" fill="#fef3c7" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="950" text-anchor="middle">${safeText(cardData.rank)} · ${safeText(cardData.top)}</text>
+    <text y="-48" fill="#67e8f9" font-family="Source Sans 3, Arial, sans-serif" font-size="196" font-weight="950" text-anchor="middle">${safeText(cardData.score)}%</text>
+    <text y="42" fill="#dbeafe" font-family="Source Sans 3, Arial, sans-serif" font-size="38" font-weight="900" text-anchor="middle" letter-spacing="4">${safeText(cardData.metric).toUpperCase()}</text>
+    <text y="124" fill="#fef3c7" font-family="Source Sans 3, Arial, sans-serif" font-size="36" font-weight="950" text-anchor="middle">${safeText(cardData.rank)} · ${safeText(cardData.top)}</text>
     <g transform="translate(-132 -282)"><rect width="112" height="112" rx="26" fill="url(#tile)" stroke="#67e8f9" stroke-opacity=".55"/><text x="56" y="70" text-anchor="middle" fill="#e0f2fe" font-family="Inter,Arial" font-size="46" font-weight="950">${safeText(leftSymbol)}</text></g>
     <g transform="translate(26 170)"><rect width="112" height="112" rx="26" fill="url(#tile)" stroke="#fbbf24" stroke-opacity=".62"/><text x="56" y="70" text-anchor="middle" fill="#fef3c7" font-family="Inter,Arial" font-size="46" font-weight="950">${safeText(rightSymbol)}</text></g>
   </g>
@@ -10934,7 +11014,7 @@ Generated in ElementOS.`,
 
   <text x="150" y="2040" fill="#fef3c7" class="label" font-size="24">${safeText(footerLine.toUpperCase())}</text>
   <text x="1450" y="2040" fill="#67e8f9" class="label" font-size="30" text-anchor="end">ELEMENTOS</text>
-  <text x="150" y="2078" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="850">${safeText(exportLayout)} · DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
+  <text x="150" y="2078" fill="#94a3b8" font-family="Source Sans 3, Arial, sans-serif" font-size="21" font-weight="850">${safeText(exportLayout)} · DISCOVER · SIMULATE · UNDERSTAND · SHARE</text>
 </svg>`;
 ;
     setExportHistory((history) => [
@@ -13931,7 +14011,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       <main className="eos-scroll-root relative z-10 space-y-5 p-3 pb-44 lg:ml-[286px] lg:p-4 lg:pb-8 xl:p-5 2xl:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 lg:hidden">
           <div>
-            <div className="text-2xl font-black tracking-[.18em] text-cyan-100">
+            <div className="eos-logo-wordmark text-2xl text-cyan-100">
               ElementOS
             </div>
             <div className="text-xs uppercase tracking-[.22em] text-slate-500">
