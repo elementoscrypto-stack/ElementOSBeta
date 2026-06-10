@@ -2197,6 +2197,195 @@ function LuxuryActionCard({ title, body, icon: Icon = Sparkles, onClick, primary
 
 
 
+
+function v155AdvisorAnalyze(input = "", fallbackSymbol = "Ti") {
+  const text = String(input || "").toLowerCase();
+  const needs = [];
+  if (/light|weight|aerospace|aircraft|drone|space/.test(text)) needs.push("Lightweight");
+  if (/heat|thermal|temperature|turbine|geothermal|engine/.test(text)) needs.push("Heat resistant");
+  if (/corrosion|marine|ocean|salt|water|subsea|deep/.test(text)) needs.push("Corrosion resistant");
+  if (/conduct|electric|power|wire|battery|circuit/.test(text)) needs.push("Conductive");
+  if (/medical|implant|bio|body|surgical/.test(text)) needs.push("Biocompatible");
+  if (/cheap|cost|affordable|scale|mass/.test(text)) needs.push("Cost efficient");
+  if (!needs.length) needs.push("Strong engineering fit", "Forecast-ready", "Report-ready");
+
+  const mission = v151MissionBuild(input, fallbackSymbol || "Ti");
+  const scored = elements.map((e) => {
+    const s = score(e.symbol);
+    const baseProfile = getExplorerProfile(e);
+    const baseIntelligence = explorerUseProfile(e);
+    const profile = v149MaterialProfile(e, baseProfile, baseIntelligence, s);
+    let value = 48;
+    if (needs.includes("Lightweight")) value += Math.max(0, 26 - e.atomicNumber * 0.18);
+    if (needs.includes("Heat resistant")) value += s.thermal * 7 + s.pressure * 3;
+    if (needs.includes("Corrosion resistant")) value += s.stability * 8;
+    if (needs.includes("Conductive")) value += s.conductivity * 8;
+    if (needs.includes("Biocompatible")) value += ["Ti", "Ta", "Nb", "Zr", "C"].includes(e.symbol) ? 18 : 0;
+    if (needs.includes("Cost efficient")) value += ["Al", "Fe", "Si", "C", "Cu", "Zn"].includes(e.symbol) ? 15 : Math.max(0, 12 - s.rarity * 2);
+    if (/marine|ocean|subsea|deep/.test(text) && ["Ti", "Zr", "Hf", "Al", "Ni"].includes(e.symbol)) value += 12;
+    if (/aerospace|aircraft|turbine|space/.test(text) && ["Ti", "Al", "Hf", "Zr", "Ni", "W"].includes(e.symbol)) value += 12;
+    if (/battery|power|electric|conduct/.test(text) && ["Cu", "Al", "Ag", "Li", "Ni"].includes(e.symbol)) value += 12;
+    const confidence = Math.max(52, Math.min(99, Math.round(value)));
+    const bestPairings = generateRecommendations([e.symbol])?.[0]?.matches?.map((m) => m.symbol).slice(0, 3) || mission.pairings || ["Al", "Ti", "Zr"];
+    return {
+      symbol: e.symbol,
+      name: e.name,
+      category: e.category,
+      confidence,
+      risks: profile?.limitations?.slice(0, 2) || ["Application-specific validation required", "Supply and cost review required"],
+      why: [
+        s.stability >= 3.4 ? "strong stability profile" : "specialist stability profile",
+        s.thermal >= 3.3 ? "thermal resilience" : "scenario-dependent thermal response",
+        s.pressure >= 3.3 ? "pressure readiness" : "moderate pressure behaviour",
+      ],
+      pairings: bestPairings.filter(Boolean),
+      score: s,
+    };
+  }).sort((a, b) => b.confidence - a.confidence).slice(0, 4);
+
+  const best = scored[0] || { symbol: mission.symbol, name: mission.elementName, confidence: mission.score, pairings: mission.pairings, risks: mission.risks || [] };
+  const years = mission.years || (/short|prototype|1 year/.test(text) ? 10 : /extreme|century|500/.test(text) ? 500 : /100/.test(text) ? 100 : 50);
+  const scenario = mission.scenarioName || (/marine|ocean|subsea|deep/.test(text) ? "Deep Ocean" : /space|aerospace/.test(text) ? "Aerospace" : /medical|implant/.test(text) ? "Medical" : "Engineering Review");
+  return {
+    id: `advisor-${Date.now()}`,
+    input: input || "What material should I use?",
+    needs,
+    recommended: scored,
+    top: best,
+    symbol: best.symbol,
+    elementName: best.name,
+    pairings: best.pairings || [],
+    years,
+    environment: mission.environment || scenario,
+    scenario,
+    missionScore: Math.max(60, Math.min(99, Math.round((best.confidence || 80) * 0.74 + needs.length * 5))),
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function v155SaveAdvisorResult(result) {
+  if (typeof window === "undefined" || !result) return;
+  try {
+    const previous = safeParseJSON(localStorage.getItem("elementosAdvisorHistory"), []);
+    const next = [result, ...safeArray(previous)].slice(0, 12);
+    localStorage.setItem("elementosAdvisorHistory", JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent("elementos:advisor", { detail: result }));
+  } catch (_error) {}
+}
+
+function V155AdvisorResultCard({ result, setSelected, setCompare, setPage, setForecastRequest, compact = false }) {
+  if (!result) return null;
+  const openForecast = () => {
+    setSelected?.(result.symbol);
+    setCompare?.([result.symbol, ...safeArray(result.pairings)].filter(Boolean).slice(0, 4));
+    setForecastRequest?.({ id: `advisor-forecast-${Date.now()}`, symbol: result.symbol, years: result.years, environment: result.environment, source: "AI Material Advisor", advisor: result });
+    setPage?.("timemachine");
+  };
+  const openReport = () => {
+    setSelected?.(result.symbol);
+    setCompare?.([result.symbol, ...safeArray(result.pairings)].filter(Boolean).slice(0, 4));
+    v155SaveAdvisorResult(result);
+    setPage?.("reports");
+  };
+  return (
+    <div className={`rounded-[1.75rem] border border-cyan-300/20 bg-cyan-300/[0.055] ${compact ? "p-4" : "p-5"}`}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">advisor recommendation</div>
+          <div className="mt-2 text-4xl font-black text-white">{result.elementName}</div>
+          <div className="mt-1 text-sm text-slate-400">{result.scenario} · {result.years}-year forecast</div>
+        </div>
+        <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-center">
+          <div className="text-3xl font-black text-emerald-100">{result.missionScore}%</div>
+          <div className="text-[10px] font-black uppercase tracking-[.18em] text-emerald-200">mission fit</div>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {safeArray(result.needs).map((need) => <span key={need} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200">✓ {need}</span>)}
+      </div>
+      <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {safeArray(result.recommended).map((item, index) => (
+          <button key={item.symbol} onClick={() => setSelected?.(item.symbol)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+            <div className="flex items-center justify-between gap-3"><div className="text-2xl font-black text-cyan-100">{item.symbol}</div><div className="text-lg font-black text-white">{item.confidence}%</div></div>
+            <div className="mt-1 text-sm font-black text-white">{index + 1}. {item.name}</div>
+            <div className="mt-2 text-xs leading-5 text-slate-400">{safeArray(item.why).slice(0, 2).join(" · ")}</div>
+          </button>
+        ))}
+      </div>
+      <div className="mt-5 grid gap-3 md:grid-cols-3">
+        <Button onClick={openForecast} variant="primary">Send to Time Machine</Button>
+        <Button onClick={openReport}>Generate Advisor Report</Button>
+        <Button onClick={() => { setSelected?.(result.symbol); setPage?.("explorer"); }}>Open Material Brief</Button>
+      </div>
+      <div className="mt-4 rounded-2xl border border-amber-300/15 bg-amber-300/[0.055] p-4 text-sm leading-6 text-amber-50">
+        <b>Risks to review:</b> {safeArray(result.top?.risks).slice(0, 2).join(" · ") || "Validate supply, cost and scenario exposure before final selection."}
+      </div>
+    </div>
+  );
+}
+
+function V155AIMaterialAdvisor({ selected = "Ti", setSelected, setCompare, setPage, setForecastRequest, compact = false }) {
+  const [input, setInput] = useState("What material should I use for a lightweight, corrosion-resistant marine system over 50 years?");
+  const [result, setResult] = useState(() => v155AdvisorAnalyze("lightweight corrosion resistant marine 50 years", selected || "Ti"));
+  const runAdvisor = () => {
+    const next = v155AdvisorAnalyze(input, selected || "Ti");
+    setResult(next);
+    setSelected?.(next.symbol);
+    setCompare?.([next.symbol, ...safeArray(next.pairings)].filter(Boolean).slice(0, 4));
+    v155SaveAdvisorResult(next);
+    showToast?.(`Advisor recommends ${next.elementName} at ${next.missionScore}% fit.`);
+  };
+  const presets = [
+    "Lightweight corrosion-resistant marine system over 50 years",
+    "High-temperature turbine blade for aerospace over 100 years",
+    "Affordable conductive material for scalable power systems",
+    "Biocompatible material for long-life medical implants",
+  ];
+  return (
+    <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-300/[0.075] via-emerald-300/[0.04] to-slate-950">
+      <div className="grid gap-6 xl:grid-cols-[.78fr_1.22fr]">
+        <div>
+          <Pill gold><Bot size={12}/> V155 AI Material Advisor</Pill>
+          <h2 className={`${compact ? "mt-3 text-3xl" : "mt-4 text-5xl"} font-black leading-tight text-white`}>What material should I use?</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">Describe the job. ElementOS recommends materials, explains why, flags risks, suggests pairings and sends the result into Forecast or Reports.</p>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="mt-5 min-h-[126px] w-full rounded-[1.25rem] border border-white/10 bg-slate-950/85 p-4 text-sm font-bold text-white outline-none placeholder:text-slate-600"
+            placeholder="Example: What material survives underwater geothermal exposure for 50 years?"
+          />
+          <div className="mt-3 flex flex-wrap gap-2">
+            {presets.map((preset) => <button key={preset} onClick={() => setInput(preset)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-300 hover:border-cyan-300/35 hover:bg-cyan-300/10">{preset}</button>)}
+          </div>
+          <Button onClick={runAdvisor} variant="primary" className="mt-5 w-full">Analyze Material Need</Button>
+        </div>
+        <V155AdvisorResultCard result={result} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} compact={compact} />
+      </div>
+    </Panel>
+  );
+}
+
+function V155AdvisorMiniBar({ selected, setSelected, setCompare, setPage, setForecastRequest }) {
+  const [input, setInput] = useState("");
+  const analyze = () => {
+    const next = v155AdvisorAnalyze(input || "What material should I use?", selected || "Ti");
+    setSelected?.(next.symbol);
+    setCompare?.([next.symbol, ...safeArray(next.pairings)].filter(Boolean).slice(0, 4));
+    setForecastRequest?.({ id: `advisor-mini-${Date.now()}`, symbol: next.symbol, years: next.years, environment: next.environment, source: "AI Material Advisor", advisor: next });
+    v155SaveAdvisorResult(next);
+    setPage?.("explorer");
+  };
+  return (
+    <div className="rounded-[1.25rem] border border-cyan-300/15 bg-cyan-300/[0.055] p-3">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="shrink-0 text-xs font-black uppercase tracking-[.2em] text-cyan-200">Ask Material Advisor</div>
+        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="What material should I use?" className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm font-bold text-white outline-none placeholder:text-slate-600" />
+        <Button onClick={analyze} variant="primary" className="shrink-0">Analyze</Button>
+      </div>
+    </div>
+  );
+}
+
 function V154MissionFirstHero({ setPage }) {
   const examples = ["Lightweight aerospace material", "Deep ocean geothermal system", "Corrosion resistant alloy", "High temperature turbine blade"];
   return (
@@ -3006,6 +3195,8 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
       </PageHero>
 
       <V154MissionFirstHero setPage={setPage} />
+
+      <V155AIMaterialAdvisor selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
 
       <SubscriberLoveStrip session={session} isPro={isPro} setPage={setPage} startCheckout={startCheckout} />
 
@@ -6464,6 +6655,8 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
         )}
       </Panel>
 
+      <V155AIMaterialAdvisor selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} compact />
+
       <div className="grid gap-6 xl:grid-cols-[320px_1fr] 2xl:grid-cols-[360px_1fr]">
         <Panel className="xl:sticky xl:top-4 xl:self-start">
           <div className="max-h-[760px] overflow-auto pr-2">
@@ -6971,7 +7164,7 @@ function PeriodicTable({ selected, setSelected }) {
   );
 }
 
-function Compare({ compare, setCompare, setPage }) {
+function Compare({ compare, setCompare, setPage, selected, setSelected, setForecastRequest }) {
   const [candidate, setCandidate] = useState("H");
   const rows = compare.map((sym) => ({ ...elementMap[sym], metrics: score(sym) }));
 
@@ -8325,7 +8518,7 @@ function CalculationCore() {
   );
 }
 
-function Reports({ compare, session, isPro, startCheckout }) {
+function Reports({ compare, session, isPro, startCheckout, selected, setSelected, setCompare, setPage, setForecastRequest }) {
   const [saved, setSaved] = useState([]);
   const [status, setStatus] = useState("");
 
@@ -14021,6 +14214,9 @@ const startCheckout = async (planName = "Pro Researcher") => {
           compare={compare}
           setCompare={setCompare}
           setPage={setPage}
+          selected={selected}
+          setSelected={setSelected}
+          setForecastRequest={setForecastRequest}
         />
       ),
       atlas: (
@@ -14043,7 +14239,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       ),
       isotopes: <IsotopeLab />,
       calculations: <CalculationCore />,
-      reports: <Reports compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} />,
+      reports: <Reports compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />,
       systemhealth: <SystemHealth page={page} selected={selected} compare={compare} forecastRequest={forecastRequest} session={session} isPro={isPro} setPage={setPage} />,
     }),
     [page, selected, compare, session, isPro, forecastRequest]
@@ -14108,7 +14304,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
         {page !== "landing" && page !== "login" && (
-          <AskElementOSInlineV149 selected={selected} setSelected={setSelected} setPage={setPage} setForecastRequest={setForecastRequest} compact />
+          <V155AdvisorMiniBar selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
         )}
         {/* Global guide strips removed in V126 so each page can focus on its primary workflow. */}
         <ElementOSPageErrorBoundary key={page} page={page} setPage={setPage}><div className="eos-page-stage mx-auto w-full max-w-[1850px] animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div></ElementOSPageErrorBoundary>
