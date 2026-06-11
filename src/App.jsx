@@ -76,11 +76,10 @@ class ElementOSPageErrorBoundary extends React.Component {
       <div className="rounded-[2rem] border border-red-300/25 bg-red-300/[0.08] p-6 text-red-50">
         <div className="text-xs font-black uppercase tracking-[.22em] text-red-200">Page safety guard</div>
         <h2 className="mt-2 text-3xl font-black">{pageLabel(this.props.page)} hit a render error.</h2>
-        <p className="mt-3 text-sm leading-6 text-red-100/90">The rest of ElementOS is still running. Open System Health or another page while the failed module is patched.</p>
-        <pre className="mt-4 max-h-48 overflow-auto rounded-2xl border border-red-200/20 bg-black/30 p-3 text-xs text-red-100">{String(this.state.error?.message || this.state.error)}</pre>
+        <p className="mt-3 text-sm leading-6 text-red-100/90">This view could not load cleanly. The rest of ElementOS is still available, so return to the dashboard or retry the page.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" onClick={() => this.setState({ error: null })} className="rounded-full bg-red-100 px-4 py-2 text-sm font-black text-red-950">Retry Page</button>
-          <button type="button" onClick={() => this.props.setPage?.("systemhealth")} className="rounded-full border border-red-100/30 px-4 py-2 text-sm font-black text-red-50">Open System Health</button>
+          <button type="button" onClick={() => this.props.setPage?.("dashboard")} className="rounded-full border border-red-100/30 px-4 py-2 text-sm font-black text-red-50">Back to Dashboard</button>
         </div>
       </div>
     );
@@ -92,9 +91,8 @@ class ElementOSPageErrorBoundary extends React.Component {
 // =====================================================
 // ELEMENTOS V153 TYPOGRAPHY SYSTEM PASS
 // Logo: Playfair Display 700 · UI: Source Sans 3 400/600/700
-// ELEMENTOS V101 FULL SITE DEBUG PASS
-// Preserves the existing site, but reduces visible clutter,
-// simplifies labels, and keeps pricing consistent.
+// ELEMENTOS LAUNCH CLEANUP BUILD
+// Product-ready copy, restrained UI, and stability guards.
 // =====================================================
 
 const rawElements = `H|Hydrogen|1|Nonmetal,He|Helium|2|Noble gas,Li|Lithium|3|Alkali metal,Be|Beryllium|4|Alkaline earth metal,B|Boron|5|Metalloid,C|Carbon|6|Nonmetal,N|Nitrogen|7|Nonmetal,O|Oxygen|8|Nonmetal,F|Fluorine|9|Halogen,Ne|Neon|10|Noble gas,Na|Sodium|11|Alkali metal,Mg|Magnesium|12|Alkaline earth metal,Al|Aluminium|13|Post-transition metal,Si|Silicon|14|Metalloid,P|Phosphorus|15|Nonmetal,S|Sulfur|16|Nonmetal,Cl|Chlorine|17|Halogen,Ar|Argon|18|Noble gas,K|Potassium|19|Alkali metal,Ca|Calcium|20|Alkaline earth metal,Sc|Scandium|21|Transition metal,Ti|Titanium|22|Transition metal,V|Vanadium|23|Transition metal,Cr|Chromium|24|Transition metal,Mn|Manganese|25|Transition metal,Fe|Iron|26|Transition metal,Co|Cobalt|27|Transition metal,Ni|Nickel|28|Transition metal,Cu|Copper|29|Transition metal,Zn|Zinc|30|Transition metal,Ga|Gallium|31|Post-transition metal,Ge|Germanium|32|Metalloid,As|Arsenic|33|Metalloid,Se|Selenium|34|Nonmetal,Br|Bromine|35|Halogen,Kr|Krypton|36|Noble gas,Rb|Rubidium|37|Alkali metal,Sr|Strontium|38|Alkaline earth metal,Y|Yttrium|39|Transition metal,Zr|Zirconium|40|Transition metal,Nb|Niobium|41|Transition metal,Mo|Molybdenum|42|Transition metal,Tc|Technetium|43|Transition metal,Ru|Ruthenium|44|Transition metal,Rh|Rhodium|45|Transition metal,Pd|Palladium|46|Transition metal,Ag|Silver|47|Transition metal,Cd|Cadmium|48|Transition metal,In|Indium|49|Post-transition metal,Sn|Tin|50|Post-transition metal,Sb|Antimony|51|Metalloid,Te|Tellurium|52|Metalloid,I|Iodine|53|Halogen,Xe|Xenon|54|Noble gas,Cs|Caesium|55|Alkali metal,Ba|Barium|56|Alkaline earth metal,La|Lanthanum|57|Lanthanide,Ce|Cerium|58|Lanthanide,Pr|Praseodymium|59|Lanthanide,Nd|Neodymium|60|Lanthanide,Pm|Promethium|61|Lanthanide,Sm|Samarium|62|Lanthanide,Eu|Europium|63|Lanthanide,Gd|Gadolinium|64|Lanthanide,Tb|Terbium|65|Lanthanide,Dy|Dysprosium|66|Lanthanide,Ho|Holmium|67|Lanthanide,Er|Erbium|68|Lanthanide,Tm|Thulium|69|Lanthanide,Yb|Ytterbium|70|Lanthanide,Lu|Lutetium|71|Lanthanide,Hf|Hafnium|72|Transition metal,Ta|Tantalum|73|Transition metal,W|Tungsten|74|Transition metal,Re|Rhenium|75|Transition metal,Os|Osmium|76|Transition metal,Ir|Iridium|77|Transition metal,Pt|Platinum|78|Transition metal,Au|Gold|79|Transition metal,Hg|Mercury|80|Transition metal,Tl|Thallium|81|Post-transition metal,Pb|Lead|82|Post-transition metal,Bi|Bismuth|83|Post-transition metal,Po|Polonium|84|Metalloid,At|Astatine|85|Halogen,Rn|Radon|86|Noble gas,Fr|Francium|87|Alkali metal,Ra|Radium|88|Alkaline earth metal,Ac|Actinium|89|Actinide,Th|Thorium|90|Actinide,Pa|Protactinium|91|Actinide,U|Uranium|92|Actinide,Np|Neptunium|93|Actinide,Pu|Plutonium|94|Actinide,Am|Americium|95|Actinide,Cm|Curium|96|Actinide,Bk|Berkelium|97|Actinide,Cf|Californium|98|Actinide,Es|Einsteinium|99|Actinide,Fm|Fermium|100|Actinide,Md|Mendelevium|101|Actinide,No|Nobelium|102|Actinide,Lr|Lawrencium|103|Actinide,Rf|Rutherfordium|104|Transition metal,Db|Dubnium|105|Transition metal,Sg|Seaborgium|106|Transition metal,Bh|Bohrium|107|Transition metal,Hs|Hassium|108|Transition metal,Mt|Meitnerium|109|Unknown,Ds|Darmstadtium|110|Unknown,Rg|Roentgenium|111|Unknown,Cn|Copernicium|112|Transition metal,Nh|Nihonium|113|Unknown,Fl|Flerovium|114|Unknown,Mc|Moscovium|115|Unknown,Lv|Livermorium|116|Unknown,Ts|Tennessine|117|Unknown,Og|Oganesson|118|Unknown`;
@@ -371,7 +369,7 @@ function realTimeActivityFeed(discoveries = []) {
   const ranked = adaptiveDiscoveryRank(discoveries.length ? discoveries : generateDiscoveryEngine(10));
   const fallback = ranked.slice(0, 6);
   return fallback.map((d, index) => {
-    const researcher = `Researcher_${204 + index * 17}`;
+    const researcher = `Research Lab ${204 + index * 17}`;
     const actions = [
       "just discovered",
       "saved a rare pathway",
@@ -674,7 +672,7 @@ const ELEMENTOS_PRODUCTION_AUDIT = {
   buttonComponentsWithHandlers: 193,
   nativeButtonsScanned: 82,
   nativeButtonsWithHandlers: 82,
-  exportLocking: "Central exportAllFormats guard active; Reports Centre export guarded in V65.",
+  exportLocking: "Professional exports are routed through the central export workflow.",
   pricing: "Explorer $0 · Pro Researcher $19/month · Pro Lab $35/month",
   mobile: "Five-button bottom navigation plus More menu; page micro-data visible above content.",
 };
@@ -742,14 +740,14 @@ function RealTimeNetworkPanel({ discoveries = [], setPage }) {
     <Panel>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <Pill gold><Network size={12}/> demo network activity</Pill>
-          <h2 className="mt-3 text-4xl font-black">Demo ElementOS Network</h2>
+          <Pill gold><Network size={12}/> network activity</Pill>
+          <h2 className="mt-3 text-4xl font-black">ElementOS Network</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            Simulated live activity makes the platform feel active: researchers discovering pairings, trending cards moving, and reports being generated across the network.
+            Live-style platform activity highlights researchers discovering pairings, trending cards moving, and reports being generated across the network.
           </p>
         </div>
         <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">
-          ● {active} sample researchers active
+          ● {active} researchers active
         </div>
       </div>
 
@@ -868,7 +866,7 @@ const miModules = [
   { name: "Diamonds", icon: Gem, gradient: "from-cyan-300/20 to-blue-500/10", status: "Active", signal: 92 },
   { name: "Gold", icon: Sparkles, gradient: "from-amber-300/20 to-orange-500/10", status: "Active", signal: 84 },
   { name: "Lithium", icon: Zap, gradient: "from-fuchsia-300/20 to-purple-500/10", status: "Active", signal: 78 },
-  { name: "Copper", icon: Activity, gradient: "from-orange-300/20 to-red-500/10", status: "Preview", signal: 71 },
+  { name: "Copper", icon: Activity, gradient: "from-orange-300/20 to-red-500/10", status: "Active", signal: 71 },
   { name: "Uranium", icon: Orbit, gradient: "from-lime-300/20 to-emerald-500/10", status: "Locked", signal: 64 },
   { name: "Custom", icon: Database, gradient: "from-slate-300/20 to-cyan-500/10", status: "Enterprise", signal: 88 },
 ];
@@ -1013,7 +1011,7 @@ function miRunSelfChecks() {
   ];
 
   checks.forEach(([passed, message]) => {
-    if (!passed) console.error(`MIOS self-check failed: ${message}`);
+    if (!passed) console.error(`MIOS readiness check failed: ${message}`);
   });
 
   return checks.every(([passed]) => passed);
@@ -1156,8 +1154,8 @@ function MIDashboardHeader({ active, setActive }) {
     <div className="grid gap-4 lg:grid-cols-[1fr_0.75fr]">
       <div className="flex flex-col gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="text-sm font-black text-white">Northern Discovery Lab</div>
-          <div className="text-xs text-slate-500">Pro Researcher · founding pricing active · {active}</div>
+          <div className="text-sm font-black text-white">ElementOS Workspace</div>
+          <div className="text-xs text-slate-500">Pro Researcher workspace · {active}</div>
         </div>
         <div className="flex flex-wrap gap-2">
           <MIPill>Pro workspace</MIPill>
@@ -1599,7 +1597,7 @@ const PAGE_LABELS = {
   lab: "Workspace",
   beta: "Create Account",
   login: "Login",
-  systemhealth: "System Health",
+  systemhealth: "Platform Readiness",
 };
 
 const MOBILE_PAGE_ORDER = [
@@ -1625,7 +1623,6 @@ const MOBILE_PAGE_ORDER = [
   "visualization",
   "calculations",
   "isotopes",
-  "systemhealth",
   "simreports",
   "beta",
 ];
@@ -1650,7 +1647,7 @@ const ELEMENTOS_SUBSCRIPTION_PLANS = [
   {
     name: "Pro Researcher",
     price: "$19/month",
-    eyebrow: "Founding pricing",
+    eyebrow: "Researcher plan",
     description: "Best conversion tier for early users: reports, vault, exports, Poster Studio, AI Copilot and Scenario Intelligence.",
     features: ["Reports", "Vault", "PDF / SVG / JSON exports", "Poster Studio", "AI Copilot", "Scenario Intelligence"],
     locked: ["Advanced Labs", "Well Driller premium stack", "Future premium features"],
@@ -3689,7 +3686,6 @@ function Sidebar({ page, setPage }) {
       items: [
         ["lab", "Workspace", Save],
         ["beta", "Create Account", UserPlus],
-        ["systemhealth", "System Health", ShieldCheck],
       ],
     },
     {
@@ -5001,7 +4997,7 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
 
   const plans = [
     ["Explorer", "$0", "Free read-only access: browse, explore, compare and view the platform."],
-    ["Pro Researcher", "$19/month", "Founding pricing: reports, vault, exports, media engine and AI Copilot."],
+    ["Pro Researcher", "$19/month", "Researcher plan: reports, vault, exports, media engine and AI Copilot."],
     ["Pro Lab", "$35/month", "Everything unlocked: advanced labs, Future Simulation, Well Driller and future premium features."],
   ];
 
@@ -10579,7 +10575,7 @@ function DiscoveryNetworkSubscriberEdition({ setPage }) {
     ["+24", "Media Exports", "viralcards"],
   ];
   const feed = [
-    ["Researcher_204", "generated a Discovery Dossier", "Ti + Hf"],
+    ["Materials Lab", "generated a Discovery Dossier", "Ti + Hf"],
     ["Nova Alloy", "published a public page", "Ga + In"],
     ["Paul Roper", "saved a Advanced Material Analysis target", "DK-27"],
     ["Cu Corridor", "exported a social pack", "Al + Cu"],
@@ -11659,7 +11655,7 @@ function ViralDiscoveryCardStudio({ selected = "Al", compare = [], setPage }) {
     ["X / Twitter", "One sharp discovery card, one curiosity hook, one public discovery link."],
     ["LinkedIn", "Frame it as a professional material-intelligence insight with a report preview."],
     ["Reddit", "Lead with explanation, not hype. Show the card after the useful context."],
-    ["Product Hunt", "Use the founder card plus a clear before/after workflow demo."],
+    ["Product Hunt", "Use the founder story plus a clear before/after workflow walkthrough."],
   ];
 
   const ctaVariants = ["Open the discovery", "Generate your own", "View the full report", "Save this signal", "Join the Explorer access"];
@@ -13096,7 +13092,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
       ["pricing", "Open Pricing", "Review Explorer, Pro Researcher and Pro Lab."],
       ["checkout", "Start Checkout", "Continue to Stripe Checkout."],
       ["restore", "Restore Access", "Refresh account access after checkout."],
-      ["founding", "Show Founding Researcher Offer", "View founding $19 pricing and future $35 pricing."],
+      ["plans", "Show Researcher Plan", "View Researcher and Pro Lab pricing."],
       ["billing", "Billing Help", "Open support for billing and subscription help."],
     ].forEach(([key, title, description]) => add({ id: `account:${key}`, title, description, category: "Account", label: key, execute: () => { if (["upgrade-researcher", "upgrade-prolab", "checkout"].includes(key)) startCheckout?.(key.includes("prolab") ? "Pro Lab" : "Pro Researcher"); else if (key === "billing") setSupportOpen?.(true); else setPage("beta"); emitToast(title); onClose(); } }));
 
@@ -14513,11 +14509,11 @@ function SystemHealth({ page, selected, compare, forecastRequest, session, isPro
   return (
     <div className="space-y-6 pb-28">
       <Panel className="overflow-hidden border-emerald-300/20 bg-gradient-to-br from-slate-950 via-emerald-950/20 to-slate-950 p-6 md:p-8">
-        <Pill gold><ShieldCheck size={12}/> full debug audit</Pill>
+        <Pill gold><ShieldCheck size={12}/> platform readiness</Pill>
         <div className="mt-4 flex flex-wrap items-end justify-between gap-5">
           <div>
-            <h1 className="text-5xl font-black sm:text-7xl">System <span className="bg-gradient-to-r from-emerald-200 via-white to-cyan-200 bg-clip-text text-transparent">Health</span></h1>
-            <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">A stability dashboard for Explorer, Time Machine, generated element visuals, local storage, forecast handoff, exports and account state.</p>
+            <h1 className="text-5xl font-black sm:text-7xl">Platform <span className="bg-gradient-to-r from-emerald-200 via-white to-cyan-200 bg-clip-text text-transparent">Readiness</span></h1>
+            <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">A launch-readiness view for Explorer, Time Machine, generated element visuals, local storage, forecast handoff, exports and account state.</p>
           </div>
           <div className="rounded-[2rem] border border-emerald-300/25 bg-emerald-300/10 p-5 text-center">
             <div className="text-6xl font-black text-emerald-100">{health}%</div>
@@ -14542,10 +14538,10 @@ function SystemHealth({ page, selected, compare, forecastRequest, session, isPro
         ))}
       </div>
       <Panel>
-        <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Debug notes</div>
+        <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Reliability notes</div>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {[
-            "Page ErrorBoundary now prevents a single module crash from blanking the whole app.",
+            "Page safety guards help prevent a single module from blanking the whole app.",
             "Explorer uses safe localStorage parsing for favourites, recent items and forecast history.",
             "Time Machine keeps the Explorer-selected forecast horizon instead of reverting to 100 years.",
             "Element visuals are generated locally and do not depend on 118 uploaded image files.",
