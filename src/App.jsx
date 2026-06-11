@@ -3043,6 +3043,321 @@ function ElementOSThemeSkin() {
       }
       .poster-grid { background-image: linear-gradient(rgba(34,211,238,.10) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.10) 1px, transparent 1px); background-size: 48px 48px; }
       .poster-gold { color:#f8d477; text-shadow: 0 0 24px rgba(245,158,11,.24); }
+
+
+      /* =====================================================
+         V158 VISUAL LUXURY PASS
+         A calmer, more expensive visual system: larger type,
+         fewer colours, softer panels, wider whitespace and more
+         intentional hierarchy across the whole ElementOS shell.
+      ===================================================== */
+      :root {
+        --eos-lux-bg: #020617;
+        --eos-lux-surface: rgba(15, 23, 42, .82);
+        --eos-lux-surface-solid: #0f172a;
+        --eos-lux-surface-soft: rgba(15, 23, 42, .58);
+        --eos-lux-border: rgba(255,255,255,.08);
+        --eos-lux-border-strong: rgba(34,211,238,.20);
+        --eos-lux-text: #ffffff;
+        --eos-lux-muted: #cbd5e1;
+        --eos-lux-subtle: #64748b;
+        --eos-lux-accent: #22d3ee;
+        --eos-lux-accent-soft: rgba(34,211,238,.10);
+        --eos-lux-radius: 28px;
+      }
+
+      html, body, #root, .eos-shell {
+        background: var(--eos-lux-bg) !important;
+        color: var(--eos-lux-text) !important;
+        font-size: 16px;
+      }
+
+      .eos-shell {
+        background:
+          radial-gradient(circle at 50% -8%, rgba(34,211,238,.075), transparent 32%),
+          linear-gradient(180deg, #020617 0%, #020617 55%, #030712 100%) !important;
+      }
+
+      .eos-logo-wordmark,
+      .eos-brand-logo {
+        font-family: var(--font-logo) !important;
+        font-size: clamp(1.75rem, 2.25vw, 2.65rem) !important;
+        line-height: .92 !important;
+        letter-spacing: -.025em !important;
+      }
+
+      .eos-page-stage {
+        max-width: 1720px !important;
+        padding-left: clamp(1rem, 2vw, 2rem) !important;
+        padding-right: clamp(1rem, 2vw, 2rem) !important;
+      }
+
+      .eos-page-stage > * + * {
+        margin-top: clamp(1.75rem, 2.5vw, 3.25rem) !important;
+      }
+
+      .eos-page-stage h1,
+      .eos-page-title {
+        font-size: clamp(3.1rem, 6vw, 6.75rem) !important;
+        line-height: .88 !important;
+        letter-spacing: -.065em !important;
+        font-weight: 700 !important;
+        color: var(--eos-lux-text) !important;
+        text-shadow: none !important;
+      }
+
+      .eos-page-stage h2,
+      .eos-main-title {
+        font-size: clamp(2.15rem, 3.6vw, 4.4rem) !important;
+        line-height: .96 !important;
+        letter-spacing: -.05em !important;
+        font-weight: 700 !important;
+        color: var(--eos-lux-text) !important;
+        text-shadow: none !important;
+      }
+
+      .eos-page-stage h3,
+      .eos-panel-title,
+      .section-title,
+      [data-panel-title="true"] {
+        font-size: clamp(1.2rem, 1.5vw, 1.65rem) !important;
+        line-height: 1.12 !important;
+        letter-spacing: -.025em !important;
+        font-weight: 600 !important;
+        color: var(--eos-lux-text) !important;
+      }
+
+      .eos-page-stage p,
+      .eos-page-stage li,
+      .eos-body-copy,
+      .eos-page-stage .text-sm {
+        font-size: 1rem !important;
+        line-height: 1.72 !important;
+        color: var(--eos-lux-muted) !important;
+      }
+
+      .eos-page-stage .text-xs,
+      .eos-page-stage .text-\[10px\] {
+        color: var(--eos-lux-subtle) !important;
+        letter-spacing: .12em;
+      }
+
+      .eos-panel,
+      .eos-data-card,
+      .poster-card,
+      .poster-card-gold,
+      .eos-luxury-window,
+      .eos-hero-panel,
+      .eos-page-stage [class*="rounded-"] [class*="border-white/10"],
+      .eos-page-stage [class*="border-cyan-300/15"],
+      .eos-page-stage [class*="border-cyan-300/20"] {
+        border-color: var(--eos-lux-border) !important;
+        background: var(--eos-lux-surface) !important;
+        box-shadow: 0 24px 80px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.035) !important;
+      }
+
+      .eos-panel,
+      .eos-data-card,
+      .poster-card,
+      .poster-card-gold {
+        border-radius: var(--eos-lux-radius) !important;
+        padding: clamp(1.35rem, 2vw, 2.25rem) !important;
+      }
+
+      .eos-panel:hover,
+      .eos-data-card:hover,
+      .poster-card:hover,
+      .poster-card-gold:hover,
+      .eos-luxury-window:hover {
+        transform: translateY(-1px) !important;
+        border-color: rgba(255,255,255,.14) !important;
+        box-shadow: 0 28px 92px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.045) !important;
+        filter: none !important;
+      }
+
+      .eos-page-stage .bg-cyan-300,
+      .eos-page-stage .bg-blue-500,
+      .eos-page-stage .bg-emerald-300,
+      .eos-page-stage .bg-amber-300,
+      .eos-page-stage .bg-fuchsia-300,
+      .eos-page-stage .bg-purple-500 {
+        background-color: var(--eos-lux-accent) !important;
+      }
+
+      .eos-page-stage .text-cyan-100,
+      .eos-page-stage .text-cyan-200,
+      .eos-page-stage .text-emerald-100,
+      .eos-page-stage .text-emerald-200,
+      .eos-page-stage .text-amber-100,
+      .eos-page-stage .text-amber-200,
+      .eos-page-stage .text-fuchsia-100,
+      .eos-page-stage .text-blue-100 {
+        color: var(--eos-lux-accent) !important;
+      }
+
+      .eos-page-stage .border-cyan-300\/20,
+      .eos-page-stage .border-cyan-300\/15,
+      .eos-page-stage .border-emerald-300\/15,
+      .eos-page-stage .border-amber-300\/15,
+      .eos-page-stage .border-white\/10 {
+        border-color: var(--eos-lux-border) !important;
+      }
+
+      .eos-page-stage .bg-cyan-300\/10,
+      .eos-page-stage .bg-cyan-300\/5,
+      .eos-page-stage .bg-emerald-300\/10,
+      .eos-page-stage .bg-emerald-300\/\[0\.06\],
+      .eos-page-stage .bg-amber-300\/10,
+      .eos-page-stage .bg-amber-300\/\[0\.06\] {
+        background: var(--eos-lux-surface-soft) !important;
+      }
+
+      .eos-page-stage button,
+      .eos-page-stage .eos-button {
+        min-height: 52px !important;
+        border-radius: 999px !important;
+        font-size: .95rem !important;
+        font-weight: 600 !important;
+        letter-spacing: -.005em !important;
+        box-shadow: none !important;
+      }
+
+      .eos-page-stage button[class*="bg-cyan-300"],
+      .eos-page-stage button[class*="variant-primary"],
+      .eos-page-stage .eos-liquid-button {
+        background: var(--eos-lux-accent) !important;
+        color: #020617 !important;
+      }
+
+      .eos-page-stage input,
+      .eos-page-stage select,
+      .eos-page-stage textarea,
+      .eos-input {
+        min-height: 56px !important;
+        border-radius: 18px !important;
+        background: rgba(2, 6, 23, .62) !important;
+        border-color: var(--eos-lux-border) !important;
+        color: var(--eos-lux-text) !important;
+        font-size: 1rem !important;
+        line-height: 1.45 !important;
+      }
+
+      .eos-nav-item,
+      .eos-nav-item-active {
+        border-color: transparent !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border-radius: 18px !important;
+      }
+      .eos-nav-item-active {
+        background: rgba(34,211,238,.10) !important;
+        color: #fff !important;
+      }
+      .eos-nav-item:hover {
+        background: rgba(255,255,255,.045) !important;
+        transform: none !important;
+      }
+
+      .eos-page-stage svg,
+      .eos-page-stage .lucide {
+        filter: none !important;
+      }
+
+      .eos-page-stage .shadow-2xl,
+      .eos-page-stage .shadow-xl,
+      .eos-page-stage [class*="shadow-["] {
+        box-shadow: 0 20px 70px rgba(0,0,0,.24) !important;
+      }
+
+      .eos-page-stage .grid {
+        gap: clamp(1.1rem, 1.8vw, 2rem);
+      }
+
+      .eos-page-stage table {
+        font-size: .95rem !important;
+      }
+
+      .eos-page-stage th,
+      .eos-page-stage td {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+      }
+
+      .eos-page-stage .text-3xl { font-size: clamp(1.65rem, 2.3vw, 2.55rem) !important; line-height: 1.02 !important; }
+      .eos-page-stage .text-4xl { font-size: clamp(2.05rem, 3vw, 3.35rem) !important; line-height: .98 !important; }
+      .eos-page-stage .text-5xl { font-size: clamp(2.55rem, 4vw, 4.8rem) !important; line-height: .92 !important; }
+      .eos-page-stage .text-6xl { font-size: clamp(3.1rem, 5.2vw, 6.25rem) !important; line-height: .88 !important; }
+
+      .eos-page-stage .font-black,
+      .eos-page-stage .font-extrabold {
+        font-weight: 700 !important;
+      }
+
+      .eos-page-stage .uppercase {
+        letter-spacing: .16em !important;
+      }
+
+      .eos-page-stage .eos-score,
+      .eos-page-stage .eos-number,
+      .eos-page-stage .font-mono {
+        color: var(--eos-lux-text) !important;
+      }
+
+      .eos-page-stage .bg-black\/20,
+      .eos-page-stage .bg-black\/25,
+      .eos-page-stage .bg-black\/30,
+      .eos-page-stage .bg-slate-950\/60,
+      .eos-page-stage .bg-slate-950\/70,
+      .eos-page-stage .bg-slate-950\/80 {
+        background: rgba(2, 6, 23, .45) !important;
+      }
+
+      @media (min-width: 1024px) {
+        .eos-page-stage main,
+        .eos-page-stage section {
+          scroll-margin-top: 2rem;
+        }
+        .eos-page-stage .xl\:grid-cols-4,
+        .eos-page-stage .md\:grid-cols-4 {
+          gap: 2rem !important;
+        }
+      }
+
+      @media (max-width: 767px) {
+        .eos-page-stage {
+          padding-left: .85rem !important;
+          padding-right: .85rem !important;
+          padding-bottom: 6.5rem !important;
+        }
+        .eos-panel,
+        .eos-data-card,
+        .poster-card,
+        .poster-card-gold {
+          border-radius: 22px !important;
+          padding: 1.15rem !important;
+        }
+        .eos-page-stage h1,
+        .eos-page-title {
+          font-size: clamp(2.45rem, 13vw, 3.7rem) !important;
+          line-height: .9 !important;
+        }
+        .eos-page-stage h2,
+        .eos-main-title {
+          font-size: clamp(1.85rem, 9vw, 2.8rem) !important;
+          line-height: .96 !important;
+        }
+        .eos-page-stage p,
+        .eos-page-stage li,
+        .eos-body-copy,
+        .eos-page-stage .text-sm {
+          font-size: .98rem !important;
+          line-height: 1.65 !important;
+        }
+        .eos-page-stage button,
+        .eos-page-stage .eos-button {
+          min-height: 50px !important;
+        }
+      }
       .poster-cyan { color:#67e8f9; text-shadow: 0 0 24px rgba(34,211,238,.34); }
       .poster-card { background: linear-gradient(145deg, rgba(3,12,24,.92), rgba(4,22,40,.72)); border: 1px solid rgba(103,232,249,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 40px rgba(8,180,255,.07); }
       .poster-card-gold { background: linear-gradient(145deg, rgba(18,14,4,.82), rgba(3,12,24,.78)); border: 1px solid rgba(250,204,21,.24); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 40px rgba(245,158,11,.08); }
@@ -9079,7 +9394,7 @@ function PublicReportView({ report, status }) {
   if (!report) {
     const isMissing = String(status || "").toLowerCase().includes("not found") || String(status || "").toLowerCase().includes("failed");
     return (
-      <div className="eos-shell eos-app-scale min-h-screen bg-[#02060d] text-slate-100">
+      <div className="eos-shell eos-app-scale min-h-screen bg-[#020617] text-slate-100">
         <ElementOSThemeSkin />
         <Background />
         <main className="relative z-10 mx-auto max-w-5xl space-y-6 p-6 lg:p-10">
@@ -9126,7 +9441,7 @@ function PublicReportView({ report, status }) {
   }));
 
   return (
-    <div className="eos-shell eos-app-scale min-h-screen bg-[#02060d] text-slate-100">
+    <div className="eos-shell eos-app-scale min-h-screen bg-[#020617] text-slate-100">
       <ElementOSThemeSkin />
       <Background />
 
@@ -14515,7 +14830,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
   }
 
   return (
-    <div className="eos-shell eos-app-scale min-h-screen bg-[#02060d] text-slate-100">
+    <div className="eos-shell eos-app-scale min-h-screen bg-[#020617] text-slate-100">
       <ElementOSThemeSkin />
       <Background />
       <LivingMotionLayer />
