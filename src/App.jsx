@@ -7744,7 +7744,6 @@ function PeriodicTable({ selected, setSelected }) {
   const [cat, setCat] = useState("All");
   const [mode, setMode] = useState("behaviour");
   const [query, setQuery] = useState("");
-  const [showInspector, setShowInspector] = useState(true);
 
   const layerLabels = {
     stability: "Stability",
@@ -7755,71 +7754,80 @@ function PeriodicTable({ selected, setSelected }) {
     rarity: "Rarity",
     alignment: "Alignment",
   };
-  const activeLayerLabel = layerLabels[layer] || "Conductivity";
+
   const activeElement = elementMap[selected] || elementMap.Al;
-  const activeScore = score(activeElement.symbol);
+  const activeMetrics = score(activeElement.symbol);
   const metricMax = layer === "alignment" ? 100 : 5;
+  const normalizedQuery = query.trim().toLowerCase();
   const activeValue = mapModeScore(activeElement.symbol, layer, mode);
   const activePercent = percentFromMetric(activeValue, mode === "risk" ? 5 : metricMax);
-  const normalizedQuery = query.trim().toLowerCase();
 
-  const visibleElements = elements.filter((element) => {
-    const matchesCategory = cat === "All" || element.category === cat;
-    const matchesQuery = !normalizedQuery || element.name.toLowerCase().includes(normalizedQuery) || element.symbol.toLowerCase().includes(normalizedQuery);
-    return matchesCategory && matchesQuery;
-  });
+  const filteredSymbols = new Set(
+    elements
+      .filter((element) => {
+        const categoryOk = cat === "All" || element.category === cat;
+        const queryOk = !normalizedQuery || element.symbol.toLowerCase().includes(normalizedQuery) || element.name.toLowerCase().includes(normalizedQuery);
+        return categoryOk && queryOk;
+      })
+      .map((element) => element.symbol)
+  );
 
-  const rankedElements = visibleElements
-    .map((element) => ({ ...element, value: mapModeScore(element.symbol, layer, mode), metrics: score(element.symbol) }))
-    .sort((a, b) => b.value - a.value);
-  const top = rankedElements.slice(0, 10);
-  const bestPairings = topPairingSymbols(activeElement.symbol, 4);
+  const topSignals = elements
+    .map((element) => ({
+      ...element,
+      value: mapModeScore(element.symbol, layer, mode),
+    }))
+    .filter((element) => filteredSymbols.has(element.symbol))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
 
-  const exportPeriodic = () => {
-    const content = `ElementOS Element Behaviour Map\n\nMode: ${ELEMENTOS_MAP_MODES[mode]}\nLayer: ${activeLayerLabel}\nCategory: ${cat}\nSelected: ${activeElement.name} (${activeElement.symbol})\nScore: ${activePercent}%\n\nTop materials:\n${top.map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${percentFromMetric(e.value, mode === "risk" ? 5 : metricMax)}%`).join("\n")}\n\n${periodicLayerDescription(layer, mode)}`;
-    exportAllFormats({ baseName: `element-map-${mode}-${layer}`, title: `Element Behaviour Map: ${activeLayerLabel}`, summary: content, payload: { layer, mode, category: cat, selected: activeElement.symbol, top } });
+  const pairings = topPairingSymbols(activeElement.symbol, 4);
+
+  const scorePercentFor = (symbol) => {
+    const value = mapModeScore(symbol, layer, mode);
+    return percentFromMetric(value, mode === "risk" ? 5 : metricMax);
+  };
+
+  const signalClassFor = (percent) => {
+    if (percent >= 82) return "bg-cyan-300/18 border-cyan-200/35 text-white";
+    if (percent >= 62) return "bg-cyan-300/10 border-cyan-300/20 text-slate-100";
+    if (percent >= 42) return "bg-white/[0.045] border-white/10 text-slate-200";
+    return "bg-black/25 border-white/[0.07] text-slate-300";
   };
 
   return (
-    <div className="space-y-10">
-      <Panel className="overflow-hidden border-white/10 bg-slate-950/70 p-0">
-        <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.16),transparent_34%),radial-gradient(circle_at_82%_70%,rgba(255,255,255,.08),transparent_28%),#020617] p-8 sm:p-12">
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-200/50 to-transparent" />
-          <div className="grid gap-10 xl:grid-cols-[1fr_420px] xl:items-end">
-            <div>
-              <Pill gold><Layers size={12}/> element behaviour map</Pill>
-              <h1 className="mt-6 max-w-5xl text-5xl font-bold tracking-[-0.04em] text-white sm:text-7xl xl:text-8xl">Scan all 118 elements as a live material radar.</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">Switch behaviour layers, filter by category, inspect any element and reveal the strongest discovery signals without the table feeling cramped.</p>
-            </div>
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
-              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Selected element</div>
-              <div className="mt-4 flex items-end justify-between gap-4">
-                <div>
-                  <div className="text-7xl font-black text-cyan-100">{activeElement.symbol}</div>
-                  <div className="mt-1 text-2xl font-semibold text-white">{activeElement.name}</div>
-                  <div className="text-sm text-slate-400">Atomic {activeElement.atomicNumber} · {activeElement.category}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-5xl font-black text-white">{activePercent}%</div>
-                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{activeLayerLabel}</div>
-                </div>
+    <div className="space-y-8">
+      <Panel className="border-white/10 bg-slate-950/70">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="max-w-5xl">
+            <Pill gold><Layers size={12}/> element behaviour map</Pill>
+            <h1 className="mt-5 text-5xl font-bold tracking-[-0.04em] text-white sm:text-6xl xl:text-7xl">Element Behaviour Map</h1>
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">A proper periodic-grid workspace for scanning all 118 elements by behaviour, discovery signal, industrial usefulness or risk — without the map collapsing into decorative shapes.</p>
+          </div>
+          <div className="w-full rounded-[2rem] border border-cyan-300/15 bg-black/25 p-5 xl:w-[360px]">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Selected</div>
+            <div className="mt-3 flex items-end justify-between gap-4">
+              <div>
+                <div className="text-6xl font-black text-white">{activeElement.symbol}</div>
+                <div className="mt-1 text-xl font-semibold text-white">{activeElement.name}</div>
+                <div className="text-sm text-slate-400">Atomic {activeElement.atomicNumber} · {activeElement.category}</div>
               </div>
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Button onClick={exportPeriodic} variant="primary">Export Map</Button>
-                <Button onClick={() => setShowInspector((value) => !value)}>{showInspector ? "Hide" : "Show"} Inspector</Button>
+              <div className="text-right">
+                <div className="text-4xl font-black text-cyan-100">{activePercent}%</div>
+                <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">{layerLabels[layer]}</div>
               </div>
             </div>
           </div>
         </div>
       </Panel>
 
-      <div className="sticky top-4 z-30 rounded-[2rem] border border-white/10 bg-slate-950/90 p-4 shadow-2xl shadow-black/40 backdrop-blur-2xl">
+      <div className="sticky top-4 z-30 rounded-[2rem] border border-white/10 bg-slate-950/95 p-4 shadow-2xl shadow-black/40 backdrop-blur-2xl">
         <div className="grid gap-3 xl:grid-cols-[1fr_auto] xl:items-center">
           <div className="grid gap-3 md:grid-cols-[1.2fr_.9fr_.9fr]">
-            <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
-              <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Search</div>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Ti, Gold, Carbon..." className="mt-1 w-full bg-transparent text-base font-semibold text-white outline-none placeholder:text-slate-600" />
-            </div>
+            <label className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
+              <span className="block text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Search element</span>
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Titanium, Ti, Gold..." className="mt-1 w-full bg-transparent text-base font-semibold text-white outline-none placeholder:text-slate-600" />
+            </label>
             <select value={cat} onChange={(event) => setCat(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none">
               {categories.map((category) => <option key={category}>{category}</option>)}
             </select>
@@ -7828,50 +7836,55 @@ function PeriodicTable({ selected, setSelected }) {
             </select>
           </div>
           <div className="flex flex-wrap gap-2">
-            {Object.entries(ELEMENTOS_MAP_MODES).map(([key, label]) => <Button key={key} onClick={() => setMode(key)} variant={mode === key ? "primary" : "ghost"}>{label}</Button>)}
+            {Object.entries(ELEMENTOS_MAP_MODES).map(([key, label]) => (
+              <button key={key} onClick={() => setMode(key)} className={`rounded-full border px-4 py-2 text-xs font-black transition ${mode === key ? "border-cyan-200/60 bg-cyan-300/15 text-cyan-50 shadow-[0_0_24px_rgba(34,211,238,.12)]" : "border-white/10 bg-white/[0.035] text-slate-300 hover:border-cyan-300/35"}`}>
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className={`grid gap-8 ${showInspector ? "xl:grid-cols-[minmax(0,1fr)_420px]" : ""}`}>
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_390px]">
         <Panel className="overflow-hidden border-white/10 bg-slate-950/60 p-0">
-          <div className="border-b border-white/10 p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="border-b border-white/10 p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <h2 className="text-3xl font-bold tracking-[-0.02em] text-white">Element Behaviour Canvas</h2>
+                <h2 className="text-3xl font-bold tracking-[-0.02em] text-white">Periodic Intelligence Grid</h2>
                 <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{periodicLayerDescription(layer, mode)}</p>
               </div>
-              <div className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-black text-slate-300">{visibleElements.length} visible</div>
+              <div className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-black text-slate-300">{filteredSymbols.size} visible</div>
             </div>
           </div>
 
-          <div className="overflow-x-auto p-5 sm:p-7">
-            <div className="min-w-[1180px] rounded-[2rem] border border-white/10 bg-black/25 p-5">
-              <div className="grid grid-cols-18 gap-2">
-                {periodicRows.map((row, rowIndex) => row.map((symbol, colIndex) => {
-                  if (!symbol) return <div key={`blank-${rowIndex}-${colIndex}`} className="aspect-[1.08]" />;
+          <div className="overflow-x-auto p-4 sm:p-6">
+            <div className="min-w-[1240px] rounded-[2rem] border border-white/10 bg-black/20 p-5">
+              <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(18, minmax(60px, 1fr))" }}>
+                {periodicRows.flatMap((row, rowIndex) => row.map((symbol, colIndex) => {
+                  if (!symbol) return <div key={`blank-${rowIndex}-${colIndex}`} className="h-[76px] rounded-2xl border border-transparent" />;
                   const element = elementMap[symbol];
-                  const hidden = !visibleElements.some((item) => item.symbol === symbol);
-                  const value = mapModeScore(symbol, layer, mode);
-                  const pct = percentFromMetric(value, mode === "risk" ? 5 : metricMax);
+                  const percent = scorePercentFor(symbol);
                   const isActive = selected === symbol;
+                  const isVisible = filteredSymbols.has(symbol);
                   return (
                     <button
-                      key={symbol}
+                      key={`${rowIndex}-${colIndex}-${symbol}`}
+                      type="button"
                       onClick={() => setSelected(symbol)}
-                      className={`group relative aspect-[1.08] overflow-hidden rounded-2xl border border-t-4 p-2 text-left transition duration-200 ${categoryAccent(element.category)} ${isActive ? "border-cyan-200 bg-cyan-300/12 shadow-[0_0_34px_rgba(34,211,238,.18)]" : "border-white/10 bg-white/[0.035] hover:border-cyan-300/35 hover:bg-white/[0.07]"} ${hidden ? "opacity-20 grayscale" : ""}`}
-                      title={`${element.name} · ${pct}% ${activeLayerLabel}`}
+                      title={`${element.name} · ${percent}% ${layerLabels[layer]}`}
+                      className={`relative h-[76px] overflow-hidden rounded-2xl border p-2 text-left transition ${signalClassFor(percent)} ${categoryAccent(element.category)} border-t-4 ${isActive ? "ring-2 ring-cyan-200/70 ring-offset-2 ring-offset-slate-950" : "hover:-translate-y-0.5 hover:border-cyan-300/45"} ${isVisible ? "" : "opacity-20 grayscale"}`}
                     >
-                      <div className="absolute inset-0 opacity-70" style={heatStyle(value, mode === "risk" ? 5 : metricMax)} />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-slate-950/50 to-slate-950/85" />
-                      <div className="relative z-10 flex h-full flex-col justify-between">
+                      <div className="absolute inset-x-2 bottom-2 h-1 overflow-hidden rounded-full bg-white/10">
+                        <div className="h-full rounded-full bg-cyan-200/80" style={{ width: `${percent}%` }} />
+                      </div>
+                      <div className="relative flex h-full flex-col justify-between pb-2">
                         <div className="flex items-start justify-between gap-1">
-                          <span className="text-[10px] font-black text-slate-300">{element.atomicNumber}</span>
-                          <span className="rounded-full bg-black/35 px-1.5 py-0.5 text-[10px] font-black text-cyan-100">{pct}</span>
+                          <span className="text-[10px] font-black text-slate-400">{element.atomicNumber}</span>
+                          <span className="text-[10px] font-black text-cyan-100">{percent}</span>
                         </div>
                         <div>
                           <div className="text-2xl font-black leading-none text-white">{element.symbol}</div>
-                          <div className="mt-1 truncate text-[10px] font-semibold text-slate-300">{element.name}</div>
+                          <div className="mt-0.5 truncate text-[10px] font-semibold text-slate-300">{element.name}</div>
                         </div>
                       </div>
                     </button>
@@ -7881,61 +7894,61 @@ function PeriodicTable({ selected, setSelected }) {
             </div>
           </div>
 
-          <div className="border-t border-white/10 p-5">
-            <div className="grid gap-4 xl:grid-cols-[1fr_1fr]">
+          <div className="border-t border-white/10 p-5 sm:p-6">
+            <div className="grid gap-4 lg:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <div className="mb-3 text-xs font-black uppercase tracking-[.22em] text-slate-500">Heat legend</div>
-                <div className="h-3 rounded-full bg-gradient-to-r from-slate-800 via-cyan-300/60 to-white" />
-                <div className="mt-2 flex justify-between text-xs text-slate-500"><span>Low signal</span><span>Medium</span><span>High signal</span></div>
+                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Signal legend</div>
+                <div className="mt-3 grid grid-cols-4 gap-2 text-center text-[10px] font-black uppercase tracking-[.12em] text-slate-400">
+                  <span className="rounded-full border border-white/10 bg-black/30 px-2 py-2">Low</span>
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-2">Medium</span>
+                  <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-2 text-cyan-100">High</span>
+                  <span className="rounded-full border border-cyan-200/40 bg-cyan-300/15 px-2 py-2 text-white">Peak</span>
+                </div>
               </div>
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Layer insight</div>
-                <p className="mt-2 text-sm leading-6 text-slate-300">{activeElement.name} is reading at <span className="font-black text-white">{activePercent}%</span> in {ELEMENTOS_MAP_MODES[mode]} / {activeLayerLabel}. Use the inspector to move it into compare, forecast or discovery work.</p>
+                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Why this is better</div>
+                <p className="mt-2 text-sm leading-6 text-slate-300">The map now uses fixed 18-column periodic layout, clear element tiles, subtle signal bars and a separate inspector. No decorative blob can cover the actual element grid.</p>
               </div>
             </div>
           </div>
         </Panel>
 
-        {showInspector && (
-          <div className="space-y-6 xl:sticky xl:top-32 xl:self-start">
-            <Panel className="border-cyan-300/15 bg-slate-950/80">
-              <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Inspector</div>
-              <div className="mt-4 flex items-start justify-between gap-4">
-                <div>
-                  <div className="text-5xl font-black text-white">{activeElement.symbol}</div>
-                  <div className="mt-1 text-2xl font-semibold text-white">{activeElement.name}</div>
-                  <div className="text-sm text-slate-400">{activeElement.category}</div>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
-                  <div className="text-4xl font-black text-cyan-100">{activePercent}%</div>
-                  <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">score</div>
-                </div>
+        <aside className="space-y-6 xl:sticky xl:top-32 xl:self-start">
+          <Panel className="border-cyan-300/15 bg-slate-950/80">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Element inspector</div>
+            <div className="mt-4 flex items-start justify-between gap-4">
+              <div>
+                <div className="text-6xl font-black text-white">{activeElement.symbol}</div>
+                <div className="mt-1 text-2xl font-semibold text-white">{activeElement.name}</div>
+                <div className="text-sm text-slate-400">{activeElement.category}</div>
               </div>
-              <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                {Object.entries(activeScore).filter(([key]) => metrics.includes(key)).slice(0, 6).map(([key, value]) => <div key={key} className="rounded-2xl border border-white/10 bg-black/20 p-3"><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">{layerLabels[key] || key}</div><div className="mt-1 text-xl font-black text-white">{key === "alignment" ? Math.round(value) : Number(value).toFixed(1)}</div></div>)}
+              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
+                <div className="text-4xl font-black text-cyan-100">{activePercent}%</div>
+                <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">score</div>
               </div>
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Button onClick={() => showToast(`${activeElement.name} is ready in Explorer.`)} variant="primary">Open Explorer</Button>
-                <Button onClick={() => showToast(`${activeElement.name} added to comparison workflow.`)}>Compare</Button>
-                <Button onClick={() => showToast(`${activeElement.name} queued for forecast.`)}>Forecast</Button>
-              </div>
-            </Panel>
+            </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {metrics.slice(0, 6).map((key) => {
+                const value = activeMetrics[key];
+                return <div key={key} className="rounded-2xl border border-white/10 bg-black/20 p-3"><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">{layerLabels[key] || key}</div><div className="mt-1 text-xl font-black text-white">{key === "alignment" ? Math.round(value) : Number(value).toFixed(1)}</div></div>;
+              })}
+            </div>
+          </Panel>
 
-            <Panel>
-              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Best pairings</div>
-              <div className="mt-4 space-y-3">
-                {bestPairings.map((item) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-cyan-300/35 hover:bg-white/[0.05]"><div><div className="text-lg font-black text-white">{activeElement.symbol} + {item.symbol}</div><div className="text-xs text-slate-400">{item.name}</div></div><div className="text-2xl font-black text-cyan-100">{item.compatibility}%</div></button>)}
-              </div>
-            </Panel>
+          <Panel>
+            <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Best pairings</div>
+            <div className="mt-4 space-y-3">
+              {pairings.map((item) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-cyan-300/35 hover:bg-white/[0.05]"><div><div className="text-lg font-black text-white">{activeElement.symbol} + {item.symbol}</div><div className="text-xs text-slate-400">{item.name}</div></div><div className="text-2xl font-black text-cyan-100">{item.compatibility}%</div></button>)}
+            </div>
+          </Panel>
 
-            <Panel>
-              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Top {activeLayerLabel} signals</div>
-              <div className="mt-4 space-y-3">
-                {top.slice(0, 5).map((item, index) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-left hover:border-cyan-300/35"><div><div className="text-xs text-slate-500">#{index + 1}</div><div className="font-black text-white">{item.name}</div></div><div className="text-xl font-black text-cyan-100">{percentFromMetric(item.value, mode === "risk" ? 5 : metricMax)}%</div></button>)}
-              </div>
-            </Panel>
-          </div>
-        )}
+          <Panel>
+            <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Top signals</div>
+            <div className="mt-4 space-y-3">
+              {topSignals.map((item, index) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-left hover:border-cyan-300/35"><div><div className="text-xs text-slate-500">#{index + 1}</div><div className="font-black text-white">{item.name}</div></div><div className="text-xl font-black text-cyan-100">{scorePercentFor(item.symbol)}%</div></button>)}
+            </div>
+          </Panel>
+        </aside>
       </div>
     </div>
   );
