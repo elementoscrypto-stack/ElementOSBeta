@@ -7739,11 +7739,13 @@ function topPairingSymbols(symbol, limit = 3) {
 }
 
 
-function PeriodicTable({ selected, setSelected }) {
-  const [layer, setLayer] = useState("conductivity");
-  const [cat, setCat] = useState("All");
-  const [mode, setMode] = useState("behaviour");
+function PeriodicTable({ selected, setSelected, setPage, setCompare, setForecastRequest }) {
+  const [layer, setLayer] = useState("thermal");
+  const [mode, setMode] = useState("discovery");
+  const [environment, setEnvironment] = useState("Deep Ocean");
   const [query, setQuery] = useState("");
+  const [scanning, setScanning] = useState(false);
+  const [hovered, setHovered] = useState(null);
 
   const layerLabels = {
     stability: "Stability",
@@ -7755,517 +7757,303 @@ function PeriodicTable({ selected, setSelected }) {
     alignment: "Alignment",
   };
 
-  const activeElement = elementMap[selected] || elementMap.Al;
-  const activeMetrics = score(activeElement.symbol);
-  const metricMax = layer === "alignment" ? 100 : 5;
+  const mapModes = [
+    ["behaviour", "Behaviour", "Raw behaviour"],
+    ["thermal", "Thermal", "Heat signal"],
+    ["pressure", "Pressure", "Load response"],
+    ["discovery", "Discovery", "Opportunity"],
+    ["industrial", "Industrial", "Practical use"],
+    ["risk", "Risk", "Mitigation need"],
+    ["economic", "Economic", "Strategic value"],
+  ];
+
+  const environments = ["Marine", "Aerospace", "Deep Ocean", "High Heat", "Space", "Mining", "Medical", "Defence"];
+  const activeElement = elementMap[selected] || elementMap.Ti || elementMap.Al;
+  const previewElement = hovered ? (elementMap[hovered] || activeElement) : activeElement;
   const normalizedQuery = query.trim().toLowerCase();
-  const activeValue = mapModeScore(activeElement.symbol, layer, mode);
-  const activePercent = percentFromMetric(activeValue, mode === "risk" ? 5 : metricMax);
 
-  const filteredSymbols = new Set(
-    elements
-      .filter((element) => {
-        const categoryOk = cat === "All" || element.category === cat;
-        const queryOk = !normalizedQuery || element.symbol.toLowerCase().includes(normalizedQuery) || element.name.toLowerCase().includes(normalizedQuery);
-        return categoryOk && queryOk;
-      })
-      .map((element) => element.symbol)
-  );
-
-  const topSignals = elements
-    .map((element) => ({
-      ...element,
-      value: mapModeScore(element.symbol, layer, mode),
-    }))
-    .filter((element) => filteredSymbols.has(element.symbol))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 6);
-
-  const pairings = topPairingSymbols(activeElement.symbol, 4);
-
-  const scorePercentFor = (symbol) => {
-    const value = mapModeScore(symbol, layer, mode);
-    return percentFromMetric(value, mode === "risk" ? 5 : metricMax);
+  const environmentBoost = (element) => {
+    const cat = element.category || "";
+    const sym = element.symbol;
+    const useful = {
+      Marine: ["Ti", "Zr", "Hf", "Ni", "Cr", "Al"],
+      Aerospace: ["Ti", "Al", "Hf", "Zr", "Mg", "Ni"],
+      "Deep Ocean": ["Ti", "Zr", "Hf", "Ni", "Cr", "Cu"],
+      "High Heat": ["Hf", "W", "Ta", "Re", "Ti", "Zr"],
+      Space: ["Ti", "Al", "Hf", "Zr", "Be", "C"],
+      Mining: ["Fe", "Cu", "Au", "Ag", "Ni", "Pt"],
+      Medical: ["Ti", "Zr", "Ta", "Au", "Pt", "Ag"],
+      Defence: ["Ti", "W", "Hf", "Ta", "U", "Zr"],
+    }[environment] || [];
+    let boost = useful.includes(sym) ? 0.72 : 0;
+    if (environment === "Economic" && ["Transition metal", "Lanthanide", "Actinide"].includes(cat)) boost += 0.2;
+    return boost;
   };
 
-  const signalClassFor = (percent) => {
-    if (percent >= 82) return "bg-cyan-300/18 border-cyan-200/35 text-white";
-    if (percent >= 62) return "bg-cyan-300/10 border-cyan-300/20 text-slate-100";
-    if (percent >= 42) return "bg-white/[0.045] border-white/10 text-slate-200";
-    return "bg-black/25 border-white/[0.07] text-slate-300";
+  const modeScore = (element) => {
+    const s = score(element.symbol);
+    const base = layer === "alignment" ? s.alignment / 20 : s[layer] || s.thermal;
+    const boost = environmentBoost(element);
+    if (mode === "thermal") return clamp(s.thermal * 0.74 + s.stability * 0.16 + boost);
+    if (mode === "pressure") return clamp(s.pressure * 0.72 + s.stability * 0.18 + boost);
+    if (mode === "discovery") return clamp(base * 0.34 + s.stability * 0.2 + s.thermal * 0.18 + s.pressure * 0.16 + s.rarity * 0.12 + boost);
+    if (mode === "industrial") return clamp(s.conductivity * 0.18 + s.thermal * 0.2 + s.stability * 0.26 + s.pressure * 0.2 + boost);
+    if (mode === "risk") return clamp(5.35 - (s.stability * 0.36 + s.pressure * 0.2 + s.thermal * 0.18 + s.diffusion * 0.12) + (boost * 0.25));
+    if (mode === "economic") return clamp(s.rarity * 0.5 + s.conductivity * 0.14 + s.thermal * 0.12 + boost);
+    return clamp(base + boost * 0.35);
+  };
+
+  const visibleElements = elements.filter((element) => {
+    if (!normalizedQuery) return true;
+    return element.symbol.toLowerCase().includes(normalizedQuery) || element.name.toLowerCase().includes(normalizedQuery) || element.category.toLowerCase().includes(normalizedQuery);
+  });
+
+  const ranked = visibleElements
+    .map((element) => ({ ...element, signal: modeScore(element) }))
+    .sort((a, b) => b.signal - a.signal);
+
+  const topSignals = ranked.slice(0, 8);
+  const selectedPairings = topPairingSymbols(activeElement.symbol, 5);
+  const opportunities = [
+    { pair: "Ti + Hf", title: "Thermal-pressure anomaly", use: "High-temperature aerospace systems", score: 97 },
+    { pair: "Al + Ti", title: "Lightweight structure signal", use: "Marine and aviation assemblies", score: 96 },
+    { pair: "Cu + Ag", title: "Conductivity corridor", use: "Electrical pathways and contacts", score: 94 },
+    { pair: "Zr + Ti", title: "Corrosion resistance cluster", use: "Deep-ocean and medical environments", score: 93 },
+  ];
+
+  const nodePositions = topSignals.slice(0, 10).map((element, index) => {
+    const ring = index < 1 ? 0 : index < 5 ? 1 : 2;
+    const count = ring === 0 ? 1 : ring === 1 ? 4 : 5;
+    const pos = ring === 0 ? 0 : index - (ring === 1 ? 1 : 5);
+    const angle = ring === 0 ? 0 : (pos / count) * Math.PI * 2 - Math.PI / 2;
+    const radius = ring === 0 ? 0 : ring === 1 ? 24 : 39;
+    return {
+      ...element,
+      x: 50 + Math.cos(angle) * radius,
+      y: 50 + Math.sin(angle) * radius,
+      percent: percentFromMetric(element.signal, 5),
+    };
+  });
+
+  const activeSignal = percentFromMetric(modeScore(activeElement), 5);
+  const previewSignal = percentFromMetric(modeScore(previewElement), 5);
+
+  const runScan = () => {
+    setScanning(true);
+    showToast?.(`Scanning ${environment} ${mode} opportunities`);
+    setTimeout(() => setScanning(false), 1300);
+  };
+
+  const openExplorer = (symbol = activeElement.symbol) => {
+    setSelected?.(symbol);
+    setPage?.("explorer");
+  };
+
+  const forecastElement = (symbol = activeElement.symbol) => {
+    setSelected?.(symbol);
+    setForecastRequest?.({ id: `map-${Date.now()}`, symbol, years: 50, environment, source: "Element Behaviour Map" });
+    setPage?.("timemachine");
+  };
+
+  const comparePair = (symbols) => {
+    setCompare?.(symbols);
+    setSelected?.(symbols[0]);
+    setPage?.("compare");
+  };
+
+  const signalTone = (percent) => {
+    if (percent >= 86) return "border-cyan-200/50 bg-cyan-300/[0.14] shadow-[0_0_32px_rgba(34,211,238,.16)]";
+    if (percent >= 68) return "border-cyan-300/25 bg-cyan-300/[0.08]";
+    if (percent >= 48) return "border-white/10 bg-white/[0.045]";
+    return "border-white/[0.07] bg-black/25 opacity-80";
   };
 
   return (
     <div className="space-y-8">
-      <Panel className="border-white/10 bg-slate-950/70">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-          <div className="max-w-5xl">
-            <Pill gold><Layers size={12}/> element behaviour map</Pill>
-            <h1 className="mt-5 text-5xl font-bold tracking-[-0.04em] text-white sm:text-6xl xl:text-7xl">Element Behaviour Map</h1>
-            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">A proper periodic-grid workspace for scanning all 118 elements by behaviour, discovery signal, industrial usefulness or risk — without the map collapsing into decorative shapes.</p>
-          </div>
-          <div className="w-full rounded-[2rem] border border-cyan-300/15 bg-black/25 p-5 xl:w-[360px]">
-            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Selected</div>
-            <div className="mt-3 flex items-end justify-between gap-4">
+      <Panel className="overflow-hidden border-white/10 bg-slate-950/80 p-0">
+        <div className="relative min-h-[760px] overflow-hidden rounded-[2rem] bg-[radial-gradient(circle_at_50%_45%,rgba(34,211,238,.16),transparent_32%),linear-gradient(135deg,#020617,#07111f_55%,#020617)]">
+          <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px)", backgroundSize: "56px 56px" }} />
+          <div className="absolute -left-24 top-24 h-80 w-80 rounded-full bg-cyan-300/10 blur-3xl" />
+          <div className="absolute -right-28 bottom-20 h-96 w-96 rounded-full bg-sky-400/10 blur-3xl" />
+
+          <div className="relative z-10 border-b border-white/10 bg-slate-950/70 p-5 backdrop-blur-2xl">
+            <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
               <div>
-                <div className="text-6xl font-black text-white">{activeElement.symbol}</div>
-                <div className="mt-1 text-xl font-semibold text-white">{activeElement.name}</div>
-                <div className="text-sm text-slate-400">Atomic {activeElement.atomicNumber} · {activeElement.category}</div>
+                <div className="text-xs font-black uppercase tracking-[.26em] text-cyan-200">Material intelligence radar</div>
+                <h1 className="mt-3 text-5xl font-bold tracking-[-0.05em] text-white sm:text-6xl xl:text-7xl">Element Behaviour Map</h1>
+                <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">Explore all 118 elements as a living opportunity canvas. Switch environments, scan hotspots, open pairings, and move strong signals directly into Explorer, Compare, or Time Machine.</p>
               </div>
-              <div className="text-right">
-                <div className="text-4xl font-black text-cyan-100">{activePercent}%</div>
-                <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">{layerLabels[layer]}</div>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={runScan} variant="primary">{scanning ? "Scanning..." : "Scan Opportunities"}</Button>
+                <Button onClick={() => openExplorer(activeElement.symbol)}>Open {activeElement.symbol}</Button>
+                <Button onClick={() => forecastElement(activeElement.symbol)}>Forecast</Button>
               </div>
             </div>
+          </div>
+
+          <div className="relative z-10 grid gap-6 p-5 xl:grid-cols-[1fr_360px]">
+            <div className="space-y-5">
+              <div className="sticky top-4 z-20 rounded-[1.5rem] border border-white/10 bg-slate-950/85 p-4 shadow-2xl shadow-black/30 backdrop-blur-2xl">
+                <div className="grid gap-3 xl:grid-cols-[1fr_1fr_1fr_.8fr]">
+                  <select value={mode} onChange={(e) => setMode(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm font-bold text-white outline-none">
+                    {mapModes.map(([key, label, helper]) => <option key={key} value={key}>{label} · {helper}</option>)}
+                  </select>
+                  <select value={layer} onChange={(e) => setLayer(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm font-bold text-white outline-none">
+                    {metrics.map((metric) => <option key={metric} value={metric}>{layerLabels[metric] || metric}</option>)}
+                  </select>
+                  <select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm font-bold text-white outline-none">
+                    {environments.map((item) => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                  <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search element..." className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500" />
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {environments.map((item) => (
+                    <button key={item} onClick={() => setEnvironment(item)} className={`rounded-full border px-4 py-2 text-xs font-black transition ${environment === item ? "border-cyan-200/50 bg-cyan-300/12 text-cyan-100" : "border-white/10 bg-white/[0.035] text-slate-400 hover:border-cyan-300/25 hover:text-cyan-100"}`}>{item}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative min-h-[560px] overflow-hidden rounded-[2rem] border border-white/10 bg-black/20">
+                <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="mapLine" x1="0" x2="1" y1="0" y2="1">
+                      <stop offset="0%" stopColor="rgba(34,211,238,.05)" />
+                      <stop offset="50%" stopColor="rgba(34,211,238,.45)" />
+                      <stop offset="100%" stopColor="rgba(34,211,238,.08)" />
+                    </linearGradient>
+                  </defs>
+                  {nodePositions.slice(1).map((node) => (
+                    <line key={`line-${node.symbol}`} x1="50" y1="50" x2={node.x} y2={node.y} stroke="url(#mapLine)" strokeWidth={node.percent > 82 ? 0.52 : 0.28} strokeDasharray="2 3" />
+                  ))}
+                  {nodePositions.slice(2, 8).map((node, index) => {
+                    const next = nodePositions[(index + 3) % nodePositions.length] || nodePositions[0];
+                    return <line key={`cross-${node.symbol}`} x1={node.x} y1={node.y} x2={next.x} y2={next.y} stroke="rgba(255,255,255,.08)" strokeWidth="0.16" />;
+                  })}
+                </svg>
+
+                <div className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" />
+                <div className="absolute left-1/2 top-1/2 h-[265px] w-[265px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/15" />
+                <div className="absolute left-1/2 top-1/2 h-[120px] w-[120px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.04]" />
+
+                {nodePositions.map((node, index) => (
+                  <button
+                    key={node.symbol}
+                    onMouseEnter={() => setHovered(node.symbol)}
+                    onMouseLeave={() => setHovered(null)}
+                    onClick={() => setSelected?.(node.symbol)}
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-[1.5rem] border p-3 text-left transition hover:z-20 hover:scale-105 ${signalTone(node.percent)} ${selected === node.symbol ? "ring-2 ring-cyan-200/60" : ""}`}
+                    style={{ left: `${node.x}%`, top: `${node.y}%`, width: index === 0 ? 132 : 112 }}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="text-[10px] font-black text-slate-500">{node.atomicNumber}</div>
+                      <div className="rounded-full border border-white/10 bg-black/25 px-2 py-0.5 text-[10px] font-black text-cyan-100">{node.percent}%</div>
+                    </div>
+                    <div className="mt-1 text-3xl font-black text-white">{node.symbol}</div>
+                    <div className="mt-1 truncate text-xs font-semibold text-slate-300">{node.name}</div>
+                  </button>
+                ))}
+
+                {scanning && (
+                  <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/45 backdrop-blur-sm">
+                    <div className="rounded-[2rem] border border-cyan-200/35 bg-slate-950/85 p-8 text-center shadow-[0_0_80px_rgba(34,211,238,.25)]">
+                      <div className="mx-auto h-24 w-24 rounded-full border border-cyan-200/40 bg-cyan-300/10 animate-pulse" />
+                      <div className="mt-5 text-2xl font-black text-white">Scanning material opportunity field</div>
+                      <div className="mt-2 text-sm text-cyan-100">{environment} · {mapModes.find(([key]) => key === mode)?.[1]}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-4">
+                {opportunities.map((item) => (
+                  <button key={item.pair} onClick={() => comparePair(item.pair.split(" + "))} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.055] p-4 text-left transition hover:-translate-y-1 hover:border-cyan-200/40 hover:bg-cyan-300/[0.09]">
+                    <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{item.title}</div>
+                    <div className="mt-2 text-2xl font-black text-white">{item.pair}</div>
+                    <div className="mt-2 text-3xl font-black text-cyan-100">{item.score}%</div>
+                    <div className="mt-2 text-xs leading-5 text-slate-400">{item.use}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <aside className="space-y-5">
+              <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/[0.065] p-5">
+                <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Element hero preview</div>
+                <div className="mt-4 flex items-center justify-between gap-4">
+                  <div>
+                    <div className="text-5xl font-black text-white">{previewElement.symbol}</div>
+                    <div className="mt-1 text-xl font-black text-cyan-100">{previewElement.name}</div>
+                    <div className="mt-1 text-sm text-slate-400">{previewElement.category}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-4xl font-black text-cyan-100">{previewSignal}%</div>
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">signal</div>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm leading-7 text-slate-300">{periodicLayerDescription(layer, mode)} Environment context is currently tuned for <b className="text-cyan-100">{environment}</b>.</p>
+                <div className="mt-5 grid gap-2">
+                  <Button onClick={() => openExplorer(previewElement.symbol)} variant="primary">Open Explorer</Button>
+                  <Button onClick={() => forecastElement(previewElement.symbol)}>Send to Time Machine</Button>
+                  <Button onClick={() => comparePair([previewElement.symbol, ...topPairingSymbols(previewElement.symbol, 3).map((p) => p.symbol)])}>Compare top materials</Button>
+                </div>
+              </div>
+
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Top opportunities</div>
+                <div className="mt-4 space-y-3">
+                  {topSignals.map((item, index) => {
+                    const pct = percentFromMetric(item.signal, 5);
+                    return (
+                      <button key={item.symbol} onClick={() => setSelected?.(item.symbol)} className="w-full rounded-2xl border border-white/10 bg-black/20 p-3 text-left transition hover:border-cyan-300/30 hover:bg-cyan-300/[0.06]">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <div className="text-sm font-black text-white">{index + 1}. {item.name}</div>
+                            <div className="text-xs text-slate-500">{item.symbol} · {item.category}</div>
+                          </div>
+                          <div className="text-xl font-black text-cyan-100">{pct}%</div>
+                        </div>
+                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${pct}%` }} /></div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Best pairings for {activeElement.symbol}</div>
+                <div className="mt-4 space-y-3">
+                  {selectedPairings.map((item) => (
+                    <div key={item.symbol} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-black text-white">{activeElement.symbol} + {item.symbol}</div>
+                          <div className="text-xs text-slate-500">{item.name}</div>
+                        </div>
+                        <div className="text-xl font-black text-cyan-100">{item.compatibility}%</div>
+                      </div>
+                      <div className="mt-3 flex gap-2">
+                        <button onClick={() => comparePair([activeElement.symbol, item.symbol])} className="rounded-full border border-cyan-300/20 px-3 py-1 text-xs font-black text-cyan-100">Compare</button>
+                        <button onClick={() => forecastElement(item.symbol)} className="rounded-full border border-white/10 px-3 py-1 text-xs font-black text-slate-300">Forecast</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Signal legend</div>
+                <div className="mt-4 h-3 overflow-hidden rounded-full bg-gradient-to-r from-slate-800 via-cyan-300/35 to-cyan-200" />
+                <div className="mt-2 flex justify-between text-[10px] font-black uppercase tracking-[.16em] text-slate-500"><span>Low</span><span>Medium</span><span>High</span></div>
+                <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-3 text-xs leading-5 text-slate-400">Selected signal: <b className="text-cyan-100">{activeSignal}%</b>. Stronger nodes represent materials that match the active mode, layer and environment profile.</div>
+              </div>
+            </aside>
           </div>
         </div>
       </Panel>
-
-      <div className="sticky top-4 z-30 rounded-[2rem] border border-white/10 bg-slate-950/95 p-4 shadow-2xl shadow-black/40 backdrop-blur-2xl">
-        <div className="grid gap-3 xl:grid-cols-[1fr_auto] xl:items-center">
-          <div className="grid gap-3 md:grid-cols-[1.2fr_.9fr_.9fr]">
-            <label className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
-              <span className="block text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Search element</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Titanium, Ti, Gold..." className="mt-1 w-full bg-transparent text-base font-semibold text-white outline-none placeholder:text-slate-600" />
-            </label>
-            <select value={cat} onChange={(event) => setCat(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none">
-              {categories.map((category) => <option key={category}>{category}</option>)}
-            </select>
-            <select value={layer} onChange={(event) => setLayer(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none">
-              {metrics.map((metric) => <option key={metric} value={metric}>{layerLabels[metric] || metric}</option>)}
-            </select>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(ELEMENTOS_MAP_MODES).map(([key, label]) => (
-              <button key={key} onClick={() => setMode(key)} className={`rounded-full border px-4 py-2 text-xs font-black transition ${mode === key ? "border-cyan-200/60 bg-cyan-300/15 text-cyan-50 shadow-[0_0_24px_rgba(34,211,238,.12)]" : "border-white/10 bg-white/[0.035] text-slate-300 hover:border-cyan-300/35"}`}>
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_390px]">
-        <Panel className="overflow-hidden border-white/10 bg-slate-950/60 p-0">
-          <div className="border-b border-white/10 p-5 sm:p-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h2 className="text-3xl font-bold tracking-[-0.02em] text-white">Periodic Intelligence Grid</h2>
-                <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{periodicLayerDescription(layer, mode)}</p>
-              </div>
-              <div className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-black text-slate-300">{filteredSymbols.size} visible</div>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto p-4 sm:p-6">
-            <div className="min-w-[1240px] rounded-[2rem] border border-white/10 bg-black/20 p-5">
-              <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(18, minmax(60px, 1fr))" }}>
-                {periodicRows.flatMap((row, rowIndex) => row.map((symbol, colIndex) => {
-                  if (!symbol) return <div key={`blank-${rowIndex}-${colIndex}`} className="h-[76px] rounded-2xl border border-transparent" />;
-                  const element = elementMap[symbol];
-                  const percent = scorePercentFor(symbol);
-                  const isActive = selected === symbol;
-                  const isVisible = filteredSymbols.has(symbol);
-                  return (
-                    <button
-                      key={`${rowIndex}-${colIndex}-${symbol}`}
-                      type="button"
-                      onClick={() => setSelected(symbol)}
-                      title={`${element.name} · ${percent}% ${layerLabels[layer]}`}
-                      className={`relative h-[76px] overflow-hidden rounded-2xl border p-2 text-left transition ${signalClassFor(percent)} ${categoryAccent(element.category)} border-t-4 ${isActive ? "ring-2 ring-cyan-200/70 ring-offset-2 ring-offset-slate-950" : "hover:-translate-y-0.5 hover:border-cyan-300/45"} ${isVisible ? "" : "opacity-20 grayscale"}`}
-                    >
-                      <div className="absolute inset-x-2 bottom-2 h-1 overflow-hidden rounded-full bg-white/10">
-                        <div className="h-full rounded-full bg-cyan-200/80" style={{ width: `${percent}%` }} />
-                      </div>
-                      <div className="relative flex h-full flex-col justify-between pb-2">
-                        <div className="flex items-start justify-between gap-1">
-                          <span className="text-[10px] font-black text-slate-400">{element.atomicNumber}</span>
-                          <span className="text-[10px] font-black text-cyan-100">{percent}</span>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-black leading-none text-white">{element.symbol}</div>
-                          <div className="mt-0.5 truncate text-[10px] font-semibold text-slate-300">{element.name}</div>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                }))}
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 p-5 sm:p-6">
-            <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Signal legend</div>
-                <div className="mt-3 grid grid-cols-4 gap-2 text-center text-[10px] font-black uppercase tracking-[.12em] text-slate-400">
-                  <span className="rounded-full border border-white/10 bg-black/30 px-2 py-2">Low</span>
-                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-2">Medium</span>
-                  <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-2 text-cyan-100">High</span>
-                  <span className="rounded-full border border-cyan-200/40 bg-cyan-300/15 px-2 py-2 text-white">Peak</span>
-                </div>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Why this is better</div>
-                <p className="mt-2 text-sm leading-6 text-slate-300">The map now uses fixed 18-column periodic layout, clear element tiles, subtle signal bars and a separate inspector. No decorative blob can cover the actual element grid.</p>
-              </div>
-            </div>
-          </div>
-        </Panel>
-
-        <aside className="space-y-6 xl:sticky xl:top-32 xl:self-start">
-          <Panel className="border-cyan-300/15 bg-slate-950/80">
-            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Element inspector</div>
-            <div className="mt-4 flex items-start justify-between gap-4">
-              <div>
-                <div className="text-6xl font-black text-white">{activeElement.symbol}</div>
-                <div className="mt-1 text-2xl font-semibold text-white">{activeElement.name}</div>
-                <div className="text-sm text-slate-400">{activeElement.category}</div>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
-                <div className="text-4xl font-black text-cyan-100">{activePercent}%</div>
-                <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">score</div>
-              </div>
-            </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {metrics.slice(0, 6).map((key) => {
-                const value = activeMetrics[key];
-                return <div key={key} className="rounded-2xl border border-white/10 bg-black/20 p-3"><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">{layerLabels[key] || key}</div><div className="mt-1 text-xl font-black text-white">{key === "alignment" ? Math.round(value) : Number(value).toFixed(1)}</div></div>;
-              })}
-            </div>
-          </Panel>
-
-          <Panel>
-            <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Best pairings</div>
-            <div className="mt-4 space-y-3">
-              {pairings.map((item) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-cyan-300/35 hover:bg-white/[0.05]"><div><div className="text-lg font-black text-white">{activeElement.symbol} + {item.symbol}</div><div className="text-xs text-slate-400">{item.name}</div></div><div className="text-2xl font-black text-cyan-100">{item.compatibility}%</div></button>)}
-            </div>
-          </Panel>
-
-          <Panel>
-            <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Top signals</div>
-            <div className="mt-4 space-y-3">
-              {topSignals.map((item, index) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-left hover:border-cyan-300/35"><div><div className="text-xs text-slate-500">#{index + 1}</div><div className="font-black text-white">{item.name}</div></div><div className="text-xl font-black text-cyan-100">{scorePercentFor(item.symbol)}%</div></button>)}
-            </div>
-          </Panel>
-        </aside>
-      </div>
     </div>
   );
 }
 
-function Compare({ compare, setCompare, setPage, selected, setSelected, setForecastRequest }) {
-  const [candidate, setCandidate] = useState("H");
-  const rows = compare.map((sym) => ({ ...elementMap[sym], metrics: score(sym) }));
-
-  return (
-    <>
-      <Panel>
-        <Pill gold>
-          <BarChart3 size={12} /> comparison engine
-        </Pill>
-        <h1 className="mt-4 text-5xl font-black">Compare Engine</h1>
-        <Info title="Cleaned terminology">
-          Perfect Alignment is now treated as a discovery achievement instead of a confusing map filter. Users compare clear metrics first, then see <b>Perfect Alignment Event</b> when a pairing earns it.
-        </Info>
-      </Panel>
-
-      <GuidePanel page="compare" />
-      <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(6)} setPage={setPage} />
-
-      <Panel>
-        <div className="flex flex-wrap gap-3">
-          <select
-            value={candidate}
-            onChange={(e) => setCandidate(e.target.value)}
-            className="rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none"
-          >
-            {elements.map((e) => (
-              <option key={e.symbol} value={e.symbol}>
-                {e.symbol} — {e.name}
-              </option>
-            ))}
-          </select>
-
-          <Button
-            onClick={() =>
-              setCompare((x) =>
-                x.includes(candidate) ? x : [...x, candidate].slice(0, 10)
-              )
-            }
-            variant="primary"
-          >
-            Add Element
-          </Button>
-
-          <Button
-            onClick={() =>
-              setCompare((x) => {
-                const next = x.filter((sym) => sym !== candidate);
-                return next.length ? next : ["H"];
-              })
-            }
-          >
-            Remove Element
-          </Button>
-
-          <Button
-            onClick={() => setCompare(["H"])}
-          >
-            Reset to Hydrogen
-          </Button>
-
-          <Button onClick={() => setPage("reports")}>Create Report</Button>
-        </div>
-
-        <div className="mt-6 overflow-auto">
-          <table className="w-full min-w-[980px] border-separate border-spacing-y-2">
-            <thead>
-              <tr className="text-left text-xs uppercase tracking-[.18em] text-slate-400">
-                <th className="px-3 py-2">Element</th>
-                {metrics.map((k) => (
-                  <th key={k} className="px-2 py-2">
-                    {k === "alignment" ? "Alignment" : k}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.symbol} className="rounded-2xl border border-white/10 bg-white/[.035]">
-                  <td className="rounded-l-2xl border-y border-l border-white/10 p-3">
-                    <b className="text-cyan-200">{row.symbol}</b>
-                    <div className="text-xs text-slate-500">{row.name}</div>
-                  </td>
-
-                  {metrics.map((k) => (
-                    <td key={k} className="border-y border-white/10 p-2 last:rounded-r-2xl last:border-r">
-                      <div
-                        className="rounded-xl px-3 py-2 text-center text-sm font-bold"
-                        style={heatStyle(row.metrics[k], k === "alignment" ? 100 : 5)}
-                      >
-                        {row.metrics[k].toFixed(k === "alignment" ? 0 : 2)}
-                      </div>
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Panel>
-
-      <div className="grid gap-6 xl:grid-cols-2">
-        <Panel>
-          <h2 className="text-2xl font-black">Compare Chart</h2>
-          <MiniBars values={rows.map((r) => r.metrics.conductivity)} />
-          <p className="mt-2 text-sm text-slate-400">
-            Conductivity ranking for current compare set.
-          </p>
-        </Panel>
-
-        <Panel>
-          <h2 className="text-2xl font-black">Decision Summary</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">
-            {rows[0]?.name || "Aluminium"} leads the current workspace. Use Reports to export this as a branded comparison brief with chart notes and simulation IDs.
-          </p>
-        </Panel>
-      </div>
-
-      <Panel>
-        <h2 className="text-3xl font-black">Compatibility Discoveries</h2>
-
-        <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {compare.slice(0, 6).map((sym, i) => {
-            const next = compare[(i + 1) % compare.length];
-
-            if (!next || sym === next) return null;
-
-            const value = compatibilityScore(sym, next);
-            const tier = rarityTier(value);
-            const dna = materialDNA(sym, next);
-
-            return (
-              <div
-                key={`${sym}-${next}`}
-                className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5"
-              >
-                <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
-
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs uppercase tracking-[.22em] text-cyan-200">
-                      Compatibility
-                    </div>
-
-                    <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-[10px] font-black tracking-[.18em] text-amber-100">
-                      {tier}
-                    </div>
-                  </div>
-
-                  <div className="mt-5 text-4xl font-black text-cyan-100">
-                    {value}%
-                  </div>
-
-                  <div className="mt-2 text-xl font-black text-white">
-                    {sym} + {next}
-                  </div>
-
-                  <div className="mt-3 text-sm leading-6 text-slate-300">
-                    ElementOS predicts strong behavioural alignment between{" "}
-                    {elementMap[sym]?.name} and {elementMap[next]?.name}.
-                  </div>
-
-                  <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-3">
-                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">
-                      Material DNA
-                    </div>
-
-                    <div className="mt-2 font-mono text-cyan-100">{dna}</div>
-                  </div>
-
-                  <div className="mt-5 flex gap-2">
-                    <Button
-                      onClick={() =>
-                        exportAllFormats({
-                          baseName: `${sym}-${next}-compatibility`,
-                          title: `${sym} + ${next} Compatibility`,
-                          summary: `${sym} + ${next}
-Compatibility: ${value}%
-Tier: ${tier}
-DNA: ${dna}`,
-                          payload: { a: sym, b: next, compatibility: value, tier, dna },
-                        })
-                      }
-                    >
-                      Export PDF/JSON/SVG
-                    </Button>
-
-                    <Button
-                      variant="primary"
-                      onClick={() =>
-                        safeCopyText(
-                          `${sym} + ${next} compatibility score: ${value}%`
-                        )
-                      }
-                    >
-                      Share
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </Panel>
-      <Panel>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h2 className="text-3xl font-black">AI Recommendations</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-              ElementOS suggests adjacent materials, substitutes and compatibility paths based on the current compare set.
-            </p>
-          </div>
-
-          <Pill gold>
-            <Sparkles size={12} /> live intelligence
-          </Pill>
-        </div>
-
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {generateRecommendations(compare).map((group) => (
-            <div
-              key={group.source}
-              className="relative overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-slate-950 via-cyan-400/5 to-fuchsia-400/10 p-5"
-            >
-              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
-
-              <div className="relative z-10">
-                <div className="text-xs uppercase tracking-[.22em] text-cyan-300">
-                  Based on current compare element
-                </div>
-
-                <div className="mt-2 text-4xl font-black text-cyan-100">
-                  {group.source}
-                </div>
-
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Users comparing {elementMap[group.source]?.name || group.source} may also explore these adjacent material paths.
-                </p>
-
-                <div className="mt-5 space-y-3">
-                  {group.matches.map((m) => (
-                    <div
-                      key={m.symbol}
-                      className="rounded-2xl border border-white/10 bg-black/30 p-4"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <div className="text-xl font-black text-white">
-                            {m.symbol}
-                          </div>
-
-                          <div className="text-sm text-slate-400">
-                            {m.name}
-                          </div>
-                        </div>
-
-                        <div className="text-2xl font-black text-emerald-200">
-                          {Math.max(1, Math.round(m.similarity))}%
-                        </div>
-                      </div>
-
-                      <div className="mt-3 rounded-xl border border-cyan-300/10 bg-cyan-300/5 p-3 text-sm text-cyan-100">
-                        {m.reason}
-                      </div>
-
-                      <Button
-                        className="mt-4 w-full"
-                        onClick={() =>
-                          safeCopyText(
-                            `${group.source} → ${m.symbol} (${Math.round(m.similarity)}% match): ${m.reason}`
-                          )
-                        }
-                      >
-                        Share Discovery
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Panel>
-
-      <Panel>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h2 className="text-3xl font-black">Discovery Engine Scan</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-              Auto-generated material discoveries ranked from the full ElementOS element-pair scan.
-            </p>
-          </div>
-          <Pill gold><Sparkles size={12} /> generated intelligence</Pill>
-        </div>
-
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {generateDiscoveryEngine(6).map((d) => (
-            <div key={`${d.dna}-compare`} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-slate-950 via-cyan-400/5 to-fuchsia-400/10 p-5">
-              <div className="text-xs uppercase tracking-[.22em] text-cyan-300">{d.type}</div>
-              <div className="mt-3 text-4xl font-black text-cyan-100">{d.a} + {d.b}</div>
-              <div className="mt-2 text-3xl font-black text-emerald-200">{d.score}%</div>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{d.reason}</p>
-              <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-3 font-mono text-xs text-cyan-100">{d.dna}</div>
-            </div>
-          ))}
-        </div>
-      </Panel>
-
-    </>
-  );
-}
 
 function BehaviourAtlas({ selected, setSelected }) {
   const [layer, setLayer] = useState("thermal");
@@ -8939,10 +8727,40 @@ function IsotopeLab() {
               <div className="mt-6 grid gap-4 md:grid-cols-4">{[[isotopeModeLabels[mode], activeModeScore, 100],["Stability", stability, 100],["Decay Risk", decayRisk, 100],["Binding Signal", bindingSignal, 100]].map(([label, value, max]) => <div key={label} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div><div className="mt-2 text-3xl font-black text-cyan-100">{value.toFixed(1)}</div><div className="mt-3 h-3 rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-fuchsia-300" style={{ width: `${Math.min(100, (value / max) * 100)}%` }}/></div></div>)}</div>
               <Info title="Simulation Interpretation">{isotopeName} is currently a <b>{shellLabel}</b>. Stability improves when neutron balance approaches the modelled stable band and when proton/neutron counts land near shell-favourable numbers.</Info>
             </div>
-            <div className="relative h-[450px] overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(217,70,239,.18),transparent_34%),linear-gradient(135deg,#020617,#07111f)]">
-              <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-300/40 bg-amber-300/10 text-center text-3xl font-black leading-[6rem] text-amber-100 shadow-[0_0_55px_rgba(251,191,36,.25)]">{selectedElement.symbol}</div>
-              {nucleus.map((dot, i) => <div key={i} className={`absolute h-4 w-4 rounded-full ${dot.type === "p" ? "bg-cyan-300" : "bg-fuchsia-300"}`} style={{ left: `calc(50% + ${Math.cos(dot.angle) * dot.ring}px - .5rem)`, top: `calc(50% + ${Math.sin(dot.angle) * dot.ring}px - .5rem)`, boxShadow: dot.type === "p" ? "0 0 18px rgba(34,211,238,.7)" : "0 0 18px rgba(217,70,239,.7)" }} title={dot.type === "p" ? "proton" : "neutron"}/>) }
-              {[1,2,3,4].map(i => <div key={i} className="absolute rounded-full border border-cyan-300/10" style={{ inset: `${18 + i * 8}%`, animation: `eosSpin ${18 + i * 7}s linear infinite` }}/>) }
+            <div className="relative h-[520px] overflow-hidden rounded-[2.5rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(217,70,239,.16),transparent_36%),linear-gradient(135deg,#020617,#07111f)] shadow-[inset_0_0_80px_rgba(34,211,238,.06)]">
+              <div className="absolute left-5 top-5 z-30 rounded-2xl border border-white/10 bg-slate-950/75 px-4 py-3 backdrop-blur-xl">
+                <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Selected nucleus</div>
+                <div className="mt-1 flex items-end gap-3">
+                  <span className="text-4xl font-black text-cyan-100">{selectedElement.symbol.toUpperCase()}</span>
+                  <span className="pb-1 text-sm font-semibold text-slate-300">{selectedElement.name}</span>
+                </div>
+              </div>
+
+              <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center select-none">
+                <span className="text-[12rem] font-black leading-none text-white/[0.055] sm:text-[16rem] lg:text-[18rem]">
+                  {selectedElement.symbol.toUpperCase()}
+                </span>
+              </div>
+
+              {[1,2,3,4].map(i => <div key={i} className="absolute z-10 rounded-full border border-cyan-300/10" style={{ inset: `${14 + i * 8}%`, animation: `eosSpin ${18 + i * 7}s linear infinite` }}/>) }
+
+              <div className="absolute left-1/2 top-1/2 z-20 flex h-28 w-28 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300/35 bg-slate-950/80 text-center shadow-[0_0_55px_rgba(251,191,36,.18)] backdrop-blur-sm">
+                <div>
+                  <div className="text-4xl font-black text-amber-100">{selectedElement.symbol.toUpperCase()}</div>
+                  <div className="mt-1 text-[10px] font-black uppercase tracking-[.18em] text-amber-200/70">core</div>
+                </div>
+              </div>
+
+              {nucleus.map((dot, i) => <div key={i} className={`absolute z-20 h-4 w-4 rounded-full border border-white/20 ${dot.type === "p" ? "bg-cyan-300" : "bg-fuchsia-300"}`} style={{ left: `calc(50% + ${Math.cos(dot.angle) * dot.ring}px - .5rem)`, top: `calc(50% + ${Math.sin(dot.angle) * dot.ring}px - .5rem)`, boxShadow: dot.type === "p" ? "0 0 18px rgba(34,211,238,.7)" : "0 0 18px rgba(217,70,239,.7)" }} title={dot.type === "p" ? "proton" : "neutron"}/>) }
+
+              <div className="absolute bottom-5 left-5 right-5 z-30 grid gap-3 rounded-[1.5rem] border border-white/10 bg-slate-950/75 p-4 backdrop-blur-xl sm:grid-cols-4">
+                {[["Protons", protons], ["Neutrons", neutrons], ["Mass", massNumber], ["Stability", `${stability.toFixed(1)}%`]].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{label}</div>
+                    <div className="mt-1 text-xl font-black text-cyan-100">{value}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </Panel>
@@ -15098,6 +14916,9 @@ const startCheckout = async (planName = "Pro Researcher") => {
         <PeriodicTable
           selected={selected}
           setSelected={setSelected}
+          setPage={setPage}
+          setCompare={setCompare}
+          setForecastRequest={setForecastRequest}
         />
       ),
       compare: (
