@@ -8727,33 +8727,43 @@ function IsotopeLab() {
               <div className="mt-6 grid gap-4 md:grid-cols-4">{[[isotopeModeLabels[mode], activeModeScore, 100],["Stability", stability, 100],["Decay Risk", decayRisk, 100],["Binding Signal", bindingSignal, 100]].map(([label, value, max]) => <div key={label} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div><div className="mt-2 text-3xl font-black text-cyan-100">{value.toFixed(1)}</div><div className="mt-3 h-3 rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-fuchsia-300" style={{ width: `${Math.min(100, (value / max) * 100)}%` }}/></div></div>)}</div>
               <Info title="Simulation Interpretation">{isotopeName} is currently a <b>{shellLabel}</b>. Stability improves when neutron balance approaches the modelled stable band and when proton/neutron counts land near shell-favourable numbers.</Info>
             </div>
-            <div className="relative h-[520px] overflow-hidden rounded-[2.5rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,rgba(217,70,239,.16),transparent_36%),linear-gradient(135deg,#020617,#07111f)] shadow-[inset_0_0_80px_rgba(34,211,238,.06)]">
-              <div className="absolute left-5 top-5 z-30 rounded-2xl border border-white/10 bg-slate-950/75 px-4 py-3 backdrop-blur-xl">
+            <div className="relative h-[560px] overflow-hidden rounded-[2.5rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_50%_42%,rgba(34,211,238,.18),transparent_30%),radial-gradient(circle_at_50%_58%,rgba(217,70,239,.14),transparent_38%),linear-gradient(135deg,#020617,#07111f)] shadow-[inset_0_0_90px_rgba(34,211,238,.08)]">
+              <div className="absolute inset-0 z-0 opacity-30" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px)", backgroundSize: "34px 34px" }} />
+
+              <div className="absolute left-5 top-5 z-50 rounded-2xl border border-white/10 bg-slate-950/85 px-4 py-3 shadow-2xl shadow-black/30 backdrop-blur-xl">
                 <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Selected nucleus</div>
                 <div className="mt-1 flex items-end gap-3">
-                  <span className="text-4xl font-black text-cyan-100">{selectedElement.symbol.toUpperCase()}</span>
-                  <span className="pb-1 text-sm font-semibold text-slate-300">{selectedElement.name}</span>
+                  <span className="text-5xl font-black leading-none text-cyan-100">{selectedElement.symbol.toUpperCase()}</span>
+                  <span className="pb-1 text-base font-semibold text-slate-200">{selectedElement.name}</span>
                 </div>
               </div>
 
-              <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center select-none">
-                <span className="text-[12rem] font-black leading-none text-white/[0.055] sm:text-[16rem] lg:text-[18rem]">
+              <div className="pointer-events-none absolute inset-x-0 top-20 z-10 flex justify-center select-none">
+                <span className="font-black leading-none tracking-[-.08em] text-white/[0.075] text-[13rem] sm:text-[17rem] lg:text-[20rem] drop-shadow-[0_0_30px_rgba(34,211,238,.12)]">
                   {selectedElement.symbol.toUpperCase()}
                 </span>
               </div>
 
-              {[1,2,3,4].map(i => <div key={i} className="absolute z-10 rounded-full border border-cyan-300/10" style={{ inset: `${14 + i * 8}%`, animation: `eosSpin ${18 + i * 7}s linear infinite` }}/>) }
+              <div className="pointer-events-none absolute inset-x-0 bottom-28 z-10 flex justify-center select-none">
+                <span className="max-w-[92%] truncate text-5xl font-black tracking-[-.04em] text-white/[0.045] sm:text-7xl">
+                  {selectedElement.name}
+                </span>
+              </div>
 
-              <div className="absolute left-1/2 top-1/2 z-20 flex h-28 w-28 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300/35 bg-slate-950/80 text-center shadow-[0_0_55px_rgba(251,191,36,.18)] backdrop-blur-sm">
+              {[1,2,3,4,5].map(i => <div key={i} className="absolute z-20 rounded-full border border-cyan-300/10" style={{ inset: `${10 + i * 7}%`, animation: `eosSpin ${18 + i * 7}s linear infinite` }}/>) }
+
+              <div className="absolute left-1/2 top-1/2 z-30 h-[330px] w-[330px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5 bg-slate-950/20 shadow-[0_0_80px_rgba(34,211,238,.08)]" />
+
+              {nucleus.map((dot, i) => <div key={i} className={`absolute z-40 h-4 w-4 rounded-full border border-white/20 ${dot.type === "p" ? "bg-cyan-300" : "bg-fuchsia-300"}`} style={{ left: `calc(50% + ${Math.cos(dot.angle) * dot.ring}px - .5rem)`, top: `calc(50% + ${Math.sin(dot.angle) * dot.ring}px - .5rem)`, boxShadow: dot.type === "p" ? "0 0 18px rgba(34,211,238,.7)" : "0 0 18px rgba(217,70,239,.7)" }} title={dot.type === "p" ? "proton" : "neutron"}/>) }
+
+              <div className="absolute left-1/2 top-1/2 z-[60] flex h-32 w-32 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300/45 bg-slate-950/90 text-center shadow-[0_0_70px_rgba(251,191,36,.24)] backdrop-blur-md">
                 <div>
-                  <div className="text-4xl font-black text-amber-100">{selectedElement.symbol.toUpperCase()}</div>
-                  <div className="mt-1 text-[10px] font-black uppercase tracking-[.18em] text-amber-200/70">core</div>
+                  <div className="text-5xl font-black leading-none text-amber-100">{selectedElement.symbol.toUpperCase()}</div>
+                  <div className="mt-2 text-[10px] font-black uppercase tracking-[.2em] text-amber-200/80">core</div>
                 </div>
               </div>
 
-              {nucleus.map((dot, i) => <div key={i} className={`absolute z-20 h-4 w-4 rounded-full border border-white/20 ${dot.type === "p" ? "bg-cyan-300" : "bg-fuchsia-300"}`} style={{ left: `calc(50% + ${Math.cos(dot.angle) * dot.ring}px - .5rem)`, top: `calc(50% + ${Math.sin(dot.angle) * dot.ring}px - .5rem)`, boxShadow: dot.type === "p" ? "0 0 18px rgba(34,211,238,.7)" : "0 0 18px rgba(217,70,239,.7)" }} title={dot.type === "p" ? "proton" : "neutron"}/>) }
-
-              <div className="absolute bottom-5 left-5 right-5 z-30 grid gap-3 rounded-[1.5rem] border border-white/10 bg-slate-950/75 p-4 backdrop-blur-xl sm:grid-cols-4">
+              <div className="absolute bottom-5 left-5 right-5 z-50 grid gap-3 rounded-[1.5rem] border border-white/10 bg-slate-950/85 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:grid-cols-4">
                 {[["Protons", protons], ["Neutrons", neutrons], ["Mass", massNumber], ["Stability", `${stability.toFixed(1)}%`]].map(([label, value]) => (
                   <div key={label}>
                     <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{label}</div>
