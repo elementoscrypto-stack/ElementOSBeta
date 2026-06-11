@@ -7109,7 +7109,8 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
     const nextRecent = [sym, ...recent.filter(x => x !== sym)].slice(0, 6);
     setRecent(nextRecent);
     try { localStorage.setItem("elementosExplorerRecent", JSON.stringify(nextRecent)); } catch (_error) {}
-    scrollElementOSToTop();
+    // UX fix: selecting a different element inside Explorer should update the content
+    // in place. Only true page navigation should trigger scrollElementOSToTop().
   }
 
   function toggleFavorite(sym) {
@@ -14522,6 +14523,8 @@ export default function App() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // Keep scroll-to-top for page navigation only. Explorer dropdown/element
+    // selection no longer calls this, so users keep their reading position.
     requestAnimationFrame(scrollElementOSToTop);
   }, [page]);
 
