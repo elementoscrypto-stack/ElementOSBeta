@@ -7676,11 +7676,75 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
 
 
 
+
+const ELEMENTOS_MAP_MODES = {
+  behaviour: "Behaviour",
+  discovery: "Discovery",
+  industrial: "Industrial",
+  risk: "Risk",
+};
+
+const ATLAS_ENVIRONMENT_PRESETS = ["Marine", "Aerospace", "Deep Ocean", "High Heat", "Space", "Mining", "Medical", "Defence"];
+const ATLAS_MATRIX_SYMBOLS = ["Al", "Ti", "Cu", "Fe", "Hf", "Zr"];
+
+function mapModeScore(symbol, layer, mode = "behaviour") {
+  const s = score(symbol);
+  const base = layer === "alignment" ? s.alignment / 20 : s[layer] || s.conductivity;
+  if (mode === "discovery") return clamp(base * 0.46 + s.stability * 0.22 + s.thermal * 0.16 + s.pressure * 0.16);
+  if (mode === "industrial") return clamp(base * 0.34 + s.conductivity * 0.22 + s.thermal * 0.2 + s.stability * 0.24);
+  if (mode === "risk") return clamp(5.25 - (s.stability * 0.35 + s.pressure * 0.22 + s.thermal * 0.18 + s.diffusion * 0.12));
+  return base;
+}
+
+function percentFromMetric(value, max = 5) {
+  return Math.max(1, Math.min(99, Math.round((Number(value || 0) / max) * 100)));
+}
+
+function categoryAccent(category = "Unknown") {
+  if (category.includes("Transition")) return "border-t-cyan-300";
+  if (category.includes("Lanthanide")) return "border-t-fuchsia-300";
+  if (category.includes("Actinide")) return "border-t-lime-300";
+  if (category.includes("Noble")) return "border-t-sky-300";
+  if (category.includes("Alkali")) return "border-t-amber-300";
+  if (category.includes("Halogen")) return "border-t-rose-300";
+  if (category.includes("Metalloid")) return "border-t-emerald-300";
+  return "border-t-slate-400";
+}
+
+function periodicLayerDescription(layer, mode) {
+  const base = {
+    stability: "relative consistency under simulated stress and exposure",
+    conductivity: "relative conductive behaviour and electrical-use potential",
+    thermal: "relative heat tolerance and thermal drift resistance",
+    diffusion: "relative boundary stability and diffusion resistance",
+    pressure: "relative compression, depth and load response",
+    rarity: "relative scarcity and strategic-material signal",
+    alignment: "ElementOS alignment score across the intelligence model",
+  }[layer] || "relative material-intelligence signal";
+  const modeText = {
+    behaviour: "Behaviour mode shows raw material behaviour.",
+    discovery: "Discovery mode blends rarity, stability and opportunity potential.",
+    industrial: "Industrial mode prioritizes practical engineering usefulness.",
+    risk: "Risk mode highlights materials that may need caution or mitigation.",
+  }[mode] || "Behaviour mode shows raw material behaviour.";
+  return `${modeText} The active layer estimates ${base}.`;
+}
+
+function topPairingSymbols(symbol, limit = 3) {
+  return elements
+    .filter((item) => item.symbol !== symbol)
+    .map((item) => ({ ...item, compatibility: compatibilityScore(symbol, item.symbol) }))
+    .sort((a, b) => b.compatibility - a.compatibility)
+    .slice(0, limit);
+}
+
+
 function PeriodicTable({ selected, setSelected }) {
   const [layer, setLayer] = useState("conductivity");
   const [cat, setCat] = useState("All");
-  const [view, setView] = useState("periodic");
-  const [signal, setSignal] = useState("intelligence");
+  const [mode, setMode] = useState("behaviour");
+  const [query, setQuery] = useState("");
+  const [showInspector, setShowInspector] = useState(true);
 
   const layerLabels = {
     stability: "Stability",
@@ -7689,533 +7753,368 @@ function PeriodicTable({ selected, setSelected }) {
     diffusion: "Diffusion",
     pressure: "Pressure",
     rarity: "Rarity",
+    alignment: "Alignment",
   };
   const activeLayerLabel = layerLabels[layer] || "Conductivity";
-
   const activeElement = elementMap[selected] || elementMap.Al;
   const activeScore = score(activeElement.symbol);
-  const visibleElements = elements.filter((e) => cat === "All" || e.category === cat);
-  const top = visibleElements
-    .map((e) => ({ ...e, metrics: score(e.symbol), value: score(e.symbol)[layer] }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 12);
+  const metricMax = layer === "alignment" ? 100 : 5;
+  const activeValue = mapModeScore(activeElement.symbol, layer, mode);
+  const activePercent = percentFromMetric(activeValue, mode === "risk" ? 5 : metricMax);
+  const normalizedQuery = query.trim().toLowerCase();
 
-  const categoryStats = categories.slice(1).map((c) => {
-    const group = elements.filter((e) => e.category === c);
-    const avg = group.length ? group.reduce((sum, e) => sum + score(e.symbol)[layer], 0) / group.length : 0;
-    return { category: c, count: group.length, avg };
-  }).sort((a, b) => b.avg - a.avg).slice(0, 8);
+  const visibleElements = elements.filter((element) => {
+    const matchesCategory = cat === "All" || element.category === cat;
+    const matchesQuery = !normalizedQuery || element.name.toLowerCase().includes(normalizedQuery) || element.symbol.toLowerCase().includes(normalizedQuery);
+    return matchesCategory && matchesQuery;
+  });
+
+  const rankedElements = visibleElements
+    .map((element) => ({ ...element, value: mapModeScore(element.symbol, layer, mode), metrics: score(element.symbol) }))
+    .sort((a, b) => b.value - a.value);
+  const top = rankedElements.slice(0, 10);
+  const bestPairings = topPairingSymbols(activeElement.symbol, 4);
 
   const exportPeriodic = () => {
-    const content = `ElementOS Periodic Intelligence Map\n\nLayer: ${layer}\nCategory: ${cat}\nSelected: ${activeElement.name} (${activeElement.symbol})\nSignal mode: ${signal}\n\nTop materials:\n${top.map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${Number(e.value).toFixed(layer === "alignment" ? 0 : 2)}`).join("\n")}\n\nGenerated by ElementOS.`;
-    exportAllFormats({ baseName: `periodic-intelligence-${layer}`, title: `Periodic Intelligence: ${layer}`, summary: content, payload: { layer, category: cat, selected: activeElement.symbol, top } });
+    const content = `ElementOS Element Behaviour Map\n\nMode: ${ELEMENTOS_MAP_MODES[mode]}\nLayer: ${activeLayerLabel}\nCategory: ${cat}\nSelected: ${activeElement.name} (${activeElement.symbol})\nScore: ${activePercent}%\n\nTop materials:\n${top.map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${percentFromMetric(e.value, mode === "risk" ? 5 : metricMax)}%`).join("\n")}\n\n${periodicLayerDescription(layer, mode)}`;
+    exportAllFormats({ baseName: `element-map-${mode}-${layer}`, title: `Element Behaviour Map: ${activeLayerLabel}`, summary: content, payload: { layer, mode, category: cat, selected: activeElement.symbol, top } });
   };
 
   return (
-    <>
-      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/30 via-slate-950 to-fuchsia-950/20">
-        <div className="grid gap-8 xl:grid-cols-[1.15fr_.85fr] xl:items-center">
-          <div>
-            <Pill gold><Layers size={12}/> periodic intelligence map</Pill>
-            <h1 className="mt-4 text-5xl font-black sm:text-7xl">
-              Periodic <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Map</span>
-            </h1>
-            <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-              A living 118-element intelligence surface. Switch behaviour layers, isolate categories, reveal top-ranked materials and turn the periodic table into a discovery cockpit.
-            </p>
-            <Info title="What to do here">
-              Use the map to spot unusual signal clusters, then click any element to send it into Compare, Relationship Graph, Isotope Lab or Element Relationships.
-            </Info>
+    <div className="space-y-10">
+      <Panel className="overflow-hidden border-white/10 bg-slate-950/70 p-0">
+        <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.16),transparent_34%),radial-gradient(circle_at_82%_70%,rgba(255,255,255,.08),transparent_28%),#020617] p-8 sm:p-12">
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-200/50 to-transparent" />
+          <div className="grid gap-10 xl:grid-cols-[1fr_420px] xl:items-end">
+            <div>
+              <Pill gold><Layers size={12}/> element behaviour map</Pill>
+              <h1 className="mt-6 max-w-5xl text-5xl font-bold tracking-[-0.04em] text-white sm:text-7xl xl:text-8xl">Scan all 118 elements as a live material radar.</h1>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">Switch behaviour layers, filter by category, inspect any element and reveal the strongest discovery signals without the table feeling cramped.</p>
+            </div>
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Selected element</div>
+              <div className="mt-4 flex items-end justify-between gap-4">
+                <div>
+                  <div className="text-7xl font-black text-cyan-100">{activeElement.symbol}</div>
+                  <div className="mt-1 text-2xl font-semibold text-white">{activeElement.name}</div>
+                  <div className="text-sm text-slate-400">Atomic {activeElement.atomicNumber} · {activeElement.category}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-5xl font-black text-white">{activePercent}%</div>
+                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{activeLayerLabel}</div>
+                </div>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Button onClick={exportPeriodic} variant="primary">Export Map</Button>
+                <Button onClick={() => setShowInspector((value) => !value)}>{showInspector ? "Hide" : "Show"} Inspector</Button>
+              </div>
+            </div>
           </div>
-          <Panel>
-            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Active element</div>
-            <div className="mt-3 flex items-end justify-between gap-4">
-              <div>
-                <div className="text-7xl font-black text-cyan-100">{activeElement.symbol}</div>
-                <div className="text-2xl font-black text-white">{activeElement.name}</div>
-                <div className="text-sm text-slate-400">Atomic {activeElement.atomicNumber} · {activeElement.category}</div>
-              </div>
-              <div className="text-right">
-                <div className="text-4xl font-black text-emerald-100">{Number(activeScore[layer]).toFixed(layer === "alignment" ? 0 : 1)}</div>
-                <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{layer}</div>
-              </div>
-            </div>
-            <div className="mt-5 grid gap-2 sm:grid-cols-3">
-              <Button onClick={() => setView("periodic")} variant={view === "periodic" ? "primary" : "ghost"}>Map View</Button>
-              <Button onClick={() => setView("clusters")} variant={view === "clusters" ? "primary" : "ghost"}>Cluster View</Button>
-              <Button onClick={exportPeriodic}>Export Map</Button>
-            </div>
-          </Panel>
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-        <Panel>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-3xl font-black">Layer Controls</h2>
-              <p className="mt-2 text-sm text-slate-400">Change the intelligence layer and the entire map recalculates.</p>
+      <div className="sticky top-4 z-30 rounded-[2rem] border border-white/10 bg-slate-950/90 p-4 shadow-2xl shadow-black/40 backdrop-blur-2xl">
+        <div className="grid gap-3 xl:grid-cols-[1fr_auto] xl:items-center">
+          <div className="grid gap-3 md:grid-cols-[1.2fr_.9fr_.9fr]">
+            <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
+              <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Search</div>
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Ti, Gold, Carbon..." className="mt-1 w-full bg-transparent text-base font-semibold text-white outline-none placeholder:text-slate-600" />
             </div>
-            <Pill gold>{cat}</Pill>
-          </div>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {metrics.filter((l) => l !== "alignment").map((l) => {
-              const layerLabel = ({
-                stability: "Stability",
-                conductivity: "Conductivity",
-                thermal: "Thermal",
-                diffusion: "Diffusion",
-                pressure: "Pressure",
-                rarity: "Rarity",
-              })[l] || l;
-              return <Button key={l} onClick={() => setLayer(l)} variant={layer === l ? "primary" : "ghost"}>{layerLabel}</Button>;
-            })}
-            <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">{categories.map((c) => <option key={c}>{c}</option>)}</select>
-            <select value={signal} onChange={(e) => setSignal(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">
-              {['intelligence','rarity scan','thermal sweep','pressure scan','conductive search','substitute hunt'].map(x => <option key={x}>{x}</option>)}
+            <select value={cat} onChange={(event) => setCat(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none">
+              {categories.map((category) => <option key={category}>{category}</option>)}
+            </select>
+            <select value={layer} onChange={(event) => setLayer(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none">
+              {metrics.map((metric) => <option key={metric} value={metric}>{layerLabels[metric] || metric}</option>)}
             </select>
           </div>
-
-          {view === "periodic" ? (
-            <div className="mt-6 overflow-auto rounded-[2rem] border border-cyan-300/15 bg-black/25 p-3">
-              <div className="grid min-w-[1120px] gap-2">
-                {periodicRows.map((row, ri) => (
-                  <div key={ri} className="grid gap-2" style={{ gridTemplateColumns: "repeat(18,minmax(0,1fr))" }}>
-                    {row.map((sym, i) => {
-                      const el = sym ? elementMap[sym] : null;
-                      const inactive = el && cat !== "All" && el.category !== cat;
-                      const v = el ? score(sym)[layer] : 0;
-                      return el ? (
-                        <button key={sym} onClick={() => setSelected(sym)} className={`relative h-20 overflow-hidden rounded-2xl border transition hover:scale-110 ${selected === sym ? "ring-2 ring-white" : ""} ${inactive ? "opacity-20" : ""}`} style={heatStyle(v, layer === "alignment" ? 100 : 5)}>
-                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,.35),transparent_35%)] opacity-60" />
-                          <div className="relative z-10 text-[9px]">{el.atomicNumber}</div>
-                          <b className="relative z-10 text-lg">{sym}</b>
-                          <div className="relative z-10 text-[9px]">{Number(v).toFixed(layer === "alignment" ? 0 : 1)}</div>
-                        </button>
-                      ) : <div key={i} className="h-20 rounded-2xl border border-cyan-300/5 bg-cyan-300/[.01]"/>;
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {categoryStats.map((row) => (
-                <button key={row.category} onClick={() => setCat(row.category)} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-300/10 to-black/30 p-5 text-left hover:border-cyan-300/40">
-                  <div className="text-xs uppercase tracking-[.18em] text-slate-500">{row.count} elements</div>
-                  <div className="mt-2 text-xl font-black text-white">{row.category}</div>
-                  <div className="mt-4 text-4xl font-black text-cyan-100">{row.avg.toFixed(1)}</div>
-                  <div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${Math.min(100, (row.avg / (layer === "alignment" ? 100 : 5)) * 100)}%` }}/></div>
-                </button>
-              ))}
-            </div>
-          )}
-        </Panel>
-
-        <Panel>
-          <Pill gold><Sparkles size={12}/> top signals</Pill>
-          <h2 className="mt-3 text-3xl font-black">Best Materials for {activeLayerLabel}</h2>
-          <div className="mt-5 space-y-3">
-            {top.slice(0, 8).map((e, i) => (
-              <button key={e.symbol} onClick={() => setSelected(e.symbol)} className="w-full rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10">
-                <div className="flex items-center justify-between gap-4"><div><div className="text-xs text-slate-500">#{i + 1}</div><div className="text-2xl font-black text-cyan-100">{e.symbol} · {e.name}</div></div><div className="text-2xl font-black text-emerald-100">{Number(e.value).toFixed(layer === "alignment" ? 0 : 1)}</div></div>
-              </button>
-            ))}
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(ELEMENTOS_MAP_MODES).map(([key, label]) => <Button key={key} onClick={() => setMode(key)} variant={mode === key ? "primary" : "ghost"}>{label}</Button>)}
           </div>
-        </Panel>
-      </div>
-    </>
-  );
-}
-
-function Compare({ compare, setCompare, setPage, selected, setSelected, setForecastRequest }) {
-  const [candidate, setCandidate] = useState("H");
-  const rows = compare.map((sym) => ({ ...elementMap[sym], metrics: score(sym) }));
-
-  return (
-    <>
-      <Panel>
-        <Pill gold>
-          <BarChart3 size={12} /> comparison engine
-        </Pill>
-        <h1 className="mt-4 text-5xl font-black">Compare Engine</h1>
-        <Info title="Cleaned terminology">
-          Perfect Alignment is now treated as a discovery achievement instead of a confusing map filter. Users compare clear metrics first, then see <b>Perfect Alignment Event</b> when a pairing earns it.
-        </Info>
-      </Panel>
-
-      <GuidePanel page="compare" />
-      <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(6)} setPage={setPage} />
-
-      <Panel>
-        <div className="flex flex-wrap gap-3">
-          <select
-            value={candidate}
-            onChange={(e) => setCandidate(e.target.value)}
-            className="rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none"
-          >
-            {elements.map((e) => (
-              <option key={e.symbol} value={e.symbol}>
-                {e.symbol} — {e.name}
-              </option>
-            ))}
-          </select>
-
-          <Button
-            onClick={() =>
-              setCompare((x) =>
-                x.includes(candidate) ? x : [...x, candidate].slice(0, 10)
-              )
-            }
-            variant="primary"
-          >
-            Add Element
-          </Button>
-
-          <Button
-            onClick={() =>
-              setCompare((x) => {
-                const next = x.filter((sym) => sym !== candidate);
-                return next.length ? next : ["H"];
-              })
-            }
-          >
-            Remove Element
-          </Button>
-
-          <Button
-            onClick={() => setCompare(["H"])}
-          >
-            Reset to Hydrogen
-          </Button>
-
-          <Button onClick={() => setPage("reports")}>Create Report</Button>
         </div>
-
-        <div className="mt-6 overflow-auto">
-          <table className="w-full min-w-[980px] border-separate border-spacing-y-2">
-            <thead>
-              <tr className="text-left text-xs uppercase tracking-[.18em] text-slate-400">
-                <th className="px-3 py-2">Element</th>
-                {metrics.map((k) => (
-                  <th key={k} className="px-2 py-2">
-                    {k === "alignment" ? "Alignment" : k}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.symbol} className="rounded-2xl border border-white/10 bg-white/[.035]">
-                  <td className="rounded-l-2xl border-y border-l border-white/10 p-3">
-                    <b className="text-cyan-200">{row.symbol}</b>
-                    <div className="text-xs text-slate-500">{row.name}</div>
-                  </td>
-
-                  {metrics.map((k) => (
-                    <td key={k} className="border-y border-white/10 p-2 last:rounded-r-2xl last:border-r">
-                      <div
-                        className="rounded-xl px-3 py-2 text-center text-sm font-bold"
-                        style={heatStyle(row.metrics[k], k === "alignment" ? 100 : 5)}
-                      >
-                        {row.metrics[k].toFixed(k === "alignment" ? 0 : 2)}
-                      </div>
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Panel>
-
-      <div className="grid gap-6 xl:grid-cols-2">
-        <Panel>
-          <h2 className="text-2xl font-black">Compare Chart</h2>
-          <MiniBars values={rows.map((r) => r.metrics.conductivity)} />
-          <p className="mt-2 text-sm text-slate-400">
-            Conductivity ranking for current compare set.
-          </p>
-        </Panel>
-
-        <Panel>
-          <h2 className="text-2xl font-black">Decision Summary</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">
-            {rows[0]?.name || "Aluminium"} leads the current workspace. Use Reports to export this as a branded comparison brief with chart notes and simulation IDs.
-          </p>
-        </Panel>
       </div>
 
-      <Panel>
-        <h2 className="text-3xl font-black">Compatibility Discoveries</h2>
-
-        <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {compare.slice(0, 6).map((sym, i) => {
-            const next = compare[(i + 1) % compare.length];
-
-            if (!next || sym === next) return null;
-
-            const value = compatibilityScore(sym, next);
-            const tier = rarityTier(value);
-            const dna = materialDNA(sym, next);
-
-            return (
-              <div
-                key={`${sym}-${next}`}
-                className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5"
-              >
-                <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
-
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs uppercase tracking-[.22em] text-cyan-200">
-                      Compatibility
-                    </div>
-
-                    <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-[10px] font-black tracking-[.18em] text-amber-100">
-                      {tier}
-                    </div>
-                  </div>
-
-                  <div className="mt-5 text-4xl font-black text-cyan-100">
-                    {value}%
-                  </div>
-
-                  <div className="mt-2 text-xl font-black text-white">
-                    {sym} + {next}
-                  </div>
-
-                  <div className="mt-3 text-sm leading-6 text-slate-300">
-                    ElementOS predicts strong behavioural alignment between{" "}
-                    {elementMap[sym]?.name} and {elementMap[next]?.name}.
-                  </div>
-
-                  <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-3">
-                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">
-                      Material DNA
-                    </div>
-
-                    <div className="mt-2 font-mono text-cyan-100">{dna}</div>
-                  </div>
-
-                  <div className="mt-5 flex gap-2">
-                    <Button
-                      onClick={() =>
-                        exportAllFormats({
-                          baseName: `${sym}-${next}-compatibility`,
-                          title: `${sym} + ${next} Compatibility`,
-                          summary: `${sym} + ${next}
-Compatibility: ${value}%
-Tier: ${tier}
-DNA: ${dna}`,
-                          payload: { a: sym, b: next, compatibility: value, tier, dna },
-                        })
-                      }
-                    >
-                      Export PDF/JSON/SVG
-                    </Button>
-
-                    <Button
-                      variant="primary"
-                      onClick={() =>
-                        safeCopyText(
-                          `${sym} + ${next} compatibility score: ${value}%`
-                        )
-                      }
-                    >
-                      Share
-                    </Button>
-                  </div>
-                </div>
+      <div className={`grid gap-8 ${showInspector ? "xl:grid-cols-[minmax(0,1fr)_420px]" : ""}`}>
+        <Panel className="overflow-hidden border-white/10 bg-slate-950/60 p-0">
+          <div className="border-b border-white/10 p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-3xl font-bold tracking-[-0.02em] text-white">Element Behaviour Canvas</h2>
+                <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{periodicLayerDescription(layer, mode)}</p>
               </div>
-            );
-          })}
-        </div>
-      </Panel>
-      <Panel>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h2 className="text-3xl font-black">AI Recommendations</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-              ElementOS suggests adjacent materials, substitutes and compatibility paths based on the current compare set.
-            </p>
+              <div className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-black text-slate-300">{visibleElements.length} visible</div>
+            </div>
           </div>
 
-          <Pill gold>
-            <Sparkles size={12} /> live intelligence
-          </Pill>
-        </div>
-
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {generateRecommendations(compare).map((group) => (
-            <div
-              key={group.source}
-              className="relative overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-slate-950 via-cyan-400/5 to-fuchsia-400/10 p-5"
-            >
-              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
-
-              <div className="relative z-10">
-                <div className="text-xs uppercase tracking-[.22em] text-cyan-300">
-                  Based on current compare element
-                </div>
-
-                <div className="mt-2 text-4xl font-black text-cyan-100">
-                  {group.source}
-                </div>
-
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Users comparing {elementMap[group.source]?.name || group.source} may also explore these adjacent material paths.
-                </p>
-
-                <div className="mt-5 space-y-3">
-                  {group.matches.map((m) => (
-                    <div
-                      key={m.symbol}
-                      className="rounded-2xl border border-white/10 bg-black/30 p-4"
+          <div className="overflow-x-auto p-5 sm:p-7">
+            <div className="min-w-[1180px] rounded-[2rem] border border-white/10 bg-black/25 p-5">
+              <div className="grid grid-cols-18 gap-2">
+                {periodicRows.map((row, rowIndex) => row.map((symbol, colIndex) => {
+                  if (!symbol) return <div key={`blank-${rowIndex}-${colIndex}`} className="aspect-[1.08]" />;
+                  const element = elementMap[symbol];
+                  const hidden = !visibleElements.some((item) => item.symbol === symbol);
+                  const value = mapModeScore(symbol, layer, mode);
+                  const pct = percentFromMetric(value, mode === "risk" ? 5 : metricMax);
+                  const isActive = selected === symbol;
+                  return (
+                    <button
+                      key={symbol}
+                      onClick={() => setSelected(symbol)}
+                      className={`group relative aspect-[1.08] overflow-hidden rounded-2xl border border-t-4 p-2 text-left transition duration-200 ${categoryAccent(element.category)} ${isActive ? "border-cyan-200 bg-cyan-300/12 shadow-[0_0_34px_rgba(34,211,238,.18)]" : "border-white/10 bg-white/[0.035] hover:border-cyan-300/35 hover:bg-white/[0.07]"} ${hidden ? "opacity-20 grayscale" : ""}`}
+                      title={`${element.name} · ${pct}% ${activeLayerLabel}`}
                     >
-                      <div className="flex items-center justify-between gap-3">
+                      <div className="absolute inset-0 opacity-70" style={heatStyle(value, mode === "risk" ? 5 : metricMax)} />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-slate-950/50 to-slate-950/85" />
+                      <div className="relative z-10 flex h-full flex-col justify-between">
+                        <div className="flex items-start justify-between gap-1">
+                          <span className="text-[10px] font-black text-slate-300">{element.atomicNumber}</span>
+                          <span className="rounded-full bg-black/35 px-1.5 py-0.5 text-[10px] font-black text-cyan-100">{pct}</span>
+                        </div>
                         <div>
-                          <div className="text-xl font-black text-white">
-                            {m.symbol}
-                          </div>
-
-                          <div className="text-sm text-slate-400">
-                            {m.name}
-                          </div>
-                        </div>
-
-                        <div className="text-2xl font-black text-emerald-200">
-                          {Math.max(1, Math.round(m.similarity))}%
+                          <div className="text-2xl font-black leading-none text-white">{element.symbol}</div>
+                          <div className="mt-1 truncate text-[10px] font-semibold text-slate-300">{element.name}</div>
                         </div>
                       </div>
-
-                      <div className="mt-3 rounded-xl border border-cyan-300/10 bg-cyan-300/5 p-3 text-sm text-cyan-100">
-                        {m.reason}
-                      </div>
-
-                      <Button
-                        className="mt-4 w-full"
-                        onClick={() =>
-                          safeCopyText(
-                            `${group.source} → ${m.symbol} (${Math.round(m.similarity)}% match): ${m.reason}`
-                          )
-                        }
-                      >
-                        Share Discovery
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                    </button>
+                  );
+                }))}
               </div>
             </div>
-          ))}
-        </div>
-      </Panel>
-
-      <Panel>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h2 className="text-3xl font-black">Discovery Engine Scan</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-              Auto-generated material discoveries ranked from the full ElementOS element-pair scan.
-            </p>
           </div>
-          <Pill gold><Sparkles size={12} /> generated intelligence</Pill>
-        </div>
 
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {generateDiscoveryEngine(6).map((d) => (
-            <div key={`${d.dna}-compare`} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-slate-950 via-cyan-400/5 to-fuchsia-400/10 p-5">
-              <div className="text-xs uppercase tracking-[.22em] text-cyan-300">{d.type}</div>
-              <div className="mt-3 text-4xl font-black text-cyan-100">{d.a} + {d.b}</div>
-              <div className="mt-2 text-3xl font-black text-emerald-200">{d.score}%</div>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{d.reason}</p>
-              <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-3 font-mono text-xs text-cyan-100">{d.dna}</div>
+          <div className="border-t border-white/10 p-5">
+            <div className="grid gap-4 xl:grid-cols-[1fr_1fr]">
+              <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div className="mb-3 text-xs font-black uppercase tracking-[.22em] text-slate-500">Heat legend</div>
+                <div className="h-3 rounded-full bg-gradient-to-r from-slate-800 via-cyan-300/60 to-white" />
+                <div className="mt-2 flex justify-between text-xs text-slate-500"><span>Low signal</span><span>Medium</span><span>High signal</span></div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Layer insight</div>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{activeElement.name} is reading at <span className="font-black text-white">{activePercent}%</span> in {ELEMENTOS_MAP_MODES[mode]} / {activeLayerLabel}. Use the inspector to move it into compare, forecast or discovery work.</p>
+              </div>
             </div>
-          ))}
-        </div>
-      </Panel>
+          </div>
+        </Panel>
 
-    </>
+        {showInspector && (
+          <div className="space-y-6 xl:sticky xl:top-32 xl:self-start">
+            <Panel className="border-cyan-300/15 bg-slate-950/80">
+              <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Inspector</div>
+              <div className="mt-4 flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-5xl font-black text-white">{activeElement.symbol}</div>
+                  <div className="mt-1 text-2xl font-semibold text-white">{activeElement.name}</div>
+                  <div className="text-sm text-slate-400">{activeElement.category}</div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
+                  <div className="text-4xl font-black text-cyan-100">{activePercent}%</div>
+                  <div className="text-[10px] uppercase tracking-[.18em] text-slate-500">score</div>
+                </div>
+              </div>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                {Object.entries(activeScore).filter(([key]) => metrics.includes(key)).slice(0, 6).map(([key, value]) => <div key={key} className="rounded-2xl border border-white/10 bg-black/20 p-3"><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">{layerLabels[key] || key}</div><div className="mt-1 text-xl font-black text-white">{key === "alignment" ? Math.round(value) : Number(value).toFixed(1)}</div></div>)}
+              </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Button onClick={() => showToast(`${activeElement.name} is ready in Explorer.`)} variant="primary">Open Explorer</Button>
+                <Button onClick={() => showToast(`${activeElement.name} added to comparison workflow.`)}>Compare</Button>
+                <Button onClick={() => showToast(`${activeElement.name} queued for forecast.`)}>Forecast</Button>
+              </div>
+            </Panel>
+
+            <Panel>
+              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Best pairings</div>
+              <div className="mt-4 space-y-3">
+                {bestPairings.map((item) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-cyan-300/35 hover:bg-white/[0.05]"><div><div className="text-lg font-black text-white">{activeElement.symbol} + {item.symbol}</div><div className="text-xs text-slate-400">{item.name}</div></div><div className="text-2xl font-black text-cyan-100">{item.compatibility}%</div></button>)}
+              </div>
+            </Panel>
+
+            <Panel>
+              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Top {activeLayerLabel} signals</div>
+              <div className="mt-4 space-y-3">
+                {top.slice(0, 5).map((item, index) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-left hover:border-cyan-300/35"><div><div className="text-xs text-slate-500">#{index + 1}</div><div className="font-black text-white">{item.name}</div></div><div className="text-xl font-black text-cyan-100">{percentFromMetric(item.value, mode === "risk" ? 5 : metricMax)}%</div></button>)}
+              </div>
+            </Panel>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
-
 
 function BehaviourAtlas({ selected, setSelected }) {
-  const [layer, setLayer] = useState("conductivity");
-  const [environment, setEnvironment] = useState("Lab air");
-  const [fieldMode, setFieldMode] = useState("wave");
+  const [layer, setLayer] = useState("thermal");
+  const [environment, setEnvironment] = useState("Deep Ocean");
+  const [fieldMode, setFieldMode] = useState("heatmap");
   const selectedElement = elementMap[selected] || elementMap.Al;
-  const selectedScore = score(selected);
-  const environmentProfiles = {
-    "Lab air": { stress: 18, corrosion: 12, thermal: 22, pressure: 14, label: "controlled baseline" },
-    "Vacuum": { stress: 28, corrosion: 2, thermal: 64, pressure: 6, label: "outgassing + thermal cycling" },
-    "High pressure": { stress: 78, corrosion: 28, thermal: 44, pressure: 92, label: "compressive load" },
-    "Salt exposure": { stress: 46, corrosion: 88, thermal: 36, pressure: 34, label: "marine corrosion" },
-    "High temperature": { stress: 62, corrosion: 42, thermal: 94, pressure: 48, label: "thermal drift" },
-    "Cryogenic": { stress: 66, corrosion: 8, thermal: 18, pressure: 58, label: "cold brittleness" },
-    "Deep ocean": { stress: 74, corrosion: 91, thermal: 30, pressure: 96, label: "salt + pressure" },
-    "Geothermal bore": { stress: 86, corrosion: 70, thermal: 98, pressure: 88, label: "heat + brine + depth" },
-    "Low orbit": { stress: 44, corrosion: 5, thermal: 86, pressure: 9, label: "radiation + vacuum" },
-    "Chemical plant": { stress: 58, corrosion: 94, thermal: 72, pressure: 64, label: "chemical attack" },
+  const selectedScore = score(selectedElement.symbol);
+  const layerLabels = {
+    stability: "Stability",
+    conductivity: "Conductivity",
+    thermal: "Thermal",
+    diffusion: "Diffusion",
+    pressure: "Pressure",
+    rarity: "Rarity",
+    alignment: "Alignment",
   };
-  const env = environmentProfiles[environment] || environmentProfiles["Lab air"];
+
+  const environmentProfiles = {
+    Marine: { stress: 46, corrosion: 88, thermal: 36, pressure: 34, label: "salt exposure and long-term corrosion risk", bias: ["Ti", "Zr", "Hf", "Al"] },
+    Aerospace: { stress: 68, corrosion: 30, thermal: 86, pressure: 54, label: "high heat, fatigue and lightweight structure", bias: ["Ti", "Al", "Hf", "Ni"] },
+    "Deep Ocean": { stress: 74, corrosion: 91, thermal: 30, pressure: 96, label: "salt, depth pressure and structural integrity", bias: ["Ti", "Hf", "Zr", "Ni"] },
+    "High Heat": { stress: 70, corrosion: 48, thermal: 98, pressure: 62, label: "turbine-grade thermal stress", bias: ["Hf", "W", "Ta", "Ti"] },
+    Space: { stress: 44, corrosion: 5, thermal: 86, pressure: 9, label: "vacuum, radiation and thermal cycling", bias: ["Ti", "Al", "Si", "Hf"] },
+    Mining: { stress: 84, corrosion: 62, thermal: 54, pressure: 90, label: "abrasion, impact and formation pressure", bias: ["Fe", "W", "Ti", "Cr"] },
+    Medical: { stress: 38, corrosion: 42, thermal: 18, pressure: 26, label: "biocompatibility and corrosion resistance", bias: ["Ti", "Zr", "Ta", "Au"] },
+    Defence: { stress: 88, corrosion: 44, thermal: 82, pressure: 86, label: "impact, pressure and extreme-load performance", bias: ["Ti", "W", "Hf", "Fe"] },
+  };
+  const env = environmentProfiles[environment] || environmentProfiles["Deep Ocean"];
   const envInfluence = (env.stress + env.corrosion + env.thermal + env.pressure) / 400;
-  const fieldCells = Array.from({ length: 160 }, (_, i) => {
-    const e = elements[(i * 11 + Math.floor(env.stress)) % elements.length];
-    const base = score(e.symbol)[layer];
-    const wave = Math.sin(i / 4 + envInfluence * 5) * 0.42 + Math.cos(i / 9) * 0.22;
-    const adjusted = layer === "alignment" ? Math.max(0, Math.min(100, base - envInfluence * 20 + wave * 8)) : Math.max(0.2, Math.min(5, base - envInfluence * 0.65 + wave));
-    return { element: e, value: adjusted };
+  const metricMax = layer === "alignment" ? 100 : 5;
+
+  const environmentAdjustedValue = (symbol) => {
+    const s = score(symbol);
+    const base = layer === "alignment" ? s.alignment / 20 : s[layer] || s.thermal;
+    const bias = env.bias.includes(symbol) ? 0.62 : 0;
+    const durability = (s.stability + s.pressure + s.thermal) / 15;
+    const corrosionPenalty = env.corrosion > 70 ? Math.max(0, 2.4 - s.stability) * 0.35 : 0;
+    return clamp(base * 0.62 + durability * 2.1 - envInfluence * 0.85 + bias - corrosionPenalty);
+  };
+
+  const fieldCells = Array.from({ length: 216 }, (_, index) => {
+    const element = elements[(index * 13 + Math.floor(env.pressure) + Math.floor(index / 9)) % elements.length];
+    const wave = Math.sin(index / 5 + envInfluence * 6) * 0.32 + Math.cos(index / 11) * 0.16;
+    const value = clamp(environmentAdjustedValue(element.symbol) + wave);
+    return { element, value };
   });
-  const top = elements.map(e => ({ ...e, metrics: score(e.symbol), value: score(e.symbol)[layer] })).sort((a, b) => b.value - a.value).slice(0, 10);
-  const resilience = Math.max(1, Math.min(99, Math.round((selectedScore.stability / 5) * 48 + (selectedScore.pressure / 5) * 22 + (selectedScore.thermal / 5) * 18 - envInfluence * 32 + 26)));
+
+  const top = elements
+    .map((element) => ({ ...element, value: environmentAdjustedValue(element.symbol), metrics: score(element.symbol) }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
+
+  const selectedAdjusted = environmentAdjustedValue(selectedElement.symbol);
+  const resilience = percentFromMetric(selectedAdjusted, 5);
+  const matrix = ATLAS_MATRIX_SYMBOLS.map((rowSymbol) => ATLAS_MATRIX_SYMBOLS.map((colSymbol) => rowSymbol === colSymbol ? null : compatibilityScore(rowSymbol, colSymbol)));
+  const anomalies = [
+    { pair: `${top[0]?.symbol || "Ti"} + ${top[1]?.symbol || "Hf"}`, score: compatibilityScore(top[0]?.symbol || "Ti", top[1]?.symbol || "Hf"), label: `${layerLabels[layer]} pressure anomaly` },
+    { pair: "Al + Ti", score: compatibilityScore("Al", "Ti"), label: "lightweight structure signal" },
+    { pair: "Cu + Ag", score: compatibilityScore("Cu", "Ag"), label: "conductivity corridor" },
+  ].sort((a, b) => b.score - a.score);
+
   const exportAtlas = () => {
-    const content = `ElementOS Material Interaction Atlas\n\nElement: ${selectedElement.name} (${selectedElement.symbol})\nEnvironment: ${environment}\nLayer: ${layer}\nResilience: ${resilience}%\nContext: ${env.label}\n\nTop materials:\n${top.slice(0, 8).map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${Number(e.value).toFixed(layer === "alignment" ? 0 : 2)}`).join("\n")}`;
-    exportAllFormats({ baseName: `behaviour-atlas-${selectedElement.symbol}-${layer}`, title: `Material Interaction Atlas: ${selectedElement.symbol}`, summary: content, payload: { selected: selectedElement.symbol, layer, environment, resilience, top } });
+    const content = `ElementOS Material Interaction Atlas\n\nElement: ${selectedElement.name} (${selectedElement.symbol})\nEnvironment: ${environment}\nLayer: ${layerLabels[layer]}\nResilience: ${resilience}%\nContext: ${env.label}\n\nTop signals:\n${top.map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${percentFromMetric(e.value, 5)}%`).join("\n")}\n\nAnomalies:\n${anomalies.map((a) => `${a.pair} — ${a.score}% · ${a.label}`).join("\n")}`;
+    exportAllFormats({ baseName: `interaction-atlas-${selectedElement.symbol}-${environment}`, title: `Material Interaction Atlas: ${selectedElement.symbol}`, summary: content, payload: { selected: selectedElement.symbol, layer, environment, resilience, top, anomalies } });
   };
 
   return (
-    <>
-      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/30 via-slate-950 to-emerald-950/20">
-        <div className="grid gap-8 xl:grid-cols-[1.15fr_.85fr] xl:items-center">
-          <div>
-            <Pill gold><Radar size={12}/> behaviour intelligence atlas</Pill>
-            <h1 className="mt-4 text-5xl font-black sm:text-7xl">Behaviour <span className="bg-gradient-to-r from-cyan-200 via-white to-emerald-200 bg-clip-text text-transparent">Atlas</span></h1>
-            <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A live field map of material behaviour under extreme environments. Watch signals shift as exposure, pressure, corrosion and thermal load change the intelligence surface.</p>
-            <Info title="Magical use case">Pick an environment, select a behaviour layer, then click the brightest cells to discover new materials for compare, reports or media exports.</Info>
+    <div className="space-y-10">
+      <Panel className="overflow-hidden border-white/10 bg-slate-950/70 p-0">
+        <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.14),transparent_34%),radial-gradient(circle_at_82%_70%,rgba(16,185,129,.10),transparent_28%),#020617] p-8 sm:p-12">
+          <div className="grid gap-10 xl:grid-cols-[1fr_420px] xl:items-end">
+            <div>
+              <Pill gold><Radar size={12}/> material interaction atlas</Pill>
+              <h1 className="mt-6 max-w-5xl text-5xl font-bold tracking-[-0.04em] text-white sm:text-7xl xl:text-8xl">A cinematic field map for material behaviour.</h1>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">Choose an environment, scan the behaviour layer and open the highest material signals as compare, forecast or report-ready opportunities.</p>
+            </div>
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Selected telemetry</div>
+              <div className="mt-4 flex items-end justify-between gap-4">
+                <div>
+                  <div className="text-7xl font-black text-cyan-100">{selectedElement.symbol}</div>
+                  <div className="text-2xl font-semibold text-white">{selectedElement.name}</div>
+                  <div className="text-sm text-slate-400">{environment} · {layerLabels[layer]}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-5xl font-black text-white">{resilience}%</div>
+                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">resilience</div>
+                </div>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Button onClick={exportAtlas} variant="primary">Export Atlas</Button>
+                <Button onClick={() => setSelected(top[0]?.symbol || selectedElement.symbol)}>Use Top Signal</Button>
+              </div>
+            </div>
           </div>
-          <Panel>
-            <div className="text-xs uppercase tracking-[.22em] text-slate-500">Selected telemetry</div>
-            <div className="mt-3 flex items-end justify-between"><div><div className="text-7xl font-black text-cyan-100">{selectedElement.symbol}</div><div className="text-2xl font-black">{selectedElement.name}</div></div><div className="text-right"><div className="text-4xl font-black text-emerald-100">{resilience}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">resilience</div></div></div>
-            <div className="mt-4 grid gap-2 sm:grid-cols-2"><Button onClick={exportAtlas} variant="primary">Export Atlas</Button><Button onClick={() => setSelected(top[0]?.symbol || selected)}>Use Top Material</Button></div>
-          </Panel>
         </div>
       </Panel>
-      <GuidePanel page="atlas" />
-      <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-        <Panel>
-          <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-3xl font-black">Live Behaviour Field</h2><p className="mt-2 text-sm text-slate-400">{environment}: {env.label}</p></div><Pill gold>{fieldMode} mode</Pill></div>
-          <div className="mt-5 flex flex-wrap gap-2">{metrics.map(l => <Button key={l} onClick={() => setLayer(l)} variant={layer === l ? "primary" : "ghost"}>{({ stability: "Stability", conductivity: "Conductivity", thermal: "Thermal", diffusion: "Diffusion", pressure: "Pressure", rarity: "Rarity", alignment: "Alignment" })[l]}</Button>)}<select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">{Object.keys(environmentProfiles).map(x => <option key={x}>{x}</option>)}</select><select value={fieldMode} onChange={(e) => setFieldMode(e.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 outline-none">{["wave","magnetic","thermal","pressure","corrosion"].map(x => <option key={x}>{x}</option>)}</select></div>
-          <div className="mt-6 grid grid-cols-8 gap-2 md:grid-cols-12 xl:grid-cols-16">
-            {fieldCells.map((cell, i) => <button key={`${cell.element.symbol}-${i}`} onClick={() => setSelected(cell.element.symbol)} className={`relative aspect-square overflow-hidden rounded-2xl border text-xs font-black transition hover:scale-110 ${selected === cell.element.symbol ? "ring-2 ring-white" : "border-white/10"}`} style={heatStyle(cell.value, layer === "alignment" ? 100 : 5)}><span className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,.35),transparent_45%)] opacity-60"/><span className="relative z-10">{cell.element.symbol}</span></button>)}
+
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <Panel className="overflow-hidden border-white/10 bg-slate-950/60 p-0">
+          <div className="border-b border-white/10 p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-3xl font-bold tracking-[-0.02em] text-white">Live Interaction Field</h2>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{environment}: {env.label}. The brightest cells are the strongest adjusted signals for the selected environment and layer.</p>
+              </div>
+              <div className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-black text-slate-300">{fieldMode} mode</div>
+            </div>
+            <div className="mt-5 space-y-4">
+              <div className="flex flex-wrap gap-2">{ATLAS_ENVIRONMENT_PRESETS.map((item) => <Button key={item} onClick={() => setEnvironment(item)} variant={environment === item ? "primary" : "ghost"}>{item}</Button>)}</div>
+              <div className="flex flex-wrap gap-2">{metrics.map((metric) => <Button key={metric} onClick={() => setLayer(metric)} variant={layer === metric ? "primary" : "ghost"}>{layerLabels[metric] || metric}</Button>)}<select value={fieldMode} onChange={(event) => setFieldMode(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none">{["heatmap", "magnetic", "thermal", "pressure", "corrosion"].map((item) => <option key={item}>{item}</option>)}</select></div>
+            </div>
+          </div>
+
+          <div className="relative p-5 sm:p-7">
+            <div className="absolute left-[24%] top-[28%] z-20 hidden rounded-2xl border border-cyan-300/25 bg-black/55 px-4 py-3 text-xs font-black text-cyan-100 backdrop-blur-xl md:block">{anomalies[0].pair}<br/><span className="font-semibold text-slate-300">{anomalies[0].label}</span></div>
+            <div className="absolute right-[18%] bottom-[22%] z-20 hidden rounded-2xl border border-white/15 bg-black/55 px-4 py-3 text-xs font-black text-white backdrop-blur-xl md:block">{anomalies[1].pair}<br/><span className="font-semibold text-slate-300">{anomalies[1].label}</span></div>
+            <div className="grid min-h-[520px] grid-cols-12 gap-2 rounded-[2rem] border border-white/10 bg-black/25 p-4 md:grid-cols-18">
+              {fieldCells.map((cell, index) => {
+                const pct = percentFromMetric(cell.value, 5);
+                const isActive = selectedElement.symbol === cell.element.symbol;
+                return <button key={`${cell.element.symbol}-${index}`} onClick={() => setSelected(cell.element.symbol)} className={`relative min-h-[42px] overflow-hidden rounded-2xl border text-xs font-black transition hover:scale-110 ${isActive ? "border-cyan-200 ring-2 ring-cyan-100/60" : "border-white/10"}`} style={heatStyle(cell.value, 5)} title={`${cell.element.name} · ${pct}%`}><span className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/70"/><span className="relative z-10 text-white">{cell.element.symbol}</span></button>;
+              })}
+            </div>
           </div>
         </Panel>
+
+        <div className="space-y-6 xl:sticky xl:top-32 xl:self-start">
+          <Panel>
+            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Top signals</div>
+            <div className="mt-4 space-y-3">
+              {top.slice(0, 6).map((item, index) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-cyan-300/35 hover:bg-white/[0.05]"><div><div className="text-xs text-slate-500">#{index + 1}</div><div className="text-lg font-black text-white">{item.name}</div><div className="text-xs text-slate-400">{item.category}</div></div><div className="text-2xl font-black text-cyan-100">{percentFromMetric(item.value, 5)}%</div></button>)}
+            </div>
+          </Panel>
+
+          <Panel>
+            <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Environment load</div>
+            <div className="mt-5 space-y-4">
+              {Object.entries(env).filter(([key]) => !["label", "bias"].includes(key)).map(([label, value]) => <div key={label}><div className="mb-1 flex justify-between text-xs uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span>{value}%</span></div><div className="h-3 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-cyan-300/80" style={{ width: `${value}%` }}/></div></div>)}
+            </div>
+            <RadarChart data={selectedScore}/>
+          </Panel>
+        </div>
+      </div>
+
+      <div className="grid gap-8 xl:grid-cols-[1fr_420px]">
         <Panel>
-          <Pill gold><Activity size={12}/> environment load</Pill>
-          <h2 className="mt-3 text-3xl font-black">Telemetry Streams — {selectedElement.name} ({selectedElement.symbol})</h2>
-          <div className="mt-5 space-y-4">
-            {Object.entries(env).filter(([k]) => k !== "label").map(([label, value]) => <div key={label}><div className="mb-1 flex justify-between text-xs uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span>{value}%</span></div><div className="h-3 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-300 to-amber-300" style={{ width: `${value}%` }}/></div></div>)}
+          <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-3xl font-bold tracking-[-0.02em] text-white">Interaction Matrix</h2><p className="mt-2 text-sm text-slate-400">Compatibility between core materials in the current atlas workspace.</p></div><Pill gold>pairing intelligence</Pill></div>
+          <div className="mt-6 overflow-x-auto">
+            <div className="min-w-[640px] rounded-[2rem] border border-white/10 bg-black/25 p-4">
+              <div className="grid gap-2" style={{ gridTemplateColumns: `120px repeat(${ATLAS_MATRIX_SYMBOLS.length}, minmax(74px, 1fr))` }}>
+                <div />
+                {ATLAS_MATRIX_SYMBOLS.map((symbol) => <div key={symbol} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-center text-sm font-black text-white">{symbol}</div>)}
+                {ATLAS_MATRIX_SYMBOLS.map((rowSymbol, rowIndex) => (
+                  <React.Fragment key={rowSymbol}>
+                    <button onClick={() => setSelected(rowSymbol)} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-left text-sm font-black text-white">{rowSymbol}</button>
+                    {matrix[rowIndex].map((value, colIndex) => <button key={`${rowSymbol}-${ATLAS_MATRIX_SYMBOLS[colIndex]}`} onClick={() => value && setSelected(rowSymbol)} className="rounded-2xl border border-white/10 p-3 text-center text-sm font-black text-white" style={value ? heatStyle(value, 100) : { background: "rgba(255,255,255,.03)" }}>{value || "—"}</button>)}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
           </div>
-          <RadarChart data={selectedScore}/>
-          <p className="text-sm leading-7 text-slate-300">{selectedElement.name} shows a {selectedScore[layer] > (layer === "alignment" ? 65 : 3.5) ? "strong" : "moderate"} {layer} signal inside the {environment} profile.</p>
+        </Panel>
+
+        <Panel>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Anomaly callouts</div>
+          <div className="mt-4 space-y-3">
+            {anomalies.map((item) => <div key={item.pair} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"><div className="flex items-center justify-between gap-3"><div className="text-lg font-black text-white">{item.pair}</div><div className="text-2xl font-black text-cyan-100">{item.score}%</div></div><div className="mt-2 text-sm text-slate-400">{item.label}</div><div className="mt-3 flex gap-2"><Button onClick={() => setSelected(item.pair.split(" + ")[0])}>Inspect</Button><Button onClick={() => showToast(`${item.pair} queued for report.`)}>Report</Button></div></div>)}
+          </div>
         </Panel>
       </div>
-      <Panel><h2 className="text-3xl font-black">Top Materials for {({ stability: "Stability", conductivity: "Conductivity", thermal: "Thermal", diffusion: "Diffusion", pressure: "Pressure", rarity: "Rarity", alignment: "Alignment" })[layer]}</h2><div className="mt-5 grid gap-3 md:grid-cols-5">{top.map((e, i) => <button key={e.symbol} onClick={() => setSelected(e.symbol)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/40"><div className="text-xs text-slate-500">#{i + 1}</div><div className="text-2xl font-black text-cyan-100">{e.symbol}</div><div className="text-sm text-slate-400">{e.name}</div></button>)}</div></Panel>
-    </>
+    </div>
   );
 }
+
 
 function BehaviourGraph({ selected, setSelected }) {
   const [metric, setMetric] = useState("conductivity");
