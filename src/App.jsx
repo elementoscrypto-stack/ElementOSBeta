@@ -1595,6 +1595,7 @@ const PAGE_LABELS = {
   simreports: "Reports",
   viralcards: "Reports & Media",
   reports: "Reports",
+  advisorreport: "Advisor Report",
   lab: "Workspace",
   beta: "Create Account",
   login: "Login",
@@ -1608,6 +1609,7 @@ const MOBILE_PAGE_ORDER = [
   "discover",
   "compare",
   "reports",
+  "advisorreport",
   "copilot",
   "mission",
   "scenario",
@@ -2284,8 +2286,9 @@ function V155AdvisorResultCard({ result, setSelected, setCompare, setPage, setFo
   const openReport = () => {
     setSelected?.(result.symbol);
     setCompare?.([result.symbol, ...safeArray(result.pairings)].filter(Boolean).slice(0, 4));
+    v157SaveAdvisorReport(result);
     v155SaveAdvisorResult(result);
-    setPage?.("reports");
+    setPage?.("advisorreport");
   };
   return (
     <div className={`rounded-[1.75rem] border border-cyan-300/20 bg-cyan-300/[0.055] ${compact ? "p-4" : "p-5"}`}>
@@ -2320,6 +2323,267 @@ function V155AdvisorResultCard({ result, setSelected, setCompare, setPage, setFo
       <div className="mt-4 rounded-2xl border border-amber-300/15 bg-amber-300/[0.055] p-4 text-sm leading-6 text-amber-50">
         <b>Risks to review:</b> {safeArray(result.top?.risks).slice(0, 2).join(" · ") || "Validate supply, cost and scenario exposure before final selection."}
       </div>
+    </div>
+  );
+}
+
+
+function v157NormalizeAdvisorReport(result, fallbackSymbol = "Ti") {
+  const source = result || (typeof window !== "undefined" ? safeParseJSON(localStorage.getItem("elementosCurrentAdvisorReport"), null) : null) || v155AdvisorAnalyze("lightweight corrosion resistant marine 50 years", fallbackSymbol);
+  const primary = source.top || safeArray(source.recommended)[0] || { symbol: source.symbol || fallbackSymbol, name: source.elementName || elementMap[fallbackSymbol]?.name || "Titanium", confidence: source.missionScore || 88, why: [], risks: [] };
+  const ranking = safeArray(source.recommended).length ? safeArray(source.recommended) : [primary];
+  const pairings = safeArray(source.pairings).length ? safeArray(source.pairings) : safeArray(primary.pairings).slice(0, 3);
+  const title = source.input || "What material should I use?";
+  return {
+    ...source,
+    title,
+    top: primary,
+    symbol: primary.symbol || source.symbol || fallbackSymbol,
+    elementName: primary.name || source.elementName || elementMap[primary.symbol]?.name || "Recommended Material",
+    ranking,
+    pairings,
+    years: safeNumber(source.years, 50),
+    environment: source.environment || source.scenario || "Engineering Review",
+    scenario: source.scenario || source.environment || "Engineering Review",
+    missionScore: safeNumber(source.missionScore || primary.confidence, 88),
+  };
+}
+
+function v157AdvisorReportText(report) {
+  const r = v157NormalizeAdvisorReport(report);
+  const lines = [];
+  lines.push("ElementOS Advisor Report");
+  lines.push("========================");
+  lines.push("");
+  lines.push(`Mission: ${r.title}`);
+  lines.push(`Recommended Material: ${r.elementName} (${r.symbol})`);
+  lines.push(`Confidence: ${r.missionScore}%`);
+  lines.push(`Scenario: ${r.scenario}`);
+  lines.push(`Forecast Horizon: ${r.years} years`);
+  lines.push("");
+  lines.push("Executive Summary");
+  lines.push(`${r.elementName} is recommended because it best matches the stated mission requirements across stability, thermal behaviour, pressure readiness and application fit. ElementOS recommends reviewing cost, supply and operating exposure before final selection.`);
+  lines.push("");
+  lines.push("Material Ranking");
+  safeArray(r.ranking).forEach((item, index) => lines.push(`${index + 1}. ${item.name || item.symbol} (${item.symbol}) — ${safeNumber(item.confidence, 0)}%`));
+  lines.push("");
+  lines.push("Recommended Pairings");
+  safeArray(r.pairings).slice(0, 4).forEach((sym) => lines.push(`- ${elementMap[sym]?.name || sym} (${sym})`));
+  lines.push("");
+  lines.push("Risks and Mitigations");
+  safeArray(r.ranking).slice(0, 4).forEach((item) => {
+    const risks = safeArray(item.risks).length ? safeArray(item.risks) : ["Application-specific validation required", "Cost and supply review required"];
+    lines.push(`- ${item.name || item.symbol}: ${risks.slice(0, 2).join("; ")}. Mitigation: validate against operating environment and pair with supporting materials where needed.`);
+  });
+  lines.push("");
+  lines.push("Next Actions");
+  lines.push("1. Send the recommended material to Time Machine.");
+  lines.push("2. Compare the top ranked materials.");
+  lines.push("3. Export this advisor report for team review.");
+  return lines.join("\n");
+}
+
+function v157SaveAdvisorReport(result) {
+  if (typeof window === "undefined") return;
+  try {
+    const report = v157NormalizeAdvisorReport(result);
+    localStorage.setItem("elementosCurrentAdvisorReport", JSON.stringify(report));
+    const previous = safeParseJSON(localStorage.getItem("elementosAdvisorReports"), []);
+    const next = [{ ...report, savedAt: new Date().toISOString() }, ...safeArray(previous)].slice(0, 12);
+    localStorage.setItem("elementosAdvisorReports", JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent("elementos:advisor-report", { detail: report }));
+  } catch (_error) {}
+}
+
+function v157DownloadAdvisorText(report) {
+  if (typeof window === "undefined") return;
+  const text = v157AdvisorReportText(report);
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `ElementOS_Advisor_Report_${report?.symbol || "Material"}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function v157ExportAdvisorPdf(report) {
+  try {
+    const r = v157NormalizeAdvisorReport(report);
+    const doc = new jsPDF();
+    const text = v157AdvisorReportText(r).split("\n");
+    let y = 16;
+    doc.setFontSize(18);
+    doc.text("ElementOS Advisor Report", 14, y);
+    y += 10;
+    doc.setFontSize(10);
+    text.slice(2).forEach((line) => {
+      if (y > 280) { doc.addPage(); y = 16; }
+      const chunks = doc.splitTextToSize ? doc.splitTextToSize(line || " ", 180) : [line || " "];
+      chunks.forEach((chunk) => { doc.text(chunk, 14, y); y += 6; });
+    });
+    doc.save(`ElementOS_Advisor_Report_${r.symbol}.pdf`);
+  } catch (_error) {
+    v157DownloadAdvisorText(report);
+  }
+}
+
+function V157AdvisorReportPage({ selected = "Ti", setSelected, setCompare, setPage, setForecastRequest, isPro, startCheckout }) {
+  const [report, setReport] = useState(() => v157NormalizeAdvisorReport(null, selected || "Ti"));
+  const [history, setHistory] = useState(() => typeof window !== "undefined" ? safeArray(safeParseJSON(localStorage.getItem("elementosAdvisorReports"), [])) : []);
+  useEffect(() => {
+    const refresh = () => {
+      setReport(v157NormalizeAdvisorReport(null, selected || "Ti"));
+      if (typeof window !== "undefined") setHistory(safeArray(safeParseJSON(localStorage.getItem("elementosAdvisorReports"), [])));
+    };
+    window?.addEventListener?.("elementos:advisor-report", refresh);
+    window?.addEventListener?.("elementos:advisor", refresh);
+    return () => {
+      window?.removeEventListener?.("elementos:advisor-report", refresh);
+      window?.removeEventListener?.("elementos:advisor", refresh);
+    };
+  }, [selected]);
+
+  const ranking = safeArray(report.ranking);
+  const sendToTimeMachine = () => {
+    setSelected?.(report.symbol);
+    setCompare?.([report.symbol, ...safeArray(report.pairings)].filter(Boolean).slice(0, 4));
+    setForecastRequest?.({ id: `advisor-report-${Date.now()}`, symbol: report.symbol, years: report.years, environment: report.environment, source: "Advisor Report", advisor: report });
+    setPage?.("timemachine");
+  };
+  const compareTop = () => {
+    setCompare?.(ranking.map((item) => item.symbol).filter(Boolean).slice(0, 4));
+    setSelected?.(report.symbol);
+    setPage?.("compare");
+  };
+  const saveReport = () => {
+    v157SaveAdvisorReport(report);
+    showToast?.("Advisor report saved to history.");
+    if (typeof window !== "undefined") setHistory(safeArray(safeParseJSON(localStorage.getItem("elementosAdvisorReports"), [])));
+  };
+  const exportPdf = () => {
+    if (!isPro) {
+      window?.dispatchEvent?.(new CustomEvent("elementos:upgrade", { detail: { reason: "Advisor PDF exports are a Pro Researcher feature." } }));
+      startCheckout?.("Pro Researcher");
+      return;
+    }
+    v157ExportAdvisorPdf(report);
+  };
+
+  return (
+    <div className="space-y-5">
+      <Panel className="overflow-hidden border-cyan-300/20 bg-cyan-300/[0.045]">
+        <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
+          <div>
+            <Pill gold><FileText size={12}/> V157 Advisor Report</Pill>
+            <h1 className="mt-4 text-5xl font-black tracking-tight text-white md:text-6xl">Advisor Report</h1>
+            <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">A professional decision brief generated from the AI Material Advisor: ranking, rationale, risks, forecast handoff and export-ready recommendations.</p>
+            <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+              <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Mission</div>
+              <div className="mt-2 text-xl font-black text-white">{report.title}</div>
+              <div className="mt-2 text-sm text-slate-400">{report.scenario} · {report.years}-year horizon · {report.environment}</div>
+            </div>
+          </div>
+          <div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/[0.07] p-6">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-emerald-200">Recommended material</div>
+            <div className="mt-3 flex items-end justify-between gap-4">
+              <div>
+                <div className="text-6xl font-black text-white">{report.symbol}</div>
+                <div className="mt-1 text-2xl font-black text-emerald-50">{report.elementName}</div>
+              </div>
+              <div className="rounded-2xl border border-emerald-300/25 bg-black/25 px-5 py-4 text-center">
+                <div className="text-4xl font-black text-emerald-100">{report.missionScore}%</div>
+                <div className="text-[10px] font-black uppercase tracking-[.18em] text-emerald-200">confidence</div>
+              </div>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {safeArray(report.needs).map((need) => <span key={need} className="rounded-full border border-emerald-200/15 bg-black/20 px-3 py-2 text-xs font-black text-emerald-50">✓ {need}</span>)}
+            </div>
+          </div>
+        </div>
+      </Panel>
+
+      <div className="grid gap-5 xl:grid-cols-[1.15fr_.85fr]">
+        <Panel>
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Executive summary</div>
+          <p className="mt-3 text-lg leading-8 text-slate-200">ElementOS recommends <b className="text-white">{report.elementName}</b> as the primary candidate because it best matches the mission requirements across stability, thermal behaviour, pressure readiness and application fit. The recommendation should be validated against cost, supply, operating exposure and any regulatory or laboratory requirements before final selection.</p>
+          <div className="mt-6 grid gap-3 md:grid-cols-3">
+            <Button onClick={sendToTimeMachine} variant="primary">Send to Time Machine</Button>
+            <Button onClick={compareTop}>Compare Top Materials</Button>
+            <Button onClick={saveReport}>Save to Workspace</Button>
+          </div>
+        </Panel>
+
+        <Panel className="border-amber-300/20 bg-amber-300/[0.05]">
+          <div className="text-xs font-black uppercase tracking-[.22em] text-amber-200">Export advisor report</div>
+          <p className="mt-2 text-sm leading-6 text-amber-50/90">Free users can preview and save the advisor result. Pro Researcher unlocks PDF/export deliverables.</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <Button onClick={exportPdf} variant="primary">Export PDF</Button>
+            <Button onClick={() => v157DownloadAdvisorText(report)}>Download TXT</Button>
+            <Button onClick={() => showToast?.("JSON export ready for Pro Researcher.")}>JSON</Button>
+            <Button onClick={() => setPage?.("viralcards")}>Poster</Button>
+          </div>
+          {!isPro && <div className="mt-4 rounded-2xl border border-amber-200/20 bg-black/25 p-3 text-xs leading-5 text-amber-50"><b>Pro Researcher:</b> unlock Advisor PDF, JSON, SVG, Poster Studio, Forecast History and Workspaces.</div>}
+        </Panel>
+      </div>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Material ranking</div>
+            <h2 className="mt-2 text-3xl font-black text-white">Recommended materials</h2>
+          </div>
+          <Button onClick={() => setPage?.("explorer")}>Open Element Explorer</Button>
+        </div>
+        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {ranking.map((item, index) => (
+            <div key={`${item.symbol}-${index}`} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+              <div className="flex items-center justify-between gap-3"><div className="text-4xl font-black text-cyan-100">{item.symbol}</div><div className="text-2xl font-black text-white">{safeNumber(item.confidence, 0)}%</div></div>
+              <div className="mt-2 text-lg font-black text-white">{index + 1}. {item.name}</div>
+              <div className="mt-3 space-y-2 text-xs leading-5 text-slate-400">{safeArray(item.why).slice(0, 3).map((w) => <div key={w}>✓ {w}</div>)}</div>
+              <Button onClick={() => { setSelected?.(item.symbol); setPage?.("explorer"); }} className="mt-4 w-full">Open Brief</Button>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="text-xs font-black uppercase tracking-[.22em] text-amber-200">Risk table</div>
+        <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-white/10">
+          {ranking.map((item, index) => {
+            const risks = safeArray(item.risks).length ? safeArray(item.risks) : ["Application-specific validation required", "Cost and supply review required"];
+            return (
+              <div key={`${item.symbol}-risk`} className={`grid gap-3 p-4 md:grid-cols-[.35fr_.65fr_1fr] ${index ? "border-t border-white/10" : ""}`}>
+                <div className="font-black text-white">{item.name}</div>
+                <div className="text-sm text-amber-100">{risks.slice(0, 2).join(" · ")}</div>
+                <div className="text-sm leading-6 text-slate-400">Mitigation: validate against the operating environment, run a Time Machine forecast and compare against supporting materials.</div>
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Recent advisor reports</div>
+            <h2 className="mt-2 text-3xl font-black text-white">Report history</h2>
+          </div>
+          <Button onClick={() => setPage?.("dashboard")} variant="primary">Start New Mission</Button>
+        </div>
+        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {history.length ? history.slice(0, 6).map((item, index) => (
+            <button key={`${item.id || item.symbol}-${index}`} onClick={() => { v157SaveAdvisorReport(item); setReport(v157NormalizeAdvisorReport(item)); }} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+              <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">{safeNumber(item.years, 50)} years</div>
+              <div className="mt-2 text-xl font-black text-white">{item.elementName || item.top?.name || item.symbol}</div>
+              <div className="mt-1 text-sm text-cyan-100">{safeNumber(item.missionScore || item.top?.confidence, 0)}% confidence</div>
+              <div className="mt-2 line-clamp-2 text-xs leading-5 text-slate-400">{item.title || item.input}</div>
+            </button>
+          )) : <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 text-sm text-slate-400">No saved advisor reports yet. Generate one from the AI Material Advisor.</div>}
+        </div>
+      </Panel>
     </div>
   );
 }
@@ -14240,6 +14504,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       isotopes: <IsotopeLab />,
       calculations: <CalculationCore />,
       reports: <Reports compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />,
+      advisorreport: <V157AdvisorReportPage selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} isPro={isPro} startCheckout={startCheckout} />,
       systemhealth: <SystemHealth page={page} selected={selected} compare={compare} forecastRequest={forecastRequest} session={session} isPro={isPro} setPage={setPage} />,
     }),
     [page, selected, compare, session, isPro, forecastRequest]
