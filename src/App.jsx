@@ -2135,7 +2135,7 @@ function Pill({ children, gold = false }) { return <span className={`inline-flex
 function Button({ children, onClick, variant = "ghost", className = "", disabled = false, title = "", ariaLabel = "", ...props }) {
   const styles =
     variant === "primary"
-      ? "border border-[#2478ff] bg-gradient-to-r from-[#0b63ff] via-[#0f7bff] to-[#08b4ff] text-white shadow-[0_0_28px_rgba(0,123,255,.35)]"
+      ? "border border-cyan-300/40 bg-slate-950/85 text-cyan-50 shadow-[0_0_0_1px_rgba(34,211,238,.12),0_18px_44px_rgba(0,0,0,.28)] hover:border-cyan-200/70 hover:bg-cyan-300/10"
       : variant === "danger"
       ? "border border-rose-300/25 bg-rose-400/10 text-rose-100 shadow-[0_0_24px_rgba(244,63,94,.12)]"
       : "border border-[#17365f] bg-[#071425]/80 text-slate-100 hover:border-[#0ea5ff]/60 hover:bg-[#0b1d35]";
@@ -3219,10 +3219,33 @@ function ElementOSThemeSkin() {
         box-shadow: none !important;
       }
 
+      /* V163: global cyan button readability fix.
+         Large solid cyan CTAs were visually overpowering cards and making underlying/nearby text feel hidden.
+         Primary buttons now use a dark premium surface with cyan border/glow; only tiny badges/icons can stay solid. */
       .eos-page-stage button[class*="bg-cyan-300"],
       .eos-page-stage button[class*="variant-primary"],
       .eos-page-stage .eos-liquid-button {
-        background: var(--eos-lux-accent) !important;
+        position: relative !important;
+        z-index: 2 !important;
+        background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(2,6,23,.90)) !important;
+        color: #ecfeff !important;
+        border: 1px solid rgba(34,211,238,.42) !important;
+        box-shadow: 0 0 0 1px rgba(34,211,238,.10), 0 16px 42px rgba(0,0,0,.30) !important;
+      }
+      .eos-page-stage button[class*="bg-cyan-300"] *,
+      .eos-page-stage .eos-liquid-button * {
+        position: relative !important;
+        z-index: 3 !important;
+        color: inherit !important;
+      }
+      .eos-page-stage button[class*="bg-cyan-300"]:hover,
+      .eos-page-stage .eos-liquid-button:hover {
+        background: linear-gradient(180deg, rgba(12,30,45,.96), rgba(2,6,23,.92)) !important;
+        border-color: rgba(103,232,249,.74) !important;
+      }
+      .eos-page-stage .eos-solid-cyan-badge,
+      .eos-page-stage span[class*="bg-cyan-300"],
+      .eos-page-stage div[class*="bg-cyan-300"]:not([class*="bg-cyan-300/"]) {
         color: #020617 !important;
       }
 
