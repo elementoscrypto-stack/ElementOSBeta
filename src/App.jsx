@@ -3229,6 +3229,71 @@ function ElementOSThemeSkin() {
         color: #020617 !important;
       }
 
+
+      /* V160: plan-card readability fix.
+         The luxury pass made any button with bg-cyan-300 in its class become a full cyan CTA.
+         Selected plan cards use bg-cyan-300/10, so they were being painted solid cyan and hiding their copy.
+         Plan cards now stay dark with a subtle selected ring and all text remains readable. */
+      .eos-page-stage .eos-plan-card,
+      .eos-page-stage button.eos-plan-card,
+      .eos-page-stage div.eos-plan-card {
+        position: relative !important;
+        overflow: hidden !important;
+        isolation: isolate !important;
+        background: rgba(15, 23, 42, .76) !important;
+        color: var(--eos-lux-text) !important;
+        border-color: rgba(255,255,255,.10) !important;
+        border-radius: var(--eos-lux-radius) !important;
+        box-shadow: 0 18px 64px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.04) !important;
+      }
+      .eos-page-stage .eos-plan-card::before {
+        content: "";
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background: radial-gradient(circle at 18% 0%, rgba(34,211,238,.10), transparent 34%), linear-gradient(180deg, rgba(255,255,255,.035), transparent 46%);
+      }
+      .eos-page-stage .eos-plan-card-selected {
+        background: rgba(15, 23, 42, .88) !important;
+        border-color: rgba(34,211,238,.55) !important;
+        box-shadow: 0 0 0 1px rgba(34,211,238,.18), 0 24px 80px rgba(0,0,0,.34) !important;
+      }
+      .eos-page-stage .eos-plan-card-selected::after {
+        content: "Selected";
+        position: absolute;
+        right: 1.15rem;
+        bottom: 1.15rem;
+        z-index: 1;
+        border: 1px solid rgba(34,211,238,.35);
+        background: rgba(2,6,23,.72);
+        color: #e0fbff;
+        border-radius: 999px;
+        padding: .35rem .7rem;
+        font-size: .68rem;
+        font-weight: 700;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+      }
+      .eos-page-stage .eos-plan-card > * {
+        position: relative !important;
+        z-index: 2 !important;
+      }
+      .eos-page-stage .eos-plan-card h3,
+      .eos-page-stage .eos-plan-card .text-white {
+        color: #ffffff !important;
+      }
+      .eos-page-stage .eos-plan-card .text-cyan-100,
+      .eos-page-stage .eos-plan-card .text-emerald-200 {
+        color: #67e8f9 !important;
+      }
+      .eos-page-stage .eos-plan-card p,
+      .eos-page-stage .eos-plan-card .text-slate-300,
+      .eos-page-stage .eos-plan-card .text-slate-400,
+      .eos-page-stage .eos-plan-card .text-slate-200 {
+        color: #cbd5e1 !important;
+      }
+
       .eos-page-stage input,
       .eos-page-stage select,
       .eos-page-stage textarea,
@@ -5042,8 +5107,8 @@ function LoginAccount({ session, setSession, setPage, isPro, startCheckout }) {
             <button
               key={p}
               onClick={() => setPlan(p)}
-              className={`rounded-[2rem] border p-6 text-left transition hover:scale-[1.02] ${
-                plan === p ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/25"
+              className={`eos-plan-card rounded-[2rem] border p-6 text-left transition hover:scale-[1.02] ${
+                plan === p ? "eos-plan-card-selected border-cyan-300/40" : "border-white/10 bg-black/25"
               }`}
             >
               <div className="flex items-center justify-between">
@@ -14222,7 +14287,7 @@ function SubscriptionUpgradeModal({ open, reason, plan, setPlan, onClose, startC
         </div>
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           {ELEMENTOS_SUBSCRIPTION_PLANS.map((p) => (
-            <div key={p.name} className={`rounded-[2rem] border p-5 ${p.name === plan ? "border-cyan-300/60 bg-cyan-300/10" : p.recommended ? "border-amber-300/40 bg-amber-300/10" : "border-white/10 bg-white/[0.035]"}`}>
+            <div key={p.name} className={`eos-plan-card rounded-[2rem] border p-5 ${p.name === plan ? "eos-plan-card-selected border-cyan-300/60" : p.recommended ? "border-amber-300/40 bg-amber-300/10" : "border-white/10 bg-white/[0.035]"}`}>
               <div className="flex items-center justify-between gap-3">
                 <div className="text-2xl font-black text-white">{p.name}</div>
                 <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] text-cyan-100">{p.eyebrow}</span>
