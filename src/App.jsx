@@ -5313,7 +5313,7 @@ function TimeMachineGenius({ selected, setSelected, setPage, forecastRequest }) 
   const events = [
     { year: Math.max(1, Math.round(years * 0.2)), title: "Surface condition shift", body: `${environment} exposure begins to separate strong candidates from weak substitutes.` },
     { year: Math.max(2, Math.round(years * 0.5)), title: `${dominantRisk[0]} becomes visible`, body: dominantRisk[2] },
-    { year, title: "Decision horizon", body: `${el.name} projects ${survivability}% survivability with ${confidence}% forecast confidence.` },
+    { year: years, title: "Decision horizon", body: `${el.name} projects ${survivability}% survivability with ${confidence}% forecast confidence.` },
   ];
 
   const reportSummary = `ElementOS projects ${el.name} as a ${survivability >= 78 ? "strong" : survivability >= 58 ? "moderate" : "high-risk"} candidate for ${environment.toLowerCase()} exposure over ${years} years. The main watch item is ${dominantRisk[0].toLowerCase()}, while projected retention is ${retention}%.`;
