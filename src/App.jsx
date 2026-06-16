@@ -8429,9 +8429,9 @@ function PeriodicTable({ selected, setSelected }) {
   const inspectedSignal = signalFor(inspectedElement.symbol);
 
   function Tile({ sym }) {
-    if (!sym) return <div className="h-[96px] rounded-[12px] border border-transparent" />;
+    if (!sym) return <div className="rounded-[12px] border border-transparent" style={{ height: "clamp(82px, 5.2vw, 128px)" }} />;
     const el = elementMap[sym];
-    if (!el) return <div className="h-[96px] rounded-[12px] border border-transparent" />;
+    if (!el) return <div className="rounded-[12px] border border-transparent" style={{ height: "clamp(82px, 5.2vw, 128px)" }} />;
     const isSelected = activeElement.symbol === sym;
     const isVisible = visibleElements.some((item) => item.symbol === sym);
     const pct = signalFor(sym);
@@ -8446,9 +8446,10 @@ function PeriodicTable({ selected, setSelected }) {
         onClick={() => setSelected?.(sym)}
         onMouseEnter={() => setHovered(sym)}
         onMouseLeave={() => setHovered(null)}
-        className="group relative h-[96px] overflow-hidden rounded-[12px] border bg-slate-950 text-left transition duration-200 hover:-translate-y-0.5 hover:border-cyan-200/45"
+        className="group relative overflow-hidden rounded-[12px] border bg-slate-950 text-left transition duration-200 hover:-translate-y-0.5 hover:border-cyan-200/45"
         style={{
           opacity,
+          height: "clamp(82px, 5.2vw, 128px)",
           borderColor: isSelected ? accent : "rgba(255,255,255,.10)",
           boxShadow: glow,
           background: `linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98)), linear-gradient(135deg, ${accent}22, transparent 45%)`,
@@ -8471,7 +8472,7 @@ function PeriodicTable({ selected, setSelected }) {
 
   return (
     <div className="space-y-6">
-      <div className="overflow-hidden rounded-[24px] border border-cyan-300/15 bg-slate-950 shadow-[0_0_80px_rgba(2,6,23,.65)]">
+      <div className="min-h-[calc(100vh-120px)] overflow-hidden rounded-[24px] border border-cyan-300/15 bg-slate-950 shadow-[0_0_80px_rgba(2,6,23,.65)]">
         <div className="relative border-b border-white/10 bg-[linear-gradient(90deg,rgba(34,211,238,.12),transparent_38%),linear-gradient(180deg,rgba(255,255,255,.045),transparent)] p-6 md:p-8">
           <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
@@ -8501,8 +8502,8 @@ function PeriodicTable({ selected, setSelected }) {
           </div>
         </div>
 
-        <div className="grid xl:grid-cols-[minmax(0,1fr)_390px]">
-          <main className="min-w-0 border-r border-white/10">
+        <div className="grid min-h-[calc(100vh-300px)] xl:grid-cols-[minmax(0,1fr)_390px] 2xl:grid-cols-[minmax(0,1fr)_430px]">
+          <main className="flex min-w-0 flex-col border-r border-white/10">
             <div className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/95 p-4 backdrop-blur-xl">
               <div className="grid gap-3 lg:grid-cols-[1fr_190px_190px]">
                 <div className="flex items-center gap-3 rounded-[14px] border border-white/10 bg-black/30 px-4 py-3 focus-within:border-cyan-300/35">
@@ -8535,9 +8536,9 @@ function PeriodicTable({ selected, setSelected }) {
               </div>
             </div>
 
-            <div className="overflow-x-auto bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.075),transparent_26%),linear-gradient(180deg,#020617,#020617)] p-5 md:p-7">
-              <div className="min-w-[1730px] rounded-[24px] border border-white/10 bg-black/30 p-6 shadow-[inset_0_0_70px_rgba(34,211,238,.045)]">
-                <div className="grid gap-[10px]" style={{ gridTemplateColumns: "repeat(18, 86px)" }}>
+            <div className="flex-1 overflow-x-auto bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.075),transparent_26%),linear-gradient(180deg,#020617,#020617)] p-4 md:p-6 2xl:p-8">
+              <div className="min-w-[1540px] rounded-[24px] border border-white/10 bg-black/30 p-5 shadow-[inset_0_0_70px_rgba(34,211,238,.045)] 2xl:min-w-0 2xl:p-7">
+                <div className="grid gap-[10px] 2xl:gap-[12px]" style={{ gridTemplateColumns: "repeat(18, minmax(78px, 1fr))" }}>
                   {periodicRows.flatMap((row, rowIndex) => row.map((sym, colIndex) => <Tile key={`${sym || "blank"}-${rowIndex}-${colIndex}`} sym={sym} />))}
                 </div>
               </div>
@@ -8563,7 +8564,7 @@ function PeriodicTable({ selected, setSelected }) {
             </div>
           </main>
 
-          <aside className="border-t border-white/10 bg-slate-950/95 p-5 xl:border-t-0">
+          <aside className="border-t border-white/10 bg-slate-950/95 p-5 xl:border-t-0 xl:max-h-[calc(100vh-150px)] xl:overflow-y-auto">
             <div className="xl:sticky xl:top-6">
               <div className="rounded-[22px] border border-cyan-300/15 bg-black/35 p-5 shadow-[0_0_35px_rgba(34,211,238,.06)]">
                 <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">selected element</div>
