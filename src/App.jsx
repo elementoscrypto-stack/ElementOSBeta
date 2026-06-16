@@ -7588,6 +7588,71 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
 
       <V155AIMaterialAdvisor selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} compact />
 
+      <Panel className="overflow-hidden border-cyan-300/15 bg-slate-950/80 p-4 md:p-5">
+        <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">periodic selector</div>
+            <h2 className="mt-2 text-3xl font-black text-white">Choose from the full periodic grid</h2>
+            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">The Explorer keeps the real 118-element periodic table visible. Select a tile to update the intelligence brief, forecast controls, pairings and reports without leaving this page.</p>
+          </div>
+          <div className="rounded-2xl border border-cyan-300/15 bg-black/30 px-4 py-3 text-sm font-bold text-cyan-100">
+            Active: <span className="text-white">{el.symbol}</span> · {cat} · {filtered.length} shown
+          </div>
+        </div>
+
+        <div className="overflow-x-auto rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_0_40px_rgba(34,211,238,.035)]">
+          <div className="grid min-w-[1120px] gap-2" style={{ gridTemplateColumns: "repeat(18, minmax(54px, 1fr))" }}>
+            {periodicRows.flatMap((row, rowIndex) =>
+              row.map((sym, colIndex) => {
+                if (!sym) return <div key={`empty-${rowIndex}-${colIndex}`} className="h-[64px]" />;
+                const mapEl = elementMap[sym];
+                const mapScore = score(sym);
+                const heatValue = Math.round(Math.min(99, Math.max(18, mapScore.diffusion * 18 + mapScore.thermal * 9 + mapScore.pressure * 6)));
+                const isVisible = cat === "All" || mapEl.category === cat;
+                const isSelected = sym === el.symbol;
+                return (
+                  <button
+                    key={`${sym}-${rowIndex}-${colIndex}`}
+                    onClick={() => chooseElement(sym)}
+                    className={`group relative h-[64px] overflow-hidden rounded-xl border p-2 text-left transition ${
+                      isSelected
+                        ? "border-cyan-200 bg-cyan-300/15 shadow-[0_0_24px_rgba(34,211,238,.18)]"
+                        : isVisible
+                          ? "border-white/10 bg-slate-900/85 hover:border-cyan-300/35 hover:bg-cyan-300/[0.08]"
+                          : "border-white/5 bg-slate-950/45 opacity-35"
+                    }`}
+                    title={`${mapEl.name} · ${mapEl.category} · diffusion heat ${heatValue}%`}
+                  >
+                    <div className="absolute inset-x-0 top-0 h-1 bg-cyan-300/20">
+                      <div className="h-full bg-cyan-300" style={{ width: `${heatValue}%`, opacity: isSelected ? 0.95 : 0.45 }} />
+                    </div>
+                    <div className="flex items-start justify-between gap-2 pt-1">
+                      <span className="text-[10px] font-black text-slate-500">{mapEl.atomicNumber}</span>
+                      <span className="text-[9px] font-black text-cyan-200/80">{heatValue}</span>
+                    </div>
+                    <div className="mt-1 text-2xl font-black leading-none text-white">{sym}</div>
+                    <div className="mt-1 truncate text-[9px] font-bold text-slate-500 group-hover:text-slate-300">{mapEl.name}</div>
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {[
+            ["Diffusion Heat", "Default grid signal using diffusion, thermal and pressure response."],
+            ["Click to Explore", "Every tile updates this page in place without jumping back to the top."],
+            ["NOR Alignment", "Rectangular rails, sharp cells and clean signal bars instead of circles or blobs."],
+          ].map(([label, body]) => (
+            <div key={label} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+              <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">{label}</div>
+              <div className="mt-2 text-xs leading-5 text-slate-400">{body}</div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
       <div className="grid gap-6 xl:grid-cols-[320px_1fr] 2xl:grid-cols-[360px_1fr]">
         <Panel className="xl:sticky xl:top-4 xl:self-start">
           <div className="max-h-[760px] overflow-auto pr-2">
