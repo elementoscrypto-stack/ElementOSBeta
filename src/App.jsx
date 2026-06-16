@@ -2911,6 +2911,156 @@ function ElementOSThemeSkin() {
       }
 
 
+      /* V174 NOR Grid Interface: perpendicular 90-degree operating system alignment */
+      :root {
+        --nor-bg: #020617;
+        --nor-panel: rgba(15, 23, 42, .88);
+        --nor-panel-deep: rgba(2, 6, 23, .92);
+        --nor-line: rgba(34, 211, 238, .075);
+        --nor-line-strong: rgba(34, 211, 238, .135);
+        --nor-node: rgba(34, 211, 238, .42);
+        --nor-accent: #22d3ee;
+        --nor-radius: 18px;
+        --nor-radius-lg: 22px;
+      }
+      .eos-nor-grid-interface {
+        position: relative;
+        isolation: isolate;
+        background:
+          radial-gradient(circle at 12% 8%, rgba(34,211,238,.09), transparent 30%),
+          radial-gradient(circle at 88% 92%, rgba(14,165,233,.055), transparent 34%),
+          var(--nor-bg) !important;
+      }
+      .eos-nor-grid-interface::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(var(--nor-line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--nor-line) 1px, transparent 1px),
+          linear-gradient(var(--nor-line-strong) 1px, transparent 1px),
+          linear-gradient(90deg, var(--nor-line-strong) 1px, transparent 1px);
+        background-size: 72px 72px, 72px 72px, 288px 288px, 288px 288px;
+        mask-image: radial-gradient(circle at center, black 0%, black 68%, transparent 100%);
+        opacity: .85;
+      }
+      .eos-nor-grid-interface::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at calc(50% - 144px) calc(50% - 144px), var(--nor-node) 0 1px, transparent 2px),
+          radial-gradient(circle at calc(50% + 144px) calc(50% + 144px), rgba(255,255,255,.18) 0 1px, transparent 2px);
+        background-size: 288px 288px;
+        opacity: .32;
+      }
+      .eos-nor-grid-interface .eos-page-stage {
+        position: relative;
+        z-index: 1;
+      }
+      .eos-nor-grid-interface .rounded-\[2\.5rem\],
+      .eos-nor-grid-interface .rounded-\[2rem\],
+      .eos-nor-grid-interface .rounded-\[1\.5rem\],
+      .eos-nor-grid-interface .rounded-3xl,
+      .eos-nor-grid-interface .rounded-2xl {
+        border-radius: var(--nor-radius-lg) !important;
+      }
+      .eos-nor-grid-interface .rounded-full {
+        border-radius: 999px !important;
+      }
+      .eos-nor-grid-interface .eos-topbar,
+      .eos-nor-grid-interface aside,
+      .eos-nor-grid-interface .eos-page-stage > div,
+      .eos-nor-grid-interface .eos-page-stage section,
+      .eos-nor-grid-interface .eos-page-stage article {
+        border-color: rgba(148, 163, 184, .12) !important;
+      }
+      .eos-nor-grid-interface .eos-hero-panel,
+      .eos-nor-grid-interface .eos-luxury-window,
+      .eos-nor-grid-interface .eos-panel,
+      .eos-nor-grid-interface .eos-data-card {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.035), transparent 42%),
+          linear-gradient(90deg, rgba(34,211,238,.055), transparent 22%, transparent 78%, rgba(34,211,238,.035)),
+          var(--nor-panel) !important;
+        box-shadow:
+          0 28px 80px rgba(0,0,0,.34),
+          inset 1px 0 0 rgba(34,211,238,.08),
+          inset 0 1px 0 rgba(255,255,255,.05) !important;
+      }
+      .eos-nor-frame {
+        position: relative;
+        border: 1px solid rgba(34,211,238,.18);
+        background: linear-gradient(135deg, rgba(15,23,42,.88), rgba(2,6,23,.92));
+        border-radius: var(--nor-radius-lg);
+        overflow: hidden;
+      }
+      .eos-nor-frame::before,
+      .eos-nor-frame::after {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        background: rgba(34,211,238,.42);
+      }
+      .eos-nor-frame::before { top: 0; left: 24px; right: 24px; height: 1px; }
+      .eos-nor-frame::after { top: 24px; bottom: 24px; left: 0; width: 1px; }
+      .eos-nor-grid-interface button,
+      .eos-nor-grid-interface select,
+      .eos-nor-grid-interface input,
+      .eos-nor-grid-interface textarea {
+        border-radius: 16px !important;
+      }
+      .eos-nor-grid-interface button {
+        transform-origin: center;
+      }
+      .eos-nor-grid-interface button.bg-cyan-300,
+      .eos-nor-grid-interface .bg-cyan-300 {
+        background: linear-gradient(135deg, rgba(34,211,238,.18), rgba(15,23,42,.88)) !important;
+        color: #e0faff !important;
+        border: 1px solid rgba(34,211,238,.34) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(34,211,238,.06), 0 14px 40px rgba(34,211,238,.09) !important;
+      }
+      .eos-nor-grid-interface .text-slate-950 {
+        color: #e0faff;
+      }
+      .eos-nor-grid-interface .eos-logo-wordmark {
+        text-shadow: 0 0 28px rgba(34,211,238,.18);
+      }
+      .eos-nor-rail {
+        position: relative;
+      }
+      .eos-nor-rail::before {
+        content: "";
+        position: absolute;
+        left: -14px;
+        top: 10px;
+        bottom: 10px;
+        width: 1px;
+        background: linear-gradient(transparent, rgba(34,211,238,.38), transparent);
+      }
+      .eos-nor-node {
+        position: relative;
+      }
+      .eos-nor-node::before {
+        content: "";
+        position: absolute;
+        left: -18px;
+        top: 50%;
+        width: 8px;
+        height: 8px;
+        border: 1px solid rgba(34,211,238,.6);
+        background: rgba(2,6,23,.9);
+        transform: translateY(-50%) rotate(45deg);
+      }
+      @media (max-width: 767px) {
+        .eos-nor-grid-interface::before { background-size: 48px 48px, 48px 48px, 192px 192px, 192px 192px; opacity: .55; }
+        .eos-nor-grid-interface .eos-page-stage { padding-inline: .15rem; }
+      }
+
       /* V131: normal-resolution interface.
          The app should look correct at 100% browser zoom.
          Density is handled by grids and spacing, not browser-style scaling. */
@@ -9905,7 +10055,7 @@ function PublicReportView({ report, status }) {
   if (!report) {
     const isMissing = String(status || "").toLowerCase().includes("not found") || String(status || "").toLowerCase().includes("failed");
     return (
-      <div className="eos-shell eos-app-scale min-h-screen bg-[#020617] text-slate-100">
+      <div className="eos-shell eos-app-scale eos-nor-grid-interface min-h-screen bg-[#020617] text-slate-100">
         <ElementOSThemeSkin />
         <Background />
         <main className="relative z-10 mx-auto max-w-5xl space-y-6 p-6 lg:p-10">
@@ -9952,7 +10102,7 @@ function PublicReportView({ report, status }) {
   }));
 
   return (
-    <div className="eos-shell eos-app-scale min-h-screen bg-[#020617] text-slate-100">
+    <div className="eos-shell eos-app-scale eos-nor-grid-interface min-h-screen bg-[#020617] text-slate-100">
       <ElementOSThemeSkin />
       <Background />
 
@@ -15346,7 +15496,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
   }
 
   return (
-    <div className="eos-shell eos-app-scale min-h-screen bg-[#020617] text-slate-100">
+    <div className="eos-shell eos-app-scale eos-nor-grid-interface min-h-screen bg-[#020617] text-slate-100">
       <ElementOSThemeSkin />
       <Background />
       <LivingMotionLayer />
