@@ -2920,84 +2920,6 @@ function ElementOSThemeSkin() {
       }
 
 
-
-      /* V190 Premium Element Explorer workstation */
-      .eos-explorer-v190-hero {
-        border-radius: 22px !important;
-        border-color: rgba(34,211,238,.18) !important;
-        background:
-          linear-gradient(90deg, rgba(34,211,238,.045) 1px, transparent 1px),
-          linear-gradient(rgba(34,211,238,.035) 1px, transparent 1px),
-          radial-gradient(circle at 15% 12%, rgba(34,211,238,.12), transparent 32%),
-          rgba(2,6,23,.86) !important;
-        background-size: 72px 72px, 72px 72px, auto, auto !important;
-      }
-      .eos-explorer-v190-hero .eos-luxury-window,
-      .eos-explorer-v190-hero [class*="rounded-"] { text-wrap: balance; }
-      .eos-explorer-v190-visual > .relative:first-child {
-        height: 100%;
-        min-height: 480px;
-        border: 0 !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-      }
-      .eos-explorer-v190-visual > .relative:first-child .aspect-\[4\/3\] { height: 100%; aspect-ratio: auto; }
-      .eos-explorer-v190-visual > .relative:first-child svg { min-height: 480px; }
-      .eos-explorer-v190-metric {
-        border: 1px solid rgba(255,255,255,.09);
-        background: linear-gradient(145deg, rgba(15,23,42,.72), rgba(2,6,23,.72));
-        border-radius: 18px;
-        padding: 1rem;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
-      }
-      .eos-explorer-v190-search:focus-within {
-        border-color: rgba(34,211,238,.48) !important;
-        box-shadow: 0 0 0 1px rgba(34,211,238,.18), 0 0 34px rgba(34,211,238,.08);
-      }
-      .eos-explorer-v190-chipbox {
-        border: 1px solid rgba(255,255,255,.08);
-        background: rgba(2,6,23,.48);
-        border-radius: 18px;
-        padding: .9rem;
-      }
-      .eos-explorer-v190-chiptitle { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .22em; color: rgb(100 116 139); }
-      .eos-explorer-v190-chip {
-        border: 1px solid rgba(255,255,255,.09);
-        background: rgba(15,23,42,.78);
-        border-radius: 14px;
-        padding: .42rem .68rem;
-        font-size: .76rem;
-        font-weight: 800;
-        color: rgb(203 213 225);
-        transition: .18s ease;
-      }
-      .eos-explorer-v190-chip:hover { border-color: rgba(34,211,238,.35); color: rgb(207 250 254); background: rgba(34,211,238,.08); }
-      .eos-explorer-v190-rail {
-        border-radius: 22px !important;
-        border-color: rgba(255,255,255,.10) !important;
-        background: rgba(2,6,23,.78) !important;
-      }
-      .eos-explorer-v190-rail > div { height: 100%; }
-      .eos-explorer-v190-list { scrollbar-gutter: stable; }
-      .eos-explorer-v190-list::-webkit-scrollbar { width: 10px; }
-      .eos-explorer-v190-list::-webkit-scrollbar-thumb { background: rgba(34,211,238,.22); border-radius: 999px; border: 3px solid rgba(2,6,23,.95); }
-      .eos-explorer-v190-element { position: relative; overflow: hidden; }
-      .eos-explorer-v190-element::before {
-        content: ""; position: absolute; inset: 0 auto 0 0; width: 3px;
-        background: rgba(34,211,238,.0); transition: .18s ease;
-      }
-      .eos-explorer-v190-element:hover::before { background: rgba(34,211,238,.5); }
-      .eos-explorer-v190-element-active {
-        border-color: rgba(34,211,238,.5) !important;
-        background: linear-gradient(90deg, rgba(34,211,238,.16), rgba(2,6,23,.65)) !important;
-        box-shadow: inset 3px 0 0 rgba(34,211,238,.9), 0 0 22px rgba(34,211,238,.08);
-      }
-      .eos-explorer-v190-element-active::before { background: rgba(34,211,238,.95); }
-      @media (max-width: 1279px) {
-        .eos-explorer-v190-visual { min-height: 420px; }
-        .eos-explorer-v190-list { max-height: 460px !important; }
-      }
-
       /* V174 NOR Grid Interface: perpendicular 90-degree operating system alignment */
       :root {
         --nor-bg: #020617;
@@ -7349,145 +7271,6 @@ function ForecastContextCard({ years = 50, elementName = "this element" }) {
   );
 }
 
-
-function ExplorerLuxuryMetricV190({ label, value, detail }) {
-  return (
-    <div className="eos-explorer-v190-metric">
-      <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">{label}</div>
-      <div className="mt-2 text-2xl font-black text-white">{value}</div>
-      {detail && <div className="mt-1 text-xs leading-5 text-slate-400">{detail}</div>}
-    </div>
-  );
-}
-
-function ExplorerLuxuryHeroV190({
-  el,
-  material,
-  intelligence,
-  profile,
-  crystal,
-  cost,
-  intelligenceScore,
-  forecastYears,
-  forecastOptions,
-  setForecastYears,
-  launchForecast,
-  openCompare,
-  q,
-  setQ,
-  cat,
-  setCat,
-  categories,
-  recent,
-  popular,
-  favorites,
-  chooseElement,
-  toggleFavorite,
-  forecastHistory,
-}) {
-  const recommended = material?.pairings?.[0] || intelligence?.recommendedCompare || "Ti";
-  return (
-    <Panel className="eos-explorer-v190-hero overflow-hidden p-0">
-      <div className="grid gap-0 xl:grid-cols-[.92fr_1.08fr]">
-        <div className="eos-explorer-v190-visual relative min-h-[480px] border-b border-white/10 xl:border-b-0 xl:border-r xl:border-white/10">
-          <ElementHeroImageV149 el={el} material={material} />
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(34,211,238,.10)_1px,transparent_1px),linear-gradient(rgba(34,211,238,.08)_1px,transparent_1px)] bg-[size:72px_72px] opacity-35" />
-          <div className="absolute left-6 top-6 rounded-[18px] border border-cyan-300/20 bg-slate-950/80 px-4 py-3 backdrop-blur-xl">
-            <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">selected material</div>
-            <div className="mt-1 text-5xl font-black tracking-[-.05em] text-white">{el.symbol}</div>
-          </div>
-          <div className="absolute bottom-6 left-6 right-6 rounded-[18px] border border-white/10 bg-slate-950/82 p-4 backdrop-blur-xl">
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <h1 className="text-5xl font-black tracking-[-.05em] text-white md:text-6xl">{el.name}</h1>
-                <div className="mt-2 text-sm font-semibold text-cyan-100">{el.category} · Atomic #{el.atomicNumber}</div>
-              </div>
-              <div className="text-right">
-                <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">ElementOS confidence</div>
-                <div className="mt-1 text-4xl font-black text-cyan-100">{material?.confidence || intelligenceScore}%</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-6 md:p-8 xl:p-10">
-          <Pill gold><Sparkles size={12}/> premium element explorer</Pill>
-          <h2 className="mt-4 max-w-3xl text-4xl font-black tracking-[-.04em] text-white md:text-5xl">Material intelligence brief</h2>
-          <p className="mt-5 max-w-4xl text-base leading-8 text-slate-300">{material?.brief || intelligence?.overview}</p>
-
-          <div className="mt-7 grid gap-3 md:grid-cols-3">
-            <ExplorerLuxuryMetricV190 label="Discovery Potential" value={`${material?.discoveryPotential || intelligenceScore}%`} detail="Weighted by stability, pressure, thermal and rarity." />
-            <ExplorerLuxuryMetricV190 label="Crystal" value={crystal?.short || profile?.crystal || "Modelled"} detail={profile?.crystal || "Structure intelligence"} />
-            <ExplorerLuxuryMetricV190 label="Cost Risk" value={cost?.relativeCost || "Medium"} detail="Decision and supply context." />
-          </div>
-
-          <div className="mt-7 grid gap-3 lg:grid-cols-[1fr_210px]">
-            <div className="eos-explorer-v190-search flex items-center gap-3 rounded-[18px] border border-cyan-300/20 bg-slate-950/70 px-4 py-4">
-              <Search className="shrink-0 text-cyan-200" size={20}/>
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements, symbols, categories, use cases..." className="w-full bg-transparent text-base font-semibold text-white outline-none placeholder:text-slate-600" />
-            </div>
-            <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-[18px] border border-white/10 bg-slate-950/80 px-4 py-4 text-sm font-bold text-white outline-none">
-              {categories.map(c => <option key={c}>{c}</option>)}
-            </select>
-          </div>
-
-          <div className="mt-5 rounded-[18px] border border-white/10 bg-black/25 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Forecast horizon</div>
-                <div className="mt-1 text-sm text-slate-300">Time Machine handoff stays matched to this Explorer selection.</div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <select value={forecastYears} onChange={(e) => setForecastYears(Number(e.target.value))} className="rounded-[14px] border border-white/10 bg-slate-950 px-4 py-3 text-sm font-black text-white outline-none">
-                  {forecastOptions.map(year => <option key={year} value={year}>{year} Year{year === 1 ? "" : "s"}</option>)}
-                </select>
-                <Button onClick={() => launchForecast(el.symbol, forecastYears)} variant="primary">Forecast</Button>
-                <Button onClick={() => openCompare([recommended])}>Compare</Button>
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-2 text-[11px] font-black sm:grid-cols-4">
-              {[["Short",10],["Medium",50],["Long",100],["Extreme",500]].map(([label, years]) => (
-                <button key={label} onClick={() => setForecastYears(years)} className={`rounded-[14px] border px-3 py-2 transition ${Number(forecastYears) === years ? "border-cyan-300/45 bg-cyan-300/10 text-cyan-100" : "border-white/10 bg-white/[0.035] text-slate-400 hover:border-cyan-300/25 hover:text-slate-200"}`}>{label} · {years}y</button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-5 grid gap-3 lg:grid-cols-3">
-            <div className="eos-explorer-v190-chipbox">
-              <div className="eos-explorer-v190-chiptitle">Recent</div>
-              <div className="mt-2 flex flex-wrap gap-2">{recent.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="eos-explorer-v190-chip">{sym}</button>)}</div>
-            </div>
-            <div className="eos-explorer-v190-chipbox">
-              <div className="eos-explorer-v190-chiptitle">Popular</div>
-              <div className="mt-2 flex flex-wrap gap-2">{popular.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="eos-explorer-v190-chip">{elementMap[sym]?.name || sym}</button>)}</div>
-            </div>
-            <div className="eos-explorer-v190-chipbox">
-              <div className="flex items-center justify-between gap-3">
-                <div className="eos-explorer-v190-chiptitle">Favourites</div>
-                <button onClick={() => toggleFavorite(el.symbol)} className="text-xs font-black text-cyan-100">{favorites.includes(el.symbol) ? "Remove" : "Add"} {el.symbol}</button>
-              </div>
-              <div className="mt-2 flex flex-wrap gap-2">{favorites.slice(0, 6).map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="eos-explorer-v190-chip">{sym}</button>)}</div>
-            </div>
-          </div>
-
-          {forecastHistory.length > 0 && (
-            <div className="mt-5 rounded-[18px] border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">Recent forecasts</div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {forecastHistory.slice(0, 6).map((item, index) => (
-                  <button key={`${item.symbol}-${item.years}-${index}`} onClick={() => launchForecast(item.symbol, item.years)} className="rounded-[14px] border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
-                    {item.symbol} · {item.years}y
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </Panel>
-  );
-}
-
 function Explorer({ selected, setSelected, setCompare, setPage, setForecastRequest }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
@@ -7737,43 +7520,79 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
 
   return (
     <div className="space-y-6 pb-28">
-      <ExplorerLuxuryHeroV190
-        el={el}
-        material={materialV149}
-        intelligence={intelligence}
-        profile={profile}
-        crystal={crystal}
-        cost={cost}
-        intelligenceScore={intelligenceScore}
-        forecastYears={forecastYears}
-        forecastOptions={forecastOptions}
-        setForecastYears={setForecastYears}
-        launchForecast={launchForecast}
-        openCompare={openCompare}
-        q={q}
-        setQ={setQ}
-        cat={cat}
-        setCat={setCat}
-        categories={categories}
-        recent={recent}
-        popular={popular}
-        favorites={favorites}
-        chooseElement={chooseElement}
-        toggleFavorite={toggleFavorite}
-        forecastHistory={forecastHistory}
-      />
+      <Panel className="eos-hero-panel overflow-hidden p-6 md:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill gold><Search size={12}/> element explorer</Pill>
+            <h1 className="mt-3 text-5xl font-black sm:text-7xl">Element <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Explorer</span></h1>
+            <p className="mt-4 max-w-5xl text-sm leading-7 text-slate-300">Search any element and open a complete material intelligence workstation: scorecard, substitutes, tradeoffs, exposure scenarios, resistance matrix, engineering snapshot, opportunities and dossier-ready notes.</p>
+          </div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-3 backdrop-blur-xl">
+            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">Forecast horizon</div>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <select value={forecastYears} onChange={(e) => setForecastYears(Number(e.target.value))} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-black text-white outline-none">
+                {forecastOptions.map(year => <option key={year} value={year}>{year} Year{year === 1 ? "" : "s"}</option>)}
+              </select>
+              <Button onClick={() => launchForecast(el.symbol, forecastYears)} variant="primary">Forecast This Element</Button>
+              <Button onClick={() => openCompare([intelligence.recommendedCompare])}>Compare With {intelligence.recommendedCompare}</Button>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-black sm:grid-cols-4">
+              {[["Short",10],["Medium",50],["Long",100],["Extreme",500]].map(([label, years]) => (
+                <button key={label} onClick={() => setForecastYears(years)} className={`rounded-full border px-3 py-1 ${Number(forecastYears) === years ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{label}</button>
+              ))}
+            </div>
+            <div className="mt-2 text-xs leading-5 text-slate-400">Launches Time Machine with {el.name}, auto-filled material, matched {forecastYears}-year horizon and current default environment.</div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 xl:grid-cols-[1fr_260px]">
+          <div className="eos-explorer-search flex w-full items-center gap-3 rounded-[1.5rem] border p-4 shadow-[0_0_35px_rgba(34,211,238,.055)]">
+            <Search className="shrink-0 text-cyan-300" size={22}/>
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements, symbols, compounds, reactions, substitutes..." className="w-full bg-transparent text-base font-bold outline-none placeholder:text-slate-600" />
+          </div>
+          <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-[1.5rem] border border-white/10 bg-slate-950 p-4 text-sm font-bold outline-none">
+            {categories.map(c => <option key={c}>{c}</option>)}
+          </select>
+        </div>
+
+        <div className="mt-4 grid gap-3 lg:grid-cols-3">
+          <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
+            <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Recent</div>
+            <div className="mt-2 flex flex-wrap gap-2">{recent.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100">{sym}</button>)}</div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
+            <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Popular</div>
+            <div className="mt-2 flex flex-wrap gap-2">{popular.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-black text-slate-200">{elementMap[sym]?.name || sym}</button>)}</div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
+            <div className="flex items-center justify-between">
+              <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Favourites</div>
+              <button onClick={() => toggleFavorite(el.symbol)} className="text-xs font-black text-amber-100">{favorites.includes(el.symbol) ? "Remove" : "Add"} {el.symbol}</button>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">{favorites.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-black text-amber-100">{sym}</button>)}</div>
+          </div>
+        </div>
+        {forecastHistory.length > 0 && (
+          <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Recent forecasts</div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {forecastHistory.map((item, index) => (
+                <button key={`${item.symbol}-${item.years}-${index}`} onClick={() => launchForecast(item.symbol, item.years)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+                  {item.symbol} · {item.years}y
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </Panel>
 
       <V155AIMaterialAdvisor selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} compact />
 
       <div className="grid gap-6 xl:grid-cols-[320px_1fr] 2xl:grid-cols-[360px_1fr]">
-        <Panel className="eos-explorer-v190-rail xl:sticky xl:top-4 xl:self-start !p-0 overflow-hidden">
-          <div className="border-b border-white/10 bg-slate-950/80 p-4">
-            <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">Element index</div>
-            <div className="mt-1 text-sm text-slate-400">{filtered.length} visible · select without losing scroll</div>
-          </div>
-          <div className="eos-explorer-v190-list max-h-[calc(100vh-220px)] overflow-auto p-3">
+        <Panel className="xl:sticky xl:top-4 xl:self-start">
+          <div className="max-h-[760px] overflow-auto pr-2">
             {filtered.map(e => (
-              <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`eos-explorer-v190-element mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-[18px] border p-3 text-left transition ${e.symbol === el.symbol ? "eos-explorer-v190-element-active" : "border-white/10 bg-black/20 hover:border-cyan-300/25 hover:bg-white/[0.05]"}`}>
+              <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
                 <ElementPicture el={e} compact />
                 <div>
                   <div className="font-black text-white">{e.name}</div>
@@ -7785,7 +7604,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
         </Panel>
 
         <div className="space-y-6">
-          <div className="grid gap-6 2xl:grid-cols-[.72fr_1.28fr]">
+          <div className="grid gap-6 2xl:grid-cols-[.9fr_1.1fr]">
             <ElementVisualCard el={el} profile={profile} crystal={crystal} />
             <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-slate-950">
               <Pill gold><Sparkles size={12}/> material intelligence brief</Pill>
