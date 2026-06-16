@@ -8715,6 +8715,9 @@ function IsotopeLab() {
           <h2 className="text-2xl font-black">Nucleus Builder</h2>
           <label className="mt-5 block text-sm text-slate-400">Base element<select value={symbol} onChange={(e) => applyElement(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select></label>
           <div className="mt-5 grid gap-4">{[["Protons", protons, setProtons, 1, 118],["Neutrons", neutrons, setNeutrons, 0, 180],["Field Strength", field, setField, 0, 100],["Thermal Load", temperature, setTemperature, 0, 100],["Pressure Load", pressure, setPressure, 0, 100]].map(([label, value, setter, min, max]) => <label key={label} className="text-sm text-slate-400"><div className="flex justify-between"><span>{label}</span><span className="font-mono text-cyan-200">{value}</span></div><input type="range" min={min} max={max} value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-2 w-full"/></label>)}</div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">{[["Carbon-12", "C", 6, 6], ["Iron-56", "Fe", 26, 30], ["Uranium-238", "U", 92, 146], ["Plutonium-239", "Pu", 94, 145]].map(([label, sym, pCount, nCount]) => (
+            <button key={label} type="button" onClick={() => { setSymbol(sym); setProtons(pCount); setNeutrons(nCount); }} className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3 text-left text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">{label}</button>
+          ))}</div>
           <div className="mt-5 grid gap-2 sm:grid-cols-2">{Object.entries(isotopeModeLabels).map(([x, label]) => <Button key={x} onClick={() => setMode(x)} variant={mode === x ? "primary" : "ghost"}>{label}</Button>)}</div>
           <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-cyan-200">Active isotope lens</div><div className="mt-2 text-3xl font-black text-cyan-100">{isotopeModeLabels[mode]} · {Number(activeModeScore).toFixed(1)}%</div><p className="mt-2 text-sm leading-6 text-slate-300">{modeNarratives[mode]}</p></div><Button variant="primary" onClick={exportSummary} className="mt-6 w-full"><Download size={15} className="inline"/> Export Isotope PDF/JSON/SVG</Button>
         </Panel>
@@ -8727,11 +8730,17 @@ function IsotopeLab() {
               <div className="mt-6 grid gap-4 md:grid-cols-4">{[[isotopeModeLabels[mode], activeModeScore, 100],["Stability", stability, 100],["Decay Risk", decayRisk, 100],["Binding Signal", bindingSignal, 100]].map(([label, value, max]) => <div key={label} className="rounded-3xl border border-white/10 bg-black/25 p-4"><div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div><div className="mt-2 text-3xl font-black text-cyan-100">{value.toFixed(1)}</div><div className="mt-3 h-3 rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-fuchsia-300" style={{ width: `${Math.min(100, (value / max) * 100)}%` }}/></div></div>)}</div>
               <Info title="Simulation Interpretation">{isotopeName} is currently a <b>{shellLabel}</b>. Stability improves when neutron balance approaches the modelled stable band and when proton/neutron counts land near shell-favourable numbers.</Info>
             </div>
-            <div className="relative h-[620px] overflow-hidden rounded-[2.75rem] border border-cyan-300/20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 shadow-2xl shadow-cyan-950/20">
+            <div className="relative h-[680px] overflow-hidden rounded-[3rem] border border-cyan-300/25 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 shadow-[0_0_120px_rgba(34,211,238,.16)]">
               <div className="absolute inset-0 z-0 opacity-25" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px)", backgroundSize: "36px 36px" }} />
               <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(circle at 50% 46%, rgba(34,211,238,.22), transparent 24%), radial-gradient(circle at 50% 54%, rgba(217,70,239,.16), transparent 36%), radial-gradient(circle at 22% 18%, rgba(251,191,36,.10), transparent 30%)" }} />
+              <div className="absolute inset-x-10 top-[47%] z-10 h-px bg-gradient-to-r from-transparent via-cyan-200/20 to-transparent" />
+              <div className="absolute inset-y-12 left-1/2 z-10 w-px bg-gradient-to-b from-transparent via-cyan-200/20 to-transparent" />
+              <div className="absolute left-8 top-32 z-20 rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.2em] text-cyan-100">proton chamber</div>
+              <div className="absolute right-8 top-32 z-20 rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.2em] text-fuchsia-100">neutron field</div>
+              <div className="absolute left-8 bottom-32 z-20 rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.2em] text-amber-100">binding halo</div>
+              <div className="absolute right-8 bottom-32 z-20 rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.2em] text-emerald-100">stability lock</div>
 
-              <div className="absolute left-5 top-5 z-50 rounded-2xl border border-white/10 bg-slate-950/85 px-4 py-3 shadow-2xl shadow-black/30 backdrop-blur-xl">
+              <div className="absolute left-5 top-5 z-50 rounded-[1.4rem] border border-cyan-300/20 bg-slate-950/88 px-5 py-4 shadow-2xl shadow-black/30 backdrop-blur-xl">
                 <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Selected nucleus</div>
                 <div className="mt-1 flex items-end gap-3">
                   <span className="text-5xl font-black leading-none text-cyan-100">{selectedElement.symbol.toUpperCase()}</span>
@@ -8739,7 +8748,7 @@ function IsotopeLab() {
                 </div>
               </div>
 
-              <div className="absolute right-5 top-5 z-50 rounded-2xl border border-emerald-300/15 bg-slate-950/80 px-4 py-3 text-right shadow-2xl shadow-black/30 backdrop-blur-xl">
+              <div className="absolute right-5 top-5 z-50 rounded-[1.4rem] border border-emerald-300/20 bg-slate-950/88 px-5 py-4 text-right shadow-2xl shadow-black/30 backdrop-blur-xl">
                 <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Reactor stability</div>
                 <div className="mt-1 text-4xl font-black text-emerald-100">{stability.toFixed(0)}%</div>
                 <div className="mt-1 text-xs text-slate-400">{isotopeClass}</div>
@@ -8768,6 +8777,8 @@ function IsotopeLab() {
               <div className="absolute left-1/2 top-1/2 z-30 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5 bg-slate-950/20 shadow-[0_0_110px_rgba(34,211,238,.1)]" />
               <div className="absolute left-1/2 top-1/2 z-30 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-amber-300/20" style={{ borderStyle: "dashed" }} />
               <div className="absolute left-1/2 top-1/2 z-30 h-[252px] w-[252px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/20" style={{ borderStyle: "dashed" }} />
+              <div className="absolute left-1/2 top-1/2 z-30 h-[470px] w-[470px] -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ background: `conic-gradient(from 90deg, rgba(34,211,238,.34) ${Math.min(100, stability)}%, rgba(255,255,255,.04) ${Math.min(100, stability)}%)`, WebkitMask: "radial-gradient(circle, transparent 67%, black 68%)", mask: "radial-gradient(circle, transparent 67%, black 68%)" }} />
+              <div className="absolute left-1/2 top-1/2 z-30 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-200/25 shadow-[0_0_80px_rgba(251,191,36,.14)]" />
 
               {nucleus.map((dot, i) => {
                 const isProton = dot.type === "p";
@@ -8789,6 +8800,10 @@ function IsotopeLab() {
                 );
               })}
 
+              {[0,1,2,3,4,5].map(i => (
+                <div key={`trail-${i}`} className="absolute left-1/2 top-1/2 z-50 h-[2px] w-[34%] origin-left rounded-full bg-gradient-to-r from-cyan-200/0 via-cyan-200/45 to-cyan-200/0" style={{ transform: `rotate(${i * 60 + 12}deg) translateX(-10%)`, opacity: 0.22 + i * 0.025 }} />
+              ))}
+
               {[0,1,2,3,4,5,6,7,8,9].map(i => <div key={`particle-${i}`} className="absolute z-50 h-2 w-2 rounded-full bg-amber-200 shadow-[0_0_18px_rgba(251,191,36,.85)]" style={{ left: `${12 + ((i * 83) % 76)}%`, top: `${18 + ((i * 47) % 64)}%`, opacity: 0.35 + (i % 4) * 0.12 }} />)}
 
               <div className="absolute left-1/2 top-1/2 z-[70] flex h-36 w-36 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300/55 bg-slate-950/90 text-center shadow-[0_0_90px_rgba(251,191,36,.28)] backdrop-blur-md">
@@ -8796,6 +8811,17 @@ function IsotopeLab() {
                   <div className="text-5xl font-black leading-none text-amber-100">{selectedElement.symbol.toUpperCase()}</div>
                   <div className="mt-2 text-[10px] font-black uppercase tracking-[.2em] text-amber-200/80">active core</div>
                 </div>
+              </div>
+
+              <div className="absolute left-5 top-1/2 z-50 hidden w-32 -translate-y-1/2 rounded-[1.5rem] border border-cyan-300/15 bg-slate-950/75 p-3 text-center shadow-2xl shadow-black/30 backdrop-blur-xl xl:block">
+                <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">binding</div>
+                <div className="mt-1 text-3xl font-black text-cyan-100">{bindingSignal.toFixed(0)}</div>
+                <div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${Math.min(100, bindingSignal)}%` }} /></div>
+              </div>
+              <div className="absolute right-5 top-1/2 z-50 hidden w-32 -translate-y-1/2 rounded-[1.5rem] border border-fuchsia-300/15 bg-slate-950/75 p-3 text-center shadow-2xl shadow-black/30 backdrop-blur-xl xl:block">
+                <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">decay</div>
+                <div className="mt-1 text-3xl font-black text-fuchsia-100">{decayRisk.toFixed(0)}</div>
+                <div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-full rounded-full bg-fuchsia-300" style={{ width: `${Math.min(100, decayRisk)}%` }} /></div>
               </div>
 
               <div className="absolute bottom-5 left-5 right-5 z-50 grid gap-3 rounded-[1.75rem] border border-white/10 bg-slate-950/85 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:grid-cols-4">
