@@ -2903,6 +2903,13 @@ function ElementOSThemeSkin() {
       .eos-page-stage table, .eos-page-stage .overflow-auto { scrollbar-gutter: stable; }
       .eos-explorer-search { min-height: 64px; border-color: rgba(103,232,249,.22) !important; background: rgba(2,6,23,.55) !important; }
       .eos-explorer-search input { font-size: 1.05rem; }
+
+      .eos-explorer-list-frame > .relative.z-10 { height: 100%; min-height: 0; }
+      .eos-explorer-list-frame { max-height: calc(100vh - 156px); }
+      .eos-explorer-list-scroll { scrollbar-gutter: stable; }
+      @media (max-width: 1279px) {
+        .eos-explorer-list-frame { height: min(560px, 72vh) !important; max-height: 72vh; }
+      }
       .eos-sticky-actions { max-width: min(100%, 1500px); margin-left: auto; margin-right: auto; }
 
       @media (min-width: 1024px) {
@@ -7580,8 +7587,12 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
       <V155AIMaterialAdvisor selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} compact />
 
       <div className="grid gap-6 xl:grid-cols-[320px_1fr] 2xl:grid-cols-[360px_1fr]">
-        <Panel className="h-[calc(100vh-180px)] min-h-[520px] overflow-hidden xl:self-start">
-          <div className="h-full overflow-y-auto pr-2">
+        <Panel className="eos-explorer-list-frame h-[min(760px,calc(100vh-156px))] min-h-[520px] overflow-hidden xl:self-start">
+          <div className="eos-explorer-list-scroll h-full min-h-0 overflow-y-auto overscroll-contain pr-2">
+            <div className="sticky top-0 z-20 mb-3 border-b border-white/10 bg-slate-950/95 pb-3 pt-1 backdrop-blur-xl">
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">118 element index</div>
+              <div className="mt-1 text-xs text-slate-500">Scroll inside this frame. The frame itself stays in the page layout.</div>
+            </div>
             {filtered.map(e => (
               <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
                 <ElementPicture el={e} compact />
