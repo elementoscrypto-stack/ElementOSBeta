@@ -7739,6 +7739,319 @@ function topPairingSymbols(symbol, limit = 3) {
 }
 
 
+function Compare({ compare, setCompare, setPage }) {
+  const [candidate, setCandidate] = useState("H");
+  const rows = compare.map((sym) => ({ ...elementMap[sym], metrics: score(sym) }));
+
+  return (
+    <>
+      <Panel>
+        <Pill gold>
+          <BarChart3 size={12} /> comparison engine
+        </Pill>
+        <h1 className="mt-4 text-5xl font-black">Compare Engine</h1>
+        <Info title="Cleaned terminology">
+          Perfect Alignment is now treated as a discovery achievement instead of a confusing map filter. Users compare clear metrics first, then see <b>Perfect Alignment Event</b> when a pairing earns it.
+        </Info>
+      </Panel>
+
+      <GuidePanel page="compare" />
+      <RealTimeNetworkPanel discoveries={generateDiscoveryEngine(6)} setPage={setPage} />
+
+      <Panel>
+        <div className="flex flex-wrap gap-3">
+          <select
+            value={candidate}
+            onChange={(e) => setCandidate(e.target.value)}
+            className="rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none"
+          >
+            {elements.map((e) => (
+              <option key={e.symbol} value={e.symbol}>
+                {e.symbol} — {e.name}
+              </option>
+            ))}
+          </select>
+
+          <Button
+            onClick={() =>
+              setCompare((x) =>
+                x.includes(candidate) ? x : [...x, candidate].slice(0, 10)
+              )
+            }
+            variant="primary"
+          >
+            Add Element
+          </Button>
+
+          <Button
+            onClick={() =>
+              setCompare((x) => {
+                const next = x.filter((sym) => sym !== candidate);
+                return next.length ? next : ["H"];
+              })
+            }
+          >
+            Remove Element
+          </Button>
+
+          <Button
+            onClick={() => setCompare(["H"])}
+          >
+            Reset to Hydrogen
+          </Button>
+
+          <Button onClick={() => setPage("reports")}>Create Report</Button>
+        </div>
+
+        <div className="mt-6 overflow-auto">
+          <table className="w-full min-w-[980px] border-separate border-spacing-y-2">
+            <thead>
+              <tr className="text-left text-xs uppercase tracking-[.18em] text-slate-400">
+                <th className="px-3 py-2">Element</th>
+                {metrics.map((k) => (
+                  <th key={k} className="px-2 py-2">
+                    {k === "alignment" ? "Alignment" : k}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.symbol} className="rounded-2xl border border-white/10 bg-white/[.035]">
+                  <td className="rounded-l-2xl border-y border-l border-white/10 p-3">
+                    <b className="text-cyan-200">{row.symbol}</b>
+                    <div className="text-xs text-slate-500">{row.name}</div>
+                  </td>
+
+                  {metrics.map((k) => (
+                    <td key={k} className="border-y border-white/10 p-2 last:rounded-r-2xl last:border-r">
+                      <div
+                        className="rounded-xl px-3 py-2 text-center text-sm font-bold"
+                        style={heatStyle(row.metrics[k], k === "alignment" ? 100 : 5)}
+                      >
+                        {row.metrics[k].toFixed(k === "alignment" ? 0 : 2)}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Panel>
+          <h2 className="text-2xl font-black">Compare Chart</h2>
+          <MiniBars values={rows.map((r) => r.metrics.conductivity)} />
+          <p className="mt-2 text-sm text-slate-400">
+            Conductivity ranking for current compare set.
+          </p>
+        </Panel>
+
+        <Panel>
+          <h2 className="text-2xl font-black">Decision Summary</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">
+            {rows[0]?.name || "Aluminium"} leads the current workspace. Use Reports to export this as a branded comparison brief with chart notes and simulation IDs.
+          </p>
+        </Panel>
+      </div>
+
+      <Panel>
+        <h2 className="text-3xl font-black">Compatibility Discoveries</h2>
+
+        <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {compare.slice(0, 6).map((sym, i) => {
+            const next = compare[(i + 1) % compare.length];
+
+            if (!next || sym === next) return null;
+
+            const value = compatibilityScore(sym, next);
+            const tier = rarityTier(value);
+            const dna = materialDNA(sym, next);
+
+            return (
+              <div
+                key={`${sym}-${next}`}
+                className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5"
+              >
+                <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs uppercase tracking-[.22em] text-cyan-200">
+                      Compatibility
+                    </div>
+
+                    <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-[10px] font-black tracking-[.18em] text-amber-100">
+                      {tier}
+                    </div>
+                  </div>
+
+                  <div className="mt-5 text-4xl font-black text-cyan-100">
+                    {value}%
+                  </div>
+
+                  <div className="mt-2 text-xl font-black text-white">
+                    {sym} + {next}
+                  </div>
+
+                  <div className="mt-3 text-sm leading-6 text-slate-300">
+                    ElementOS predicts strong behavioural alignment between{" "}
+                    {elementMap[sym]?.name} and {elementMap[next]?.name}.
+                  </div>
+
+                  <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-3">
+                    <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">
+                      Material DNA
+                    </div>
+
+                    <div className="mt-2 font-mono text-cyan-100">{dna}</div>
+                  </div>
+
+                  <div className="mt-5 flex gap-2">
+                    <Button
+                      onClick={() =>
+                        exportAllFormats({
+                          baseName: `${sym}-${next}-compatibility`,
+                          title: `${sym} + ${next} Compatibility`,
+                          summary: `${sym} + ${next}
+Compatibility: ${value}%
+Tier: ${tier}
+DNA: ${dna}`,
+                          payload: { a: sym, b: next, compatibility: value, tier, dna },
+                        })
+                      }
+                    >
+                      Export PDF/JSON/SVG
+                    </Button>
+
+                    <Button
+                      variant="primary"
+                      onClick={() =>
+                        safeCopyText(
+                          `${sym} + ${next} compatibility score: ${value}%`
+                        )
+                      }
+                    >
+                      Share
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-black">AI Recommendations</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+              ElementOS suggests adjacent materials, substitutes and compatibility paths based on the current compare set.
+            </p>
+          </div>
+
+          <Pill gold>
+            <Sparkles size={12} /> live intelligence
+          </Pill>
+        </div>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {generateRecommendations(compare).map((group) => (
+            <div
+              key={group.source}
+              className="relative overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-slate-950 via-cyan-400/5 to-fuchsia-400/10 p-5"
+            >
+              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
+
+              <div className="relative z-10">
+                <div className="text-xs uppercase tracking-[.22em] text-cyan-300">
+                  Based on current compare element
+                </div>
+
+                <div className="mt-2 text-4xl font-black text-cyan-100">
+                  {group.source}
+                </div>
+
+                <p className="mt-3 text-sm leading-6 text-slate-400">
+                  Users comparing {elementMap[group.source]?.name || group.source} may also explore these adjacent material paths.
+                </p>
+
+                <div className="mt-5 space-y-3">
+                  {group.matches.map((m) => (
+                    <div
+                      key={m.symbol}
+                      className="rounded-2xl border border-white/10 bg-black/30 p-4"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-xl font-black text-white">
+                            {m.symbol}
+                          </div>
+
+                          <div className="text-sm text-slate-400">
+                            {m.name}
+                          </div>
+                        </div>
+
+                        <div className="text-2xl font-black text-emerald-200">
+                          {Math.max(1, Math.round(m.similarity))}%
+                        </div>
+                      </div>
+
+                      <div className="mt-3 rounded-xl border border-cyan-300/10 bg-cyan-300/5 p-3 text-sm text-cyan-100">
+                        {m.reason}
+                      </div>
+
+                      <Button
+                        className="mt-4 w-full"
+                        onClick={() =>
+                          safeCopyText(
+                            `${group.source} → ${m.symbol} (${Math.round(m.similarity)}% match): ${m.reason}`
+                          )
+                        }
+                      >
+                        Share Discovery
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-black">Discovery Engine Scan</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+              Auto-generated material discoveries ranked from the full ElementOS element-pair scan.
+            </p>
+          </div>
+          <Pill gold><Sparkles size={12} /> generated intelligence</Pill>
+        </div>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {generateDiscoveryEngine(6).map((d) => (
+            <div key={`${d.dna}-compare`} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-slate-950 via-cyan-400/5 to-fuchsia-400/10 p-5">
+              <div className="text-xs uppercase tracking-[.22em] text-cyan-300">{d.type}</div>
+              <div className="mt-3 text-4xl font-black text-cyan-100">{d.a} + {d.b}</div>
+              <div className="mt-2 text-3xl font-black text-emerald-200">{d.score}%</div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{d.reason}</p>
+              <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-3 font-mono text-xs text-cyan-100">{d.dna}</div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+    </>
+  );
+}
+
 function PeriodicTable({ selected, setSelected, setPage, setCompare, setForecastRequest }) {
   const [layer, setLayer] = useState("thermal");
   const [mode, setMode] = useState("discovery");
