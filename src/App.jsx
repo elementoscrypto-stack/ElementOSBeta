@@ -1493,7 +1493,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
             <h1 className="mt-4 text-5xl font-black sm:text-7xl">
               {pair} <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-100 bg-clip-text text-transparent">Discovery</span>
             </h1>
-            <p className="mt-4 max-w-4xl text-base leading-8 text-slate-300">
+            <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-300">
               This is a share-ready ElementOS discovery page: a persistent result card with AI narrative, scores, report preview, workspace save and next-step actions.
             </p>
             <div className="mt-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-xs uppercase tracking-[.18em] text-slate-400">
@@ -8327,6 +8327,8 @@ function PeriodicTable({ selected, setSelected }) {
   const [query, setQuery] = useState("");
   const [hovered, setHovered] = useState(null);
   const activeElement = elementMap[selected] || elementMap.Ti || elements[0];
+  const mapTileSize = "clamp(46px, min(4.35vw, 7.2vh), 82px)";
+  const mapGapSize = "clamp(3px, .42vw, 8px)";
 
   const layerConfig = {
     diffusion: {
@@ -8429,9 +8431,9 @@ function PeriodicTable({ selected, setSelected }) {
   const inspectedSignal = signalFor(inspectedElement.symbol);
 
   function Tile({ sym }) {
-    if (!sym) return <div className="rounded-[12px] border border-transparent" style={{ height: "clamp(82px, 5.2vw, 128px)" }} />;
+    if (!sym) return <div className="rounded-[12px] border border-transparent" style={{ height: mapTileSize }} />;
     const el = elementMap[sym];
-    if (!el) return <div className="rounded-[12px] border border-transparent" style={{ height: "clamp(82px, 5.2vw, 128px)" }} />;
+    if (!el) return <div className="rounded-[12px] border border-transparent" style={{ height: mapTileSize }} />;
     const isSelected = activeElement.symbol === sym;
     const isVisible = visibleElements.some((item) => item.symbol === sym);
     const pct = signalFor(sym);
@@ -8449,7 +8451,7 @@ function PeriodicTable({ selected, setSelected }) {
         className="group relative overflow-hidden rounded-[12px] border bg-slate-950 text-left transition duration-200 hover:-translate-y-0.5 hover:border-cyan-200/45"
         style={{
           opacity,
-          height: "clamp(82px, 5.2vw, 128px)",
+          height: mapTileSize,
           borderColor: isSelected ? accent : "rgba(255,255,255,.10)",
           boxShadow: glow,
           background: `linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98)), linear-gradient(135deg, ${accent}22, transparent 45%)`,
@@ -8458,13 +8460,13 @@ function PeriodicTable({ selected, setSelected }) {
         <div className="absolute left-0 top-0 h-full w-[4px]" style={{ background: rail }} />
         <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${accent}, transparent ${Math.max(24, pct)}%)` }} />
         <div className="absolute bottom-0 left-0 h-[5px] rounded-r-full" style={{ width: `${pct}%`, background: accent }} />
-        <div className="absolute right-2 top-2 text-[10px] font-black text-slate-500">{el.atomicNumber}</div>
-        <div className="flex h-full flex-col justify-between p-3 pl-4">
+        <div className="absolute right-1.5 top-1.5 text-[clamp(7px,.52vw,10px)] font-black text-slate-500">{el.atomicNumber}</div>
+        <div className="flex h-full flex-col justify-between p-2 pl-3 2xl:p-3 2xl:pl-4">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-600">{pct}</div>
-            <div className="mt-1 text-3xl font-black tracking-[-.08em] text-white">{el.symbol}</div>
+            <div className="text-[clamp(7px,.5vw,10px)] font-black uppercase tracking-[.12em] text-slate-600">{pct}</div>
+            <div className="mt-0.5 text-[clamp(18px,1.65vw,32px)] font-black tracking-[-.08em] text-white">{el.symbol}</div>
           </div>
-          <div className="min-w-0 truncate text-[11px] font-semibold text-slate-400 group-hover:text-slate-200">{el.name}</div>
+          <div className="min-w-0 truncate text-[clamp(8px,.62vw,11px)] font-semibold text-slate-400 group-hover:text-slate-200">{el.name}</div>
         </div>
       </button>
     );
@@ -8472,20 +8474,20 @@ function PeriodicTable({ selected, setSelected }) {
 
   return (
     <div className="space-y-6">
-      <div className="min-h-[calc(100vh-120px)] overflow-hidden rounded-[24px] border border-cyan-300/15 bg-slate-950 shadow-[0_0_80px_rgba(2,6,23,.65)]">
-        <div className="relative border-b border-white/10 bg-[linear-gradient(90deg,rgba(34,211,238,.12),transparent_38%),linear-gradient(180deg,rgba(255,255,255,.045),transparent)] p-6 md:p-8">
+      <div className="min-h-[calc(100vh-92px)] overflow-hidden rounded-[22px] border border-cyan-300/15 bg-slate-950 shadow-[0_0_80px_rgba(2,6,23,.65)]">
+        <div className="relative border-b border-white/10 bg-[linear-gradient(90deg,rgba(34,211,238,.12),transparent_38%),linear-gradient(180deg,rgba(255,255,255,.045),transparent)] p-4 md:p-5">
           <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <Pill gold><Layers size={12} /> element map</Pill>
-              <h1 className="mt-5 max-w-6xl text-5xl font-black tracking-[-.065em] text-white sm:text-7xl">
+              <h1 className="mt-3 max-w-6xl text-4xl font-black tracking-[-.065em] text-white sm:text-6xl">
                 Periodic Intelligence <span className="text-cyan-200">Heatmap</span>
               </h1>
-              <p className="mt-4 max-w-4xl text-base leading-8 text-slate-300">
+              <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-300">
                 A premium 118-element command surface for scanning diffusion, thermal response, pressure behaviour, conductivity, stability, rarity and discovery potential.
               </p>
             </div>
-            <div className="grid min-w-[300px] grid-cols-3 gap-3 rounded-[18px] border border-cyan-300/15 bg-black/35 p-4 backdrop-blur-xl">
+            <div className="grid min-w-[280px] grid-cols-3 gap-2 rounded-[16px] border border-cyan-300/15 bg-black/35 p-3 backdrop-blur-xl">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Layer</div>
                 <div className="mt-1 text-lg font-black text-cyan-100">{layerConfig[layer].label}</div>
@@ -8502,9 +8504,9 @@ function PeriodicTable({ selected, setSelected }) {
           </div>
         </div>
 
-        <div className="grid min-h-[calc(100vh-300px)] xl:grid-cols-[minmax(0,1fr)_390px] 2xl:grid-cols-[minmax(0,1fr)_430px]">
-          <main className="flex min-w-0 flex-col border-r border-white/10">
-            <div className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/95 p-4 backdrop-blur-xl">
+        <div className="grid min-h-[calc(100vh-235px)] 2xl:grid-cols-[minmax(0,1fr)_380px]">
+          <main className="flex min-w-0 flex-col 2xl:border-r 2xl:border-white/10">
+            <div className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/95 p-3 md:p-4 backdrop-blur-xl">
               <div className="grid gap-3 lg:grid-cols-[1fr_190px_190px]">
                 <div className="flex items-center gap-3 rounded-[14px] border border-white/10 bg-black/30 px-4 py-3 focus-within:border-cyan-300/35">
                   <Search size={18} className="text-cyan-200" />
@@ -8536,15 +8538,15 @@ function PeriodicTable({ selected, setSelected }) {
               </div>
             </div>
 
-            <div className="flex-1 overflow-x-auto bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.075),transparent_26%),linear-gradient(180deg,#020617,#020617)] p-4 md:p-6 2xl:p-8">
-              <div className="min-w-[1540px] rounded-[24px] border border-white/10 bg-black/30 p-5 shadow-[inset_0_0_70px_rgba(34,211,238,.045)] 2xl:min-w-0 2xl:p-7">
-                <div className="grid gap-[10px] 2xl:gap-[12px]" style={{ gridTemplateColumns: "repeat(18, minmax(78px, 1fr))" }}>
+            <div className="flex-1 overflow-hidden bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.075),transparent_26%),linear-gradient(180deg,#020617,#020617)] p-3 md:p-4 2xl:p-5">
+              <div className="h-full w-full rounded-[20px] border border-white/10 bg-black/30 p-3 shadow-[inset_0_0_70px_rgba(34,211,238,.045)] md:p-4 2xl:p-5">
+                <div className="grid w-full" style={{ gridTemplateColumns: "repeat(18, minmax(0, 1fr))", gap: mapGapSize }}>
                   {periodicRows.flatMap((row, rowIndex) => row.map((sym, colIndex) => <Tile key={`${sym || "blank"}-${rowIndex}-${colIndex}`} sym={sym} />))}
                 </div>
               </div>
             </div>
 
-            <div className="grid gap-4 border-t border-white/10 p-5 md:p-6 lg:grid-cols-3">
+            <div className="grid gap-3 border-t border-white/10 p-3 md:p-4 lg:grid-cols-3">
               <div className="rounded-[18px] border border-white/10 bg-black/30 p-4">
                 <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Heat legend</div>
                 <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-900">
@@ -8564,8 +8566,8 @@ function PeriodicTable({ selected, setSelected }) {
             </div>
           </main>
 
-          <aside className="border-t border-white/10 bg-slate-950/95 p-5 xl:border-t-0 xl:max-h-[calc(100vh-150px)] xl:overflow-y-auto">
-            <div className="xl:sticky xl:top-6">
+          <aside className="border-t border-white/10 bg-slate-950/95 p-4 2xl:border-t-0 2xl:max-h-[calc(100vh-140px)] 2xl:overflow-y-auto">
+            <div className="2xl:sticky 2xl:top-4">
               <div className="rounded-[22px] border border-cyan-300/15 bg-black/35 p-5 shadow-[0_0_35px_rgba(34,211,238,.06)]">
                 <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">selected element</div>
                 <div className="mt-5 flex items-end gap-4">
