@@ -3062,111 +3062,76 @@ function ElementOSThemeSkin() {
       }
 
 
-
-      /* V175 Site-wide NOR enforcement: every page, window, button, dock and modal follows the perpendicular rule */
-      .eos-nor-grid-interface * {
-        box-sizing: border-box;
+      /* V176 Safe site-wide NOR enforcement rebuilt from V174.
+         This deliberately avoids changing .eos-page-stage spacing, direct-child layout,
+         homepage padding, or top-level margins. It only restyles existing controls/windows. */
+      .eos-nor-grid-interface .eos-panel,
+      .eos-nor-grid-interface .eos-data-card,
+      .eos-nor-grid-interface .poster-card,
+      .eos-nor-grid-interface .poster-card-gold,
+      .eos-nor-grid-interface [class*="border-white/10"],
+      .eos-nor-grid-interface [class*="border-cyan-300/15"],
+      .eos-nor-grid-interface [class*="border-cyan-300/20"],
+      .eos-nor-grid-interface [class*="border-emerald-300/15"],
+      .eos-nor-grid-interface [class*="border-amber-300/15"],
+      .eos-nor-grid-interface [class*="border-red-300/15"] {
+        border-color: rgba(148,163,184,.13) !important;
       }
-      .eos-nor-grid-interface .eos-page-stage,
-      .eos-nor-grid-interface main,
-      .eos-nor-grid-interface aside,
-      .eos-nor-grid-interface nav,
-      .eos-nor-grid-interface header,
-      .eos-nor-grid-interface footer {
-        --nor-local-radius: var(--nor-radius-lg);
+      .eos-nor-grid-interface .eos-panel,
+      .eos-nor-grid-interface .eos-data-card,
+      .eos-nor-grid-interface .eos-luxury-window,
+      .eos-nor-grid-interface .poster-card,
+      .eos-nor-grid-interface .poster-card-gold {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.034), rgba(255,255,255,.012)),
+          linear-gradient(90deg, rgba(34,211,238,.048), transparent 26%, transparent 74%, rgba(34,211,238,.028)),
+          rgba(15,23,42,.86) !important;
+        box-shadow:
+          0 24px 72px rgba(0,0,0,.32),
+          inset 1px 0 0 rgba(34,211,238,.07),
+          inset 0 1px 0 rgba(255,255,255,.05) !important;
       }
-      .eos-nor-grid-interface .eos-page-stage > *,
-      .eos-nor-grid-interface .eos-page-stage section,
-      .eos-nor-grid-interface .eos-page-stage article,
-      .eos-nor-grid-interface .eos-page-stage [class*="rounded-[2rem]"],
-      .eos-nor-grid-interface .eos-page-stage [class*="rounded-[2.5rem]"],
-      .eos-nor-grid-interface .eos-page-stage [class*="rounded-[1.5rem]"],
-      .eos-nor-grid-interface .eos-page-stage .rounded-3xl,
-      .eos-nor-grid-interface .eos-page-stage .rounded-2xl,
-      .eos-nor-grid-interface .eos-page-stage .rounded-xl,
-      .eos-nor-grid-interface aside,
-      .eos-nor-grid-interface .eos-topbar,
-      .eos-nor-grid-interface [role="dialog"],
-      .eos-nor-grid-interface .fixed[class*="border"] {
-        border-radius: var(--nor-radius-lg) !important;
-        border-color: rgba(148, 163, 184, .13) !important;
+      .eos-nor-grid-interface .eos-hero-panel {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)),
+          radial-gradient(circle at 14% 18%, rgba(34,211,238,.13), transparent 34%),
+          linear-gradient(90deg, rgba(34,211,238,.06), transparent 45%, rgba(34,211,238,.03)),
+          rgba(2,6,23,.86) !important;
+        border-color: rgba(34,211,238,.18) !important;
       }
-      .eos-nor-grid-interface .eos-page-stage > *:not(svg):not(canvas),
-      .eos-nor-grid-interface .eos-page-stage section:not(svg):not(canvas),
-      .eos-nor-grid-interface .eos-page-stage article:not(svg):not(canvas),
-      .eos-nor-grid-interface aside,
-      .eos-nor-grid-interface .eos-topbar,
-      .eos-nor-grid-interface [role="dialog"] {
-        position: relative;
-      }
-      .eos-nor-grid-interface .eos-page-stage > *:not(svg):not(canvas)::before,
-      .eos-nor-grid-interface .eos-page-stage section:not(svg):not(canvas)::before,
-      .eos-nor-grid-interface .eos-page-stage article:not(svg):not(canvas)::before,
-      .eos-nor-grid-interface aside::before,
-      .eos-nor-grid-interface .eos-topbar::before,
-      .eos-nor-grid-interface [role="dialog"]::before {
-        content: "";
-        position: absolute;
-        left: 18px;
-        right: 18px;
-        top: 0;
-        height: 1px;
-        pointer-events: none;
-        background: linear-gradient(90deg, transparent, rgba(34,211,238,.20), transparent);
-        opacity: .72;
-      }
-      .eos-nor-grid-interface .eos-page-stage > *:not(svg):not(canvas)::after,
-      .eos-nor-grid-interface .eos-page-stage section:not(svg):not(canvas)::after,
-      .eos-nor-grid-interface .eos-page-stage article:not(svg):not(canvas)::after,
-      .eos-nor-grid-interface aside::after,
-      .eos-nor-grid-interface .eos-topbar::after,
-      .eos-nor-grid-interface [role="dialog"]::after {
-        content: "";
-        position: absolute;
-        top: 18px;
-        bottom: 18px;
-        left: 0;
-        width: 1px;
-        pointer-events: none;
-        background: linear-gradient(transparent, rgba(34,211,238,.16), transparent);
-        opacity: .62;
-      }
-      .eos-nor-grid-interface .eos-page-stage button,
-      .eos-nor-grid-interface .eos-page-stage a[role="button"],
-      .eos-nor-grid-interface .eos-page-stage select,
-      .eos-nor-grid-interface .eos-page-stage input,
-      .eos-nor-grid-interface .eos-page-stage textarea,
-      .eos-nor-grid-interface .eos-topbar button,
-      .eos-nor-grid-interface aside button,
-      .eos-nor-grid-interface [role="dialog"] button {
-        min-height: 42px;
+      .eos-nor-grid-interface button,
+      .eos-nor-grid-interface select,
+      .eos-nor-grid-interface input,
+      .eos-nor-grid-interface textarea,
+      .eos-nor-grid-interface a[role="button"] {
         border-radius: 14px !important;
-        border-color: rgba(34,211,238,.22) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 0 0 1px rgba(34,211,238,.025) !important;
-      }
-      .eos-nor-grid-interface .eos-page-stage button:hover,
-      .eos-nor-grid-interface .eos-topbar button:hover,
-      .eos-nor-grid-interface aside button:hover,
-      .eos-nor-grid-interface [role="dialog"] button:hover {
-        border-color: rgba(34,211,238,.42) !important;
-        background-color: rgba(34,211,238,.10) !important;
       }
       .eos-nor-grid-interface button[class*="bg-cyan-300"],
       .eos-nor-grid-interface button[class*="bg-emerald-300"],
       .eos-nor-grid-interface button[class*="bg-amber-300"],
-      .eos-nor-grid-interface button[class*="bg-blue-"],
-      .eos-nor-grid-interface button[class*="bg-fuchsia-"],
-      .eos-nor-grid-interface button[class*="bg-purple-"],
       .eos-nor-grid-interface button[class*="bg-red-300"],
-      .eos-nor-grid-interface .eos-live-pulse,
-      .eos-nor-grid-interface [class*="bg-cyan-300"]:not(.h-full):not(.w-full),
-      .eos-nor-grid-interface [class*="bg-emerald-300"]:not(.h-full):not(.w-full),
-      .eos-nor-grid-interface [class*="bg-amber-300"]:not(.h-full):not(.w-full),
-      .eos-nor-grid-interface [class*="bg-red-300"]:not(.h-full):not(.w-full) {
-        background: linear-gradient(135deg, rgba(34,211,238,.16), rgba(2,6,23,.86)) !important;
+      .eos-nor-grid-interface button[class*="bg-blue-"],
+      .eos-nor-grid-interface button[class*="bg-purple-"],
+      .eos-nor-grid-interface button[class*="bg-fuchsia-"] {
+        background: linear-gradient(135deg, rgba(34,211,238,.17), rgba(2,6,23,.88)) !important;
         color: #e6fbff !important;
         border: 1px solid rgba(34,211,238,.34) !important;
         text-shadow: none !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 14px 40px rgba(34,211,238,.08) !important;
+      }
+      .eos-nor-grid-interface button:hover,
+      .eos-nor-grid-interface a[role="button"]:hover {
+        border-color: rgba(34,211,238,.42) !important;
+      }
+      .eos-nor-grid-interface input,
+      .eos-nor-grid-interface select,
+      .eos-nor-grid-interface textarea {
+        background: rgba(2,6,23,.78) !important;
+        border-color: rgba(34,211,238,.18) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.045) !important;
+      }
+      .eos-nor-grid-interface .rounded-full:not(.eos-particle):not([class*="h-"]):not([class*="w-"]) {
+        border-radius: 14px !important;
       }
       .eos-nor-grid-interface [class*="bg-cyan-300/10"],
       .eos-nor-grid-interface [class*="bg-cyan-300/5"],
@@ -3174,55 +3139,33 @@ function ElementOSThemeSkin() {
       .eos-nor-grid-interface [class*="bg-amber-300/10"],
       .eos-nor-grid-interface [class*="bg-red-300/10"] {
         background-color: rgba(15,23,42,.50) !important;
-        background-image: linear-gradient(90deg, rgba(34,211,238,.045), transparent 44%, rgba(34,211,238,.025)) !important;
+        background-image: linear-gradient(90deg, rgba(34,211,238,.04), transparent 48%, rgba(34,211,238,.025)) !important;
       }
-      .eos-nor-grid-interface .rounded-full:not(.eos-particle):not([class*="h-"]):not([class*="w-"]) {
-        border-radius: 14px !important;
+      .eos-nor-grid-interface .eos-topbar,
+      .eos-nor-grid-interface aside,
+      .eos-nor-grid-interface [role="dialog"] {
+        border-radius: var(--nor-radius-lg) !important;
+        border-color: rgba(148,163,184,.14) !important;
+        box-shadow: 0 22px 70px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.045) !important;
       }
-      .eos-nor-grid-interface .eos-page-stage .grid,
-      .eos-nor-grid-interface .eos-page-stage [class*="grid-cols"],
-      .eos-nor-grid-interface .eos-page-stage [class*="space-y"] {
-        align-items: stretch;
-      }
-      .eos-nor-grid-interface .eos-page-stage [class*="shadow-[0_0"],
-      .eos-nor-grid-interface .eos-page-stage [class*="shadow-2xl"] {
-        box-shadow: 0 24px 70px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.045) !important;
-      }
-      .eos-nor-grid-interface .eos-page-stage [class*="blur-3xl"],
-      .eos-nor-grid-interface .eos-page-stage [class*="blur-2xl"] {
-        opacity: .45 !important;
-      }
-      .eos-nor-grid-interface .eos-page-stage svg,
-      .eos-nor-grid-interface .eos-page-stage canvas {
-        max-width: 100%;
-      }
-      .eos-nor-grid-interface .eos-page-stage table {
-        border-collapse: separate;
-        border-spacing: 0;
-      }
-      .eos-nor-grid-interface .eos-page-stage th,
-      .eos-nor-grid-interface .eos-page-stage td {
+      .eos-nor-grid-interface table th,
+      .eos-nor-grid-interface table td {
         border-color: rgba(148,163,184,.12) !important;
       }
-      .eos-nor-grid-interface .eos-page-stage .overflow-hidden {
-        overflow: hidden;
+      .eos-nor-grid-interface svg,
+      .eos-nor-grid-interface canvas {
+        max-width: 100%;
       }
-      .eos-nor-grid-interface .eos-page-stage .overflow-auto,
-      .eos-nor-grid-interface .eos-page-stage .overflow-x-auto {
-        scrollbar-color: rgba(34,211,238,.35) rgba(2,6,23,.8);
+      .eos-nor-grid-interface .eos-logo-wordmark,
+      .eos-nor-grid-interface .eos-brand-logo {
+        text-shadow: 0 0 28px rgba(34,211,238,.18);
       }
       @media (max-width: 767px) {
-        .eos-nor-grid-interface .eos-page-stage > *:not(svg):not(canvas)::before,
-        .eos-nor-grid-interface .eos-page-stage section:not(svg):not(canvas)::before,
-        .eos-nor-grid-interface .eos-page-stage article:not(svg):not(canvas)::before {
-          left: 12px;
-          right: 12px;
-        }
-        .eos-nor-grid-interface .eos-page-stage > *:not(svg):not(canvas)::after,
-        .eos-nor-grid-interface .eos-page-stage section:not(svg):not(canvas)::after,
-        .eos-nor-grid-interface .eos-page-stage article:not(svg):not(canvas)::after {
-          top: 12px;
-          bottom: 12px;
+        .eos-nor-grid-interface button,
+        .eos-nor-grid-interface select,
+        .eos-nor-grid-interface input,
+        .eos-nor-grid-interface textarea {
+          min-height: 44px;
         }
       }
 
