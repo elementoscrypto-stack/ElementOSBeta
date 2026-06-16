@@ -8641,9 +8641,10 @@ function PeriodicTable({ selected, setSelected, setPage, setCompare, setForecast
 function BehaviourAtlas({ selected, setSelected }) {
   const [layer, setLayer] = useState("thermal");
   const [environment, setEnvironment] = useState("Deep Ocean");
-  const [fieldMode, setFieldMode] = useState("heatmap");
+  const [selectedPair, setSelectedPair] = useState(["Ti", "Hf"]);
+  const [scanActive, setScanActive] = useState(false);
   const selectedElement = elementMap[selected] || elementMap.Al;
-  const selectedScore = score(selectedElement.symbol);
+
   const layerLabels = {
     stability: "Stability",
     conductivity: "Conductivity",
@@ -8654,160 +8655,249 @@ function BehaviourAtlas({ selected, setSelected }) {
     alignment: "Alignment",
   };
 
-  const environmentProfiles = {
-    Marine: { stress: 46, corrosion: 88, thermal: 36, pressure: 34, label: "salt exposure and long-term corrosion risk", bias: ["Ti", "Zr", "Hf", "Al"] },
-    Aerospace: { stress: 68, corrosion: 30, thermal: 86, pressure: 54, label: "high heat, fatigue and lightweight structure", bias: ["Ti", "Al", "Hf", "Ni"] },
-    "Deep Ocean": { stress: 74, corrosion: 91, thermal: 30, pressure: 96, label: "salt, depth pressure and structural integrity", bias: ["Ti", "Hf", "Zr", "Ni"] },
-    "High Heat": { stress: 70, corrosion: 48, thermal: 98, pressure: 62, label: "turbine-grade thermal stress", bias: ["Hf", "W", "Ta", "Ti"] },
-    Space: { stress: 44, corrosion: 5, thermal: 86, pressure: 9, label: "vacuum, radiation and thermal cycling", bias: ["Ti", "Al", "Si", "Hf"] },
-    Mining: { stress: 84, corrosion: 62, thermal: 54, pressure: 90, label: "abrasion, impact and formation pressure", bias: ["Fe", "W", "Ti", "Cr"] },
-    Medical: { stress: 38, corrosion: 42, thermal: 18, pressure: 26, label: "biocompatibility and corrosion resistance", bias: ["Ti", "Zr", "Ta", "Au"] },
-    Defence: { stress: 88, corrosion: 44, thermal: 82, pressure: 86, label: "impact, pressure and extreme-load performance", bias: ["Ti", "W", "Hf", "Fe"] },
+  const environments = {
+    Marine: { label: "Salt exposure, corrosion and structural persistence", weights: { stability: 1.18, conductivity: 0.72, thermal: 0.72, diffusion: 0.88, pressure: 0.92, rarity: 0.58 }, bias: ["Ti", "Zr", "Hf", "Al"] },
+    Aerospace: { label: "Lightweight strength, heat and fatigue response", weights: { stability: 1.05, conductivity: 0.82, thermal: 1.38, diffusion: 0.72, pressure: 1.05, rarity: 0.64 }, bias: ["Ti", "Al", "Hf", "Ni"] },
+    "Deep Ocean": { label: "Depth pressure, corrosion and long-term integrity", weights: { stability: 1.25, conductivity: 0.6, thermal: 0.72, diffusion: 0.82, pressure: 1.42, rarity: 0.7 }, bias: ["Ti", "Hf", "Zr", "Ni"] },
+    Space: { label: "Vacuum, thermal cycling and low-mass performance", weights: { stability: 1.08, conductivity: 0.78, thermal: 1.24, diffusion: 0.7, pressure: 0.42, rarity: 0.86 }, bias: ["Ti", "Al", "Si", "Hf"] },
+    Mining: { label: "Impact load, abrasion, pressure and service durability", weights: { stability: 1.12, conductivity: 0.62, thermal: 0.82, diffusion: 0.68, pressure: 1.36, rarity: 0.52 }, bias: ["Fe", "W", "Ti", "Cr"] },
+    Medical: { label: "Biocompatibility, stability and corrosion resistance", weights: { stability: 1.34, conductivity: 0.52, thermal: 0.42, diffusion: 0.72, pressure: 0.62, rarity: 0.72 }, bias: ["Ti", "Zr", "Ta", "Au"] },
+    Defence: { label: "Extreme load, heat, pressure and mission resilience", weights: { stability: 1.14, conductivity: 0.72, thermal: 1.2, diffusion: 0.68, pressure: 1.34, rarity: 0.62 }, bias: ["Ti", "W", "Hf", "Fe"] },
+    "High Heat": { label: "Thermal endurance and pressure stability", weights: { stability: 1.02, conductivity: 0.74, thermal: 1.56, diffusion: 0.62, pressure: 1.1, rarity: 0.72 }, bias: ["Hf", "W", "Ta", "Ti"] },
   };
-  const env = environmentProfiles[environment] || environmentProfiles["Deep Ocean"];
-  const envInfluence = (env.stress + env.corrosion + env.thermal + env.pressure) / 400;
-  const metricMax = layer === "alignment" ? 100 : 5;
 
-  const environmentAdjustedValue = (symbol) => {
+  const env = environments[environment] || environments["Deep Ocean"];
+  const layerKeys = ["thermal", "pressure", "stability", "conductivity", "diffusion", "rarity"];
+  const coreSymbols = ["Al", "Ti", "Cu", "Fe", "Hf", "Zr", "Ni", "W", "Ag", "Ta", "Si", "Au"];
+  const matrixSymbols = ATLAS_MATRIX_SYMBOLS || ["Al", "Ti", "Cu", "Fe", "Hf", "Zr"];
+
+  const environmentScore = (symbol) => {
     const s = score(symbol);
-    const base = layer === "alignment" ? s.alignment / 20 : s[layer] || s.thermal;
+    const metricValue = layer === "alignment" ? s.alignment / 20 : s[layer] || s.thermal;
+    const weighted = layerKeys.reduce((sum, key) => sum + (s[key] || 0) * (env.weights[key] || 1), 0) / layerKeys.length;
     const bias = env.bias.includes(symbol) ? 0.62 : 0;
-    const durability = (s.stability + s.pressure + s.thermal) / 15;
-    const corrosionPenalty = env.corrosion > 70 ? Math.max(0, 2.4 - s.stability) * 0.35 : 0;
-    return clamp(base * 0.62 + durability * 2.1 - envInfluence * 0.85 + bias - corrosionPenalty);
+    return Math.max(0, Math.min(99, Math.round((metricValue * 11.5) + (weighted * 9.6) + bias * 12)));
   };
 
-  const fieldCells = Array.from({ length: 216 }, (_, index) => {
-    const element = elements[(index * 13 + Math.floor(env.pressure) + Math.floor(index / 9)) % elements.length];
-    const wave = Math.sin(index / 5 + envInfluence * 6) * 0.32 + Math.cos(index / 11) * 0.16;
-    const value = clamp(environmentAdjustedValue(element.symbol) + wave);
-    return { element, value };
+  const atlasNodes = coreSymbols.map((symbol, index) => {
+    const element = elementMap[symbol] || elementMap.Al;
+    const scoreValue = environmentScore(symbol);
+    const positions = [
+      [20, 28], [47, 18], [76, 30], [28, 55], [59, 50], [83, 64],
+      [16, 76], [42, 82], [68, 78], [36, 36], [64, 24], [52, 66],
+    ];
+    return { ...element, scoreValue, x: positions[index][0], y: positions[index][1] };
   });
 
-  const top = elements
-    .map((element) => ({ ...element, value: environmentAdjustedValue(element.symbol), metrics: score(element.symbol) }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 8);
+  const topSignals = [...atlasNodes].sort((a, b) => b.scoreValue - a.scoreValue).slice(0, 6);
+  const pairScore = compatibilityScore(selectedPair[0], selectedPair[1]);
+  const selectedA = elementMap[selectedPair[0]] || elementMap.Ti;
+  const selectedB = elementMap[selectedPair[1]] || elementMap.Hf;
+  const selectedReadout = score(selectedA.symbol);
 
-  const selectedAdjusted = environmentAdjustedValue(selectedElement.symbol);
-  const resilience = percentFromMetric(selectedAdjusted, 5);
-  const matrix = ATLAS_MATRIX_SYMBOLS.map((rowSymbol) => ATLAS_MATRIX_SYMBOLS.map((colSymbol) => rowSymbol === colSymbol ? null : compatibilityScore(rowSymbol, colSymbol)));
+  const connections = [
+    ["Ti", "Hf"], ["Al", "Ti"], ["Ti", "Zr"], ["Cu", "Ag"], ["Fe", "W"], ["Hf", "Ta"], ["Ni", "Ti"], ["Si", "Al"], ["Au", "Ta"],
+  ].map(([a, b]) => {
+    const na = atlasNodes.find((node) => node.symbol === a);
+    const nb = atlasNodes.find((node) => node.symbol === b);
+    return na && nb ? { a: na, b: nb, score: compatibilityScore(a, b) } : null;
+  }).filter(Boolean);
+
   const anomalies = [
-    { pair: `${top[0]?.symbol || "Ti"} + ${top[1]?.symbol || "Hf"}`, score: compatibilityScore(top[0]?.symbol || "Ti", top[1]?.symbol || "Hf"), label: `${layerLabels[layer]} pressure anomaly` },
-    { pair: "Al + Ti", score: compatibilityScore("Al", "Ti"), label: "lightweight structure signal" },
+    { pair: `${topSignals[0]?.symbol || "Ti"} + ${topSignals[1]?.symbol || "Hf"}`, score: compatibilityScore(topSignals[0]?.symbol || "Ti", topSignals[1]?.symbol || "Hf"), label: `${environment} ${layerLabels[layer]} anomaly` },
+    { pair: "Al + Ti", score: compatibilityScore("Al", "Ti"), label: "lightweight structural pathway" },
     { pair: "Cu + Ag", score: compatibilityScore("Cu", "Ag"), label: "conductivity corridor" },
   ].sort((a, b) => b.score - a.score);
 
+  const runScan = () => {
+    setScanActive(true);
+    const best = anomalies[0]?.pair?.split(" + ") || ["Ti", "Hf"];
+    setSelectedPair([best[0], best[1]]);
+    setSelected(best[0]);
+    showToast(`Interaction scan found ${best[0]} + ${best[1]} at ${anomalies[0]?.score || 97}%`);
+    if (typeof window !== "undefined") window.setTimeout(() => setScanActive(false), 1200);
+  };
+
   const exportAtlas = () => {
-    const content = `ElementOS Material Interaction Atlas\n\nElement: ${selectedElement.name} (${selectedElement.symbol})\nEnvironment: ${environment}\nLayer: ${layerLabels[layer]}\nResilience: ${resilience}%\nContext: ${env.label}\n\nTop signals:\n${top.map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${percentFromMetric(e.value, 5)}%`).join("\n")}\n\nAnomalies:\n${anomalies.map((a) => `${a.pair} — ${a.score}% · ${a.label}`).join("\n")}`;
-    exportAllFormats({ baseName: `interaction-atlas-${selectedElement.symbol}-${environment}`, title: `Material Interaction Atlas: ${selectedElement.symbol}`, summary: content, payload: { selected: selectedElement.symbol, layer, environment, resilience, top, anomalies } });
+    const content = `ElementOS Material Interaction Atlas\n\nEnvironment: ${environment}\nLayer: ${layerLabels[layer]}\nSelected pair: ${selectedPair[0]} + ${selectedPair[1]}\nCompatibility: ${pairScore}%\n\nTop signals:\n${topSignals.map((item, index) => `${index + 1}. ${item.symbol} — ${item.name}: ${item.scoreValue}%`).join("\n")}\n\nAnomalies:\n${anomalies.map((item) => `${item.pair} — ${item.score}% · ${item.label}`).join("\n")}`;
+    exportAllFormats({ baseName: `material-interaction-atlas-${environment}`, title: "Material Interaction Atlas", summary: content, payload: { environment, layer, selectedPair, pairScore, topSignals, anomalies } });
   };
 
   return (
-    <div className="space-y-10">
-      <Panel className="overflow-hidden border-white/10 bg-slate-950/70 p-0">
-        <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,.14),transparent_34%),radial-gradient(circle_at_82%_70%,rgba(16,185,129,.10),transparent_28%),#020617] p-8 sm:p-12">
-          <div className="grid gap-10 xl:grid-cols-[1fr_420px] xl:items-end">
+    <div className="space-y-8">
+      <Panel className="overflow-hidden border-cyan-300/15 bg-slate-950/80 p-0">
+        <div className="relative overflow-hidden border-b border-cyan-300/10 p-6 sm:p-8">
+          <div className="absolute inset-0 opacity-35" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
+          <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1fr)_380px] xl:items-end">
             <div>
               <Pill gold><Radar size={12}/> material interaction atlas</Pill>
-              <h1 className="mt-6 max-w-5xl text-5xl font-bold tracking-[-0.04em] text-white sm:text-7xl xl:text-8xl">A cinematic field map for material behaviour.</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">Choose an environment, scan the behaviour layer and open the highest material signals as compare, forecast or report-ready opportunities.</p>
+              <h1 className="mt-5 max-w-5xl text-5xl font-bold tracking-[-0.04em] text-white sm:text-7xl">NOR-aligned material mission control.</h1>
+              <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300">Scan relationships between materials through perpendicular NOR rails: environment on the vertical axis, behaviour layer on the horizontal axis, and opportunities at the intersection nodes.</p>
             </div>
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
-              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Selected telemetry</div>
+            <div className="rounded-[18px] border border-cyan-300/20 bg-slate-950/90 p-5 shadow-[0_0_60px_rgba(34,211,238,.10)]">
+              <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">active pair inspector</div>
               <div className="mt-4 flex items-end justify-between gap-4">
                 <div>
-                  <div className="text-7xl font-black text-cyan-100">{selectedElement.symbol}</div>
-                  <div className="text-2xl font-semibold text-white">{selectedElement.name}</div>
-                  <div className="text-sm text-slate-400">{environment} · {layerLabels[layer]}</div>
+                  <div className="text-5xl font-black text-white">{selectedPair[0]} + {selectedPair[1]}</div>
+                  <div className="mt-2 text-sm text-slate-400">{selectedA.name} paired with {selectedB.name}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-5xl font-black text-white">{resilience}%</div>
-                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">resilience</div>
+                  <div className="text-5xl font-black text-cyan-100">{pairScore}%</div>
+                  <div className="text-[10px] uppercase tracking-[.2em] text-slate-500">compatibility</div>
                 </div>
               </div>
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Button onClick={exportAtlas} variant="primary">Export Atlas</Button>
-                <Button onClick={() => setSelected(top[0]?.symbol || selectedElement.symbol)}>Use Top Signal</Button>
+              <div className="mt-5 grid grid-cols-2 gap-3 text-xs text-slate-300">
+                <div className="rounded-[14px] border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">Forecast</b><br/>50-year ready</div>
+                <div className="rounded-[14px] border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">Use case</b><br/>{environment}</div>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Button onClick={runScan} variant="primary">Run Interaction Scan</Button>
+                <Button onClick={exportAtlas}>Export Atlas</Button>
               </div>
             </div>
           </div>
         </div>
       </Panel>
 
-      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px]">
-        <Panel className="overflow-hidden border-white/10 bg-slate-950/60 p-0">
-          <div className="border-b border-white/10 p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-3xl font-bold tracking-[-0.02em] text-white">Live Interaction Field</h2>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{environment}: {env.label}. The brightest cells are the strongest adjusted signals for the selected environment and layer.</p>
-              </div>
-              <div className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-black text-slate-300">{fieldMode} mode</div>
+      <div className="grid gap-6 xl:grid-cols-[260px_minmax(0,1fr)_360px]">
+        <aside className="space-y-4">
+          <Panel className="border-cyan-300/15 bg-slate-950/80 p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">environment rail</div>
+            <div className="mt-4 grid gap-2">
+              {Object.keys(environments).map((item) => (
+                <button key={item} onClick={() => setEnvironment(item)} className={`rounded-[14px] border px-4 py-3 text-left text-sm font-black transition ${environment === item ? "border-cyan-300/50 bg-cyan-300/10 text-cyan-50" : "border-white/10 bg-black/20 text-slate-300 hover:border-cyan-300/30"}`}>{item}</button>
+              ))}
             </div>
-            <div className="mt-5 space-y-4">
-              <div className="flex flex-wrap gap-2">{ATLAS_ENVIRONMENT_PRESETS.map((item) => <Button key={item} onClick={() => setEnvironment(item)} variant={environment === item ? "primary" : "ghost"}>{item}</Button>)}</div>
-              <div className="flex flex-wrap gap-2">{metrics.map((metric) => <Button key={metric} onClick={() => setLayer(metric)} variant={layer === metric ? "primary" : "ghost"}>{layerLabels[metric] || metric}</Button>)}<select value={fieldMode} onChange={(event) => setFieldMode(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none">{["heatmap", "magnetic", "thermal", "pressure", "corrosion"].map((item) => <option key={item}>{item}</option>)}</select></div>
+          </Panel>
+
+          <Panel className="border-cyan-300/15 bg-slate-950/80 p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">behaviour rail</div>
+            <div className="mt-4 grid gap-2">
+              {metrics.map((metric) => (
+                <button key={metric} onClick={() => setLayer(metric)} className={`rounded-[14px] border px-4 py-3 text-left text-sm font-black transition ${layer === metric ? "border-cyan-300/50 bg-cyan-300/10 text-cyan-50" : "border-white/10 bg-black/20 text-slate-300 hover:border-cyan-300/30"}`}>{layerLabels[metric] || metric}</button>
+              ))}
             </div>
+          </Panel>
+        </aside>
+
+        <Panel className="overflow-hidden border-cyan-300/15 bg-slate-950/70 p-0">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-300/10 p-5">
+            <div>
+              <h2 className="text-3xl font-bold tracking-[-0.02em] text-white">Interaction Field</h2>
+              <p className="mt-1 text-sm text-slate-400">{environment}: {env.label}</p>
+            </div>
+            <div className="flex items-center gap-2 rounded-[14px] border border-cyan-300/20 bg-black/30 px-4 py-2 text-xs font-black uppercase tracking-[.2em] text-cyan-100">{scanActive ? "Scanning nodes" : "NOR grid locked"}</div>
           </div>
 
-          <div className="relative p-5 sm:p-7">
-            <div className="absolute left-[24%] top-[28%] z-20 hidden rounded-2xl border border-cyan-300/25 bg-black/55 px-4 py-3 text-xs font-black text-cyan-100 backdrop-blur-xl md:block">{anomalies[0].pair}<br/><span className="font-semibold text-slate-300">{anomalies[0].label}</span></div>
-            <div className="absolute right-[18%] bottom-[22%] z-20 hidden rounded-2xl border border-white/15 bg-black/55 px-4 py-3 text-xs font-black text-white backdrop-blur-xl md:block">{anomalies[1].pair}<br/><span className="font-semibold text-slate-300">{anomalies[1].label}</span></div>
-            <div className="grid min-h-[520px] grid-cols-12 gap-2 rounded-[2rem] border border-white/10 bg-black/25 p-4 md:grid-cols-18">
-              {fieldCells.map((cell, index) => {
-                const pct = percentFromMetric(cell.value, 5);
-                const isActive = selectedElement.symbol === cell.element.symbol;
-                return <button key={`${cell.element.symbol}-${index}`} onClick={() => setSelected(cell.element.symbol)} className={`relative min-h-[42px] overflow-hidden rounded-2xl border text-xs font-black transition hover:scale-110 ${isActive ? "border-cyan-200 ring-2 ring-cyan-100/60" : "border-white/10"}`} style={heatStyle(cell.value, 5)} title={`${cell.element.name} · ${pct}%`}><span className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/70"/><span className="relative z-10 text-white">{cell.element.symbol}</span></button>;
+          <div className="relative min-h-[660px] overflow-hidden bg-[#020617] p-5">
+            <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "64px 64px" }} />
+            <div className="absolute left-1/2 top-0 h-full w-px bg-cyan-300/20" />
+            <div className="absolute left-0 top-1/2 h-px w-full bg-cyan-300/20" />
+            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              {connections.map((link) => {
+                const active = selectedPair.includes(link.a.symbol) && selectedPair.includes(link.b.symbol);
+                return <line key={`${link.a.symbol}-${link.b.symbol}`} x1={link.a.x} y1={link.a.y} x2={link.b.x} y2={link.b.y} stroke={active ? "rgba(103,232,249,.9)" : "rgba(34,211,238,.22)"} strokeWidth={active ? 0.62 : 0.28} strokeDasharray={active ? "0" : "1.4 1.6"} />;
               })}
+            </svg>
+
+            {connections.slice(0, 5).map((link, index) => (
+              <div key={`flow-${link.a.symbol}-${link.b.symbol}`} className="absolute h-2 w-2 rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(103,232,249,.9)]" style={{ left: `${(link.a.x + link.b.x) / 2}%`, top: `${(link.a.y + link.b.y) / 2}%`, animation: `eosPulse ${1.8 + index * 0.25}s ease-in-out infinite` }} />
+            ))}
+
+            {atlasNodes.map((node) => {
+              const active = selectedPair.includes(node.symbol) || selectedElement.symbol === node.symbol;
+              const size = 54 + Math.round(node.scoreValue / 5);
+              return (
+                <button
+                  key={node.symbol}
+                  onClick={() => { setSelected(node.symbol); setSelectedPair([node.symbol, topSignals.find((item) => item.symbol !== node.symbol)?.symbol || "Ti"]); }}
+                  className={`absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-[18px] border text-center transition hover:scale-110 ${active ? "border-cyan-200 bg-cyan-300/15 text-white shadow-[0_0_36px_rgba(34,211,238,.35)]" : "border-white/10 bg-slate-950/90 text-slate-200"}`}
+                  style={{ left: `${node.x}%`, top: `${node.y}%`, width: size, height: size }}
+                  title={`${node.name} · ${node.scoreValue}%`}
+                >
+                  <span className="text-lg font-black leading-none">{node.symbol}</span>
+                  <span className="mt-1 text-[10px] font-black text-cyan-100">{node.scoreValue}%</span>
+                </button>
+              );
+            })}
+
+            <div className="absolute left-6 top-6 rounded-[18px] border border-cyan-300/25 bg-black/55 p-4 backdrop-blur-xl">
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">hotspot</div>
+              <div className="mt-2 text-xl font-black text-white">{anomalies[0].pair}</div>
+              <div className="text-sm text-slate-300">{anomalies[0].label}</div>
+            </div>
+
+            <div className="absolute bottom-6 left-6 right-6 grid gap-3 md:grid-cols-3">
+              {anomalies.map((item) => (
+                <button key={item.pair} onClick={() => setSelectedPair(item.pair.split(" + "))} className="rounded-[18px] border border-cyan-300/15 bg-slate-950/85 p-4 text-left backdrop-blur-xl transition hover:border-cyan-300/45">
+                  <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">anomaly</div>
+                  <div className="mt-1 text-lg font-black text-white">{item.pair}</div>
+                  <div className="mt-1 text-sm text-slate-400">{item.label}</div>
+                  <div className="mt-2 text-2xl font-black text-cyan-100">{item.score}%</div>
+                </button>
+              ))}
             </div>
           </div>
         </Panel>
 
-        <div className="space-y-6 xl:sticky xl:top-32 xl:self-start">
-          <Panel>
-            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Top signals</div>
+        <aside className="space-y-4">
+          <Panel className="border-cyan-300/15 bg-slate-950/80 p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">top signal dock</div>
             <div className="mt-4 space-y-3">
-              {top.slice(0, 6).map((item, index) => <button key={item.symbol} onClick={() => setSelected(item.symbol)} className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-cyan-300/35 hover:bg-white/[0.05]"><div><div className="text-xs text-slate-500">#{index + 1}</div><div className="text-lg font-black text-white">{item.name}</div><div className="text-xs text-slate-400">{item.category}</div></div><div className="text-2xl font-black text-cyan-100">{percentFromMetric(item.value, 5)}%</div></button>)}
+              {topSignals.map((item, index) => (
+                <button key={item.symbol} onClick={() => { setSelected(item.symbol); setSelectedPair([item.symbol, selectedPair[0] === item.symbol ? selectedPair[1] : selectedPair[0]]); }} className="flex w-full items-center justify-between rounded-[16px] border border-white/10 bg-black/20 p-3 text-left transition hover:border-cyan-300/35">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">#{index + 1}</div>
+                    <div className="text-lg font-black text-white">{item.symbol}</div>
+                    <div className="text-xs text-slate-400">{item.name}</div>
+                  </div>
+                  <div className="text-2xl font-black text-cyan-100">{item.scoreValue}%</div>
+                </button>
+              ))}
             </div>
           </Panel>
 
-          <Panel>
-            <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Environment load</div>
-            <div className="mt-5 space-y-4">
-              {Object.entries(env).filter(([key]) => !["label", "bias"].includes(key)).map(([label, value]) => <div key={label}><div className="mb-1 flex justify-between text-xs uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span>{value}%</span></div><div className="h-3 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-cyan-300/80" style={{ width: `${value}%` }}/></div></div>)}
+          <Panel className="border-cyan-300/15 bg-slate-950/80 p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">pair readout</div>
+            <div className="mt-3 text-4xl font-black text-white">{selectedPair[0]} + {selectedPair[1]}</div>
+            <div className="mt-2 text-sm leading-6 text-slate-400">Selected pair is optimized against {environment.toLowerCase()} conditions and the active {layerLabels[layer].toLowerCase()} layer.</div>
+            <RadarChart data={selectedReadout} />
+            <div className="mt-4 grid gap-2">
+              <Button onClick={() => showToast(`${selectedPair[0]} + ${selectedPair[1]} queued for Compare.`)} variant="primary">Compare Pair</Button>
+              <Button onClick={() => showToast(`${selectedPair[0]} sent to Future Simulation.`)}>Forecast Pair</Button>
+              <Button onClick={() => showToast(`${selectedPair[0]} + ${selectedPair[1]} report queued.`)}>Generate Report</Button>
             </div>
-            <RadarChart data={selectedScore}/>
           </Panel>
+        </aside>
+      </div>
+
+      <Panel className="border-cyan-300/15 bg-slate-950/80">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">interaction matrix</div>
+            <h2 className="mt-2 text-3xl font-bold tracking-[-0.02em] text-white">Compatibility grid</h2>
+          </div>
+          <div className="text-sm text-slate-400">Click any intersection to inspect the pair.</div>
         </div>
-      </div>
-
-      <div className="grid gap-8 xl:grid-cols-[1fr_420px]">
-        <Panel>
-          <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-3xl font-bold tracking-[-0.02em] text-white">Interaction Matrix</h2><p className="mt-2 text-sm text-slate-400">Compatibility between core materials in the current atlas workspace.</p></div><Pill gold>pairing intelligence</Pill></div>
-          <div className="mt-6 overflow-x-auto">
-            <div className="min-w-[640px] rounded-[2rem] border border-white/10 bg-black/25 p-4">
-              <div className="grid gap-2" style={{ gridTemplateColumns: `120px repeat(${ATLAS_MATRIX_SYMBOLS.length}, minmax(74px, 1fr))` }}>
-                <div />
-                {ATLAS_MATRIX_SYMBOLS.map((symbol) => <div key={symbol} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-center text-sm font-black text-white">{symbol}</div>)}
-                {ATLAS_MATRIX_SYMBOLS.map((rowSymbol, rowIndex) => (
-                  <React.Fragment key={rowSymbol}>
-                    <button onClick={() => setSelected(rowSymbol)} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-left text-sm font-black text-white">{rowSymbol}</button>
-                    {matrix[rowIndex].map((value, colIndex) => <button key={`${rowSymbol}-${ATLAS_MATRIX_SYMBOLS[colIndex]}`} onClick={() => value && setSelected(rowSymbol)} className="rounded-2xl border border-white/10 p-3 text-center text-sm font-black text-white" style={value ? heatStyle(value, 100) : { background: "rgba(255,255,255,.03)" }}>{value || "—"}</button>)}
-                  </React.Fragment>
-                ))}
-              </div>
+        <div className="mt-6 overflow-x-auto">
+          <div className="min-w-[720px] rounded-[18px] border border-cyan-300/15 bg-black/25 p-4">
+            <div className="grid gap-2" style={{ gridTemplateColumns: `120px repeat(${matrixSymbols.length}, minmax(82px, 1fr))` }}>
+              <div />
+              {matrixSymbols.map((symbol) => <div key={symbol} className="rounded-[14px] border border-white/10 bg-slate-950/80 p-3 text-center text-sm font-black text-white">{symbol}</div>)}
+              {matrixSymbols.map((rowSymbol) => (
+                <React.Fragment key={rowSymbol}>
+                  <button onClick={() => setSelected(rowSymbol)} className="rounded-[14px] border border-white/10 bg-slate-950/80 p-3 text-left text-sm font-black text-white">{rowSymbol}</button>
+                  {matrixSymbols.map((colSymbol) => {
+                    const value = rowSymbol === colSymbol ? null : compatibilityScore(rowSymbol, colSymbol);
+                    const active = selectedPair.includes(rowSymbol) && selectedPair.includes(colSymbol);
+                    return <button key={`${rowSymbol}-${colSymbol}`} onClick={() => value && setSelectedPair([rowSymbol, colSymbol])} className={`rounded-[14px] border p-3 text-center text-sm font-black transition ${active ? "border-cyan-200 bg-cyan-300/15 text-cyan-50" : "border-white/10 bg-slate-950/60 text-white hover:border-cyan-300/35"}`}>{value || "—"}</button>;
+                  })}
+                </React.Fragment>
+              ))}
             </div>
           </div>
-        </Panel>
-
-        <Panel>
-          <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Anomaly callouts</div>
-          <div className="mt-4 space-y-3">
-            {anomalies.map((item) => <div key={item.pair} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"><div className="flex items-center justify-between gap-3"><div className="text-lg font-black text-white">{item.pair}</div><div className="text-2xl font-black text-cyan-100">{item.score}%</div></div><div className="mt-2 text-sm text-slate-400">{item.label}</div><div className="mt-3 flex gap-2"><Button onClick={() => setSelected(item.pair.split(" + ")[0])}>Inspect</Button><Button onClick={() => showToast(`${item.pair} queued for report.`)}>Report</Button></div></div>)}
-          </div>
-        </Panel>
-      </div>
+        </div>
+      </Panel>
     </div>
   );
 }
