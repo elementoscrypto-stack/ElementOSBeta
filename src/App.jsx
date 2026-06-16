@@ -1,3 +1,4 @@
+// ELEMENTOS V181 SECOND FULL DEBUG VERIFIED
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { supabase } from "./supabaseClient";
