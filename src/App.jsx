@@ -1705,6 +1705,15 @@ function heatStyle(value, max = 5) {
   const hue = 220 - t * 170;
   return { background: `linear-gradient(135deg,hsl(${hue} 92% ${34 + t * 20}%),hsl(${hue - 20} 88% ${24 + t * 10}%))`, color: t > 0.55 ? "#05111f" : "#e0f2fe" };
 }
+
+function heatTileStyle(value, max = 5) {
+  const t = Math.max(0, Math.min(1, value / max));
+  const cyan = 10 + Math.round(t * 22);
+  const blue = 6 + Math.round(t * 18);
+  return {
+    background: `linear-gradient(180deg, rgba(34,211,238,${cyan / 100}), rgba(15,23,42,.08) 44%, rgba(2,6,23,.62)), linear-gradient(90deg, rgba(255,255,255,.035), transparent 42%, rgba(34,211,238,${blue / 100}))`,
+  };
+}
 function downloadFile(name, content, type = "text/plain") {
   const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);
@@ -2910,6 +2919,84 @@ function ElementOSThemeSkin() {
         .eos-panel, .eos-data-card { box-shadow: 0 0 34px rgba(15,23,42,.16); }
       }
 
+
+
+      /* V190 Premium Element Explorer workstation */
+      .eos-explorer-v190-hero {
+        border-radius: 22px !important;
+        border-color: rgba(34,211,238,.18) !important;
+        background:
+          linear-gradient(90deg, rgba(34,211,238,.045) 1px, transparent 1px),
+          linear-gradient(rgba(34,211,238,.035) 1px, transparent 1px),
+          radial-gradient(circle at 15% 12%, rgba(34,211,238,.12), transparent 32%),
+          rgba(2,6,23,.86) !important;
+        background-size: 72px 72px, 72px 72px, auto, auto !important;
+      }
+      .eos-explorer-v190-hero .eos-luxury-window,
+      .eos-explorer-v190-hero [class*="rounded-"] { text-wrap: balance; }
+      .eos-explorer-v190-visual > .relative:first-child {
+        height: 100%;
+        min-height: 480px;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+      .eos-explorer-v190-visual > .relative:first-child .aspect-\[4\/3\] { height: 100%; aspect-ratio: auto; }
+      .eos-explorer-v190-visual > .relative:first-child svg { min-height: 480px; }
+      .eos-explorer-v190-metric {
+        border: 1px solid rgba(255,255,255,.09);
+        background: linear-gradient(145deg, rgba(15,23,42,.72), rgba(2,6,23,.72));
+        border-radius: 18px;
+        padding: 1rem;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      }
+      .eos-explorer-v190-search:focus-within {
+        border-color: rgba(34,211,238,.48) !important;
+        box-shadow: 0 0 0 1px rgba(34,211,238,.18), 0 0 34px rgba(34,211,238,.08);
+      }
+      .eos-explorer-v190-chipbox {
+        border: 1px solid rgba(255,255,255,.08);
+        background: rgba(2,6,23,.48);
+        border-radius: 18px;
+        padding: .9rem;
+      }
+      .eos-explorer-v190-chiptitle { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .22em; color: rgb(100 116 139); }
+      .eos-explorer-v190-chip {
+        border: 1px solid rgba(255,255,255,.09);
+        background: rgba(15,23,42,.78);
+        border-radius: 14px;
+        padding: .42rem .68rem;
+        font-size: .76rem;
+        font-weight: 800;
+        color: rgb(203 213 225);
+        transition: .18s ease;
+      }
+      .eos-explorer-v190-chip:hover { border-color: rgba(34,211,238,.35); color: rgb(207 250 254); background: rgba(34,211,238,.08); }
+      .eos-explorer-v190-rail {
+        border-radius: 22px !important;
+        border-color: rgba(255,255,255,.10) !important;
+        background: rgba(2,6,23,.78) !important;
+      }
+      .eos-explorer-v190-rail > div { height: 100%; }
+      .eos-explorer-v190-list { scrollbar-gutter: stable; }
+      .eos-explorer-v190-list::-webkit-scrollbar { width: 10px; }
+      .eos-explorer-v190-list::-webkit-scrollbar-thumb { background: rgba(34,211,238,.22); border-radius: 999px; border: 3px solid rgba(2,6,23,.95); }
+      .eos-explorer-v190-element { position: relative; overflow: hidden; }
+      .eos-explorer-v190-element::before {
+        content: ""; position: absolute; inset: 0 auto 0 0; width: 3px;
+        background: rgba(34,211,238,.0); transition: .18s ease;
+      }
+      .eos-explorer-v190-element:hover::before { background: rgba(34,211,238,.5); }
+      .eos-explorer-v190-element-active {
+        border-color: rgba(34,211,238,.5) !important;
+        background: linear-gradient(90deg, rgba(34,211,238,.16), rgba(2,6,23,.65)) !important;
+        box-shadow: inset 3px 0 0 rgba(34,211,238,.9), 0 0 22px rgba(34,211,238,.08);
+      }
+      .eos-explorer-v190-element-active::before { background: rgba(34,211,238,.95); }
+      @media (max-width: 1279px) {
+        .eos-explorer-v190-visual { min-height: 420px; }
+        .eos-explorer-v190-list { max-height: 460px !important; }
+      }
 
       /* V174 NOR Grid Interface: perpendicular 90-degree operating system alignment */
       :root {
@@ -7262,6 +7349,145 @@ function ForecastContextCard({ years = 50, elementName = "this element" }) {
   );
 }
 
+
+function ExplorerLuxuryMetricV190({ label, value, detail }) {
+  return (
+    <div className="eos-explorer-v190-metric">
+      <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">{label}</div>
+      <div className="mt-2 text-2xl font-black text-white">{value}</div>
+      {detail && <div className="mt-1 text-xs leading-5 text-slate-400">{detail}</div>}
+    </div>
+  );
+}
+
+function ExplorerLuxuryHeroV190({
+  el,
+  material,
+  intelligence,
+  profile,
+  crystal,
+  cost,
+  intelligenceScore,
+  forecastYears,
+  forecastOptions,
+  setForecastYears,
+  launchForecast,
+  openCompare,
+  q,
+  setQ,
+  cat,
+  setCat,
+  categories,
+  recent,
+  popular,
+  favorites,
+  chooseElement,
+  toggleFavorite,
+  forecastHistory,
+}) {
+  const recommended = material?.pairings?.[0] || intelligence?.recommendedCompare || "Ti";
+  return (
+    <Panel className="eos-explorer-v190-hero overflow-hidden p-0">
+      <div className="grid gap-0 xl:grid-cols-[.92fr_1.08fr]">
+        <div className="eos-explorer-v190-visual relative min-h-[480px] border-b border-white/10 xl:border-b-0 xl:border-r xl:border-white/10">
+          <ElementHeroImageV149 el={el} material={material} />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(34,211,238,.10)_1px,transparent_1px),linear-gradient(rgba(34,211,238,.08)_1px,transparent_1px)] bg-[size:72px_72px] opacity-35" />
+          <div className="absolute left-6 top-6 rounded-[18px] border border-cyan-300/20 bg-slate-950/80 px-4 py-3 backdrop-blur-xl">
+            <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">selected material</div>
+            <div className="mt-1 text-5xl font-black tracking-[-.05em] text-white">{el.symbol}</div>
+          </div>
+          <div className="absolute bottom-6 left-6 right-6 rounded-[18px] border border-white/10 bg-slate-950/82 p-4 backdrop-blur-xl">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h1 className="text-5xl font-black tracking-[-.05em] text-white md:text-6xl">{el.name}</h1>
+                <div className="mt-2 text-sm font-semibold text-cyan-100">{el.category} · Atomic #{el.atomicNumber}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">ElementOS confidence</div>
+                <div className="mt-1 text-4xl font-black text-cyan-100">{material?.confidence || intelligenceScore}%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 md:p-8 xl:p-10">
+          <Pill gold><Sparkles size={12}/> premium element explorer</Pill>
+          <h2 className="mt-4 max-w-3xl text-4xl font-black tracking-[-.04em] text-white md:text-5xl">Material intelligence brief</h2>
+          <p className="mt-5 max-w-4xl text-base leading-8 text-slate-300">{material?.brief || intelligence?.overview}</p>
+
+          <div className="mt-7 grid gap-3 md:grid-cols-3">
+            <ExplorerLuxuryMetricV190 label="Discovery Potential" value={`${material?.discoveryPotential || intelligenceScore}%`} detail="Weighted by stability, pressure, thermal and rarity." />
+            <ExplorerLuxuryMetricV190 label="Crystal" value={crystal?.short || profile?.crystal || "Modelled"} detail={profile?.crystal || "Structure intelligence"} />
+            <ExplorerLuxuryMetricV190 label="Cost Risk" value={cost?.relativeCost || "Medium"} detail="Decision and supply context." />
+          </div>
+
+          <div className="mt-7 grid gap-3 lg:grid-cols-[1fr_210px]">
+            <div className="eos-explorer-v190-search flex items-center gap-3 rounded-[18px] border border-cyan-300/20 bg-slate-950/70 px-4 py-4">
+              <Search className="shrink-0 text-cyan-200" size={20}/>
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements, symbols, categories, use cases..." className="w-full bg-transparent text-base font-semibold text-white outline-none placeholder:text-slate-600" />
+            </div>
+            <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-[18px] border border-white/10 bg-slate-950/80 px-4 py-4 text-sm font-bold text-white outline-none">
+              {categories.map(c => <option key={c}>{c}</option>)}
+            </select>
+          </div>
+
+          <div className="mt-5 rounded-[18px] border border-white/10 bg-black/25 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Forecast horizon</div>
+                <div className="mt-1 text-sm text-slate-300">Time Machine handoff stays matched to this Explorer selection.</div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <select value={forecastYears} onChange={(e) => setForecastYears(Number(e.target.value))} className="rounded-[14px] border border-white/10 bg-slate-950 px-4 py-3 text-sm font-black text-white outline-none">
+                  {forecastOptions.map(year => <option key={year} value={year}>{year} Year{year === 1 ? "" : "s"}</option>)}
+                </select>
+                <Button onClick={() => launchForecast(el.symbol, forecastYears)} variant="primary">Forecast</Button>
+                <Button onClick={() => openCompare([recommended])}>Compare</Button>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2 text-[11px] font-black sm:grid-cols-4">
+              {[["Short",10],["Medium",50],["Long",100],["Extreme",500]].map(([label, years]) => (
+                <button key={label} onClick={() => setForecastYears(years)} className={`rounded-[14px] border px-3 py-2 transition ${Number(forecastYears) === years ? "border-cyan-300/45 bg-cyan-300/10 text-cyan-100" : "border-white/10 bg-white/[0.035] text-slate-400 hover:border-cyan-300/25 hover:text-slate-200"}`}>{label} · {years}y</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-3 lg:grid-cols-3">
+            <div className="eos-explorer-v190-chipbox">
+              <div className="eos-explorer-v190-chiptitle">Recent</div>
+              <div className="mt-2 flex flex-wrap gap-2">{recent.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="eos-explorer-v190-chip">{sym}</button>)}</div>
+            </div>
+            <div className="eos-explorer-v190-chipbox">
+              <div className="eos-explorer-v190-chiptitle">Popular</div>
+              <div className="mt-2 flex flex-wrap gap-2">{popular.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="eos-explorer-v190-chip">{elementMap[sym]?.name || sym}</button>)}</div>
+            </div>
+            <div className="eos-explorer-v190-chipbox">
+              <div className="flex items-center justify-between gap-3">
+                <div className="eos-explorer-v190-chiptitle">Favourites</div>
+                <button onClick={() => toggleFavorite(el.symbol)} className="text-xs font-black text-cyan-100">{favorites.includes(el.symbol) ? "Remove" : "Add"} {el.symbol}</button>
+              </div>
+              <div className="mt-2 flex flex-wrap gap-2">{favorites.slice(0, 6).map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="eos-explorer-v190-chip">{sym}</button>)}</div>
+            </div>
+          </div>
+
+          {forecastHistory.length > 0 && (
+            <div className="mt-5 rounded-[18px] border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">Recent forecasts</div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {forecastHistory.slice(0, 6).map((item, index) => (
+                  <button key={`${item.symbol}-${item.years}-${index}`} onClick={() => launchForecast(item.symbol, item.years)} className="rounded-[14px] border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+                    {item.symbol} · {item.years}y
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function Explorer({ selected, setSelected, setCompare, setPage, setForecastRequest }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
@@ -7511,79 +7737,43 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
 
   return (
     <div className="space-y-6 pb-28">
-      <Panel className="eos-hero-panel overflow-hidden p-6 md:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <Pill gold><Search size={12}/> element explorer</Pill>
-            <h1 className="mt-3 text-5xl font-black sm:text-7xl">Element <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Explorer</span></h1>
-            <p className="mt-4 max-w-5xl text-sm leading-7 text-slate-300">Search any element and open a complete material intelligence workstation: scorecard, substitutes, tradeoffs, exposure scenarios, resistance matrix, engineering snapshot, opportunities and dossier-ready notes.</p>
-          </div>
-          <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-3 backdrop-blur-xl">
-            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">Forecast horizon</div>
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              <select value={forecastYears} onChange={(e) => setForecastYears(Number(e.target.value))} className="rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-black text-white outline-none">
-                {forecastOptions.map(year => <option key={year} value={year}>{year} Year{year === 1 ? "" : "s"}</option>)}
-              </select>
-              <Button onClick={() => launchForecast(el.symbol, forecastYears)} variant="primary">Forecast This Element</Button>
-              <Button onClick={() => openCompare([intelligence.recommendedCompare])}>Compare With {intelligence.recommendedCompare}</Button>
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-black sm:grid-cols-4">
-              {[["Short",10],["Medium",50],["Long",100],["Extreme",500]].map(([label, years]) => (
-                <button key={label} onClick={() => setForecastYears(years)} className={`rounded-full border px-3 py-1 ${Number(forecastYears) === years ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{label}</button>
-              ))}
-            </div>
-            <div className="mt-2 text-xs leading-5 text-slate-400">Launches Time Machine with {el.name}, auto-filled material, matched {forecastYears}-year horizon and current default environment.</div>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-4 xl:grid-cols-[1fr_260px]">
-          <div className="eos-explorer-search flex w-full items-center gap-3 rounded-[1.5rem] border p-4 shadow-[0_0_35px_rgba(34,211,238,.055)]">
-            <Search className="shrink-0 text-cyan-300" size={22}/>
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search elements, symbols, compounds, reactions, substitutes..." className="w-full bg-transparent text-base font-bold outline-none placeholder:text-slate-600" />
-          </div>
-          <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-[1.5rem] border border-white/10 bg-slate-950 p-4 text-sm font-bold outline-none">
-            {categories.map(c => <option key={c}>{c}</option>)}
-          </select>
-        </div>
-
-        <div className="mt-4 grid gap-3 lg:grid-cols-3">
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-            <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Recent</div>
-            <div className="mt-2 flex flex-wrap gap-2">{recent.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100">{sym}</button>)}</div>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-            <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Popular</div>
-            <div className="mt-2 flex flex-wrap gap-2">{popular.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-black text-slate-200">{elementMap[sym]?.name || sym}</button>)}</div>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-            <div className="flex items-center justify-between">
-              <div className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Favourites</div>
-              <button onClick={() => toggleFavorite(el.symbol)} className="text-xs font-black text-amber-100">{favorites.includes(el.symbol) ? "Remove" : "Add"} {el.symbol}</button>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">{favorites.map(sym => <button key={sym} onClick={() => chooseElement(sym)} className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-black text-amber-100">{sym}</button>)}</div>
-          </div>
-        </div>
-        {forecastHistory.length > 0 && (
-          <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
-            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Recent forecasts</div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {forecastHistory.map((item, index) => (
-                <button key={`${item.symbol}-${item.years}-${index}`} onClick={() => launchForecast(item.symbol, item.years)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
-                  {item.symbol} · {item.years}y
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </Panel>
+      <ExplorerLuxuryHeroV190
+        el={el}
+        material={materialV149}
+        intelligence={intelligence}
+        profile={profile}
+        crystal={crystal}
+        cost={cost}
+        intelligenceScore={intelligenceScore}
+        forecastYears={forecastYears}
+        forecastOptions={forecastOptions}
+        setForecastYears={setForecastYears}
+        launchForecast={launchForecast}
+        openCompare={openCompare}
+        q={q}
+        setQ={setQ}
+        cat={cat}
+        setCat={setCat}
+        categories={categories}
+        recent={recent}
+        popular={popular}
+        favorites={favorites}
+        chooseElement={chooseElement}
+        toggleFavorite={toggleFavorite}
+        forecastHistory={forecastHistory}
+      />
 
       <V155AIMaterialAdvisor selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} compact />
 
       <div className="grid gap-6 xl:grid-cols-[320px_1fr] 2xl:grid-cols-[360px_1fr]">
-        <Panel className="xl:sticky xl:top-4 xl:self-start">
-          <div className="max-h-[760px] overflow-auto pr-2">
+        <Panel className="eos-explorer-v190-rail xl:sticky xl:top-4 xl:self-start !p-0 overflow-hidden">
+          <div className="border-b border-white/10 bg-slate-950/80 p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">Element index</div>
+            <div className="mt-1 text-sm text-slate-400">{filtered.length} visible · select without losing scroll</div>
+          </div>
+          <div className="eos-explorer-v190-list max-h-[calc(100vh-220px)] overflow-auto p-3">
             {filtered.map(e => (
-              <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
+              <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`eos-explorer-v190-element mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-[18px] border p-3 text-left transition ${e.symbol === el.symbol ? "eos-explorer-v190-element-active" : "border-white/10 bg-black/20 hover:border-cyan-300/25 hover:bg-white/[0.05]"}`}>
                 <ElementPicture el={e} compact />
                 <div>
                   <div className="font-black text-white">{e.name}</div>
@@ -7595,7 +7785,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
         </Panel>
 
         <div className="space-y-6">
-          <div className="grid gap-6 2xl:grid-cols-[.9fr_1.1fr]">
+          <div className="grid gap-6 2xl:grid-cols-[.72fr_1.28fr]">
             <ElementVisualCard el={el} profile={profile} crystal={crystal} />
             <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-slate-950">
               <Pill gold><Sparkles size={12}/> material intelligence brief</Pill>
@@ -8310,12 +8500,15 @@ DNA: ${dna}`,
   );
 }
 
+
 function PeriodicTable({ selected, setSelected }) {
   const [layer, setLayer] = useState("diffusion");
   const [cat, setCat] = useState("All");
-  const [signal, setSignal] = useState("Behaviour");
+  const [mode, setMode] = useState("Behaviour");
   const [search, setSearch] = useState("");
-
+  const activeElement = elementMap[selected] || elementMap.Ti || elements[0];
+  const activeScore = score(activeElement.symbol);
+  const maxValue = layer === "alignment" ? 100 : 5;
   const layerLabels = {
     stability: "Stability",
     conductivity: "Conductivity",
@@ -8323,80 +8516,93 @@ function PeriodicTable({ selected, setSelected }) {
     diffusion: "Diffusion",
     pressure: "Pressure",
     rarity: "Rarity",
-    alignment: "Discovery",
+    alignment: "Alignment",
   };
-
   const layerDescriptions = {
-    stability: "Relative consistency under simulated stress and long-duration loading.",
-    conductivity: "Electrical and pathway response for conductive material searches.",
-    thermal: "Resistance to heat-driven degradation and thermal drift.",
-    diffusion: "Boundary-control signal: lower unwanted material spread and drift.",
-    pressure: "Compression, depth, load and high-pressure environment response.",
-    rarity: "Relative rarity and high-value discovery signal.",
-    alignment: "ElementOS discovery alignment score against the aluminium reference model.",
+    stability: "Structural consistency under simulated stress, age and environmental load.",
+    conductivity: "Electrical and pathway behaviour for conductive-use discovery.",
+    thermal: "Heat tolerance, thermal drift resistance and high-temperature usefulness.",
+    diffusion: "Boundary stability and resistance to unwanted material spread.",
+    pressure: "Compression, depth and load response for demanding environments.",
+    rarity: "Strategic-material scarcity and rarity signal.",
+    alignment: "ElementOS cross-metric material-intelligence alignment.",
   };
-
-  const activeElement = elementMap[selected] || elementMap.Al;
-  const activeScore = score(activeElement.symbol);
-  const maxValue = layer === "alignment" ? 100 : 5;
-  const activeValue = Number(activeScore[layer] || 0);
-  const searchTerm = search.trim().toLowerCase();
-
-  const matchesFilter = (el) => {
-    if (!el) return false;
+  const modeDescriptions = {
+    Behaviour: "Raw behaviour profile using the selected layer.",
+    Discovery: "Blends the layer with rarity and alignment potential.",
+    Industrial: "Prioritizes practical engineering usefulness.",
+    Risk: "Shows where caution, mitigation or specialist handling may be needed.",
+  };
+  const categoryAccentMap = {
+    "Transition metal": "#38bdf8",
+    "Post-transition metal": "#67e8f9",
+    "Alkali metal": "#fbbf24",
+    "Alkaline earth metal": "#bef264",
+    "Lanthanide": "#c4b5fd",
+    "Actinide": "#fb7185",
+    "Noble gas": "#f0abfc",
+    "Halogen": "#6ee7b7",
+    "Metalloid": "#5eead4",
+    "Nonmetal": "#cbd5e1",
+    Unknown: "#94a3b8",
+  };
+  function layerValue(sym) {
+    const base = Number(score(sym)[layer] || 0);
+    const s = score(sym);
+    if (mode === "Discovery") return layer === "alignment" ? base : Math.min(5, base * 0.68 + s.rarity * 0.18 + (s.alignment / 100) * 5 * 0.14);
+    if (mode === "Industrial") return layer === "alignment" ? base : Math.min(5, base * 0.64 + s.stability * 0.18 + s.thermal * 0.18);
+    if (mode === "Risk") return layer === "alignment" ? Math.max(0, 100 - base) : Math.max(0.2, 5.4 - base);
+    return base;
+  }
+  function matchesFilter(el) {
+    const q = search.trim().toLowerCase();
     const categoryMatch = cat === "All" || el.category === cat;
-    const searchMatch = !searchTerm || el.symbol.toLowerCase().includes(searchTerm) || el.name.toLowerCase().includes(searchTerm) || el.category.toLowerCase().includes(searchTerm);
+    const searchMatch = !q || el.symbol.toLowerCase().includes(q) || el.name.toLowerCase().includes(q) || el.category.toLowerCase().includes(q);
     return categoryMatch && searchMatch;
-  };
-
-  const filtered = elements.filter(matchesFilter);
-  const ranked = filtered
-    .map((e) => ({ ...e, metrics: score(e.symbol), value: Number(score(e.symbol)[layer] || 0) }))
+  }
+  const ranked = elements
+    .map((e) => ({ ...e, value: layerValue(e.symbol) }))
     .sort((a, b) => b.value - a.value);
-  const top = ranked.slice(0, 10);
-
-  const pairings = elements
-    .filter((e) => e.symbol !== activeElement.symbol)
-    .map((e) => ({ ...e, compatibility: compatibilityScore(activeElement.symbol, e.symbol) }))
-    .sort((a, b) => b.compatibility - a.compatibility)
-    .slice(0, 4);
-
-  const categoryStats = categories.slice(1).map((c) => {
-    const group = elements.filter((e) => e.category === c);
-    const avg = group.length ? group.reduce((sum, e) => sum + Number(score(e.symbol)[layer] || 0), 0) / group.length : 0;
-    return { category: c, count: group.length, avg };
-  }).sort((a, b) => b.avg - a.avg).slice(0, 6);
-
-  const exportPeriodic = () => {
-    const content = `ElementOS Periodic Behaviour Map\n\nLayer: ${layerLabels[layer] || layer}\nCategory: ${cat}\nMode: ${signal}\nSelected: ${activeElement.name} (${activeElement.symbol})\nLayer score: ${activeValue.toFixed(layer === "alignment" ? 0 : 1)}\n\nTop materials:\n${top.map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${Number(e.value).toFixed(layer === "alignment" ? 0 : 1)}`).join("\n")}\n\nGenerated by ElementOS.`;
-    exportAllFormats({ baseName: `periodic-behaviour-map-${layer}`, title: `Periodic Behaviour Map: ${layerLabels[layer] || layer}`, summary: content, payload: { layer, category: cat, selected: activeElement.symbol, top } });
-  };
-
+  const filtered = ranked.filter(matchesFilter);
+  const top = filtered.slice(0, 8);
+  const activeValue = layerValue(activeElement.symbol);
+  const pairings = topPairingSymbols(activeElement.symbol, 5);
   const layerButtons = ["diffusion", "thermal", "pressure", "stability", "conductivity", "rarity", "alignment"];
   const modeButtons = ["Behaviour", "Discovery", "Industrial", "Risk"];
+  const categoryStats = categories.filter((c) => c !== "All").map((c) => {
+    const group = elements.filter((e) => e.category === c);
+    const avg = group.length ? group.reduce((sum, e) => sum + layerValue(e.symbol), 0) / group.length : 0;
+    return { category: c, count: group.length, avg };
+  }).sort((a, b) => b.avg - a.avg).slice(0, 5);
+
+  const exportPeriodic = () => {
+    const content = `ElementOS Periodic Intelligence Grid\n\nLayer: ${layerLabels[layer]}\nMode: ${mode}\nCategory: ${cat}\nSelected: ${activeElement.name} (${activeElement.symbol})\nSignal: ${activeValue.toFixed(layer === "alignment" ? 0 : 1)}\n\nTop signals:\n${top.map((e, i) => `${i + 1}. ${e.symbol} — ${e.name}: ${Number(e.value).toFixed(layer === "alignment" ? 0 : 1)}`).join("\n")}`;
+    exportAllFormats({ baseName: `periodic-intelligence-grid-${layer}`, title: `Periodic Intelligence Grid: ${layerLabels[layer]}`, summary: content, payload: { layer, mode, category: cat, selected: activeElement.symbol, top } });
+  };
+
+  function tileScoreTone(value) {
+    const t = Math.max(0, Math.min(1, value / maxValue));
+    if (t >= 0.82) return "text-cyan-50 border-cyan-200/55 shadow-[0_0_0_1px_rgba(255,255,255,.08),0_18px_42px_rgba(34,211,238,.12)]";
+    if (t >= 0.62) return "text-slate-50 border-cyan-300/28";
+    if (t >= 0.42) return "text-slate-100 border-white/12";
+    return "text-slate-300 border-white/8";
+  }
 
   return (
-    <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-[26px] border border-cyan-300/16 bg-slate-950/95 p-6 shadow-[0_24px_80px_rgba(0,0,0,.36)] sm:p-8">
-        <div className="pointer-events-none absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
-        <div className="relative grid gap-8 xl:grid-cols-[1.05fr_.95fr] xl:items-end">
+    <div className="space-y-7">
+      <section className="relative overflow-hidden rounded-[16px] border border-cyan-300/14 bg-[#020617] p-7 shadow-[0_28px_90px_rgba(0,0,0,.46)] sm:p-9">
+        <div className="pointer-events-none absolute inset-0 opacity-35" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.06) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 border border-cyan-300/10 bg-cyan-300/[.03]" />
+        <div className="relative grid gap-8 xl:grid-cols-[1fr_420px] xl:items-end">
           <div>
-            <Pill gold><Layers size={12}/> element behaviour map</Pill>
-            <h1 className="mt-5 text-5xl font-black tracking-tight text-white sm:text-6xl xl:text-7xl">
-              Periodic Intelligence Grid
-            </h1>
-            <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-              A full-width 118-element heatmap for scanning diffusion, thermal behaviour, pressure response, conductivity, rarity and discovery alignment without squashing the periodic table.
-            </p>
+            <Pill gold><Layers size={12}/> periodic intelligence workspace</Pill>
+            <h1 className="mt-5 max-w-5xl text-5xl font-black tracking-[-.045em] text-white sm:text-6xl xl:text-7xl">Element Behaviour Map</h1>
+            <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">A full 118-element periodic heatmap built as a premium workspace: real table structure, large readable cells, diffusion-first analysis, and a clean inspector for instant material decisions.</p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              ["Active Layer", layerLabels[layer] || layer],
-              ["Visible Elements", String(filtered.length)],
-              ["Selected Score", activeValue.toFixed(layer === "alignment" ? 0 : 1)],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-[18px] border border-cyan-300/12 bg-black/30 p-4">
-                <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{label}</div>
+          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+            {[['Layer', layerLabels[layer]], ['Mode', mode], ['Selected', `${activeElement.symbol} · ${activeValue.toFixed(layer === 'alignment' ? 0 : 1)}`]].map(([label, value]) => (
+              <div key={label} className="rounded-[12px] border border-cyan-300/14 bg-slate-950/90 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.05)]">
+                <div className="text-[10px] font-black uppercase tracking-[.24em] text-slate-500">{label}</div>
                 <div className="mt-2 text-2xl font-black text-cyan-100">{value}</div>
               </div>
             ))}
@@ -8404,82 +8610,75 @@ function PeriodicTable({ selected, setSelected }) {
         </div>
       </section>
 
-      <section className="sticky top-3 z-30 rounded-[22px] border border-cyan-300/16 bg-slate-950/92 p-4 shadow-[0_18px_60px_rgba(0,0,0,.38)] backdrop-blur-xl">
+      <section className="sticky top-3 z-30 rounded-[14px] border border-cyan-300/14 bg-[#020617]/95 p-4 shadow-[0_18px_70px_rgba(0,0,0,.48)] backdrop-blur-xl">
         <div className="grid gap-4 xl:grid-cols-[1fr_auto] xl:items-center">
           <div className="flex flex-wrap gap-2">
             {layerButtons.map((l) => (
-              <button
-                key={l}
-                type="button"
-                onClick={() => setLayer(l)}
-                className={`rounded-[14px] border px-4 py-3 text-sm font-black transition ${layer === l ? "border-cyan-200 bg-cyan-300/12 text-cyan-50 shadow-[0_0_24px_rgba(34,211,238,.18)]" : "border-white/10 bg-black/25 text-slate-300 hover:border-cyan-300/35 hover:text-white"}`}
-              >
-                {layerLabels[l] || l}
-              </button>
+              <button key={l} type="button" onClick={() => setLayer(l)} className={`rounded-[8px] border px-4 py-3 text-sm font-black transition ${layer === l ? "border-cyan-200 bg-cyan-300/12 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,.08),0_0_24px_rgba(34,211,238,.14)]" : "border-white/10 bg-slate-950 text-slate-300 hover:border-cyan-300/35 hover:text-white"}`}>{layerLabels[l]}</button>
             ))}
           </div>
           <div className="flex flex-wrap gap-2 xl:justify-end">
-            <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-[14px] border border-white/10 bg-black/40 px-4 py-3 text-sm font-bold text-white outline-none">
-              {categories.map((c) => <option key={c}>{c}</option>)}
-            </select>
-            <select value={signal} onChange={(e) => setSignal(e.target.value)} className="rounded-[14px] border border-white/10 bg-black/40 px-4 py-3 text-sm font-bold text-white outline-none">
-              {modeButtons.map((m) => <option key={m}>{m}</option>)}
-            </select>
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search element" className="w-full rounded-[14px] border border-white/10 bg-black/40 px-4 py-3 text-sm font-bold text-white outline-none placeholder:text-slate-600 sm:w-48" />
-            <button type="button" onClick={exportPeriodic} className="rounded-[14px] border border-cyan-300/30 bg-cyan-300/10 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/16">Export Map</button>
+            <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-[8px] border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none">{categories.map((c) => <option key={c}>{c}</option>)}</select>
+            <select value={mode} onChange={(e) => setMode(e.target.value)} className="rounded-[8px] border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none">{modeButtons.map((m) => <option key={m}>{m}</option>)}</select>
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search element" className="w-full rounded-[8px] border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none placeholder:text-slate-600 sm:w-52" />
+            <button type="button" onClick={exportPeriodic} className="rounded-[8px] border border-cyan-300/32 bg-cyan-300/10 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/16">Export Map</button>
           </div>
         </div>
-        <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_360px] lg:items-center">
-          <div className="text-sm leading-6 text-slate-400"><b className="text-cyan-100">{layerLabels[layer]} layer:</b> {layerDescriptions[layer]}</div>
-          <div className="rounded-[14px] border border-white/10 bg-black/25 p-3">
+        <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_380px] lg:items-center">
+          <div className="text-sm leading-6 text-slate-400"><b className="text-cyan-100">{layerLabels[layer]}:</b> {layerDescriptions[layer]} <span className="text-slate-500">{modeDescriptions[mode]}</span></div>
+          <div className="rounded-[8px] border border-white/10 bg-black/25 p-3">
             <div className="mb-2 flex justify-between text-[10px] font-black uppercase tracking-[.18em] text-slate-500"><span>Low</span><span>Medium</span><span>High</span></div>
-            <div className="h-3 rounded-full bg-gradient-to-r from-slate-800 via-cyan-900/80 to-cyan-200" />
+            <div className="grid grid-cols-24 gap-px overflow-hidden rounded-[4px] border border-white/8">
+              {Array.from({ length: 24 }).map((_, i) => <div key={i} className="h-3" style={{ background: `rgba(34,211,238,${0.05 + i / 26})` }} />)}
+            </div>
           </div>
         </div>
       </section>
 
       <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_430px]">
-        <section className="rounded-[26px] border border-cyan-300/16 bg-slate-950/95 p-4 shadow-[0_24px_80px_rgba(0,0,0,.30)] sm:p-5">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <section className="rounded-[16px] border border-cyan-300/14 bg-[#020617] p-4 shadow-[0_24px_80px_rgba(0,0,0,.34)] sm:p-5">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-3xl font-black text-white">118-element periodic heatmap</h2>
-              <p className="mt-1 text-sm text-slate-400">Cells keep their proper periodic layout. Scroll horizontally on smaller screens instead of compressing the science into a cramped block.</p>
+              <h2 className="text-3xl font-black tracking-tight text-white">118-element periodic heatmap</h2>
+              <p className="mt-1 text-sm text-slate-400">Clean rectangular NOR cells. Atomic numbers, symbols, names and layer scores stay readable. The table scrolls horizontally instead of squeezing.</p>
             </div>
-            <div className="rounded-[14px] border border-cyan-300/15 bg-cyan-300/8 px-4 py-2 text-sm font-black text-cyan-100">{signal} mode</div>
+            <div className="rounded-[8px] border border-cyan-300/16 bg-cyan-300/8 px-4 py-2 text-sm font-black text-cyan-100">{filtered.length} visible</div>
           </div>
 
-          <div className="overflow-x-auto overflow-y-hidden rounded-[22px] border border-white/10 bg-black/35 p-5">
-            <div className="min-w-[1660px] space-y-3">
+          <div className="overflow-x-auto overflow-y-hidden rounded-[12px] border border-cyan-300/12 bg-black/42 p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,.025)]">
+            <div className="min-w-[1765px] space-y-2.5">
               {periodicRows.map((row, ri) => (
-                <div key={ri} className="grid gap-3" style={{ gridTemplateColumns: "repeat(18, 82px)" }}>
+                <div key={ri} className="grid gap-2.5" style={{ gridTemplateColumns: "repeat(18, 86px)" }}>
                   {row.map((sym, i) => {
                     const el = sym ? elementMap[sym] : null;
-                    if (!el) return <div key={`${ri}-${i}`} className="h-[92px] rounded-[16px] border border-cyan-300/[.035] bg-cyan-300/[.012]" />;
-                    const passes = matchesFilter(el);
-                    const v = Number(score(sym)[layer] || 0);
+                    if (!el) return <div key={`${ri}-${i}`} className="h-[96px] rounded-[4px] border border-cyan-300/[.025] bg-cyan-300/[.006]" />;
+                    const v = layerValue(sym);
                     const pct = Math.max(0, Math.min(100, (v / maxValue) * 100));
+                    const passes = matchesFilter(el);
                     const isSelected = selected === sym;
                     const isTop = top.some((t) => t.symbol === sym);
+                    const categoryAccent = categoryAccentMap[el.category] || categoryAccentMap.Unknown;
+                    const t = Math.max(0, Math.min(1, v / maxValue));
                     return (
                       <button
                         key={sym}
                         type="button"
                         onClick={() => setSelected(sym)}
-                        className={`group relative h-[92px] overflow-hidden rounded-[16px] border bg-slate-950 p-2 text-left transition ${passes ? "opacity-100" : "opacity-18 grayscale"} ${isSelected ? "border-cyan-100 shadow-[0_0_0_2px_rgba(255,255,255,.72),0_0_34px_rgba(34,211,238,.35)]" : "border-white/10 hover:-translate-y-1 hover:border-cyan-300/45"}`}
+                        className={`group relative h-[96px] overflow-hidden rounded-[4px] border bg-[#07111f] p-2.5 text-left transition duration-200 ${tileScoreTone(v)} ${passes ? "opacity-100" : "opacity-20 grayscale"} ${isSelected ? "border-cyan-100 bg-cyan-950/28 shadow-[inset_0_0_0_1px_rgba(255,255,255,.24),0_0_30px_rgba(34,211,238,.24)]" : "hover:-translate-y-0.5 hover:border-cyan-300/42 hover:bg-slate-900"}`}
                       >
-                        <div className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, rgba(34,211,238,.25), rgba(34,211,238,${0.25 + pct / 135}))` }} />
-                        <div className="absolute inset-x-2 bottom-2 h-1.5 overflow-hidden rounded-full bg-white/8"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${pct}%` }} /></div>
-                        <div className="absolute inset-0 opacity-70" style={heatStyle(v, maxValue)} />
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/[.08] via-transparent to-black/40" />
-                        {isTop && <div className="absolute right-2 top-2 h-2 w-2 rounded-full bg-cyan-200 shadow-[0_0_14px_rgba(103,232,249,.9)]" />}
+                        <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: categoryAccent }} />
+                        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, rgba(34,211,238,${0.04 + t * 0.14}), transparent 54%, rgba(2,6,23,.65)), linear-gradient(135deg, rgba(255,255,255,.055), transparent 45%)` }} />
+                        <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-white/[.05]"><div className="h-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,.62)]" style={{ width: `${pct}%` }} /></div>
+                        <div className="absolute left-0 top-0 h-full w-[2px] bg-cyan-300/18" />
+                        {isTop && <div className="absolute right-2 top-2 h-[7px] w-[7px] border border-cyan-100/70 bg-cyan-200 shadow-[0_0_12px_rgba(103,232,249,.8)]" />}
                         <div className="relative z-10 flex h-full flex-col justify-between">
-                          <div className="flex items-start justify-between gap-1">
-                            <span className="text-[10px] font-bold text-slate-300">{el.atomicNumber}</span>
-                            <span className="text-[10px] font-black text-cyan-100">{v.toFixed(layer === "alignment" ? 0 : 1)}</span>
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="text-[10px] font-bold text-slate-400">{el.atomicNumber}</span>
+                            <span className="rounded-[3px] border border-white/10 bg-black/40 px-1.5 py-0.5 text-[10px] font-black text-cyan-100">{v.toFixed(layer === "alignment" ? 0 : 1)}</span>
                           </div>
                           <div>
-                            <div className="text-2xl font-black leading-none text-white">{sym}</div>
-                            <div className="mt-1 truncate text-[10px] font-semibold text-slate-300">{el.name}</div>
+                            <div className="text-[30px] font-black leading-none tracking-[-.055em] text-white">{sym}</div>
+                            <div className="mt-1 truncate text-[10px] font-semibold text-slate-400">{el.name}</div>
                           </div>
                         </div>
                       </button>
@@ -8492,37 +8691,37 @@ function PeriodicTable({ selected, setSelected }) {
         </section>
 
         <aside className="space-y-6 2xl:sticky 2xl:top-32 2xl:self-start">
-          <section className="rounded-[26px] border border-cyan-300/18 bg-slate-950/95 p-6 shadow-[0_24px_80px_rgba(0,0,0,.30)]">
+          <section className="rounded-[16px] border border-cyan-300/18 bg-[#020617] p-6 shadow-[0_24px_80px_rgba(0,0,0,.34)]">
             <div className="flex items-start justify-between gap-5">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Selected element</div>
+                <div className="text-[10px] font-black uppercase tracking-[.24em] text-slate-500">Selected element</div>
                 <div className="mt-3 text-7xl font-black leading-none text-cyan-100">{activeElement.symbol}</div>
                 <h2 className="mt-3 text-3xl font-black text-white">{activeElement.name}</h2>
                 <div className="mt-1 text-sm text-slate-400">Atomic {activeElement.atomicNumber} · {activeElement.category}</div>
               </div>
-              <div className="rounded-[18px] border border-cyan-300/18 bg-cyan-300/8 p-4 text-right">
+              <div className="rounded-[10px] border border-cyan-300/18 bg-cyan-300/8 p-4 text-right">
                 <div className="text-4xl font-black text-white">{activeValue.toFixed(layer === "alignment" ? 0 : 1)}</div>
                 <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-100">{layerLabels[layer]}</div>
               </div>
             </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 2xl:grid-cols-1">
+            <div className="mt-6 space-y-3">
               {metrics.filter((m) => m !== "alignment").map((m) => {
                 const value = Number(activeScore[m] || 0);
                 return (
-                  <div key={m} className="rounded-[16px] border border-white/10 bg-black/25 p-3">
-                    <div className="flex justify-between text-xs font-black uppercase tracking-[.14em] text-slate-500"><span>{m}</span><span className="text-cyan-100">{value.toFixed(1)}</span></div>
-                    <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/8"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${Math.min(100, value / 5 * 100)}%` }} /></div>
+                  <div key={m} className="rounded-[8px] border border-white/10 bg-black/25 p-3">
+                    <div className="flex justify-between text-xs font-black uppercase tracking-[.14em] text-slate-500"><span>{layerLabels[m] || m}</span><span className="text-cyan-100">{value.toFixed(1)}</span></div>
+                    <div className="mt-2 h-2 overflow-hidden rounded-[3px] bg-white/8"><div className="h-full bg-cyan-300" style={{ width: `${Math.min(100, value / 5 * 100)}%` }} /></div>
                   </div>
                 );
               })}
             </div>
           </section>
 
-          <section className="rounded-[26px] border border-cyan-300/18 bg-slate-950/95 p-6">
-            <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Best pairings</div>
+          <section className="rounded-[16px] border border-cyan-300/18 bg-[#020617] p-6">
+            <div className="text-[10px] font-black uppercase tracking-[.24em] text-slate-500">Best pairings</div>
             <div className="mt-4 space-y-3">
               {pairings.map((p) => (
-                <button key={p.symbol} type="button" onClick={() => setSelected(p.symbol)} className="w-full rounded-[16px] border border-white/10 bg-black/25 p-4 text-left hover:border-cyan-300/35">
+                <button key={p.symbol} type="button" onClick={() => setSelected(p.symbol)} className="w-full rounded-[8px] border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/8">
                   <div className="flex items-center justify-between gap-3"><span className="text-lg font-black text-white">{activeElement.symbol} + {p.symbol}</span><span className="text-xl font-black text-cyan-100">{p.compatibility}%</span></div>
                   <div className="mt-1 text-xs text-slate-400">{p.name} · compatibility candidate</div>
                 </button>
@@ -8530,12 +8729,12 @@ function PeriodicTable({ selected, setSelected }) {
             </div>
           </section>
 
-          <section className="rounded-[26px] border border-cyan-300/18 bg-slate-950/95 p-6">
-            <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Top signals</div>
+          <section className="rounded-[16px] border border-cyan-300/18 bg-[#020617] p-6">
+            <div className="text-[10px] font-black uppercase tracking-[.24em] text-slate-500">Top signals</div>
             <div className="mt-4 space-y-3">
               {top.slice(0, 5).map((e, i) => (
-                <button key={e.symbol} type="button" onClick={() => setSelected(e.symbol)} className="w-full rounded-[16px] border border-white/10 bg-black/25 p-3 text-left hover:border-cyan-300/35">
-                  <div className="flex items-center justify-between gap-3"><span className="text-sm font-black text-slate-400">#{i + 1}</span><span className="flex-1 text-lg font-black text-white">{e.symbol} · {e.name}</span><span className="text-lg font-black text-cyan-100">{Number(e.value).toFixed(layer === "alignment" ? 0 : 1)}</span></div>
+                <button key={e.symbol} type="button" onClick={() => setSelected(e.symbol)} className="w-full rounded-[8px] border border-white/10 bg-black/25 p-3 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/8">
+                  <div className="flex items-center justify-between gap-3"><span className="text-sm font-black text-slate-500">#{i + 1}</span><span className="flex-1 text-lg font-black text-white">{e.symbol} · {e.name}</span><span className="text-lg font-black text-cyan-100">{Number(e.value).toFixed(layer === "alignment" ? 0 : 1)}</span></div>
                 </button>
               ))}
             </div>
@@ -8543,11 +8742,12 @@ function PeriodicTable({ selected, setSelected }) {
         </aside>
       </div>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         {categoryStats.map((row) => (
-          <button key={row.category} type="button" onClick={() => setCat(row.category)} className="rounded-[22px] border border-white/10 bg-slate-950/90 p-5 text-left hover:border-cyan-300/35">
-            <div className="flex items-center justify-between gap-4"><div><div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{row.count} elements</div><div className="mt-2 text-xl font-black text-white">{row.category}</div></div><div className="text-3xl font-black text-cyan-100">{row.avg.toFixed(1)}</div></div>
-            <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/8"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${Math.min(100, (row.avg / maxValue) * 100)}%` }} /></div>
+          <button key={row.category} type="button" onClick={() => setCat(row.category)} className="rounded-[12px] border border-white/10 bg-[#020617] p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/8">
+            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{row.count} elements</div>
+            <div className="mt-2 text-lg font-black text-white">{row.category}</div>
+            <div className="mt-4 flex items-end justify-between gap-4"><div className="h-2 flex-1 overflow-hidden rounded-[3px] bg-white/8"><div className="h-full bg-cyan-300" style={{ width: `${Math.min(100, (row.avg / maxValue) * 100)}%` }} /></div><div className="text-2xl font-black text-cyan-100">{row.avg.toFixed(1)}</div></div>
           </button>
         ))}
       </section>
