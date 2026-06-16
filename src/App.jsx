@@ -5236,6 +5236,254 @@ function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
     </div>
   );
 }
+function TimeMachineGenius({ selected, setSelected, setPage, forecastRequest }) {
+  const environmentProfiles = {
+    Marine: { label: "Salt, humidity and long-cycle corrosion pressure", corrosion: 1.55, thermal: 0.75, pressure: 0.8, fatigue: 1.15, radiation: 0.2 },
+    Aerospace: { label: "Thermal cycling, vibration and weight-critical loading", corrosion: 0.35, thermal: 1.35, pressure: 0.75, fatigue: 1.45, radiation: 0.6 },
+    "Deep Ocean": { label: "Extreme pressure, chloride exposure and low-temperature drift", corrosion: 1.75, thermal: 0.45, pressure: 1.85, fatigue: 1.1, radiation: 0.2 },
+    "High Heat": { label: "Thermal shock, creep risk and long-term heat exposure", corrosion: 0.65, thermal: 2.05, pressure: 0.9, fatigue: 1.35, radiation: 0.35 },
+    Space: { label: "Vacuum, radiation and high-amplitude thermal cycling", corrosion: 0.18, thermal: 1.25, pressure: 0.25, fatigue: 1.2, radiation: 2.2 },
+    Mining: { label: "Abrasive dust, vibration, moisture and mechanical load", corrosion: 1.15, thermal: 0.8, pressure: 1.25, fatigue: 1.55, radiation: 0.3 },
+    Medical: { label: "Biocompatibility, corrosion resistance and fatigue durability", corrosion: 0.95, thermal: 0.25, pressure: 0.45, fatigue: 1.05, radiation: 0.15 },
+    Defence: { label: "Shock, heat, pressure and field-service uncertainty", corrosion: 0.9, thermal: 1.25, pressure: 1.35, fatigue: 1.45, radiation: 0.55 },
+  };
+
+  const horizons = [1, 5, 10, 25, 50, 100, 250, 500, 1000];
+  const [material, setMaterial] = useState(forecastRequest?.symbol || selected || "Ti");
+  const [environment, setEnvironment] = useState(forecastRequest?.environment && environmentProfiles[forecastRequest.environment] ? forecastRequest.environment : "Marine");
+  const [years, setYears] = useState(Number(forecastRequest?.years) || 50);
+  const [scanComplete, setScanComplete] = useState(true);
+
+  useEffect(() => {
+    if (!forecastRequest) return;
+    const nextSymbol = forecastRequest.symbol || selected || material || "Ti";
+    const nextYears = Number(forecastRequest.years) || 50;
+    setMaterial(nextSymbol);
+    setSelected?.(nextSymbol);
+    setYears(nextYears);
+    if (forecastRequest.environment && environmentProfiles[forecastRequest.environment]) setEnvironment(forecastRequest.environment);
+  }, [forecastRequest?.id]);
+
+  const el = elementMap[material] || elementMap.Ti || elements[21] || elements[0];
+  const s = score(el.symbol);
+  const profile = environmentProfiles[environment] || environmentProfiles.Marine;
+  const materialOptions = elements.filter((item) => item.category !== "Unknown").slice(0, 118);
+
+  const exposureLoad = profile.corrosion * 13 + profile.thermal * 11 + profile.pressure * 10 + profile.fatigue * 10 + profile.radiation * 9;
+  const materialStrength = s.stability * 13 + s.thermal * 10 + s.pressure * 9 + s.diffusion * 8 + s.conductivity * 2;
+  const confidence = Math.max(62, Math.min(98, Math.round(74 + s.stability * 3 + s.thermal * 2 - Math.log10(years + 1) * 5)));
+  const survivability = Math.max(6, Math.min(99, Math.round(96 + materialStrength * 0.18 - exposureLoad * 0.72 - Math.log10(years + 1) * 15)));
+  const corrosionRisk = Math.max(2, Math.min(99, Math.round(profile.corrosion * 18 + years * 0.035 + (5 - s.diffusion) * 9)));
+  const thermalRisk = Math.max(2, Math.min(99, Math.round(profile.thermal * 17 + years * 0.025 + (5 - s.thermal) * 8)));
+  const pressureRisk = Math.max(2, Math.min(99, Math.round(profile.pressure * 17 + years * 0.026 + (5 - s.pressure) * 8)));
+  const fatigueRisk = Math.max(2, Math.min(99, Math.round(profile.fatigue * 16 + years * 0.03 + (5 - s.stability) * 8)));
+  const retention = Math.max(4, Math.min(99, Math.round((survivability + (100 - corrosionRisk) + (100 - fatigueRisk)) / 3)));
+  const dominantRisk = [
+    ["Corrosion", corrosionRisk, "Surface attack, moisture, chemical or chloride load."],
+    ["Thermal Drift", thermalRisk, "Heat cycling, creep, expansion and shock response."],
+    ["Pressure Drift", pressureRisk, "Compression, load transfer and long-term deformation."],
+    ["Fatigue", fatigueRisk, "Repeated stress, vibration and micro-crack growth."],
+  ].sort((a, b) => b[1] - a[1])[0];
+
+  const curveYears = [0, 1, 5, 10, 25, 50, 100, 250, 500, 1000].filter((item) => item <= Math.max(years, 50));
+  const curve = curveYears.map((year, index) => {
+    const drop = Math.log10(year + 1) * (exposureLoad * 0.34) + index * 1.5;
+    const value = Math.max(8, Math.min(99, Math.round(98 - drop + materialStrength * 0.08)));
+    return { year, value };
+  });
+  const maxYear = Math.max(...curve.map((item) => item.year), years, 1);
+  const points = curve.map((item) => {
+    const x = 7 + (item.year / maxYear) * 86;
+    const y = 90 - (item.value / 100) * 74;
+    return `${x.toFixed(2)},${y.toFixed(2)}`;
+  }).join(" ");
+  const selectedX = 7 + (years / maxYear) * 86;
+  const selectedY = 90 - (survivability / 100) * 74;
+
+  const alternatives = elements
+    .filter((item) => item.symbol !== el.symbol && item.category !== "Unknown")
+    .map((item) => {
+      const sc = score(item.symbol);
+      const fit = Math.max(35, Math.min(98, Math.round(70 + sc.stability * 4 + sc.thermal * 3 + sc.pressure * 2 - exposureLoad * 0.18 - Math.abs(item.atomicNumber - el.atomicNumber) * 0.08)));
+      return { ...item, fit };
+    })
+    .sort((a, b) => b.fit - a.fit)
+    .slice(0, 3);
+
+  const events = [
+    { year: Math.max(1, Math.round(years * 0.2)), title: "Surface condition shift", body: `${environment} exposure begins to separate strong candidates from weak substitutes.` },
+    { year: Math.max(2, Math.round(years * 0.5)), title: `${dominantRisk[0]} becomes visible`, body: dominantRisk[2] },
+    { year, title: "Decision horizon", body: `${el.name} projects ${survivability}% survivability with ${confidence}% forecast confidence.` },
+  ];
+
+  const reportSummary = `ElementOS projects ${el.name} as a ${survivability >= 78 ? "strong" : survivability >= 58 ? "moderate" : "high-risk"} candidate for ${environment.toLowerCase()} exposure over ${years} years. The main watch item is ${dominantRisk[0].toLowerCase()}, while projected retention is ${retention}%.`;
+
+  const runForecast = () => {
+    setScanComplete(false);
+    try { if (typeof window !== "undefined") window.setTimeout(() => setScanComplete(true), 650); }
+    catch (_error) { setScanComplete(true); }
+  };
+
+  const exportForecast = () => {
+    const text = [
+      "ElementOS Time Machine Forecast",
+      `Material: ${el.name} (${el.symbol})`,
+      `Environment: ${environment}`,
+      `Horizon: ${years} years`,
+      `Survivability: ${survivability}%`,
+      `Retention: ${retention}%`,
+      `Confidence: ${confidence}%`,
+      `Primary risk: ${dominantRisk[0]} (${dominantRisk[1]}%)`,
+      "",
+      reportSummary,
+    ].join("\n");
+    try {
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ElementOS_TimeMachine_${el.symbol}_${years}y.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (_error) { showToast?.("Forecast summary ready."); }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Panel className="overflow-hidden border-cyan-300/20 bg-slate-950/90">
+        <div className="grid gap-8 xl:grid-cols-[.82fr_1.38fr_.82fr]">
+          <div className="space-y-4">
+            <Pill gold><Clock3 size={12}/> future simulation</Pill>
+            <div>
+              <h1 className="text-5xl font-black tracking-tight sm:text-6xl">Time Machine</h1>
+              <p className="mt-4 text-base leading-7 text-slate-300">Forecast a material through years of heat, pressure, corrosion, fatigue and exposure. Built as a NOR-aligned decision console: inputs left, simulation centre, outputs right.</p>
+            </div>
+
+            <div className="rounded-[1.25rem] border border-cyan-300/15 bg-black/25 p-4">
+              <label className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Material</label>
+              <select value={material} onChange={(event) => { setMaterial(event.target.value); setSelected?.(event.target.value); }} className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-sm font-bold text-white outline-none focus:border-cyan-300/50">
+                {materialOptions.map((item) => <option key={item.symbol} value={item.symbol}>{item.symbol} — {item.name}</option>)}
+              </select>
+            </div>
+
+            <div className="rounded-[1.25rem] border border-cyan-300/15 bg-black/25 p-4">
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Environment preset</div>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {Object.keys(environmentProfiles).map((name) => (
+                  <button key={name} type="button" onClick={() => setEnvironment(name)} className={`rounded-xl border px-3 py-2 text-left text-xs font-black transition ${environment === name ? "border-cyan-300/60 bg-cyan-300/12 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[0.035] text-slate-300 hover:border-cyan-300/30"}`}>{name}</button>
+                ))}
+              </div>
+              <p className="mt-3 text-xs leading-5 text-slate-400">{profile.label}</p>
+            </div>
+
+            <div className="rounded-[1.25rem] border border-cyan-300/15 bg-black/25 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <label className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Forecast horizon</label>
+                <span className="text-lg font-black text-cyan-100">{years}y</span>
+              </div>
+              <input type="range" min="1" max="1000" step="1" value={years} onChange={(event) => setYears(Number(event.target.value))} className="mt-4 w-full accent-cyan-300" />
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {horizons.map((item) => <button key={item} type="button" onClick={() => setYears(item)} className={`rounded-xl border px-2 py-2 text-xs font-black ${years === item ? "border-cyan-300/70 bg-cyan-300/15 text-cyan-100" : "border-white/10 bg-white/[0.03] text-slate-400"}`}>{item}y</button>)}
+              </div>
+            </div>
+
+            <Button onClick={runForecast} variant="primary" className="w-full">Run Forecast</Button>
+          </div>
+
+          <div className="relative min-h-[620px] overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-[linear-gradient(135deg,#020617,#07111f_58%,#020617)] p-5 shadow-[0_0_80px_rgba(34,211,238,.08)]">
+            <div className="pointer-events-none absolute inset-0 opacity-45 bg-[linear-gradient(rgba(34,211,238,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.08)_1px,transparent_1px)] bg-[size:56px_56px]" />
+            <div className="relative z-10 flex items-start justify-between gap-4">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">Future state curve</div>
+                <h2 className="mt-2 text-3xl font-black text-white">{el.name} · {environment}</h2>
+              </div>
+              <div className="rounded-xl border border-cyan-300/25 bg-cyan-300/10 px-4 py-3 text-right">
+                <div className="text-3xl font-black text-cyan-100">{survivability}%</div>
+                <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-400">survival</div>
+              </div>
+            </div>
+
+            <div className={`relative z-10 mt-5 h-[390px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/25 ${scanComplete ? "" : "animate-pulse"}`}>
+              <svg viewBox="0 0 100 100" className="h-full w-full">
+                <defs>
+                  <linearGradient id="tmGeniusLine" x1="0" x2="1"><stop offset="0%" stopColor="#22d3ee"/><stop offset="55%" stopColor="#ffffff"/><stop offset="100%" stopColor="#fbbf24"/></linearGradient>
+                  <filter id="tmGeniusGlow"><feGaussianBlur stdDeviation="1.1" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                </defs>
+                {[18, 36, 54, 72, 90].map((y) => <line key={y} x1="6" x2="94" y1={y} y2={y} stroke="rgba(255,255,255,.08)" />)}
+                {[7, 28, 49, 70, 91].map((x) => <line key={x} x1={x} x2={x} y1="10" y2="92" stroke="rgba(34,211,238,.08)" />)}
+                <polyline points={points} fill="none" stroke="url(#tmGeniusLine)" strokeWidth="1.6" filter="url(#tmGeniusGlow)" />
+                <polygon points={`7,90 ${points} 93,90`} fill="rgba(34,211,238,.10)" />
+                <line x1={selectedX} x2={selectedX} y1="10" y2="92" stroke="rgba(251,191,36,.8)" strokeDasharray="2 2" />
+                <circle cx={selectedX} cy={selectedY} r="2.2" fill="#fbbf24" stroke="#ffffff" strokeWidth=".6" />
+                {curve.map((item) => {
+                  const x = 7 + (item.year / maxYear) * 86;
+                  const y = 90 - (item.value / 100) * 74;
+                  return <circle key={item.year} cx={x} cy={y} r="1.1" fill="#22d3ee" opacity=".85" />;
+                })}
+              </svg>
+              <div className="absolute bottom-4 left-4 right-4 grid gap-2 sm:grid-cols-4">
+                {["Retention", "Corrosion", "Thermal", "Pressure"].map((label, idx) => {
+                  const val = [retention, 100 - corrosionRisk, 100 - thermalRisk, 100 - pressureRisk][idx];
+                  return <div key={label} className="rounded-xl border border-white/10 bg-slate-950/80 p-3"><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">{label}</div><div className="mt-1 text-xl font-black text-white">{val}%</div></div>;
+                })}
+              </div>
+            </div>
+
+            <div className="relative z-10 mt-5 rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Timeline spine</div>
+                <div className="text-xs font-bold text-cyan-100">Selected horizon: {years} years</div>
+              </div>
+              <div className="mt-4 grid grid-cols-9 gap-1">
+                {horizons.map((item) => <button key={item} type="button" onClick={() => setYears(item)} className={`h-2 rounded-full ${item <= years ? "bg-cyan-300" : "bg-white/10"}`} title={`${item} years`} />)}
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-3">
+                {events.map((event) => <div key={`${event.year}-${event.title}`} className="rounded-xl border border-cyan-300/15 bg-black/25 p-3"><div className="text-xs font-black text-cyan-100">Year {event.year}</div><div className="mt-1 text-sm font-black text-white">{event.title}</div><p className="mt-1 text-xs leading-5 text-slate-400">{event.body}</p></div>)}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="rounded-[1.5rem] border border-cyan-300/20 bg-black/25 p-5">
+              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Forecast verdict</div>
+              <div className="mt-3 text-5xl font-black text-white">{el.symbol}</div>
+              <div className="mt-1 text-xl font-black text-cyan-100">{el.name}</div>
+              <p className="mt-4 text-sm leading-7 text-slate-300">{reportSummary}</p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3"><div className="text-2xl font-black text-emerald-100">{confidence}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">confidence</div></div>
+                <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3"><div className="text-2xl font-black text-amber-100">{retention}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">retention</div></div>
+              </div>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-rose-300/20 bg-black/25 p-5">
+              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Risk forecast</div>
+              {[["Corrosion", corrosionRisk], ["Thermal", thermalRisk], ["Pressure", pressureRisk], ["Fatigue", fatigueRisk]].map(([label, value]) => (
+                <div key={label} className="mt-4">
+                  <div className="flex justify-between text-xs font-black"><span className="text-slate-300">{label}</span><span className="text-white">{value}%</span></div>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-[1.5rem] border border-cyan-300/20 bg-black/25 p-5">
+              <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Alternative materials</div>
+              <div className="mt-4 space-y-3">
+                {alternatives.map((item) => <button key={item.symbol} type="button" onClick={() => { setMaterial(item.symbol); setSelected?.(item.symbol); }} className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.035] p-3 text-left hover:border-cyan-300/40"><span><b className="text-white">{item.symbol}</b><span className="ml-2 text-xs text-slate-400">{item.name}</span></span><span className="text-sm font-black text-cyan-100">{item.fit}%</span></button>)}
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              <Button onClick={exportForecast} variant="primary">Export Forecast Summary</Button>
+              <Button onClick={() => setPage?.("reports")}>Generate Report</Button>
+              <Button onClick={() => setPage?.("explorer")}>Open Explorer</Button>
+            </div>
+          </div>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
 
 
 
@@ -15450,7 +15698,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
       ),
       discover: <Discover setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
       publicdiscovery: <PublicDiscoveryPage discovery={publicDiscovery} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
-      timemachine: <TimeMachine selected={selected} setSelected={setSelected} setPage={setPage} forecastRequest={forecastRequest} />,
+      timemachine: <TimeMachineGenius selected={selected} setSelected={setSelected} setPage={setPage} forecastRequest={forecastRequest} />,
       matterlab: <MatterIntelligenceLab />,
       scenario: <ScenarioBuilderSafe selected={selected} setSelected={setSelected} setPage={setPage} />,
       lab: <DiscoveryVaultV57 session={session} selected={selected} compare={compare} setPage={setPage} />,
