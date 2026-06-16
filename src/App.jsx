@@ -7580,8 +7580,8 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
       <V155AIMaterialAdvisor selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} compact />
 
       <div className="grid gap-6 xl:grid-cols-[320px_1fr] 2xl:grid-cols-[360px_1fr]">
-        <Panel className="xl:sticky xl:top-4 xl:self-start">
-          <div className="max-h-[760px] overflow-auto pr-2">
+        <Panel className="xl:self-start">
+          <div className="max-h-none overflow-visible pr-2">
             {filtered.map(e => (
               <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
                 <ElementPicture el={e} compact />
