@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+cimport React, { useEffect, useMemo, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { supabase } from "./supabaseClient";
 import {
@@ -1381,7 +1381,7 @@ function MatterIntelligenceLab() {
           </div>
           <Button onClick={runScan} variant="primary">Run New Scan</Button>
         </div>
-        <div className="mt-6 grid gap-3 md:grid-cols-5">
+        <div className="mt-7 grid gap-4 md:grid-cols-5">
           {pipeline.map(([step, title, body]) => (
             <div key={title} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-4">
               <div className="text-xs font-black text-cyan-200">{step}</div>
@@ -4464,7 +4464,7 @@ function Discover({ setPage, setPublicDiscovery }) {
           <h2 className="mt-3 text-4xl font-black text-cyan-100">{top?.a} + {top?.b}</h2>
           <div className="mt-3 text-6xl font-black text-emerald-200">{top?.momentum}</div>
           <div className="mt-1 text-xs uppercase tracking-[.22em] text-slate-500">adaptive momentum score</div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4">
               <div className="text-xs uppercase tracking-[.2em] text-cyan-200">AI confidence</div>
               <div className="mt-2 text-3xl font-black text-cyan-100">{top?.aiConfidence}%</div>
@@ -10423,7 +10423,7 @@ function CalculationCore() {
                   <div className="text-xs font-black uppercase tracking-[.18em] text-amber-200">Importance in mathematics</div>
                   <p className="mt-2 text-sm leading-6 text-slate-300">{activeTokenInfo.importance}</p>
                 </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="mt-5 grid gap-4 sm:grid-cols-2">
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Uses inside ElementOS</div>
                     <div className="mt-3 space-y-2">{activeTokenInfo.uses.map((use) => <div key={use} className="flex gap-2 text-xs leading-5 text-slate-300"><span className="text-cyan-200">✓</span><span>{use}</span></div>)}</div>
@@ -10696,7 +10696,7 @@ function V211ResearchCentreHub({ compare = [], selected = "Al", isPro, startChec
 
   return (
     <div className="space-y-5">
-      <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/95 p-0">
+      <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/95 p-0 shadow-[0_28px_120px_rgba(0,0,0,.35)]">
         <div className="relative grid gap-0 lg:grid-cols-[1.05fr_.95fr]">
           <div className="absolute inset-0 opacity-45" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.06) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
           <div className="relative p-6 lg:p-8">
@@ -11159,12 +11159,28 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
 
       <ElementOSIntelligenceLayer page="accelerator" context={{ selected: beamElement.symbol }} setPage={setPage} />
 
-      <div className="grid gap-5 xl:grid-cols-[300px_minmax(0,1fr)_360px]">
-        <Panel className="border-cyan-300/15 bg-[#050b16]/90">
+      <div className="grid gap-3 md:grid-cols-4">
+        {[
+          ["Machine", machine.name, machine.subtitle],
+          ["Beam", `${beamElement.symbol} → ${targetElement.symbol}`, `${particle} collision path`],
+          ["Energy", `${collisionEnergyGeV} GeV`, `${(velocityFraction * 100).toFixed(2)}% light speed`],
+          ["State", simulationRunning ? "Running" : "Ready", `${collisionQuality}% collision quality`],
+        ].map(([label, value, note]) => (
+          <div key={label} className="border border-cyan-300/12 bg-[#050b16]/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
+            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{label}</div>
+            <div className="mt-2 text-xl font-black text-white">{value}</div>
+            <div className="mt-1 text-xs leading-5 text-slate-400">{note}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)_340px]">
+        <Panel className="border-cyan-300/15 bg-[#050b16]/90 shadow-[0_24px_80px_rgba(0,0,0,.28)]">
           <Pill><Zap size={12}/> accelerator modes</Pill>
+          <p className="mt-3 text-xs leading-5 text-slate-400">Choose the machine geometry first. The centre chamber, telemetry and collision output adapt without changing the rest of the lab.</p>
           <div className="mt-4 grid gap-2">
             {machines.map((item) => (
-              <button key={item.id} onClick={() => setMachineId(item.id)} className={`group border p-3 text-left transition ${machineId === item.id ? "border-cyan-300/55 bg-cyan-300/12 shadow-[0_0_32px_rgba(34,211,238,.14)]" : "border-white/10 bg-black/22 hover:border-cyan-300/25 hover:bg-cyan-300/[.06]"}`}>
+              <button key={item.id} onClick={() => setMachineId(item.id)} className={`group border p-4 text-left transition hover:-translate-y-0.5 ${machineId === item.id ? "border-cyan-300/55 bg-cyan-300/12 shadow-[0_0_32px_rgba(34,211,238,.14)]" : "border-white/10 bg-black/22 hover:border-cyan-300/25 hover:bg-cyan-300/[.06]"}`}>
                 <div className="flex items-center justify-between gap-3">
                   <div><div className="text-sm font-black text-white">{item.name}</div><div className="mt-1 text-[11px] text-slate-500">{item.subtitle}</div></div>
                   <div className="h-8 w-1 bg-cyan-300/45" />
@@ -11174,8 +11190,8 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           </div>
         </Panel>
 
-        <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/95 p-0">
-          <div className="relative min-h-[760px] overflow-hidden border border-cyan-300/10 bg-[linear-gradient(rgba(34,211,238,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.06)_1px,transparent_1px),radial-gradient(circle_at_50%_44%,rgba(34,211,238,.18),transparent_34%),linear-gradient(135deg,#020617,#061120_65%,#020617)] bg-[size:64px_64px,64px_64px,auto,auto]">
+        <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/95 p-0 shadow-[0_28px_120px_rgba(0,0,0,.35)]">
+          <div className="relative min-h-[690px] overflow-hidden border border-cyan-300/10 bg-[linear-gradient(rgba(34,211,238,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.06)_1px,transparent_1px),radial-gradient(circle_at_50%_44%,rgba(34,211,238,.18),transparent_34%),linear-gradient(135deg,#020617,#061120_65%,#020617)] bg-[size:64px_64px,64px_64px,auto,auto]">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute left-1/2 top-0 h-full w-px bg-cyan-300/12" />
               <div className="absolute left-0 top-1/2 h-px w-full bg-cyan-300/12" />
@@ -11183,13 +11199,13 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
               <div className="absolute right-[14%] bottom-[16%] h-2 w-2 bg-amber-200 shadow-[0_0_24px_rgba(251,191,36,.8)]" />
               {simulationRunning && <div className="absolute inset-0 bg-cyan-300/[.04] animate-pulse" />}
             </div>
-            <div className="absolute left-6 top-6 z-20 border border-cyan-300/20 bg-black/50 px-4 py-3 backdrop-blur-xl">
+            <div className="absolute left-6 top-6 z-20 max-w-[440px] border border-cyan-300/20 bg-black/55 px-5 py-4 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,.32)]">
               <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">active accelerator</div>
-              <div className="mt-1 text-4xl font-black text-white">{machine.name}</div>
+              <div className="mt-1 text-3xl font-black text-white md:text-4xl">{machine.name}</div>
               <div className="text-sm text-cyan-100">{particle === "Element Ion" || particle === "Custom Nucleus" ? beamElement.name : particle} → {targetElement.name}</div>
               <div className="mt-2 max-w-sm text-xs leading-5 text-slate-400">{machine.focus}</div>
             </div>
-            <div className="absolute right-6 top-6 z-20 flex flex-wrap gap-2">
+            <div className="absolute right-6 top-6 z-20 flex flex-wrap gap-2 rounded-none border border-cyan-300/15 bg-black/35 p-2 backdrop-blur-xl">
               <button onClick={simulationRunning ? stopSimulation : runSimulation} className={`border px-4 py-3 text-sm font-black shadow-[0_0_24px_rgba(34,211,238,.12)] ${simulationRunning ? "border-amber-300/50 bg-amber-300/12 text-amber-50 hover:bg-amber-300/18" : "border-cyan-300/35 bg-cyan-300/10 text-cyan-50 hover:bg-cyan-300/18"}`}>{simulationRunning ? "Stop Simulation" : "Start Simulation"}</button>
             </div>
             <DetectorHalo />
@@ -11207,26 +11223,27 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
         </Panel>
 
         <div className="space-y-5">
-          <Panel className="border-cyan-300/15 bg-[#050b16]/90">
+          <Panel className="border-cyan-300/15 bg-[#050b16]/90 shadow-[0_24px_80px_rgba(0,0,0,.24)]">
             <Pill><Activity size={12}/> live telemetry</Pill>
+            <div className="mt-3 text-xs leading-5 text-slate-400">Operational readout from the selected accelerator configuration.</div>
             <div className="mt-5 grid gap-3">
               {[ ["Beam Stability", beamStability, "%"], ["Collision Quality", collisionQuality, "%"], ["Velocity", (velocityFraction * 100).toFixed(2), "% c"], ["Speed", velocityMS.toLocaleString(), "m/s"], ["Acceleration", accelerationMS2.toExponential(2), "m/s²"], ["Magnetic Field", magneticTesla, "T"], ["RF Frequency", rfMHz, "MHz"], ["Beam Power", beamPowerMW, "MW"] ].map(([label, value, unit]) => (
-                <div key={label} className="border border-white/10 bg-black/25 p-3">
+                <div key={label} className="border border-white/10 bg-black/25 p-4 transition hover:border-cyan-300/25 hover:bg-cyan-300/[.035]">
                   <div className="flex justify-between gap-3 text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{value} {unit}</span></div>
                   <div className="mt-2 h-2 overflow-hidden bg-slate-900"><div className="h-full bg-cyan-300 shadow-[0_0_18px_rgba(34,211,238,.65)]" style={{ width: `${Math.max(5, Math.min(99, typeof value === "number" ? value : collisionQuality))}%` }} /></div>
                 </div>
               ))}
             </div>
           </Panel>
-          <Panel className="border-amber-300/15 bg-[#0f0b05]/80">
+          <Panel className="border-amber-300/15 bg-[#0f0b05]/80 shadow-[0_24px_80px_rgba(0,0,0,.2)]">
             <Pill gold><ShieldCheck size={12}/> safety system</Pill>
             <div className="mt-4 space-y-2">{warnings.map((item) => <div key={item} className="border border-amber-200/12 bg-black/25 p-3 text-sm leading-5 text-amber-50">⚠ {item}</div>)}</div>
           </Panel>
         </div>
       </div>
 
-      <Panel className="border-cyan-300/15 bg-[#050b16]/90">
-        <div className="flex flex-wrap items-start justify-between gap-5 border-b border-cyan-300/10 pb-5">
+      <Panel className="border-cyan-300/15 bg-[#050b16]/90 shadow-[0_32px_120px_rgba(0,0,0,.32)]">
+        <div className="flex flex-wrap items-start justify-between gap-6 border-b border-cyan-300/10 pb-6">
           <div>
             <Pill><Radar size={12}/> collision command centre</Pill>
             <h2 className="mt-3 text-4xl font-black text-white">{collisionResult?.headline || "Collision event ready"}</h2>
@@ -11240,9 +11257,9 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           </div>
         </div>
 
-        <div className="mt-6 grid gap-3 md:grid-cols-5">
+        <div className="mt-7 grid gap-4 md:grid-cols-5">
           {sequence.map(([label, value], i) => (
-            <div key={label} className="border border-cyan-300/12 bg-black/24 p-4">
+            <div key={label} className="border border-cyan-300/12 bg-black/24 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
               <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">0{i + 1}</div>
               <div className="mt-2 text-xl font-black text-white">{label}</div>
               <div className="mt-3 h-2 bg-slate-900"><div className="h-full bg-cyan-300 shadow-[0_0_18px_rgba(34,211,238,.6)]" style={{ width: `${Math.max(4, Math.min(99, value))}%` }} /></div>
@@ -11251,23 +11268,23 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           ))}
         </div>
 
-        <div className="mt-6 grid gap-5 2xl:grid-cols-[1fr_1fr]">
+        <div className="mt-7 grid gap-6 2xl:grid-cols-[1fr_1fr]">
           {[
             ["Beam Telemetry", beamTelemetryRows, "beam physics"],
             ["Target Response", targetResponseRows, `${targetElement.name} material response`],
             ["Detector Output", detectorOutputRows, `${selectedEvent} readout`],
             ["Collision Result", collisionResultRows, resultHeadline],
           ].map(([title, rows, subtitle]) => (
-            <div key={title} className="border border-cyan-300/12 bg-black/24 p-5">
+            <div key={title} className="border border-cyan-300/12 bg-black/24 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">{title}</div>
                   <div className="mt-1 text-xs leading-5 text-slate-500">{subtitle}</div>
                 </div>
               </div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 {rows.map(([label, value, note, signal]) => (
-                  <div key={`${title}-${label}`} className="border border-white/10 bg-slate-950/55 p-4">
+                  <div key={`${title}-${label}`} className="border border-white/10 bg-slate-950/55 p-4 transition hover:border-cyan-300/20 hover:bg-slate-950/75">
                     <div className="flex items-start justify-between gap-3">
                       <div className="text-[11px] font-black uppercase tracking-[.18em] text-slate-500">{label}</div>
                       <div className="text-right text-sm font-black text-cyan-100">{value}</div>
@@ -11281,9 +11298,10 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           ))}
         </div>
 
-        <div className="mt-6 grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
-          <div className="border border-cyan-300/12 bg-black/24 p-5">
+        <div className="mt-7 grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
+          <div className="border border-cyan-300/12 bg-black/24 p-6">
             <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">collision matrix</div>
+            <div className="mt-2 text-xs leading-5 text-slate-500">Fast readout of energy transfer, material yield, target damage and detector confidence.</div>
             <div className="mt-4 space-y-4">
               {collisionMatrixRows.map(([label, value, note]) => (
                 <div key={label} className="grid gap-3 md:grid-cols-[150px_1fr_80px] md:items-center">
@@ -11298,8 +11316,9 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
             </div>
           </div>
 
-          <div className="border border-amber-300/12 bg-black/24 p-5">
+          <div className="border border-amber-300/12 bg-black/24 p-6">
             <div className="text-xs font-black uppercase tracking-[.22em] text-amber-200">live event feed</div>
+            <div className="mt-2 text-xs leading-5 text-slate-500">Control-room sequence from injection through detector readout.</div>
             <div className="mt-4 max-h-[420px] space-y-3 overflow-auto pr-1">
               {eventLogRows.map(([time, title, body]) => (
                 <div key={`${time}-${title}`} className="border border-white/10 bg-slate-950/55 p-3">
@@ -11312,9 +11331,9 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           </div>
         </div>
 
-        <div className="mt-6 grid gap-5 xl:grid-cols-[1fr_420px]">
+        <div className="mt-7 grid gap-6 xl:grid-cols-[1fr_420px]">
           <div className="border border-cyan-300/12 bg-black/24 p-5">
-            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">full collision dataset</div>
+            <div className="flex flex-wrap items-center justify-between gap-3"><div><div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">full collision dataset</div><div className="mt-2 text-xs leading-5 text-slate-500">Expanded export-ready telemetry for the current source, target and accelerator mode.</div></div><span className="border border-cyan-300/20 bg-cyan-300/8 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-cyan-100">report ready</span></div>
             <div className="mt-4 overflow-x-auto">
               <div className="min-w-[760px]">
                 {collisionDataRows.map(([label, value, note]) => (
@@ -11350,8 +11369,8 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
         </div>
       </Panel>
 
-      <Panel className="border-cyan-300/15 bg-[#050b16]/90">
-        <Pill><Settings size={12}/> accelerator controls</Pill>
+      <Panel className="border-cyan-300/15 bg-[#050b16]/90 shadow-[0_24px_80px_rgba(0,0,0,.24)]">
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><Pill><Settings size={12}/> accelerator controls</Pill><p className="mt-3 text-xs leading-5 text-slate-400">Tune source, target, energy, RF, vacuum and detector controls. All current dropdowns and simulation logic are preserved.</p></div><div className="border border-cyan-300/15 bg-black/24 px-4 py-3 text-right"><div className="text-xs uppercase tracking-[.18em] text-slate-500">simulation</div><div className="text-sm font-black text-cyan-100">{simulationRunning ? "Running" : "Ready"}</div></div></div>
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <label><span className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Particle type</span><select value={particle} onChange={(e) => setParticle(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-slate-950 p-3 text-sm outline-none">{particles.map((item) => <option key={item}>{item}</option>)}</select></label>
           <label><span className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Beam element source</span><select value={beamSymbol} onChange={(e) => setBeamSymbol(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-slate-950 p-3 text-sm outline-none">{elements.map((item) => <option key={item.symbol} value={item.symbol}>{item.atomicNumber}. {item.name} ({item.symbol})</option>)}</select></label>
@@ -12158,12 +12177,12 @@ function AdvancedVisualization({ selected, compare, setPage }) {
           <select value={material} onChange={(e) => setMaterial(e.target.value)} className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">
             {elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}
           </select>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
             {[
               "Survival Curve", "Thermal Pulse", "Pressure Evolution", "AI Waveform", "Anomaly Field", "Investor View"
             ].map((m) => <Button key={m} onClick={() => setMode(m)} variant={mode === m ? "primary" : "ghost"}>{m}</Button>)}
           </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
             {[
               "Magnetic", "Luxury", "Neon", "Executive"
             ].map((m) => <Button key={m} onClick={() => setVisualStyle(m)} variant={visualStyle === m ? "primary" : "ghost"}>{m}</Button>)}
@@ -12340,7 +12359,7 @@ function MyLab({ session, selected, compare, setPage }) {
               <div key={scenario.title} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-fuchsia-400/10 p-5">
                 <div className="text-xs uppercase tracking-[.22em] text-cyan-200">{scenario.environment}</div>
                 <div className="mt-3 text-2xl font-black text-white">{scenario.title}</div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="mt-5 grid gap-4 sm:grid-cols-2">
                   <div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-2xl font-black text-rose-200">{scenario.risk}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">risk</div></div>
                   <div className="rounded-2xl border border-white/10 bg-black/25 p-3"><div className="text-2xl font-black text-emerald-200">{scenario.survival}y</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">survival</div></div>
                 </div>
@@ -13458,7 +13477,7 @@ function AdvancedWellDriller({ setPage }) {
           <div className="text-xs uppercase tracking-[.22em] text-slate-500">Formation command readout</div>
           <div className="mt-3 text-2xl font-black text-white">{formation}</div>
           <div className="mt-1 text-sm text-slate-400">{fp.category} · {fp.texture} texture · target depth {depth}m</div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
             {[
               ["Reservoir", `${reservoirScore}%`, "emerald"],
               ["Bore Stability", `${boreStability}%`, "cyan"],
@@ -14804,7 +14823,7 @@ function UniversalSimulationReports({ selected = "Al", compare = [], session, is
           <select value={source} onChange={(e) => setSource(e.target.value)} className="mt-5 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
             {["Complete Simulation Dossier", "Future Simulation Focus", "Scenario Builder Focus", "Well Driller Focus", "Seismo Focus"].map((x) => <option key={x}>{x}</option>)}
           </select>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <Button onClick={exportUniversalReport} variant="primary"><Download size={16} className="inline"/> Export PDF/JSON/SVG</Button>
             {!isPro ? <Button onClick={session ? startCheckout : () => setPage("login")}>Unlock Pro PDF</Button> : <Button onClick={() => setPage("reports")}>Open Reports</Button>}
           </div>
@@ -16479,7 +16498,7 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
                 <div className="mt-2 text-2xl font-black text-white">Run Future Simulation</div>
                 <p className="mt-2 text-sm leading-6 text-slate-300">{isPaidPlan ? "Pro workflow ready: reports, posters and saved discoveries are unlocked." : "Explorer can investigate. Pro Researcher unlocks reports, posters and saved discoveries."}</p>
               </div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 <Button onClick={saveDiscovery} className="w-full"><Save size={15} className="inline"/> Save to Discoveries</Button>
                 <Button onClick={exportBrief} className="w-full"><Download size={15} className="inline"/> Export Brief</Button>
               </div>
