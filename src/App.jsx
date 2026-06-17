@@ -10343,202 +10343,294 @@ function ReportsDiscoveryMergePanel({ setPage, setPublicDiscovery }) {
 
 
 function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastRequest }) {
-  const machineTypes = [
-    { id: "linac", name: "LINAC", subtitle: "Straight RF cavity beamline", shape: "linear", energy: 68, stability: 92, risk: "Low beam-loss", accent: "cyan" },
-    { id: "cyclotron", name: "Cyclotron", subtitle: "Spiral magnetic acceleration", shape: "spiral", energy: 54, stability: 84, risk: "Magnet tuning", accent: "blue" },
-    { id: "synchrotron", name: "Synchrotron", subtitle: "Ramped ring with timed RF", shape: "ring", energy: 82, stability: 88, risk: "RF phase drift", accent: "violet" },
-    { id: "hadron", name: "Hadron Collider", subtitle: "Counter-rotating collision beams", shape: "collider", energy: 96, stability: 78, risk: "Detector saturation", accent: "amber" },
-    { id: "electron", name: "Electron Collider", subtitle: "High-speed light-particle ring", shape: "electron", energy: 74, stability: 81, risk: "Synchrotron radiation", accent: "emerald" },
-    { id: "ion", name: "Ion Accelerator", subtitle: "Heavy nuclei beam transport", shape: "ion", energy: 70, stability: 76, risk: "Activation load", accent: "rose" },
-    { id: "plasma", name: "Plasma Wakefield", subtitle: "Compact wave acceleration", shape: "wakefield", energy: 91, stability: 68, risk: "Wave collapse", accent: "fuchsia" },
-    { id: "target", name: "Fixed Target", subtitle: "Beam into material target", shape: "target", energy: 63, stability: 89, risk: "Thermal stress", accent: "orange" },
-    { id: "medical", name: "Medical Beamline", subtitle: "Proton therapy / isotope yield", shape: "medical", energy: 48, stability: 95, risk: "Dose control", accent: "teal" },
+  const machines = [
+    { id: "linac", name: "LINAC", subtitle: "RF cavity beamline", shape: "linear", gradient: "from-cyan-300/20 to-blue-500/10", focus: "Straight beam acceleration through synchronized RF cavities." },
+    { id: "cyclotron", name: "Cyclotron", subtitle: "Spiral magnetic accelerator", shape: "spiral", gradient: "from-emerald-300/20 to-cyan-500/10", focus: "Particles spiral outward under magnetic confinement." },
+    { id: "synchrotron", name: "Synchrotron", subtitle: "Timed RF ring", shape: "ring", gradient: "from-blue-300/20 to-cyan-500/10", focus: "Magnetic ramp and RF timing keep the beam locked to the ring." },
+    { id: "storage", name: "Storage Ring", subtitle: "Long-life beam orbit", shape: "ring", gradient: "from-slate-300/20 to-cyan-500/10", focus: "Orbit quality and lifetime become the dominant control problem." },
+    { id: "hadron", name: "Hadron Collider", subtitle: "Counter-rotating proton beams", shape: "collider", gradient: "from-amber-300/20 to-cyan-500/10", focus: "Two beams collide at interaction points for high-energy event yield." },
+    { id: "electron", name: "Electron Collider", subtitle: "Lepton collision ring", shape: "collider", gradient: "from-fuchsia-300/20 to-cyan-500/10", focus: "High detector clarity, stronger synchrotron radiation losses." },
+    { id: "ion", name: "Ion Accelerator", subtitle: "Heavy nucleus beam", shape: "ring", gradient: "from-lime-300/20 to-cyan-500/10", focus: "Heavy ions increase target load and activation risk." },
+    { id: "wakefield", name: "Plasma Wakefield", subtitle: "Compact wave tunnel", shape: "wakefield", gradient: "from-violet-300/20 to-fuchsia-500/10", focus: "A plasma wave pushes particle packets through a compact tunnel." },
+    { id: "fixed", name: "Fixed Target", subtitle: "Beam into material target", shape: "target", gradient: "from-orange-300/20 to-amber-500/10", focus: "Target scattering, isotope yield, heat load and activation dominate." },
+    { id: "medical", name: "Medical Beamline", subtitle: "Proton therapy / isotope production", shape: "target", gradient: "from-rose-300/20 to-cyan-500/10", focus: "Dose precision, target moderation and beam stability matter most." },
   ];
-  const particleOptions = ["Proton", "Electron", "Alpha", "Carbon Ion", "Uranium Ion", "Custom Nucleus"];
+
+  const particles = ["Proton", "Electron", "Neutron", "Alpha", "Carbon Ion", "Uranium Ion", "Custom Nucleus"];
   const targetOptions = ["Carbon", "Aluminium", "Titanium", "Copper", "Tungsten", "Gold", "Uranium"];
   const [machineId, setMachineId] = useState("hadron");
   const [particle, setParticle] = useState("Proton");
   const [target, setTarget] = useState("Tungsten");
-  const [beamEnergy, setBeamEnergy] = useState(72);
+  const [beamEnergy, setBeamEnergy] = useState(78);
   const [magneticField, setMagneticField] = useState(64);
-  const [rfFrequency, setRfFrequency] = useState(58);
+  const [rfFrequency, setRfFrequency] = useState(72);
   const [vacuum, setVacuum] = useState(86);
+  const [detectorSensitivity, setDetectorSensitivity] = useState(74);
+  const [collimation, setCollimation] = useState(67);
   const [scanActive, setScanActive] = useState(false);
-  const machine = machineTypes.find((item) => item.id === machineId) || machineTypes[0];
-  const targetElement = elements.find((e) => e.name === target) || elementMap.W || elementMap.Al;
+  const [selectedEvent, setSelectedEvent] = useState("Primary interaction point");
+
+  const machine = machines.find((item) => item.id === machineId) || machines[0];
+  const targetElement = elements.find((item) => item.name === target) || elementMap.W || elementMap.Al;
   const targetScore = score(targetElement.symbol);
-  const velocity = Math.min(99.98, Math.max(12, beamEnergy * 0.78 + machine.energy * 0.21));
-  const beamStability = Math.max(8, Math.min(99, Math.round((machine.stability * 0.35) + (vacuum * 0.27) + (magneticField * 0.2) + (rfFrequency * 0.18) - (machine.energy > 85 ? 6 : 0))));
-  const luminosity = Math.max(1, Math.min(99, Math.round((beamEnergy * 0.46) + (rfFrequency * 0.28) + (vacuum * 0.16) + (machine.energy * 0.1))));
-  const targetYield = Math.max(1, Math.min(99, Math.round((targetScore.thermal * 11) + (targetScore.pressure * 9) + (beamEnergy * 0.27) + (machine.shape === "target" ? 12 : 0))));
-  const radiationLoad = Math.max(1, Math.min(99, Math.round((beamEnergy * 0.62) + (machine.energy * 0.25) + (targetScore.rarity * 3) - (vacuum * 0.1))));
-  const efficiency = Math.max(1, Math.min(99, Math.round((beamStability * 0.42) + (luminosity * 0.3) + (targetYield * 0.18) - (radiationLoad * 0.1))));
+  const isCollider = machine.shape === "collider";
+  const isTarget = machine.shape === "target";
+  const particleMassFactor = particle.includes("Ion") ? 1.18 : particle === "Electron" ? 0.78 : particle === "Neutron" ? 1.04 : 1;
+  const beamStability = Math.max(8, Math.min(99, Math.round(vacuum * 0.32 + magneticField * 0.22 + rfFrequency * 0.22 + collimation * 0.24 - (beamEnergy > 88 ? 7 : 0))));
+  const luminosity = Math.max(6, Math.min(99, Math.round(beamEnergy * 0.34 + rfFrequency * 0.2 + detectorSensitivity * 0.19 + magneticField * 0.17 + (isCollider ? 12 : -4))));
+  const targetYield = Math.max(8, Math.min(99, Math.round(targetScore.pressure * 10 + beamEnergy * 0.18 + detectorSensitivity * 0.14 + (isTarget ? 16 : 2))));
+  const radiationLoad = Math.max(4, Math.min(99, Math.round(beamEnergy * 0.42 + targetScore.rarity * 8 + (particleMassFactor * 8) - vacuum * 0.08)));
+  const efficiency = Math.max(7, Math.min(99, Math.round((beamStability + luminosity + targetYield) / 3 - radiationLoad * 0.12 + vacuum * 0.08)));
+  const velocityPct = Math.max(12, Math.min(99, Math.round(beamEnergy * 0.74 + (particle === "Electron" ? 18 : 6))));
+  const orbitQuality = Math.max(5, Math.min(99, Math.round((magneticField * 0.45 + vacuum * 0.35 + collimation * 0.2) - (machine.shape === "linear" ? 8 : 0))));
+
   const warnings = [
-    beamStability < 72 ? "Beam orbit correction required" : "Beam orbit locked",
-    radiationLoad > 78 ? "Shielding load elevated" : "Shielding envelope nominal",
-    rfFrequency < 45 ? "RF cavity phase drift risk" : "RF timing synchronized",
-    vacuum < 70 ? "Vacuum quality reducing beam lifetime" : "Vacuum field stable",
+    radiationLoad > 76 ? "Radiation load elevated — shielding review required." : "Radiation envelope inside simulated tolerance.",
+    beamStability < 58 ? "Beam instability risk — improve vacuum, collimation or RF timing." : "Beam orbit stable across current configuration.",
+    magneticField > 86 ? "Magnet load high — cryogenic and coil limits should be checked." : "Magnet load nominal.",
+    rfFrequency < 38 ? "RF phase weak — acceleration synchronization may drift." : "RF synchronization locked.",
+    detectorSensitivity > 90 && luminosity > 82 ? "Detector saturation possible at current luminosity." : "Detector window clean."
   ];
-  const eventSignatures = machine.shape === "collider"
-    ? ["Hadronic jet trace", "Muon corridor", "Gamma burst", "Energy deposition cone"]
-    : machine.shape === "target"
-      ? ["Backscatter plume", "Thermal bloom", "Isotope yield", "Activation signature"]
-      : ["Beam packet compression", "Orbit tune", "RF gain pulse", "Detector confidence"];
-  const saveReport = () => {
-    const report = `ElementOS Particle Accelerator Lab\n\nMachine: ${machine.name}\nParticle: ${particle}\nTarget: ${target}\nBeam energy: ${beamEnergy}%\nMagnetic field: ${magneticField}%\nRF frequency: ${rfFrequency}%\nVacuum quality: ${vacuum}%\nBeam stability: ${beamStability}%\nLuminosity: ${luminosity}%\nTarget yield: ${targetYield}%\nRadiation load: ${radiationLoad}%\nEfficiency: ${efficiency}%`;
-    const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `elementos_particle_accelerator_${machine.id}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+
+  const eventSignatures = isCollider
+    ? ["Opposing beam lock", "Collision vertex", "Muon trace", "Hadronic jet", "Gamma burst", "Detector yield"]
+    : isTarget
+    ? ["Beam strike", "Thermal plume", "Scattering cone", "Activation signal", "Isotope yield", "Target fatigue"]
+    : machine.shape === "wakefield"
+    ? ["Plasma wave crest", "Electron packet", "Wake tunnel", "Field collapse", "Energy surge", "Beam extraction"]
+    : ["Injector pulse", "RF cavity gain", "Magnet correction", "Orbit trim", "Beam focus", "Extraction line"];
+
+  const sequence = [
+    ["Inject", Math.round(beamEnergy * 0.45 + vacuum * 0.14)],
+    ["Accelerate", Math.round(beamEnergy * 0.72 + rfFrequency * 0.18)],
+    ["Focus", Math.round(collimation * 0.7 + magneticField * 0.2)],
+    [isCollider ? "Collide" : isTarget ? "Strike" : "Extract", isCollider ? luminosity : targetYield],
+  ];
+
   const runScan = () => {
     setScanActive(true);
-    setTimeout(() => setScanActive(false), 1500);
+    showToast("Particle Accelerator Lab scan started.");
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => setScanActive(false), 1200);
+    }
   };
+
+  const saveReport = () => {
+    exportAllFormats({
+      baseName: "elementos-particle-accelerator-report",
+      title: "ElementOS Particle Accelerator Lab Report",
+      summary: `${machine.name} · ${particle} beam into ${target} · stability ${beamStability}% · luminosity ${luminosity}% · target yield ${targetYield}%`,
+      payload: { machine: machine.name, particle, target, beamEnergy, magneticField, rfFrequency, vacuum, detectorSensitivity, collimation, beamStability, luminosity, targetYield, radiationLoad, efficiency, velocityPct, orbitQuality, warnings },
+      sections: [
+        ["Machine", `${machine.name} — ${machine.focus}`],
+        ["Beam Setup", `${particle} beam, energy ${beamEnergy}%, RF ${rfFrequency}%, magnetic field ${magneticField}%, vacuum ${vacuum}%`],
+        ["Telemetry", `Stability ${beamStability}% · Luminosity ${luminosity}% · Target yield ${targetYield}% · Radiation load ${radiationLoad}% · Efficiency ${efficiency}%`],
+        ["Warnings", warnings.join("\n")]
+      ]
+    });
+  };
+
   const sendTargetToExplorer = () => {
     setSelected?.(targetElement.symbol);
     setPage?.("explorer");
   };
   const compareTargetMaterials = () => {
-    setCompare?.([targetElement.symbol, "Ti", "Cu", "W"].filter((v, i, arr) => v && arr.indexOf(v) === i).slice(0, 4));
+    setCompare?.([targetElement.symbol, "Ti", "Cu", "W"].filter(Boolean).slice(0, 4));
     setPage?.("compare");
   };
   const forecastTarget = () => {
-    setSelected?.(targetElement.symbol);
     setForecastRequest?.({ material: targetElement.symbol, years: 25, environment: "Accelerator target exposure", source: "Particle Accelerator Lab" });
     setPage?.("timemachine");
   };
+
+  const BeamLine = () => {
+    if (machine.shape === "linear") {
+      return (
+        <div className="absolute inset-x-8 top-1/2 h-32 -translate-y-1/2 border-y border-cyan-300/20 bg-cyan-300/[.035]">
+          <div className="absolute left-0 top-1/2 h-[3px] w-full -translate-y-1/2 bg-cyan-200 shadow-[0_0_48px_rgba(34,211,238,.95)]" />
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={i} className="absolute top-1/2 h-32 w-8 -translate-y-1/2 border border-cyan-300/25 bg-black/55 shadow-[0_0_30px_rgba(34,211,238,.18)]" style={{ left: `${5 + i * 7.6}%` }}>
+              <div className="absolute inset-x-2 top-2 h-3 bg-cyan-300/20" />
+              <div className="absolute inset-x-2 bottom-2 h-3 bg-cyan-300/20" />
+            </div>
+          ))}
+          <div className="absolute right-4 top-1/2 h-20 w-5 -translate-y-1/2 bg-amber-300/25 shadow-[0_0_55px_rgba(251,191,36,.45)]" />
+        </div>
+      );
+    }
+    if (machine.shape === "target") {
+      return (
+        <div className="absolute inset-x-10 top-1/2 h-56 -translate-y-1/2">
+          <div className="absolute left-0 top-1/2 h-3 w-[62%] -translate-y-1/2 bg-cyan-200 shadow-[0_0_52px_rgba(34,211,238,.95)]" />
+          <div className="absolute left-[62%] top-1/2 h-px w-[22%] -translate-y-1/2 bg-gradient-to-r from-amber-200 to-transparent shadow-[0_0_50px_rgba(251,191,36,.7)]" />
+          <div className="absolute right-[18%] top-1/2 h-64 w-12 -translate-y-1/2 border border-amber-200/35 bg-amber-300/18 shadow-[0_0_90px_rgba(251,191,36,.5)]" />
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={i} className="absolute h-px w-28 origin-left bg-amber-100/35" style={{ left: "72%", top: "50%", transform: `rotate(${-48 + i * 8}deg)` }} />
+          ))}
+          <div className="absolute right-[7%] top-1/2 h-72 w-72 -translate-y-1/2 rounded-full border border-amber-200/20 bg-amber-300/[.045] blur-sm" />
+        </div>
+      );
+    }
+    if (machine.shape === "wakefield") {
+      return (
+        <div className="absolute inset-x-10 top-1/2 h-72 -translate-y-1/2 border border-fuchsia-300/25 bg-fuchsia-300/[.035] shadow-[0_0_90px_rgba(217,70,239,.16)]">
+          {Array.from({ length: 16 }).map((_, i) => (
+            <div key={i} className="absolute top-1/2 w-5 -translate-y-1/2 rounded-full bg-fuchsia-300/28 blur-[1px]" style={{ left: `${3 + i * 6}%`, height: `${44 + ((i % 5) * 30)}px` }} />
+          ))}
+          <div className="absolute left-[12%] top-1/2 h-3 w-[76%] -translate-y-1/2 rounded-full bg-cyan-100 shadow-[0_0_60px_rgba(34,211,238,.95)]" />
+        </div>
+      );
+    }
+    return (
+      <div className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/35 bg-cyan-300/[.018] shadow-[0_0_120px_rgba(34,211,238,.2)]">
+        <div className="absolute inset-8 rounded-full border border-cyan-300/18" />
+        <div className="absolute inset-20 rounded-full border border-blue-300/14" />
+        <div className="absolute inset-32 rounded-full border border-white/8" />
+        <div className="absolute inset-0 rounded-full border-2 border-dashed border-cyan-200/25 animate-[eosSpin_22s_linear_infinite]" />
+        {isCollider && <div className="absolute inset-3 rounded-full border-2 border-dashed border-amber-200/35 animate-[eosSpinReverse_17s_linear_infinite]" />}
+        {Array.from({ length: 24 }).map((_, i) => {
+          const angle = (i / 24) * Math.PI * 2;
+          const radius = 260;
+          return <div key={i} className={`absolute h-2.5 w-2.5 rounded-full ${i % 3 === 0 ? "bg-amber-200" : "bg-cyan-200"} shadow-[0_0_22px_rgba(34,211,238,.9)]`} style={{ left: `calc(50% + ${Math.cos(angle) * radius}px)`, top: `calc(50% + ${Math.sin(angle) * radius}px)`, transform: "translate(-50%,-50%)" }} />;
+        })}
+        <div className="absolute left-1/2 top-1/2 grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center border border-cyan-300/35 bg-black/72 shadow-[0_0_70px_rgba(34,211,238,.48)]">
+          <span className="text-xs font-black uppercase tracking-[.2em] text-cyan-100">{isCollider ? "IP-01" : "CORE"}</span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6 pb-24">
       <PageHero
         eyebrow="Advanced Lab · Particle Accelerator"
-        title="Particle Accelerator Lab"
-        description="Simulate beamlines, rings, collisions, RF acceleration, target materials, detector signatures and accelerator risk in one ElementOS control room."
         icon={Zap}
-      >
-        <div className="grid gap-3 sm:grid-cols-4">
-          {[[`${velocity.toFixed(2)}%`, "speed of light"], [`${beamStability}%`, "beam stability"], [`${luminosity}%`, "luminosity"], [`${efficiency}%`, "efficiency"]].map(([value, label]) => (
-            <div key={label} className="rounded-2xl border border-cyan-300/15 bg-black/30 p-4">
-              <div className="text-3xl font-black text-cyan-100">{value}</div>
-              <div className="mt-1 text-[10px] font-black uppercase tracking-[.22em] text-slate-500">{label}</div>
-            </div>
-          ))}
-        </div>
-      </PageHero>
+        title={<>Particle <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Accelerator Lab</span></>}
+        description="Simulate LINACs, cyclotrons, synchrotrons, hadron colliders, fixed-target beamlines, plasma wakefields and material target interactions inside an ElementOS control-room interface."
+      />
 
-      <div className="grid gap-5 xl:grid-cols-[330px_minmax(0,1fr)_360px]">
-        <Panel className="border-cyan-300/12 bg-[#050b16]/90">
-          <Pill gold><Settings size={12}/> machine setup</Pill>
-          <div className="mt-5 space-y-4">
-            <label className="block">
-              <span className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Accelerator type</span>
-              <select value={machineId} onChange={(e) => setMachineId(e.target.value)} className="mt-2 w-full rounded-xl border border-cyan-300/15 bg-slate-950 p-3 text-sm text-white outline-none">
-                {machineTypes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
-              </select>
-            </label>
-            <div className="grid gap-2">
-              {machineTypes.slice(0, 6).map((item) => (
-                <button key={item.id} onClick={() => setMachineId(item.id)} className={`rounded-xl border p-3 text-left transition ${machineId === item.id ? "border-cyan-300/45 bg-cyan-300/10 text-white" : "border-white/10 bg-black/20 text-slate-300 hover:border-cyan-300/25"}`}>
-                  <div className="text-sm font-black">{item.name}</div>
-                  <div className="mt-1 text-xs text-slate-500">{item.subtitle}</div>
-                </button>
-              ))}
-            </div>
-            <label className="block"><span className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Particle</span><select value={particle} onChange={(e) => setParticle(e.target.value)} className="mt-2 w-full rounded-xl border border-cyan-300/15 bg-slate-950 p-3 text-sm outline-none">{particleOptions.map((item) => <option key={item}>{item}</option>)}</select></label>
-            <label className="block"><span className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Target material</span><select value={target} onChange={(e) => setTarget(e.target.value)} className="mt-2 w-full rounded-xl border border-cyan-300/15 bg-slate-950 p-3 text-sm outline-none">{targetOptions.map((item) => <option key={item}>{item}</option>)}</select></label>
-            {[ ["Beam energy", beamEnergy, setBeamEnergy], ["Magnetic field", magneticField, setMagneticField], ["RF frequency", rfFrequency, setRfFrequency], ["Vacuum quality", vacuum, setVacuum] ].map(([label, value, setter]) => (
-              <label key={label} className="block">
-                <div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{value}%</span></div>
-                <input type="range" min="10" max="100" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-2 w-full accent-cyan-300" />
-              </label>
+      <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)_360px]">
+        <Panel className="border-cyan-300/15 bg-[#050b16]/92">
+          <Pill><Settings size={12}/> machine setup</Pill>
+          <div className="mt-5 grid gap-2">
+            {machines.map((item) => (
+              <button key={item.id} onClick={() => setMachineId(item.id)} className={`group border p-3 text-left transition ${machineId === item.id ? "border-cyan-300/55 bg-cyan-300/12 shadow-[0_0_32px_rgba(34,211,238,.14)]" : "border-white/10 bg-black/22 hover:border-cyan-300/25 hover:bg-cyan-300/[.06]"}`}>
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-black text-white">{item.name}</div>
+                    <div className="mt-1 text-[11px] text-slate-500">{item.subtitle}</div>
+                  </div>
+                  <div className={`h-8 w-1 bg-gradient-to-b ${item.gradient}`} />
+                </div>
+              </button>
             ))}
           </div>
         </Panel>
 
         <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/95 p-0">
-          <div className="relative min-h-[680px] overflow-hidden border border-cyan-300/10 bg-[linear-gradient(rgba(34,211,238,.055)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.055)_1px,transparent_1px),radial-gradient(circle_at_50%_45%,rgba(34,211,238,.18),transparent_32%),linear-gradient(135deg,#020617,#061120_65%,#020617)] bg-[size:56px_56px,56px_56px,auto,auto]">
-            <div className="absolute left-6 top-6 z-20 rounded-xl border border-cyan-300/20 bg-black/45 px-4 py-3 backdrop-blur-xl">
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">active accelerator</div>
-              <div className="mt-1 text-3xl font-black text-white">{machine.name}</div>
-              <div className="text-sm text-cyan-100">{particle} beam → {target}</div>
+          <div className="relative min-h-[760px] overflow-hidden border border-cyan-300/10 bg-[linear-gradient(rgba(34,211,238,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.06)_1px,transparent_1px),radial-gradient(circle_at_50%_44%,rgba(34,211,238,.18),transparent_34%),linear-gradient(135deg,#020617,#061120_65%,#020617)] bg-[size:64px_64px,64px_64px,auto,auto]">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute left-1/2 top-0 h-full w-px bg-cyan-300/12" />
+              <div className="absolute left-0 top-1/2 h-px w-full bg-cyan-300/12" />
+              <div className="absolute left-[12%] top-[18%] h-2 w-2 bg-cyan-200 shadow-[0_0_24px_rgba(34,211,238,.9)]" />
+              <div className="absolute right-[14%] bottom-[16%] h-2 w-2 bg-amber-200 shadow-[0_0_24px_rgba(251,191,36,.8)]" />
             </div>
-            <div className="absolute right-6 top-6 z-20 flex gap-2">
-              <Button onClick={runScan} variant="primary">{scanActive ? "Scanning..." : "Run Beam Scan"}</Button>
+            <div className="absolute left-6 top-6 z-20 border border-cyan-300/20 bg-black/50 px-4 py-3 backdrop-blur-xl">
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">active accelerator</div>
+              <div className="mt-1 text-4xl font-black text-white">{machine.name}</div>
+              <div className="text-sm text-cyan-100">{particle} beam → {target}</div>
+              <div className="mt-2 max-w-sm text-xs leading-5 text-slate-400">{machine.focus}</div>
+            </div>
+            <div className="absolute right-6 top-6 z-20 flex flex-wrap gap-2">
+              <button onClick={runScan} className="border border-cyan-300/35 bg-cyan-300/10 px-4 py-3 text-sm font-black text-cyan-50 shadow-[0_0_24px_rgba(34,211,238,.12)] hover:bg-cyan-300/18">{scanActive ? "Scanning..." : "Run Beam Scan"}</button>
             </div>
 
-            {machine.shape === "linear" && (
-              <div className="absolute inset-x-10 top-1/2 h-24 -translate-y-1/2 rounded-2xl border border-cyan-300/25 bg-cyan-300/[.04]">
-                <div className="absolute left-0 top-1/2 h-2 w-full -translate-y-1/2 bg-cyan-300/30 shadow-[0_0_40px_rgba(34,211,238,.8)]" />
-                {Array.from({ length: 9 }).map((_, i) => <div key={i} className="absolute top-1/2 h-28 w-10 -translate-y-1/2 rounded-xl border border-cyan-300/25 bg-black/55 shadow-[0_0_28px_rgba(34,211,238,.18)]" style={{ left: `${8 + i * 10}%` }} />)}
-              </div>
-            )}
-            {machine.shape !== "linear" && machine.shape !== "target" && machine.shape !== "wakefield" && (
-              <div className="absolute left-1/2 top-1/2 h-[430px] w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/35 bg-cyan-300/[.025] shadow-[0_0_90px_rgba(34,211,238,.18)]">
-                <div className="absolute inset-10 rounded-full border border-blue-400/20" />
-                <div className="absolute inset-20 rounded-full border border-cyan-300/15" />
-                {machine.shape === "collider" && <div className="absolute inset-0 rounded-full border-2 border-dashed border-amber-200/40 animate-[eosSpin_16s_linear_infinite]" />}
-                <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/30 bg-black/65 shadow-[0_0_60px_rgba(34,211,238,.45)]" />
-                {Array.from({ length: 16 }).map((_, i) => {
-                  const angle = (i / 16) * Math.PI * 2;
-                  const radius = 215;
-                  return <div key={i} className="absolute h-3 w-3 rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(34,211,238,.9)]" style={{ left: `calc(50% + ${Math.cos(angle) * radius}px)`, top: `calc(50% + ${Math.sin(angle) * radius}px)`, transform: "translate(-50%,-50%)" }} />;
-                })}
-              </div>
-            )}
-            {machine.shape === "target" && (
-              <div className="absolute inset-x-14 top-1/2 h-40 -translate-y-1/2">
-                <div className="absolute left-0 top-1/2 h-3 w-[62%] -translate-y-1/2 bg-cyan-300 shadow-[0_0_40px_rgba(34,211,238,.9)]" />
-                <div className="absolute right-[18%] top-1/2 h-56 w-10 -translate-y-1/2 rounded-xl border border-amber-200/35 bg-amber-300/20 shadow-[0_0_80px_rgba(251,191,36,.45)]" />
-                <div className="absolute right-[8%] top-1/2 h-72 w-72 -translate-y-1/2 rounded-full border border-amber-200/20 bg-amber-300/[.06] blur-sm" />
-              </div>
-            )}
-            {machine.shape === "wakefield" && (
-              <div className="absolute inset-x-12 top-1/2 h-64 -translate-y-1/2 rounded-[2rem] border border-fuchsia-300/25 bg-fuchsia-300/[.04]">
-                {Array.from({ length: 11 }).map((_, i) => <div key={i} className="absolute top-1/2 h-28 w-6 -translate-y-1/2 rounded-full bg-fuchsia-300/25 blur-[1px]" style={{ left: `${5 + i * 9}%`, height: `${50 + ((i % 4) * 28)}px` }} />)}
-                <div className="absolute left-[18%] top-1/2 h-4 w-[68%] -translate-y-1/2 rounded-full bg-cyan-200 shadow-[0_0_44px_rgba(34,211,238,.9)]" />
-              </div>
-            )}
+            <BeamLine />
 
             {scanActive && <div className="absolute inset-0 z-10 bg-cyan-300/[.055] animate-pulse" />}
-            <div className="absolute bottom-6 left-6 right-6 grid gap-3 md:grid-cols-4">
-              {eventSignatures.map((item, i) => <div key={item} className="rounded-xl border border-white/10 bg-black/45 p-3 backdrop-blur-xl"><div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">event {i + 1}</div><div className="mt-1 text-sm font-black text-cyan-100">{item}</div></div>)}
+            <div className="absolute bottom-6 left-6 right-6 z-20 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+              {eventSignatures.map((item, i) => (
+                <button key={item} onClick={() => setSelectedEvent(item)} className={`border p-3 text-left backdrop-blur-xl transition ${selectedEvent === item ? "border-cyan-300/45 bg-cyan-300/12" : "border-white/10 bg-black/45 hover:border-cyan-300/30"}`}>
+                  <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">event {i + 1}</div>
+                  <div className="mt-1 text-sm font-black text-cyan-100">{item}</div>
+                </button>
+              ))}
             </div>
           </div>
         </Panel>
 
         <div className="space-y-5">
           <Panel className="border-cyan-300/15 bg-[#050b16]/90">
-            <Pill><Activity size={12}/> telemetry</Pill>
-            <div className="mt-5 space-y-3">
-              {[ ["Beam Stability", beamStability], ["Luminosity", luminosity], ["Target Yield", targetYield], ["Radiation Load", radiationLoad], ["Efficiency", efficiency] ].map(([label, value]) => (
-                <div key={label} className="rounded-xl border border-white/10 bg-black/25 p-3">
+            <Pill><Activity size={12}/> live telemetry</Pill>
+            <div className="mt-5 grid gap-3">
+              {[["Beam Stability", beamStability], ["Luminosity", luminosity], ["Target Yield", targetYield], ["Radiation Load", radiationLoad], ["Efficiency", efficiency], ["Velocity / c", velocityPct], ["Orbit Quality", orbitQuality]].map(([label, value]) => (
+                <div key={label} className="border border-white/10 bg-black/25 p-3">
                   <div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{value}%</span></div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-900"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${value}%` }} /></div>
+                  <div className="mt-2 h-2 overflow-hidden bg-slate-900"><div className="h-full bg-cyan-300 shadow-[0_0_18px_rgba(34,211,238,.65)]" style={{ width: `${value}%` }} /></div>
                 </div>
               ))}
             </div>
           </Panel>
           <Panel className="border-amber-300/15 bg-[#0f0b05]/80">
             <Pill gold><ShieldCheck size={12}/> safety system</Pill>
-            <div className="mt-4 space-y-2">{warnings.map((item) => <div key={item} className="rounded-xl border border-amber-200/12 bg-black/25 p-3 text-sm text-amber-50">⚠ {item}</div>)}</div>
-          </Panel>
-          <Panel className="border-cyan-300/15 bg-[#050b16]/90">
-            <Pill><Target size={12}/> target material</Pill>
-            <div className="mt-4 text-4xl font-black text-white">{targetElement.symbol}</div>
-            <div className="text-lg font-black text-cyan-100">{targetElement.name}</div>
-            <p className="mt-3 text-sm leading-6 text-slate-400">Target response estimates heat load, activation risk, scattering and isotope yield using ElementOS behaviour metrics.</p>
-            <div className="mt-5 grid gap-2">
-              <Button onClick={sendTargetToExplorer} variant="ghost">Open Target in Explorer</Button>
-              <Button onClick={compareTargetMaterials} variant="ghost">Compare Target Materials</Button>
-              <Button onClick={forecastTarget} variant="ghost">Forecast Target Exposure</Button>
-              <Button onClick={saveReport} variant="primary">Export Accelerator Report</Button>
-            </div>
+            <div className="mt-4 space-y-2">{warnings.map((item) => <div key={item} className="border border-amber-200/12 bg-black/25 p-3 text-sm leading-5 text-amber-50">⚠ {item}</div>)}</div>
           </Panel>
         </div>
       </div>
+
+      <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
+        <Panel className="border-cyan-300/15 bg-[#050b16]/90">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <Pill><Radar size={12}/> operational sequence</Pill>
+              <h2 className="mt-3 text-3xl font-black text-white">Beamline command sequence</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-400">The accelerator converts setup inputs into a simulated chain: injection, acceleration, focus and interaction output.</p>
+            </div>
+            <div className="text-right"><div className="text-4xl font-black text-cyan-100">{efficiency}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">system efficiency</div></div>
+          </div>
+          <div className="mt-6 grid gap-3 md:grid-cols-4">
+            {sequence.map(([label, value], i) => (
+              <div key={label} className="border border-cyan-300/12 bg-black/24 p-4">
+                <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">0{i + 1}</div>
+                <div className="mt-2 text-xl font-black text-white">{label}</div>
+                <div className="mt-3 h-2 bg-slate-900"><div className="h-full bg-cyan-300" style={{ width: `${Math.max(4, Math.min(99, value))}%` }} /></div>
+                <div className="mt-2 text-sm font-black text-cyan-100">{Math.max(4, Math.min(99, value))}%</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel className="border-cyan-300/15 bg-[#050b16]/90">
+          <Pill><Target size={12}/> target material</Pill>
+          <div className="mt-4 text-5xl font-black text-white">{targetElement.symbol}</div>
+          <div className="text-lg font-black text-cyan-100">{targetElement.name}</div>
+          <p className="mt-3 text-sm leading-6 text-slate-400">Target response estimates heat load, activation risk, scattering and isotope yield using ElementOS material metrics.</p>
+          <div className="mt-5 grid grid-cols-2 gap-2 text-center text-xs">
+            <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{Math.round(targetScore.thermal * 20)}%</b><br/><span className="text-slate-500">Thermal</span></div>
+            <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{Math.round(targetScore.pressure * 20)}%</b><br/><span className="text-slate-500">Pressure</span></div>
+          </div>
+          <div className="mt-5 grid gap-2">
+            <button onClick={sendTargetToExplorer} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Open Target in Explorer</button>
+            <button onClick={compareTargetMaterials} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Compare Target Materials</button>
+            <button onClick={forecastTarget} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Forecast Target Exposure</button>
+            <button onClick={saveReport} className="border border-cyan-300/35 bg-cyan-300/12 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/18">Export Accelerator Report</button>
+          </div>
+        </Panel>
+      </div>
+
+      <Panel className="border-cyan-300/15 bg-[#050b16]/90">
+        <Pill><Settings size={12}/> accelerator controls</Pill>
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <label><span className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Particle</span><select value={particle} onChange={(e) => setParticle(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-slate-950 p-3 text-sm outline-none">{particles.map((item) => <option key={item}>{item}</option>)}</select></label>
+          <label><span className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Target material</span><select value={target} onChange={(e) => setTarget(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-slate-950 p-3 text-sm outline-none">{targetOptions.map((item) => <option key={item}>{item}</option>)}</select></label>
+          {[["Beam energy", beamEnergy, setBeamEnergy], ["Magnetic field", magneticField, setMagneticField], ["RF frequency", rfFrequency, setRfFrequency], ["Vacuum quality", vacuum, setVacuum], ["Detector sensitivity", detectorSensitivity, setDetectorSensitivity], ["Collimation", collimation, setCollimation]].map(([label, value, setter]) => (
+            <label key={label} className="block">
+              <div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{value}%</span></div>
+              <input type="range" min="10" max="100" value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-3 w-full accent-cyan-300" />
+            </label>
+          ))}
+        </div>
+      </Panel>
     </div>
   );
 }
