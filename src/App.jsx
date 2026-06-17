@@ -2126,6 +2126,106 @@ function Panel({ children, className = "" }) {
     </div>
   );
 }
+
+
+function intelligenceLayerForPage(page, context = {}) {
+  const selectedSymbol = context?.selected || context?.symbol || "Ti";
+  const selectedElement = elementMap[selectedSymbol] || elementMap.Ti || elements[0];
+  const selectedName = selectedElement?.name || selectedSymbol;
+  const library = {
+    mission: {
+      eyebrow: "ElementOS intelligence layer",
+      title: "What this is",
+      what: "Mission Intelligence converts a plain-language material question into a practical workflow: recommended materials, pairings, forecast horizon, risks, and report-ready outputs.",
+      why: "This matters because paid users do not just want a database — they want a decision path they can understand, save, and present.",
+      actions: ["Run a mission", "Open the recommended material", "Generate a mission report"],
+    },
+    explorer: {
+      eyebrow: "Material intelligence layer",
+      title: `${selectedName} context`,
+      what: `${selectedName} is treated as a selectable material token inside ElementOS, connecting its properties to comparisons, forecasts, reports, and simulation workflows.`,
+      why: "The Explorer becomes more valuable when every element explains what it is, why it matters, and which action should come next.",
+      actions: ["Forecast this element", "Compare recommended pairings", "Generate a material profile report"],
+    },
+    map: {
+      eyebrow: "Map intelligence layer",
+      title: "Reading the heatmap",
+      what: "The Element Map is a behaviour scan across all 118 elements. Each heat layer highlights a different property such as diffusion, thermal response, pressure behaviour, conductivity, rarity, or discovery potential.",
+      why: "This matters because users can see patterns before they choose a material, instead of reading isolated element cards one at a time.",
+      actions: ["Select a high-signal element", "Open it in Explorer", "Create a discovery report"],
+    },
+    compare: {
+      eyebrow: "Comparison intelligence layer",
+      title: "Interpreting material pairings",
+      what: "The Compare Engine turns a material set into compatibility scores, metric differences, and pairing opportunities.",
+      why: "This matters because the commercial value is not just knowing one element — it is understanding which materials work better together and why.",
+      actions: ["Add 2–6 materials", "Review strongest pairings", "Generate a comparative report"],
+    },
+    timemachine: {
+      eyebrow: "Forecast intelligence layer",
+      title: "What the future curve means",
+      what: "Time Machine projects how a selected material may behave across a chosen horizon under heat, pressure, corrosion, fatigue, and environmental stress.",
+      why: "This matters because real material decisions are time-dependent. A material that looks strong today may become risky over 10, 50, or 100 years.",
+      actions: ["Choose horizon", "Inspect risk drivers", "Export a forecast report"],
+    },
+    atlas: {
+      eyebrow: "Interaction intelligence layer",
+      title: "How to read interactions",
+      what: "The Interaction Atlas explains how materials behave under different environmental and behavioural layers, surfacing top signals and weak points.",
+      why: "This matters because systems rarely use one material in isolation. Interaction behaviour helps identify opportunities, failure modes, and reportable insights.",
+      actions: ["Pick environment", "Inspect top signals", "Generate an interaction report"],
+    },
+    accelerator: {
+      eyebrow: "Accelerator intelligence layer",
+      title: "Collision meaning",
+      what: "Particle Accelerator Lab simulates source and target element collisions, beam energy, magnetism, RF behaviour, detector output, and material response.",
+      why: "This matters because high-energy collision data becomes more useful when users understand what happened, why it happened, and what to do with the result.",
+      actions: ["Start simulation", "Review collision command centre", "Generate collision report"],
+    },
+    reports: {
+      eyebrow: "Research centre intelligence layer",
+      title: "Reports are the product output",
+      what: "Reports turn missions, elements, heatmaps, comparisons, forecasts, interactions, and lab simulations into professional deliverables.",
+      why: "This matters because reports are where ElementOS creates paid value: exportable conclusions, evidence, risks, opportunities, and next steps.",
+      actions: ["Choose report type", "Review executive summary", "Export or save to workspace"],
+    },
+  };
+  return library[page] || library.mission;
+}
+
+function ElementOSIntelligenceLayer({ page = "mission", context = {}, setPage, compact = false }) {
+  const item = intelligenceLayerForPage(page, context);
+  return (
+    <Panel className={`${compact ? "p-4" : ""} border-cyan-300/18 bg-[linear-gradient(135deg,rgba(2,6,23,.96),rgba(15,23,42,.88))]`}>
+      <div className="grid gap-5 xl:grid-cols-[1.05fr_1fr_.82fr]">
+        <div>
+          <Pill gold><Sparkles size={12}/> {item.eyebrow}</Pill>
+          <h2 className="mt-3 text-3xl font-black text-white">{item.title}</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">{item.what}</p>
+        </div>
+        <div className="rounded-[1.35rem] border border-white/10 bg-black/25 p-4">
+          <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">Why it matters</div>
+          <p className="mt-2 text-sm leading-7 text-slate-300">{item.why}</p>
+        </div>
+        <div className="rounded-[1.35rem] border border-cyan-300/15 bg-cyan-300/[0.055] p-4">
+          <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-200">Recommended actions</div>
+          <div className="mt-3 space-y-2">
+            {item.actions.map((action, index) => (
+              <div key={action} className="flex items-center gap-2 text-sm font-bold text-slate-200">
+                <span className="grid h-6 w-6 place-items-center rounded-lg border border-cyan-300/20 bg-slate-950 text-[10px] text-cyan-100">{index + 1}</span>
+                <span>{action}</span>
+              </div>
+            ))}
+          </div>
+          {setPage && (
+            <Button onClick={() => setPage("reports")} variant="primary" className="mt-4 w-full">Generate Report</Button>
+          )}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function Pill({ children, gold = false }) { return <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] uppercase tracking-[.22em] ${gold ? "border-amber-300/30 bg-amber-300/10 text-amber-100" : "border-cyan-300/30 bg-cyan-400/10 text-cyan-100"}`}>{children}</span>; }
 function Button({ children, onClick, variant = "ghost", className = "", disabled = false, title = "", ariaLabel = "", ...props }) {
   const styles =
@@ -4263,6 +4363,8 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
         </div>
       </PageHero>
 
+      <ElementOSIntelligenceLayer page="mission" context={{ selected }} setPage={setPage} />
+
       <V154MissionFirstHero setPage={setPage} />
 
       <V155AIMaterialAdvisor selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
@@ -5146,6 +5248,7 @@ function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
 
   return (
     <div className="space-y-6">
+      <ElementOSIntelligenceLayer page="timemachine" context={{ selected: material }} setPage={setPage} />
       <Panel className="grid gap-8 xl:grid-cols-[1.05fr_.95fr] border-cyan-300/25 bg-gradient-to-br from-cyan-950/25 via-slate-950 to-fuchsia-950/20">
         <div>
           <Pill gold><Clock3 size={12}/> time machine</Pill>
@@ -8007,6 +8110,8 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
         .eos-explorer-premium-v203 .eos-explorer-premium-panel { border-radius: 30px !important; border-color: rgba(255,255,255,.09) !important; background: linear-gradient(135deg, rgba(15,23,42,.9), rgba(2,6,23,.96)) !important; }
         .eos-explorer-premium-v203 .eos-explorer-kpi { border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.035); border-radius: 22px; padding: 16px; }
       `}</style>
+      <ElementOSIntelligenceLayer page="explorer" context={{ selected: el.symbol }} setPage={setPage} />
+
       <Panel className="eos-hero-panel overflow-hidden p-6 md:p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -8531,6 +8636,7 @@ function Compare({ compare, setCompare, setPage }) {
 
   return (
     <>
+      <ElementOSIntelligenceLayer page="compare" setPage={setPage} />
       <Panel>
         <Pill gold>
           <BarChart3 size={12} /> comparison engine
@@ -8993,6 +9099,7 @@ function PeriodicTable({ selected, setSelected }) {
 
   return (
     <div className="space-y-6">
+      <ElementOSIntelligenceLayer page="map" context={{ selected }} />
       <div className="min-h-[calc(100vh-92px)] overflow-hidden rounded-[22px] border border-cyan-300/15 bg-slate-950 shadow-[0_0_80px_rgba(2,6,23,.65)]">
         <div className="relative border-b border-white/10 bg-[linear-gradient(90deg,rgba(34,211,238,.12),transparent_38%),linear-gradient(180deg,rgba(255,255,255,.045),transparent)] p-4 md:p-5">
           <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
@@ -9220,6 +9327,7 @@ function BehaviourAtlas({ selected, setSelected }) {
         </div>
       </Panel>
       <GuidePanel page="atlas" />
+      <ElementOSIntelligenceLayer page="atlas" context={{ selected: selectedElement.symbol }} setPage={setPage} />
       <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
         <Panel>
           <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-3xl font-black">Live Behaviour Field</h2><p className="mt-2 text-sm text-slate-400">{environment}: {env.label}</p></div><Pill gold>{fieldMode} mode</Pill></div>
@@ -11049,6 +11157,8 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
         ]}
       />
 
+      <ElementOSIntelligenceLayer page="accelerator" context={{ selected: beamElement.symbol }} setPage={setPage} />
+
       <div className="grid gap-5 xl:grid-cols-[300px_minmax(0,1fr)_360px]">
         <Panel className="border-cyan-300/15 bg-[#050b16]/90">
           <Pill><Zap size={12}/> accelerator modes</Pill>
@@ -11655,6 +11765,7 @@ Status: Presentation-ready platform export.`;
 
   return (
     <>
+      <ElementOSIntelligenceLayer page="reports" context={{ selected }} setPage={setPage} />
       <V211ResearchCentreHub compare={compare} selected={selected} isPro={isPro} startCheckout={startCheckout} setPage={setPage} />
       <V212ReportOutputStudio compare={compare} selected={selected} isPro={isPro} startCheckout={startCheckout} setPage={setPage} saveReport={saveReport} exportPDF={exportPDF} />
       <V200ReportRevenueLock isPro={isPro} startCheckout={startCheckout} />
