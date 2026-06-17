@@ -7892,7 +7892,19 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
   );
 
   return (
-    <div className="space-y-6 pb-28">
+    <div className="eos-explorer-premium-v203 space-y-8 pb-28">
+      <style>{`
+        .eos-explorer-premium-v203 { --explorer-cyan: rgba(34,211,238,.34); --explorer-glow: rgba(34,211,238,.12); }
+        .eos-explorer-premium-v203 .eos-hero-panel { border-radius: 34px !important; border-color: rgba(34,211,238,.22) !important; background: radial-gradient(circle at 18% 8%, rgba(34,211,238,.18), transparent 34%), linear-gradient(135deg, rgba(2,6,23,.98), rgba(15,23,42,.94) 48%, rgba(3,7,18,.98)) !important; box-shadow: 0 28px 90px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.06); }
+        .eos-explorer-premium-v203 .eos-explorer-command-strip { border-radius: 30px; border: 1px solid rgba(34,211,238,.18); background: linear-gradient(135deg, rgba(15,23,42,.86), rgba(2,6,23,.96)); box-shadow: 0 24px 80px rgba(2,6,23,.32); }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame { max-height: min(78vh, 880px); border-radius: 28px; background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(2,6,23,.98)); border: 1px solid rgba(34,211,238,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 22px 60px rgba(0,0,0,.28); }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame button { border-radius: 20px !important; }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame button:hover { transform: translateX(3px); border-color: rgba(34,211,238,.42) !important; }
+        .eos-explorer-premium-v203 .eos-explorer-search { background: rgba(2,6,23,.72); border-color: rgba(34,211,238,.18) !important; }
+        .eos-explorer-premium-v203 .eos-explorer-search:focus-within { border-color: rgba(34,211,238,.48) !important; box-shadow: 0 0 0 4px rgba(34,211,238,.08); }
+        .eos-explorer-premium-v203 .eos-explorer-premium-panel { border-radius: 30px !important; border-color: rgba(255,255,255,.09) !important; background: linear-gradient(135deg, rgba(15,23,42,.9), rgba(2,6,23,.96)) !important; }
+        .eos-explorer-premium-v203 .eos-explorer-kpi { border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.035); border-radius: 22px; padding: 16px; }
+      `}</style>
       <Panel className="eos-hero-panel overflow-hidden p-6 md:p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -7961,9 +7973,41 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
 
       <V155AIMaterialAdvisor selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} compact />
 
-      <div className="grid gap-6 xl:grid-cols-[320px_1fr] 2xl:grid-cols-[360px_1fr]">
-        <Panel className="xl:sticky xl:top-4 xl:self-start">
-          <div className="max-h-[760px] overflow-auto pr-2">
+      <Panel className="eos-explorer-command-strip p-5">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="eos-explorer-kpi">
+            <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">selected material</div>
+            <div className="mt-2 text-2xl font-black text-white">{el.name}</div>
+            <div className="mt-1 text-xs font-bold text-cyan-100">{el.symbol} · #{el.atomicNumber}</div>
+          </div>
+          <div className="eos-explorer-kpi">
+            <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">intelligence score</div>
+            <div className="mt-2 text-4xl font-black text-cyan-100">{intelligenceScore}%</div>
+            <div className="mt-1 text-xs text-slate-400">Discovery-ready material profile</div>
+          </div>
+          <div className="eos-explorer-kpi">
+            <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">best next step</div>
+            <div className="mt-2 text-xl font-black text-white">{forecastYears}y forecast</div>
+            <div className="mt-1 text-xs text-slate-400">Auto-handoff into Time Machine</div>
+          </div>
+          <div className="eos-explorer-kpi">
+            <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">recommended pairing</div>
+            <div className="mt-2 text-xl font-black text-amber-100">{el.symbol} + {intelligence.recommendedCompare}</div>
+            <div className="mt-1 text-xs text-slate-400">Compare, forecast or report</div>
+          </div>
+        </div>
+      </Panel>
+
+      <div className="grid gap-8 xl:grid-cols-[380px_1fr] 2xl:grid-cols-[420px_1fr]">
+        <Panel className="eos-explorer-list-frame xl:sticky xl:top-4 xl:self-start">
+          <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div>
+              <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">element index</div>
+              <div className="mt-1 text-sm text-slate-400">{filtered.length} materials matching your filters</div>
+            </div>
+            <div className="rounded-xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-sm font-black text-cyan-100">{el.symbol}</div>
+          </div>
+          <div className="max-h-[calc(min(78vh,880px)-110px)] overflow-auto pr-2">
             {filtered.map(e => (
               <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
                 <ElementPicture el={e} compact />
@@ -7979,7 +8023,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
         <div className="space-y-6">
           <div className="grid gap-6 2xl:grid-cols-[.9fr_1.1fr]">
             <ElementVisualCard el={el} profile={profile} crystal={crystal} />
-            <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-slate-950">
+            <Panel className="eos-explorer-premium-panel overflow-hidden border-cyan-300/25 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-slate-950">
               <Pill gold><Sparkles size={12}/> material intelligence brief</Pill>
               <div className="mt-5 flex flex-wrap items-end gap-5">
                 <div className="text-8xl font-black tracking-[-.08em] text-cyan-100 sm:text-9xl">{el.symbol}</div>
@@ -7999,7 +8043,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
               </div>
             </Panel>
 
-            <Panel className="bg-white/[0.03]">
+            <Panel className="eos-explorer-premium-panel bg-white/[0.03]">
               <SectionTitle eyebrow="scorecard" title="Material Intelligence Scorecard" body="A single executive view of industrial value, engineering value, scientific interest, future potential and supply security." />
               <div className="grid gap-3 md:grid-cols-2">
                 {scorecard.map(([label, value], index) => <StatusBar key={label} label={label} value={value} tone={index === 0 ? "emerald" : index > 3 ? "amber" : "cyan"} />)}
@@ -15572,7 +15616,19 @@ function SystemHealth({ page, selected, compare, forecastRequest, session, isPro
   const passed = checks.filter((item) => item.passed).length;
   const health = Math.round((passed / Math.max(1, checks.length)) * 100);
   return (
-    <div className="space-y-6 pb-28">
+    <div className="eos-explorer-premium-v203 space-y-8 pb-28">
+      <style>{`
+        .eos-explorer-premium-v203 { --explorer-cyan: rgba(34,211,238,.34); --explorer-glow: rgba(34,211,238,.12); }
+        .eos-explorer-premium-v203 .eos-hero-panel { border-radius: 34px !important; border-color: rgba(34,211,238,.22) !important; background: radial-gradient(circle at 18% 8%, rgba(34,211,238,.18), transparent 34%), linear-gradient(135deg, rgba(2,6,23,.98), rgba(15,23,42,.94) 48%, rgba(3,7,18,.98)) !important; box-shadow: 0 28px 90px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.06); }
+        .eos-explorer-premium-v203 .eos-explorer-command-strip { border-radius: 30px; border: 1px solid rgba(34,211,238,.18); background: linear-gradient(135deg, rgba(15,23,42,.86), rgba(2,6,23,.96)); box-shadow: 0 24px 80px rgba(2,6,23,.32); }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame { max-height: min(78vh, 880px); border-radius: 28px; background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(2,6,23,.98)); border: 1px solid rgba(34,211,238,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 22px 60px rgba(0,0,0,.28); }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame button { border-radius: 20px !important; }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame button:hover { transform: translateX(3px); border-color: rgba(34,211,238,.42) !important; }
+        .eos-explorer-premium-v203 .eos-explorer-search { background: rgba(2,6,23,.72); border-color: rgba(34,211,238,.18) !important; }
+        .eos-explorer-premium-v203 .eos-explorer-search:focus-within { border-color: rgba(34,211,238,.48) !important; box-shadow: 0 0 0 4px rgba(34,211,238,.08); }
+        .eos-explorer-premium-v203 .eos-explorer-premium-panel { border-radius: 30px !important; border-color: rgba(255,255,255,.09) !important; background: linear-gradient(135deg, rgba(15,23,42,.9), rgba(2,6,23,.96)) !important; }
+        .eos-explorer-premium-v203 .eos-explorer-kpi { border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.035); border-radius: 22px; padding: 16px; }
+      `}</style>
       <Panel className="overflow-hidden border-emerald-300/20 bg-gradient-to-br from-slate-950 via-emerald-950/20 to-slate-950 p-6 md:p-8">
         <Pill gold><ShieldCheck size={12}/> platform readiness</Pill>
         <div className="mt-4 flex flex-wrap items-end justify-between gap-5">
