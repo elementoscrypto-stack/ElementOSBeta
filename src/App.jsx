@@ -10342,6 +10342,247 @@ function ReportsDiscoveryMergePanel({ setPage, setPublicDiscovery }) {
 }
 
 
+const V211_REPORT_SOURCE_MAP = {
+  dashboard: {
+    label: "Mission Intelligence",
+    report: "Mission Intelligence Report",
+    summary: "Mission inputs, recommended material pathway, scenario intent, forecast horizon and executive next steps.",
+    includes: ["Mission brief", "Recommended materials", "Scenario assumptions", "Upgrade-ready action plan"],
+  },
+  explorer: {
+    label: "Element Explorer",
+    report: "Material Profile Report",
+    summary: "Single-material intelligence report with applications, risks, behaviour metrics, pairings and forecast opportunities.",
+    includes: ["Element profile", "Applications", "Risks", "Recommended pairings"],
+  },
+  periodic: {
+    label: "Element Map",
+    report: "Element Heatmap Discovery Report",
+    summary: "Periodic heatmap snapshot with active layer, selected material, top signals and discovery candidates.",
+    includes: ["Heatmap layer", "Top signal elements", "Selected material", "Discovery opportunities"],
+  },
+  compare: {
+    label: "Compare Engine",
+    report: "Comparative Material Analysis",
+    summary: "Side-by-side comparison report with rankings, compatibility logic, strengths, weaknesses and recommendation notes.",
+    includes: ["Compare set", "Compatibility metrics", "Best material", "Decision notes"],
+  },
+  timemachine: {
+    label: "Time Machine",
+    report: "Future Forecast Report",
+    summary: "Forecast dossier covering selected material, horizon, environment, risk progression and report-ready conclusion.",
+    includes: ["Forecast horizon", "Risk timeline", "Material alternatives", "Executive summary"],
+  },
+  atlas: {
+    label: "Interaction Atlas",
+    report: "Material Interaction Report",
+    summary: "Interaction report for behaviour fields, pair signals, compatibility strengths, risks and material response notes.",
+    includes: ["Interaction matrix", "Top pairs", "Behaviour layers", "Risk/opportunity notes"],
+  },
+  accelerator: {
+    label: "Particle Accelerator Lab",
+    report: "Particle Collision Report",
+    summary: "Accelerator report with beam telemetry, source/target elements, detector output, collision result and event log.",
+    includes: ["Beam physics", "Collision result", "Detector events", "Target response"],
+  },
+  isotopes: {
+    label: "Isotope Lab",
+    report: "Nuclear Stability Report",
+    summary: "Isotope report with proton/neutron configuration, mass number, stability readout and nuclear risk notes.",
+    includes: ["Nucleus configuration", "Mass number", "Stability", "Decay risk"],
+  },
+  seismo: {
+    label: "Seismic Laboratory",
+    report: "Seismic Laboratory Report",
+    summary: "Wave intelligence report for P/S-wave settings, arrival gap, depth response and subsurface signal interpretation.",
+    includes: ["Wave speeds", "Arrival gap", "Depth response", "Signal notes"],
+  },
+  welldriller: {
+    label: "Well Driller",
+    report: "Resource Discovery Drilling Report",
+    summary: "Drilling report covering formation pressure, bore path, target depth, readiness and risk interpretation.",
+    includes: ["Bore path", "Formation pressure", "Target depth", "Readiness notes"],
+  },
+  calculations: {
+    label: "Calculation Studio",
+    report: "Calculation Evidence Report",
+    summary: "Calculation report collecting equations, conversions, whiteboard notes and export-ready supporting evidence.",
+    includes: ["Equations", "Conversions", "Whiteboard notes", "Research support"],
+  },
+};
+
+function v211ReportIntentForPage(page, selected = "Al", compare = []) {
+  const source = V211_REPORT_SOURCE_MAP[page] || V211_REPORT_SOURCE_MAP.dashboard;
+  const element = elementMap[selected] || elementMap.Al;
+  const compareSet = safeArray(compare, []).length ? compare.join(" + ") : selected;
+  return {
+    id: `${page}-${selected}-${Date.now()}`,
+    sourcePage: page,
+    sourceLabel: source.label,
+    title: source.report,
+    selectedElement: selected,
+    selectedName: element?.name || selected,
+    compareSet,
+    summary: source.summary,
+    includes: source.includes,
+    generatedAt: new Date().toLocaleString(),
+  };
+}
+
+function v211StoreReportIntent(intent) {
+  if (typeof window === "undefined") return;
+  try {
+    const current = safeParseJSON(localStorage.getItem("elementos_report_pipeline"), []);
+    const next = [intent, ...safeArray(current)].slice(0, 12);
+    localStorage.setItem("elementos_report_pipeline", JSON.stringify(next));
+    localStorage.setItem("elementos_pending_report", JSON.stringify(intent));
+  } catch (_error) {
+    // Best-effort only. Reporting should never crash the app.
+  }
+}
+
+function V211ReportPipelineDock({ page, selected, compare, setPage }) {
+  if (["landing", "login", "reports", "systemhealth", "publicdiscovery"].includes(page)) return null;
+  const intent = v211ReportIntentForPage(page, selected, compare);
+  const sendToReports = () => {
+    v211StoreReportIntent(intent);
+    setPage?.("reports");
+  };
+  return (
+    <div className="rounded-[1.25rem] border border-cyan-300/12 bg-[#050b16]/88 p-3 shadow-[0_18px_60px_rgba(0,0,0,.22)] backdrop-blur-xl">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">Report pipeline · {intent.sourceLabel}</div>
+          <div className="mt-1 text-sm leading-6 text-slate-300">
+            Turn this page into a <b className="text-white">{intent.title}</b> for {intent.selectedName} / {intent.compareSet}.
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={sendToReports} className="rounded-xl border border-cyan-300/35 bg-cyan-300/10 px-4 py-2 text-sm font-black text-cyan-50 transition hover:bg-cyan-300/16">
+            Generate Report
+          </button>
+          <button type="button" onClick={() => setPage?.("reports")} className="rounded-xl border border-white/10 bg-white/[0.035] px-4 py-2 text-sm font-black text-slate-200 transition hover:border-cyan-300/25">
+            Research Centre
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function V211ResearchCentreHub({ compare = [], selected = "Al", isPro, startCheckout, setPage }) {
+  const [pipeline, setPipeline] = useState([]);
+  const [pending, setPending] = useState(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const list = safeParseJSON(localStorage.getItem("elementos_report_pipeline"), []);
+    const latest = safeParseJSON(localStorage.getItem("elementos_pending_report"), null);
+    setPipeline(safeArray(list));
+    setPending(latest);
+  }, []);
+
+  const defaultIntent = pending || v211ReportIntentForPage("compare", selected, compare);
+  const reportFamilies = [
+    ["Mission Reports", "Mission Intelligence", "Decision-ready material recommendations from user goals and scenarios.", "dashboard"],
+    ["Material Reports", "Element Explorer", "Single-element profile reports with applications, risks, pairings and future outlook.", "explorer"],
+    ["Heatmap Reports", "Element Map", "Periodic heatmap and discovery-layer snapshots for all 118 elements.", "periodic"],
+    ["Comparison Reports", "Compare", "Side-by-side material rankings, compatibility tables and recommendation notes.", "compare"],
+    ["Forecast Reports", "Time Machine", "Future-state risk, environment and horizon reports.", "timemachine"],
+    ["Interaction Reports", "Interaction Atlas", "Material response, pair behaviour, signal and anomaly reports.", "atlas"],
+    ["Lab Reports", "Advanced Labs", "Particle collision, isotope, seismic and drilling lab reports.", "accelerator"],
+    ["Saved Reports", "Research Centre", "Persistent cloud reports, share links and export history.", "reports"],
+  ];
+
+  const savePipelineSnapshot = () => {
+    const intent = v211ReportIntentForPage("reports", selected, compare);
+    v211StoreReportIntent({ ...intent, title: "Research Centre Snapshot", sourceLabel: "Reports" });
+    setPipeline((items) => [{ ...intent, title: "Research Centre Snapshot", sourceLabel: "Reports" }, ...items].slice(0, 12));
+  };
+
+  return (
+    <div className="space-y-5">
+      <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/95 p-0">
+        <div className="relative grid gap-0 lg:grid-cols-[1.05fr_.95fr]">
+          <div className="absolute inset-0 opacity-45" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.06) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
+          <div className="relative p-6 lg:p-8">
+            <Pill gold><FileText size={12}/> unified research centre</Pill>
+            <h1 className="mt-4 max-w-4xl text-5xl font-black tracking-tight lg:text-7xl">Reports are now the output engine.</h1>
+            <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300">
+              Every core page now has a reporting path: Mission Intelligence, Explorer, Element Map, Compare, Time Machine, Interaction Atlas and Advanced Labs all feed into one professional Research Centre.
+            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {[["Active source", defaultIntent.sourceLabel], ["Report type", defaultIntent.title], ["Current set", defaultIntent.compareSet]].map(([label, value]) => (
+                <div key={label} className="border border-cyan-300/12 bg-black/25 p-4">
+                  <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">{label}</div>
+                  <div className="mt-2 text-lg font-black text-cyan-50">{value}</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button variant="primary" onClick={savePipelineSnapshot}>Save Research Snapshot</Button>
+              <Button onClick={() => setPage?.("timemachine")}>Open Forecast Source</Button>
+              <Button onClick={() => setPage?.("accelerator")}>Open Lab Source</Button>
+            </div>
+          </div>
+          <div className="relative border-t border-cyan-300/10 bg-black/20 p-6 lg:border-l lg:border-t-0 lg:p-8">
+            <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">Current report blueprint</div>
+            <h2 className="mt-3 text-3xl font-black text-white">{defaultIntent.title}</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-300">{defaultIntent.summary}</p>
+            <div className="mt-5 grid gap-2">
+              {safeArray(defaultIntent.includes).map((item) => (
+                <div key={item} className="flex items-center justify-between gap-3 border border-white/10 bg-slate-950/65 p-3 text-sm text-slate-200">
+                  <span>{item}</span>
+                  <span className="text-cyan-200">ready</span>
+                </div>
+              ))}
+            </div>
+            {!isPro && (
+              <div className="mt-5 border border-amber-300/20 bg-amber-300/[.08] p-4 text-sm leading-6 text-amber-50">
+                Export is the paid moment: preview reports free, unlock PDF/JSON/SVG and shareable exports with Pro Researcher.
+                <button type="button" onClick={() => startCheckout?.("Pro Researcher")} className="mt-3 block rounded-xl border border-amber-200/30 bg-amber-200/10 px-4 py-2 text-sm font-black text-amber-50">Unlock exports</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </Panel>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {reportFamilies.map(([title, source, description, target]) => (
+          <button key={title} type="button" onClick={() => target === "reports" ? null : setPage?.(target)} className="group border border-white/10 bg-[#07111f]/88 p-5 text-left shadow-[0_18px_60px_rgba(0,0,0,.2)] transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/[.055]">
+            <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">{source}</div>
+            <div className="mt-3 text-2xl font-black text-white group-hover:text-cyan-50">{title}</div>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
+            <div className="mt-5 text-xs font-black uppercase tracking-[.18em] text-cyan-200">open source →</div>
+          </button>
+        ))}
+      </div>
+
+      <Panel className="border-cyan-300/12 bg-[#050b16]/90">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Pill><Save size={12}/> report intake queue</Pill>
+            <h2 className="mt-3 text-3xl font-black">Reports generated from across ElementOS</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">This queue shows report intents pushed from Explorer, Map, Compare, Time Machine and Labs before cloud save/export.</p>
+          </div>
+          <Button onClick={savePipelineSnapshot}>Add current page snapshot</Button>
+        </div>
+        <div className="mt-5 grid gap-3 lg:grid-cols-3">
+          {(pipeline.length ? pipeline : [defaultIntent]).slice(0, 6).map((item, index) => (
+            <div key={item.id || `${item.title}-${index}`} className="border border-white/10 bg-black/25 p-4">
+              <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-200">{item.sourceLabel}</div>
+              <div className="mt-2 text-lg font-black text-white">{item.title}</div>
+              <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-400">{item.summary}</p>
+              <div className="mt-3 text-xs text-slate-500">{item.generatedAt}</div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+
 function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastRequest }) {
   const machines = [
     { id: "linac", name: "LINAC", subtitle: "RF cavity beamline", shape: "linear", multiplier: 0.75, focus: "Straight-line acceleration through synchronized RF cavities." },
@@ -11163,6 +11404,7 @@ Status: Presentation-ready platform export.`;
 
   return (
     <>
+      <V211ResearchCentreHub compare={compare} selected={selected} isPro={isPro} startCheckout={startCheckout} setPage={setPage} />
       <V200ReportRevenueLock isPro={isPro} startCheckout={startCheckout} />
       <V154ExecutiveReportPreview compare={compare} isPro={isPro} startCheckout={startCheckout} />
       <ReportsDiscoveryMergePanel setPage={setPage} setPublicDiscovery={() => {}} />
@@ -16767,6 +17009,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         {page !== "landing" && page !== "login" && (
           <V155AdvisorMiniBar selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
         )}
+        <V211ReportPipelineDock page={page} selected={selected} compare={compare} setPage={setPage} />
         {/* Global guide strips removed in V126 so each page can focus on its primary workflow. */}
         <ElementOSPageErrorBoundary key={page} page={page} setPage={setPage}><div className="eos-page-stage mx-auto w-full max-w-[1850px] animate-[fadeIn_.22s_ease-out]">{pages[page] || pages.dashboard}</div></ElementOSPageErrorBoundary>
       </main>
