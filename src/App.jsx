@@ -1,3 +1,8 @@
+// =====================================================
+// ELEMENTOS LAUNCH CANDIDATE
+// Built from V218 Visual Identity Pass.
+// Scope: stabilize current flagship pages, preserve navigation, preserve Reports/Calculation/Labs, and avoid broad rewrites.
+// =====================================================
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { supabase } from "./supabaseClient";
