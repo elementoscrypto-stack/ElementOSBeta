@@ -9340,7 +9340,7 @@ function PeriodicTable({ selected, setSelected }) {
   );
 }
 
-function BehaviourAtlas({ selected, setSelected }) {
+function BehaviourAtlas({ selected, setSelected, setPage }) {
   const [layer, setLayer] = useState("conductivity");
   const [environment, setEnvironment] = useState("Lab air");
   const [fieldMode, setFieldMode] = useState("wave");
@@ -17373,6 +17373,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         <BehaviourAtlas
           selected={selected}
           setSelected={setSelected}
+          setPage={setPage}
         />
       ),
       graph: (
