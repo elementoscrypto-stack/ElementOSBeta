@@ -1607,6 +1607,7 @@ const MOBILE_PAGE_ORDER = [
   "periodic",
   "compare",
   "timemachine",
+  "calculations",
   "atlas",
   "reports",
   "lab",
@@ -4110,6 +4111,7 @@ function Sidebar({ page, setPage }) {
     ["periodic", "Element Map", Layers],
     ["compare", "Compare", BarChart3],
     ["timemachine", "Time Machine", Clock3],
+    ["calculations", "Calculation Studio", Calculator],
     ["atlas", "Interaction Atlas", Radar],
     ["reports", "Reports", BookOpen],
   ];
@@ -15014,6 +15016,7 @@ function MobileBottomNav({ page, setPage }) {
   const moreItems = [
     ["compare", "Compare", "Material comparison workflow"],
     ["timemachine", "Time Machine", "Long-term forecasts"],
+    ["calculations", "Calculation Studio", "Equations, conversions and report evidence"],
     ["atlas", "Interaction Atlas", "Material interaction heatmaps"],
     ["lab", "Labs", "Specialist laboratories"],
     ["isotopes", "Isotope Lab", "Nucleus builder"],
