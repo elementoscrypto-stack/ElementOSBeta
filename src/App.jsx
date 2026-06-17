@@ -2684,6 +2684,105 @@ function V154SubscriberUpgradeGrid({ isPro, startCheckout, setPage }) {
   );
 }
 
+
+
+function V200RevenueConversionPanel({ isPro, startCheckout, setPage }) {
+  const [teamSize, setTeamSize] = useState(3);
+  const [hoursSaved, setHoursSaved] = useState(6);
+  const [hourlyValue, setHourlyValue] = useState(85);
+  const monthlyValue = Math.max(0, teamSize * hoursSaved * hourlyValue);
+  const proResearcherCost = 19;
+  const proLabCost = 35;
+  const roi = Math.max(1, Math.round(monthlyValue / proResearcherCost));
+  const unlocks = [
+    ["Reports", "Turn simulations into executive PDFs, JSON and visual export assets."],
+    ["Forecast history", "Save material forecasts and reopen them from Workspace."],
+    ["Advisor workflow", "Convert a real-world need into ranked materials and actions."],
+    ["Advanced labs", "Use isotope, seismic and well-drilling modules when the work gets specialist."],
+  ];
+  return (
+    <Panel className="border-cyan-300/20 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-slate-950">
+      <div className="grid gap-6 xl:grid-cols-[1fr_.9fr] xl:items-stretch">
+        <div>
+          <Pill gold><Crown size={12}/> revenue engine</Pill>
+          <h2 className="mt-4 text-4xl font-bold tracking-tight text-white">Show users the value before asking them to upgrade.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+            ElementOS should sell time saved, professional outputs, and confidence in material decisions — not just access to more pages.
+          </p>
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
+            {unlocks.map(([title, body]) => (
+              <div key={title} className="rounded-[1.25rem] border border-white/10 bg-white/[0.035] p-4">
+                <div className="text-base font-bold text-white">{title}</div>
+                <div className="mt-2 text-sm leading-6 text-slate-400">{body}</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button onClick={() => startCheckout?.("Pro Researcher")} variant="primary">Start Pro Researcher · $19/mo</Button>
+            <Button onClick={() => startCheckout?.("Pro Lab")}>Start Pro Lab · $35/mo</Button>
+            <Button onClick={() => setPage?.("reports")}>Preview Report Exports</Button>
+          </div>
+        </div>
+        <div className="rounded-[1.75rem] border border-cyan-300/20 bg-black/30 p-5">
+          <div className="text-xs font-bold uppercase tracking-[.22em] text-cyan-200">ROI preview</div>
+          <div className="mt-3 text-5xl font-bold text-white">${monthlyValue.toLocaleString()}</div>
+          <div className="mt-1 text-sm text-slate-400">estimated monthly value from research time saved</div>
+          <div className="mt-5 grid gap-3">
+            <label className="text-xs font-bold uppercase tracking-[.18em] text-slate-500">Team members</label>
+            <input type="range" min="1" max="20" value={teamSize} onChange={(e) => setTeamSize(safeNumber(e.target.value, 3))} className="w-full" />
+            <div className="text-sm font-bold text-cyan-100">{teamSize} people</div>
+            <label className="text-xs font-bold uppercase tracking-[.18em] text-slate-500">Hours saved per person / month</label>
+            <input type="range" min="1" max="30" value={hoursSaved} onChange={(e) => setHoursSaved(safeNumber(e.target.value, 6))} className="w-full" />
+            <div className="text-sm font-bold text-cyan-100">{hoursSaved} hours</div>
+            <label className="text-xs font-bold uppercase tracking-[.18em] text-slate-500">Research hour value</label>
+            <input type="range" min="25" max="250" step="5" value={hourlyValue} onChange={(e) => setHourlyValue(safeNumber(e.target.value, 85))} className="w-full" />
+            <div className="text-sm font-bold text-cyan-100">${hourlyValue}/hour</div>
+          </div>
+          <div className="mt-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.08] p-4">
+            <div className="text-xs font-bold uppercase tracking-[.2em] text-emerald-200">Value multiple</div>
+            <div className="mt-1 text-3xl font-bold text-emerald-100">{roi}× vs Pro Researcher</div>
+            <div className="mt-1 text-xs leading-5 text-emerald-50/80">A clear ROI story makes the $19/month plan feel easy to justify.</div>
+          </div>
+          {!isPro && <Button onClick={() => startCheckout?.("Pro Researcher")} variant="primary" className="mt-5 w-full">Unlock report exports now</Button>}
+          {isPro && <Button onClick={() => setPage?.("reports")} variant="primary" className="mt-5 w-full">Generate a report</Button>}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function V200ReportRevenueLock({ isPro, startCheckout }) {
+  if (isPro) {
+    return (
+      <Panel className="border-emerald-300/20 bg-emerald-300/[0.055]">
+        <Pill gold><CheckCircle2 size={12}/> pro exports active</Pill>
+        <h2 className="mt-3 text-3xl font-bold text-white">Professional export workflow unlocked.</h2>
+        <p className="mt-2 text-sm leading-7 text-slate-300">Use Reports as the paid deliverable layer: PDF, JSON, SVG, posters, saved workspaces and executive summaries.</p>
+      </Panel>
+    );
+  }
+  return (
+    <Panel className="border-amber-300/25 bg-gradient-to-br from-amber-300/[0.09] via-slate-950 to-cyan-300/[0.06]">
+      <div className="grid gap-5 lg:grid-cols-[1fr_.75fr] lg:items-center">
+        <div>
+          <Pill gold><Lock size={12}/> pro researcher conversion point</Pill>
+          <h2 className="mt-3 text-4xl font-bold text-white">Reports are the moment users understand what they are paying for.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">Free users can preview intelligence. Pro Researcher unlocks polished exports they can send to a team, client, lab or investor.</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {["Export PDF", "Save forecast history", "Create poster", "Build research vault"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-3 text-sm font-semibold text-slate-200">✓ {item}</div>)}
+          </div>
+        </div>
+        <div className="rounded-[1.5rem] border border-cyan-300/20 bg-black/30 p-5 text-center">
+          <div className="text-xs font-bold uppercase tracking-[.22em] text-cyan-200">Recommended plan</div>
+          <div className="mt-3 text-4xl font-bold text-white">Pro Researcher</div>
+          <div className="mt-1 text-3xl font-bold text-cyan-100">$19/month</div>
+          <Button onClick={() => startCheckout?.("Pro Researcher")} variant="primary" className="mt-5 w-full">Unlock exports</Button>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function V154PremiumExplorerStrip({ el, material, intelligence, scoreValue, onForecast, onCompare }) {
   const apps = material?.applications || intelligence?.applications || ["Aerospace", "Marine", "Medical", "Energy"];
   const advantages = material?.advantages || intelligence?.strengths || ["Strong material profile", "Forecast-ready", "Report-ready"];
@@ -4069,6 +4168,8 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
       <SubscriberLoveStrip session={session} isPro={isPro} setPage={setPage} startCheckout={startCheckout} />
 
       <V154SubscriberUpgradeGrid isPro={isPro} startCheckout={startCheckout} setPage={setPage} />
+
+      <V200RevenueConversionPanel isPro={isPro} startCheckout={startCheckout} setPage={setPage} />
 
       <MissionIntelligencePipelineV151 selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
 
@@ -10240,6 +10341,7 @@ Status: Presentation-ready platform export.`;
 
   return (
     <>
+      <V200ReportRevenueLock isPro={isPro} startCheckout={startCheckout} />
       <V154ExecutiveReportPreview compare={compare} isPro={isPro} startCheckout={startCheckout} />
       <ReportsDiscoveryMergePanel setPage={setPage} setPublicDiscovery={() => {}} />
       <Panel>
