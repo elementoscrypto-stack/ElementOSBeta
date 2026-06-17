@@ -1570,7 +1570,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 
 
 const PAGE_LABELS = {
-  landing: "Mission Intelligence",
+  landing: "Homepage",
   dashboard: "Mission Intelligence",
   copilot: "Mission Intelligence",
   mission: "Mission Intelligence",
@@ -1601,6 +1601,7 @@ const PAGE_LABELS = {
 };
 
 const MOBILE_PAGE_ORDER = [
+  "landing",
   "dashboard",
   "explorer",
   "periodic",
@@ -3973,7 +3974,104 @@ function ElementOSThemeSkin() {
         background: linear-gradient(90deg, transparent, rgba(103,232,249,.58), rgba(250,204,21,.32), transparent);
       }
 
-            @keyframes eosSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+      
+
+      /* V204 Sitewide Amplification: controlled premium polish outside Explorer */
+      .eos-nor-grid-interface .eos-page-stage {
+        --eos-v204-rail: rgba(34,211,238,.18);
+      }
+      .eos-nor-grid-interface .eos-page-stage > .eos-panel,
+      .eos-nor-grid-interface .eos-page-stage > div > .eos-panel,
+      .eos-nor-grid-interface .eos-page-stage .eos-luxury-window {
+        border-color: rgba(148,163,184,.13) !important;
+      }
+      .eos-nor-grid-interface .eos-page-stage .eos-panel::after {
+        content: "";
+        position: absolute;
+        top: 22px;
+        bottom: 22px;
+        left: 0;
+        width: 1px;
+        background: linear-gradient(180deg, transparent, rgba(34,211,238,.34), transparent);
+        opacity: .82;
+        pointer-events: none;
+      }
+      .eos-nor-grid-interface .eos-page-stage .eos-hero-panel {
+        background:
+          linear-gradient(90deg, rgba(34,211,238,.12), transparent 30%),
+          radial-gradient(circle at 78% 18%, rgba(34,211,238,.10), transparent 28%),
+          linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)),
+          rgba(2,6,23,.92) !important;
+        border-color: rgba(34,211,238,.22) !important;
+      }
+      .eos-nor-grid-interface .eos-page-stage h1 {
+        text-wrap: balance;
+        text-shadow: 0 24px 80px rgba(34,211,238,.08);
+      }
+      .eos-nor-grid-interface .eos-page-stage h2 {
+        text-wrap: balance;
+      }
+      .eos-nor-grid-interface .eos-page-stage p {
+        color: rgb(203 213 225 / .92);
+      }
+      .eos-nor-grid-interface .eos-page-stage .grid > button,
+      .eos-nor-grid-interface .eos-page-stage article,
+      .eos-nor-grid-interface .eos-page-stage section,
+      .eos-nor-grid-interface .eos-page-stage .eos-data-card {
+        transition: transform .22s ease, border-color .22s ease, background .22s ease, box-shadow .22s ease;
+      }
+      .eos-nor-grid-interface .eos-page-stage .grid > button:hover,
+      .eos-nor-grid-interface .eos-page-stage article:hover,
+      .eos-nor-grid-interface .eos-page-stage .eos-data-card:hover {
+        border-color: rgba(34,211,238,.24) !important;
+        box-shadow: 0 22px 70px rgba(0,0,0,.28), 0 0 42px rgba(34,211,238,.055) !important;
+      }
+      .eos-nor-grid-interface .eos-page-stage input,
+      .eos-nor-grid-interface .eos-page-stage select,
+      .eos-nor-grid-interface .eos-page-stage textarea {
+        background: rgba(2,6,23,.74) !important;
+        border-color: rgba(148,163,184,.15) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+      }
+      .eos-nor-grid-interface .eos-page-stage input:focus,
+      .eos-nor-grid-interface .eos-page-stage select:focus,
+      .eos-nor-grid-interface .eos-page-stage textarea:focus {
+        border-color: rgba(34,211,238,.42) !important;
+        box-shadow: 0 0 0 1px rgba(34,211,238,.18), 0 0 34px rgba(34,211,238,.08) !important;
+      }
+      .eos-nor-grid-interface .eos-nav-item-active {
+        border-color: rgba(34,211,238,.34) !important;
+        background: linear-gradient(90deg, rgba(34,211,238,.13), rgba(2,6,23,.72)) !important;
+      }
+      .eos-nor-grid-interface aside .eos-nav-item:first-child {
+        position: relative;
+      }
+      .eos-nor-grid-interface aside .eos-nav-item:first-child::before {
+        content: "";
+        position: absolute;
+        left: -1px;
+        top: 12px;
+        bottom: 12px;
+        width: 2px;
+        background: rgba(34,211,238,.34);
+        opacity: .75;
+      }
+      .eos-nor-grid-interface table {
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+      .eos-nor-grid-interface th {
+        color: #bae6fd;
+        font-weight: 700;
+      }
+      .eos-nor-grid-interface td {
+        border-color: rgba(148,163,184,.10) !important;
+      }
+      @media (min-width: 1280px) {
+        .eos-nor-grid-interface .eos-page-stage > * + * { margin-top: 1.45rem; }
+      }
+
+      @keyframes eosSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
       @keyframes eosSpinReverse { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
       @keyframes eosPulse { 0%,100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.06); } }
       @keyframes eosStrataDrift { 0%,100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.18) saturate(1.35); } }
@@ -4006,6 +4104,7 @@ function Sidebar({ page, setPage }) {
   });
 
   const primaryItems = [
+    ["landing", "Homepage", Home],
     ["dashboard", "Mission Intelligence", Sparkles],
     ["explorer", "Element Explorer", Search],
     ["periodic", "Element Map", Layers],
