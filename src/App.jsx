@@ -10469,6 +10469,50 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
     ["00:15", "Detector readout", `${resultProducts.join(" · ")}`],
   ];
 
+  const beamTelemetryRows = [
+    ["Speed", `${velocityMS.toLocaleString()} m/s`, `${(velocityFraction * 100).toFixed(3)}% of light`, Math.round(velocityFraction * 100)],
+    ["Acceleration", `${accelerationMS2.toExponential(3)} m/s²`, "RF-driven simulated acceleration", Math.min(99, Math.round(beamEnergy * 0.52 + rfFrequency * 0.28))],
+    ["Magnetism", `${magneticTesla} T`, `Orbit radius ${orbitRadiusM} m`, magneticField],
+    ["RF Sync", `${rfMHz} MHz`, `${pulseRate}% pulse · ${beamCurrent}% current`, rfFrequency],
+    ["Beam Power", `${beamPowerMW} MW`, "Estimated delivered beam power", Math.min(99, Math.round(beamPowerMW * 11))],
+    ["Luminosity", `${luminosity}%`, "Event density estimate", luminosity],
+  ];
+
+  const targetResponseRows = [
+    ["Heat Load", `${heatLoad}%`, `${targetElement.symbol} thermal envelope`, heatLoad],
+    ["Activation Risk", `${activationRisk}%`, "Induced target activity", activationRisk],
+    ["Scattering", `${scatteringIndex}%`, "Angular spread / interaction cone", scatteringIndex],
+    ["Target Yield", `${targetYield}%`, "Useful event or isotope yield", targetYield],
+    ["Damage Index", `${Math.max(5, Math.min(99, Math.round((heatLoad + radiationLoad + activationRisk) / 3)))}%`, "Combined material stress", Math.max(5, Math.min(99, Math.round((heatLoad + radiationLoad + activationRisk) / 3)))],
+    ["Penetration", `${Math.max(4, Math.min(99, Math.round(beamEnergy * 0.46 + targetScore.pressure * 8)))}%`, "Beam depth estimate", Math.max(4, Math.min(99, Math.round(beamEnergy * 0.46 + targetScore.pressure * 8)))],
+  ];
+
+  const detectorOutputRows = [
+    ["Muon Trace", `${Math.max(1, Math.round(collisionQuality * 0.42 + detectorSensitivity * 0.18))}`, "Track candidates", Math.max(6, Math.min(99, Math.round(collisionQuality * 0.55 + detectorSensitivity * 0.18)))],
+    ["Gamma Burst", `${Math.max(2, Math.round(radiationLoad * 0.72))}`, "Photon burst signature", radiationLoad],
+    ["Neutron Flux", `${Math.max(1, Math.round(scatteringIndex * 0.64))}`, "Secondary neutron signal", scatteringIndex],
+    ["Energy Deposition", `${Math.max(4, Math.min(99, Math.round(heatLoad * 0.55 + beamEnergy * 0.25)))}%`, "Detector calorimeter load", Math.max(4, Math.min(99, Math.round(heatLoad * 0.55 + beamEnergy * 0.25)))],
+    ["Saturation", `${Math.max(3, Math.min(99, Math.round(luminosity * 0.45 + detectorSensitivity * 0.35)))}%`, "Readout saturation risk", Math.max(3, Math.min(99, Math.round(luminosity * 0.45 + detectorSensitivity * 0.35)))],
+    ["Confidence", `${detectorSensitivity}%`, `${selectedEvent} readout selected`, detectorSensitivity],
+  ];
+
+  const collisionResultRows = [
+    ["Event Type", resultHeadline, "Primary simulated outcome", collisionQuality],
+    ["Products", resultProducts.join(" · "), "Detected final-state signature", Math.max(8, Math.min(99, resultProducts.length * 16))],
+    ["Quality", `${collisionQuality}%`, "Interaction clarity", collisionQuality],
+    ["Efficiency", `${efficiency}%`, "Useful output vs load", efficiency],
+    ["Stability", `${beamStability}%`, "Beam control quality", beamStability],
+    ["Risk Envelope", radiationLoad > 76 || heatLoad > 78 ? "Elevated" : "Controlled", "Radiation and thermal risk", Math.max(radiationLoad, heatLoad)],
+  ];
+
+  const collisionMatrixRows = [
+    ["Energy", collisionQuality, `${collisionEnergyGeV} GeV collision`],
+    ["Yield", targetYield, `${targetElement.symbol} target response`],
+    ["Damage", Math.max(5, Math.min(99, Math.round((heatLoad + activationRisk) / 2))), "Thermal + activation load"],
+    ["Activation", activationRisk, "Induced material activity"],
+    ["Confidence", detectorSensitivity, "Detector readout quality"],
+  ];
+
   const sequence = [
     ["Inject", Math.round(beamEnergy * 0.35 + vacuum * 0.18 + beamCurrent * 0.12)],
     ["Accelerate", Math.round(beamEnergy * 0.64 + rfFrequency * 0.2 + pulseRate * 0.08)],
@@ -10744,35 +10788,100 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
         </div>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1fr_420px]">
-        <Panel className="border-cyan-300/15 bg-[#050b16]/90">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <Pill><Radar size={12}/> collision result</Pill>
-              <h2 className="mt-3 text-3xl font-black text-white">{collisionResult?.headline || "No collision result yet"}</h2>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{collisionResult?.summary || "Choose an accelerator, particle source, 118-element collision target, then press Start Simulation to generate a collision result."}</p>
+      <Panel className="border-cyan-300/15 bg-[#050b16]/90">
+        <div className="flex flex-wrap items-start justify-between gap-5 border-b border-cyan-300/10 pb-5">
+          <div>
+            <Pill><Radar size={12}/> collision command centre</Pill>
+            <h2 className="mt-3 text-4xl font-black text-white">{collisionResult?.headline || "Collision event ready"}</h2>
+            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{collisionResult?.summary || "Start the accelerator to generate a full collision event. This command centre separates beam physics, target response, detector output and event reconstruction so the data is readable instead of cramped."}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-right sm:grid-cols-4">
+            <div className="border border-cyan-300/12 bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{collisionQuality}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">quality</div></div>
+            <div className="border border-cyan-300/12 bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{collisionEnergyGeV}</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">GeV</div></div>
+            <div className="border border-cyan-300/12 bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{targetYield}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">yield</div></div>
+            <div className="border border-cyan-300/12 bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{efficiency}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">efficiency</div></div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-3 md:grid-cols-5">
+          {sequence.map(([label, value], i) => (
+            <div key={label} className="border border-cyan-300/12 bg-black/24 p-4">
+              <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">0{i + 1}</div>
+              <div className="mt-2 text-xl font-black text-white">{label}</div>
+              <div className="mt-3 h-2 bg-slate-900"><div className="h-full bg-cyan-300 shadow-[0_0_18px_rgba(34,211,238,.6)]" style={{ width: `${Math.max(4, Math.min(99, value))}%` }} /></div>
+              <div className="mt-2 text-sm font-black text-cyan-100">{Math.max(4, Math.min(99, value))}%</div>
             </div>
-            <div className="text-right"><div className="text-4xl font-black text-cyan-100">{collisionQuality}%</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">collision quality</div></div>
-          </div>
-          <div className="mt-6 grid gap-3 md:grid-cols-5">
-            {sequence.map(([label, value], i) => (
-              <div key={label} className="border border-cyan-300/12 bg-black/24 p-4">
-                <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">0{i + 1}</div>
-                <div className="mt-2 text-xl font-black text-white">{label}</div>
-                <div className="mt-3 h-2 bg-slate-900"><div className="h-full bg-cyan-300" style={{ width: `${Math.max(4, Math.min(99, value))}%` }} /></div>
-                <div className="mt-2 text-sm font-black text-cyan-100">{Math.max(4, Math.min(99, value))}%</div>
+          ))}
+        </div>
+
+        <div className="mt-6 grid gap-5 2xl:grid-cols-[1fr_1fr]">
+          {[
+            ["Beam Telemetry", beamTelemetryRows, "beam physics"],
+            ["Target Response", targetResponseRows, `${targetElement.name} material response`],
+            ["Detector Output", detectorOutputRows, `${selectedEvent} readout`],
+            ["Collision Result", collisionResultRows, resultHeadline],
+          ].map(([title, rows, subtitle]) => (
+            <div key={title} className="border border-cyan-300/12 bg-black/24 p-5">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">{title}</div>
+                  <div className="mt-1 text-xs leading-5 text-slate-500">{subtitle}</div>
+                </div>
               </div>
-            ))}
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {rows.map(([label, value, note, signal]) => (
+                  <div key={`${title}-${label}`} className="border border-white/10 bg-slate-950/55 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="text-[11px] font-black uppercase tracking-[.18em] text-slate-500">{label}</div>
+                      <div className="text-right text-sm font-black text-cyan-100">{value}</div>
+                    </div>
+                    <div className="mt-2 text-xs leading-5 text-slate-400">{note}</div>
+                    <div className="mt-3 h-1.5 bg-slate-900"><div className="h-full bg-cyan-300" style={{ width: `${Math.max(4, Math.min(99, Number(signal) || 35))}%` }} /></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+          <div className="border border-cyan-300/12 bg-black/24 p-5">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">collision matrix</div>
+            <div className="mt-4 space-y-4">
+              {collisionMatrixRows.map(([label, value, note]) => (
+                <div key={label} className="grid gap-3 md:grid-cols-[150px_1fr_80px] md:items-center">
+                  <div className="text-sm font-black text-white">{label}</div>
+                  <div className="h-4 border border-white/10 bg-slate-950">
+                    <div className="h-full bg-gradient-to-r from-cyan-300/30 via-cyan-200 to-amber-200 shadow-[0_0_22px_rgba(34,211,238,.45)]" style={{ width: `${Math.max(4, Math.min(99, value))}%` }} />
+                  </div>
+                  <div className="text-right text-sm font-black text-cyan-100">{value}%</div>
+                  <div className="md:col-start-2 md:col-span-2 text-xs leading-5 text-slate-500">{note}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-6 grid gap-3 md:grid-cols-4">
-            {resultProducts.map((item) => <div key={item} className="border border-white/10 bg-black/25 p-4 text-sm font-black text-cyan-100">{item}</div>)}
+
+          <div className="border border-amber-300/12 bg-black/24 p-5">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-amber-200">live event feed</div>
+            <div className="mt-4 max-h-[420px] space-y-3 overflow-auto pr-1">
+              {eventLogRows.map(([time, title, body]) => (
+                <div key={`${time}-${title}`} className="border border-white/10 bg-slate-950/55 p-3">
+                  <div className="flex items-center justify-between gap-3"><span className="text-xs font-black text-cyan-100">{time}</span><span className="text-[10px] uppercase tracking-[.18em] text-slate-500">{simulationRunning ? "live" : "preview"}</span></div>
+                  <div className="mt-1 text-sm font-black text-white">{title}</div>
+                  <div className="mt-1 text-xs leading-5 text-slate-400">{body}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-6 grid gap-4 xl:grid-cols-[1.15fr_.85fr]">
-            <div className="border border-cyan-300/12 bg-black/24 p-4">
-              <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">collision data console</div>
-              <div className="mt-4 max-h-[420px] overflow-auto">
+        </div>
+
+        <div className="mt-6 grid gap-5 xl:grid-cols-[1fr_420px]">
+          <div className="border border-cyan-300/12 bg-black/24 p-5">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">full collision dataset</div>
+            <div className="mt-4 overflow-x-auto">
+              <div className="min-w-[760px]">
                 {collisionDataRows.map(([label, value, note]) => (
-                  <div key={label} className="grid gap-2 border-t border-white/8 py-3 md:grid-cols-[170px_1fr_1.2fr]">
+                  <div key={label} className="grid grid-cols-[190px_220px_1fr] gap-4 border-t border-white/8 py-3">
                     <div className="text-[11px] font-black uppercase tracking-[.18em] text-slate-500">{label}</div>
                     <div className="text-sm font-black text-white">{value}</div>
                     <div className="text-xs leading-5 text-slate-400">{note}</div>
@@ -10780,41 +10889,29 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
                 ))}
               </div>
             </div>
-            <div className="border border-amber-300/12 bg-black/24 p-4">
-              <div className="text-xs font-black uppercase tracking-[.22em] text-amber-200">event log</div>
-              <div className="mt-4 space-y-3">
-                {eventLogRows.map(([time, title, body]) => (
-                  <div key={`${time}-${title}`} className="border border-white/10 bg-slate-950/55 p-3">
-                    <div className="flex items-center justify-between gap-3"><span className="text-xs font-black text-cyan-100">{time}</span><span className="text-[10px] uppercase tracking-[.18em] text-slate-500">{simulationRunning ? "live" : "preview"}</span></div>
-                    <div className="mt-1 text-sm font-black text-white">{title}</div>
-                    <div className="mt-1 text-xs leading-5 text-slate-400">{body}</div>
-                  </div>
-                ))}
-              </div>
+          </div>
+
+          <div className="border border-cyan-300/12 bg-black/24 p-5">
+            <Pill><Target size={12}/> 118 element collision target</Pill>
+            <div className="mt-4 flex items-end justify-between gap-3">
+              <div><div className="text-5xl font-black text-white">{targetElement.symbol}</div><div className="text-lg font-black text-cyan-100">{targetElement.name}</div></div>
+              <div className="text-right"><div className="text-3xl font-black text-amber-100">{beamElement.symbol}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">beam source</div></div>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-2 text-center text-xs">
+              <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{heatLoad}%</b><br/><span className="text-slate-500">Heat Load</span></div>
+              <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{activationRisk}%</b><br/><span className="text-slate-500">Activation</span></div>
+              <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{scatteringIndex}%</b><br/><span className="text-slate-500">Scattering</span></div>
+              <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{targetYield}%</b><br/><span className="text-slate-500">Yield</span></div>
+            </div>
+            <div className="mt-5 grid gap-2">
+              <button onClick={sendTargetToExplorer} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Open Target in Explorer</button>
+              <button onClick={compareTargetMaterials} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Compare Beam + Target</button>
+              <button onClick={forecastTarget} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Forecast Target Exposure</button>
+              <button onClick={saveReport} className="border border-cyan-300/35 bg-cyan-300/12 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/18">Export Accelerator Report</button>
             </div>
           </div>
-        </Panel>
-
-        <Panel className="border-cyan-300/15 bg-[#050b16]/90">
-          <Pill><Target size={12}/> 118 element collision target</Pill>
-          <div className="mt-4 flex items-end justify-between gap-3">
-            <div><div className="text-5xl font-black text-white">{targetElement.symbol}</div><div className="text-lg font-black text-cyan-100">{targetElement.name}</div></div>
-            <div className="text-right"><div className="text-3xl font-black text-amber-100">{beamElement.symbol}</div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">beam source</div></div>
-          </div>
-          <div className="mt-5 grid grid-cols-2 gap-2 text-center text-xs">
-            <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{heatLoad}%</b><br/><span className="text-slate-500">Heat Load</span></div>
-            <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{activationRisk}%</b><br/><span className="text-slate-500">Activation</span></div>
-            <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{scatteringIndex}%</b><br/><span className="text-slate-500">Scattering</span></div>
-            <div className="border border-white/10 bg-black/25 p-3"><b className="text-cyan-100">{targetYield}%</b><br/><span className="text-slate-500">Yield</span></div>
-          </div>
-          <div className="mt-5 grid gap-2">
-            <button onClick={sendTargetToExplorer} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Open Target in Explorer</button>
-            <button onClick={compareTargetMaterials} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Compare Beam + Target</button>
-            <button onClick={forecastTarget} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Forecast Target Exposure</button>
-            <button onClick={saveReport} className="border border-cyan-300/35 bg-cyan-300/12 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/18">Export Accelerator Report</button>
-          </div>
-        </Panel>
-      </div>
+        </div>
+      </Panel>
 
       <Panel className="border-cyan-300/15 bg-[#050b16]/90">
         <Pill><Settings size={12}/> accelerator controls</Pill>
