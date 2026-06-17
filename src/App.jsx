@@ -79,7 +79,7 @@ class ElementOSPageErrorBoundary extends React.Component {
         <p className="mt-3 text-sm leading-6 text-red-100/90">This view could not load cleanly. The rest of ElementOS is still available, so return to the dashboard or retry the page.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" onClick={() => this.setState({ error: null })} className="rounded-full bg-red-100 px-4 py-2 text-sm font-black text-red-950">Retry Page</button>
-          <button type="button" onClick={() => this.props.setPage?.("dashboard")} className="rounded-full border border-red-100/30 px-4 py-2 text-sm font-black text-red-50">Back to Dashboard</button>
+          <button type="button" onClick={() => this.props.setPage?.("dashboard")} className="rounded-full border border-red-100/30 px-4 py-2 text-sm font-black text-red-50">Back to Mission Intelligence</button>
         </div>
       </div>
     );
@@ -402,7 +402,7 @@ function guidanceForPage(page) {
       next: "Create a free Explorer account, try the platform, then upgrade to Pro Researcher or Pro Lab when exports, reports, vault, media and advanced labs are needed.",
     },
     copilot: {
-      title: "Research Director",
+      title: "Mission Intelligence",
       description: "Describe a material goal and ElementOS turns it into an investigation plan, suggested workflow and professional outputs.",
       next: "Type a goal, review the investigation plan, then run the recommended workflow.",
     },
@@ -686,7 +686,7 @@ function PageMicroDataBar({ page = "dashboard", setPage }) {
           <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-200">{pageLabel(page)}</div>
           <div className="mt-1 text-sm text-slate-300">{g.next}</div>
         </div>
-        <button type="button" onClick={() => setPage?.("copilot")} className="rounded-full bg-cyan-300 px-3 py-2 text-xs font-black text-slate-950">Open Research Director</button>
+        <button type="button" onClick={() => setPage?.("dashboard")} className="rounded-full bg-cyan-300 px-3 py-2 text-xs font-black text-slate-950">Open Mission Intelligence</button>
       </div>
     </div>
   );
@@ -777,7 +777,7 @@ function RealTimeNetworkPanel({ discoveries = [], setPage }) {
               </div>
             ))}
           </div>
-          <Button onClick={() => setPage?.("discover")} variant="primary" className="mt-5 w-full">Open Live Discovery Feed</Button>
+          <Button onClick={() => setPage?.("reports")} variant="primary" className="mt-5 w-full">Open Live Discovery Feed</Button>
         </div>
       </div>
     </Panel>
@@ -846,7 +846,7 @@ function CoreLoopPanel({ setPage }) {
           <h2 className="mt-3 text-3xl font-black">One workflow. Every page supports it.</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">ElementOS is simplest when every tool supports the same loop: choose a material, run analysis, understand the result, then export or save it.</p>
         </div>
-        <Button onClick={() => setPage?.("copilot")} variant="primary">Open Research Director</Button>
+        <Button onClick={() => setPage?.("dashboard")} variant="primary">Open Mission Intelligence</Button>
       </div>
       <div className="mt-6 grid gap-3 md:grid-cols-4">
         {steps.map(([num, title, body, target]) => (
@@ -1561,7 +1561,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
           <Button onClick={savePublicDiscovery}>Save to Workspace</Button>
           <Button onClick={() => setPage("timemachine")}>Run Future Simulation</Button>
           <Button onClick={() => setPage("simreports")}>Generate Research Dossier</Button>
-          <Button onClick={() => { setPublicDiscovery?.(null); window.history.replaceState({}, document.title, window.location.pathname); setPage("discover"); }}>Back to Feed</Button>
+          <Button onClick={() => { setPublicDiscovery?.(null); window.history.replaceState({}, document.title, window.location.pathname); setPage("reports"); }}>Back to Feed</Button>
         </div>
       </Panel>
     </>
@@ -1570,9 +1570,9 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 
 
 const PAGE_LABELS = {
-  landing: "Home",
-  dashboard: "Dashboard",
-  copilot: "Research Director",
+  landing: "Mission Intelligence",
+  dashboard: "Mission Intelligence",
+  copilot: "Mission Intelligence",
   mission: "Mission Intelligence",
   discover: "Discoveries",
   explorer: "Element Explorer",
@@ -1581,50 +1581,34 @@ const PAGE_LABELS = {
   atlas: "Material Interaction Atlas",
   graph: "Element Relationships",
   universe: "Element Relationships",
-  scenario: "Scenario Builder",
+  scenario: "Mission Intelligence",
   visualization: "Advanced Visuals",
   calculations: "Calculation Studio",
   timemachine: "Time Machine",
-  seismo: "Wave Intelligence",
-  welldriller: "Resource Discovery Lab",
+  seismo: "Seismic Laboratory",
+  welldriller: "Well Driller",
   isotopes: "Isotope Lab",
-  matterlab: "Advanced Material Analysis",
+  matterlab: "Mission Intelligence",
   publicdiscovery: "Public Discovery Page",
   simreports: "Reports",
   viralcards: "Reports & Media",
   reports: "Reports",
-  advisorreport: "Advisor Report",
-  lab: "Workspace",
+  advisorreport: "Reports",
+  lab: "Labs",
   beta: "Create Account",
   login: "Login",
   systemhealth: "Platform Readiness",
 };
 
 const MOBILE_PAGE_ORDER = [
-  "landing",
   "dashboard",
   "explorer",
-  "discover",
-  "compare",
-  "reports",
-  "advisorreport",
-  "copilot",
-  "mission",
-  "scenario",
-  "timemachine",
-  "matterlab",
-  "seismo",
-  "welldriller",
-  "viralcards",
-  "lab",
   "periodic",
+  "compare",
+  "timemachine",
   "atlas",
-  "universe",
-  "visualization",
-  "calculations",
-  "isotopes",
-  "simreports",
-  "beta",
+  "reports",
+  "lab",
 ];
 
 function pageLabel(page) {
@@ -3923,71 +3907,25 @@ function Sidebar({ page, setPage }) {
   });
 
   const primaryItems = [
-    ["landing", "Home", Sparkles],
-    ["copilot", "Research Director", Bot],
-    ["dashboard", "Dashboard", Home],
+    ["dashboard", "Mission Intelligence", Sparkles],
+    ["explorer", "Element Explorer", Search],
+    ["periodic", "Element Map", Layers],
+    ["compare", "Compare", BarChart3],
+    ["timemachine", "Time Machine", Clock3],
+    ["atlas", "Interaction Atlas", Radar],
+    ["reports", "Reports", BookOpen],
   ];
 
   const groups = [
     {
-      id: "research",
-      label: "Material Intelligence",
-      icon: Search,
-      items: [
-        ["explorer", "Element Explorer", Search],
-        ["compare", "Material Comparison", BarChart3],
-        ["periodic", "Element Map", Layers],
-        ["atlas", "Material Interaction Atlas", Radar],
-        ["universe", "Relationship Explorer", Network],
-      ],
-    },
-    {
-      id: "simulations",
-      label: "Future Simulation",
-      icon: Clock3,
-      items: [
-        ["scenario", "Scenario Builder", FileText],
-        ["timemachine", "Time Machine", Clock3],
-      ],
-    },
-    {
-      id: "calculations",
-      label: "Calculation Studio",
-      icon: Calculator,
-      items: [
-        ["calculations", "Calculator & Equations", Calculator],
-      ],
-    },
-    {
-      id: "publishing",
-      label: "Reports & Media",
-      icon: BookOpen,
-      items: [
-        ["discover", "Discoveries", Sparkles],
-        ["reports", "Executive Reports", BookOpen],
-        ["viralcards", "Poster Studio", Sparkles],
-        ["simreports", "Simulation Dossiers", BookOpen],
-      ],
-    },
-    {
-      id: "workspace",
-      label: "Workspace",
-      icon: Save,
-      items: [
-        ["lab", "Workspace", Save],
-        ["beta", "Create Account", UserPlus],
-      ],
-    },
-    {
       id: "advanced",
-      label: "Advanced Labs",
+      label: "Labs",
       icon: Radar,
       items: [
-        ["matterlab", "Opportunity Intelligence", Globe2],
-        ["welldriller", "Resource Discovery", Radar],
-        ["seismo", "Wave Intelligence", Network],
+        ["lab", "Advanced Labs", Radar],
         ["isotopes", "Isotope Lab", Atom],
-        ["visualization", "Advanced Visuals", BarChart3],
+        ["seismo", "Seismic Laboratory", Network],
+        ["welldriller", "Well Driller", Compass],
       ],
     },
   ];
@@ -4049,7 +3987,7 @@ function Sidebar({ page, setPage }) {
                     <GroupIcon size={15} />
                   </span>
                   <span>
-                    <span className="block text-[10px] uppercase tracking-[.22em] text-slate-500">Section</span>
+                    <span className="block text-[10px] uppercase tracking-[.22em] text-slate-500">Secondary</span>
                     <span className={`text-sm font-black ${activeGroup ? "text-cyan-100" : "text-slate-200"}`}>{group.label}</span>
                   </span>
                 </span>
@@ -4101,7 +4039,7 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
     ["Compare Materials", "Compare aluminium, titanium, copper or any material set and generate a ranked insight.", BarChart3, "compare", true],
     ["Forecast Behaviour", "Run heat, pressure, corrosion and time-horizon simulations in Future Simulation.", Clock3, "timemachine", false],
     ["Generate Report", "Turn discoveries and simulations into executive summaries, PDFs and research outputs.", FileText, "reports", false],
-    ["Open Workspace", "Return to saved discoveries, reports, posters, scenarios and research history.", Save, "lab", false],
+    ["Open Labs", "Open specialist labs for isotopes, seismic simulation and well drilling.", Radar, "lab", false],
   ];
   const systemStats = [
     ["118", "elements indexed"],
@@ -4112,7 +4050,7 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
   return (
     <div className="space-y-6 pb-24">
       <PageHero
-        eyebrow="ElementOS Dashboard"
+        eyebrow="ElementOS Mission Intelligence"
         icon={Sparkles}
         title={<>What would you like to <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">investigate today?</span></>}
         description="Explore materials. Simulate behaviour. Generate discoveries. Create professional reports from one beautiful research workspace."
@@ -4148,7 +4086,7 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
               <h2 className="mt-3 text-4xl font-black">Choose → Simulate → Understand → Export</h2>
               <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">Every page now supports one calm subscriber journey: choose a material or question, run analysis, understand the result, then export or save the work.</p>
             </div>
-            <Button onClick={() => setPage("copilot")} variant="primary">Open Research Director</Button>
+            <Button onClick={() => setPage("dashboard")} variant="primary">Open Mission Intelligence</Button>
           </div>
           <div className="mt-6 grid gap-3 md:grid-cols-4">
             {["Choose material", "Run analysis", "Read executive summary", "Save or publish"].map((step, index) => (
@@ -5021,7 +4959,7 @@ function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
               </div>
             </div>
           )}
-          <div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Time PDF/JSON/SVG</Button><Button onClick={() => setPage("scenario")}>Send to Scenario Builder</Button><Button onClick={() => setPage("matterlab")}>Open Advanced Material Analysis</Button></div>
+          <div className="mt-5 flex flex-wrap gap-3"><Button onClick={exportTimeline} variant="primary"><Download size={16} className="inline"/> Export Time PDF/JSON/SVG</Button><Button onClick={() => setPage("dashboard")}>Send to Scenario Builder</Button><Button onClick={() => setPage("dashboard")}>Open Advanced Material Analysis</Button></div>
         </div>
         <Panel>
           <div className="text-xs uppercase tracking-[.22em] text-slate-500">future-state verdict</div>
@@ -6587,7 +6525,7 @@ function ResearchNotesCard({ el, profile, intelligence }) {
   return (
     <Panel>
       <Pill gold><BookOpen size={12}/> subscriber research notes</Pill>
-      <h2 className="mt-3 text-4xl font-black">Research Director Notes</h2>
+      <h2 className="mt-3 text-4xl font-black">Mission Intelligence Notes</h2>
       <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">{profile.summary || intelligence.overview}</p>
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         <div className="rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.06] p-4">
@@ -7565,7 +7503,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
     return (
       <Panel>
         <SectionTitle eyebrow="element explorer" title="Element Explorer" body="Element data is loading. Select an element from the periodic map or return to the dashboard." />
-        <Button onClick={() => setPage?.("dashboard")} variant="primary">Return to Dashboard</Button>
+        <Button onClick={() => setPage?.("dashboard")} variant="primary">Return to Mission Intelligence</Button>
       </Panel>
     );
   }
@@ -10038,6 +9976,74 @@ function CalculationCore() {
   );
 }
 
+
+function ReportsDiscoveryMergePanel({ setPage, setPublicDiscovery }) {
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(10)).slice(0, 5), []);
+  return (
+    <Panel className="border-cyan-300/15 bg-cyan-300/[0.035]">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Pill gold><Sparkles size={12}/> discoveries merged into reports</Pill>
+          <h2 className="mt-3 text-3xl font-black">Report-ready discoveries</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+            Discovery Feed has been folded into Reports so users move from signal to executive output in one place.
+          </p>
+        </div>
+        <Button onClick={() => setPage?.("compare")} variant="primary">Compare a Discovery</Button>
+      </div>
+      <div className="mt-5 grid gap-3 lg:grid-cols-5">
+        {discoveries.map((d) => (
+          <button
+            key={d.dna}
+            type="button"
+            onClick={() => { setPublicDiscovery?.(d); setPage?.("publicdiscovery"); }}
+            className="rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10"
+          >
+            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{d.tier}</div>
+            <div className="mt-2 text-2xl font-black text-cyan-100">{d.a} + {d.b}</div>
+            <div className="mt-2 text-sm font-black text-white">{d.score}% signal</div>
+            <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{d.reason}</p>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function AdvancedLabsLaunch({ setPage }) {
+  const labs = [
+    ["isotopes", "Isotope Lab", "Build nucleus structures, inspect stability, mass, protons and neutrons.", Atom],
+    ["seismo", "Seismic Laboratory", "Model P-wave and S-wave behaviour through simulated subsurface fields.", Network],
+    ["welldriller", "Well Driller", "Explore bore paths, formation pressure, depth and drilling-readiness.", Compass],
+  ];
+  return (
+    <div className="space-y-6 pb-24">
+      <PageHero
+        eyebrow="Advanced Labs"
+        icon={Radar}
+        title={<>Specialist <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">laboratories</span></>}
+        description="Advanced Labs are now secondary tools. The main product stays focused on Mission Intelligence, Element Explorer, Element Map, Compare, Time Machine, Interaction Atlas and Reports."
+      />
+      <div className="grid gap-5 lg:grid-cols-3">
+        {labs.map(([id, title, body, Icon]) => (
+          <Panel key={id} className="group min-h-[260px] border-cyan-300/15 bg-slate-950/80">
+            <div className="flex h-full flex-col justify-between">
+              <div>
+                <div className="grid h-14 w-14 place-items-center rounded-xl border border-cyan-300/25 bg-cyan-300/10 text-cyan-100">
+                  <Icon size={24} />
+                </div>
+                <h2 className="mt-5 text-3xl font-black text-white">{title}</h2>
+                <p className="mt-3 text-sm leading-7 text-slate-400">{body}</p>
+              </div>
+              <Button onClick={() => setPage?.(id)} variant="primary" className="mt-6 w-full">Open {title}</Button>
+            </div>
+          </Panel>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Reports({ compare, session, isPro, startCheckout, selected, setSelected, setCompare, setPage, setForecastRequest }) {
   const [saved, setSaved] = useState([]);
   const [status, setStatus] = useState("");
@@ -10235,6 +10241,7 @@ Status: Presentation-ready platform export.`;
   return (
     <>
       <V154ExecutiveReportPreview compare={compare} isPro={isPro} startCheckout={startCheckout} />
+      <ReportsDiscoveryMergePanel setPage={setPage} setPublicDiscovery={() => {}} />
       <Panel>
         <Pill gold><BookOpen size={12}/> PDF publishing layer</Pill>
         <h1 className="mt-4 text-5xl font-black">Reports Centre</h1>
@@ -10796,7 +10803,7 @@ function MyLab({ session, selected, compare, setPage }) {
               <h2 className="mt-3 text-4xl font-black">Scenario Library</h2>
               <p className="mt-2 text-sm leading-6 text-slate-400">Saved material situations become reusable case studies users can revisit, compare and export.</p>
             </div>
-            <Button onClick={() => setPage("scenario")} variant="primary">Build Scenario</Button>
+            <Button onClick={() => setPage("dashboard")} variant="primary">Build Scenario</Button>
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -10810,7 +10817,7 @@ function MyLab({ session, selected, compare, setPage }) {
                 </div>
                 <p className="mt-4 text-sm leading-6 text-slate-300">{scenario.status}</p>
                 <div className="mt-5 flex gap-2">
-                  <Button onClick={() => setPage("scenario")}>Open</Button>
+                  <Button onClick={() => setPage("dashboard")}>Open</Button>
                   <Button onClick={() => safeCopyText(`${scenario.title} · Risk ${scenario.risk}% · Survival ${scenario.survival} years`)} variant="primary">Share</Button>
                 </div>
               </div>
@@ -10929,8 +10936,8 @@ function BetaLaunch({ session, setPage, startCheckout }) {
               <h2 className="mt-4 text-3xl font-black text-emerald-100">Explorer Account Ready</h2>
               <p className="mt-3 text-sm leading-6 text-slate-300">Your account details have been saved for this browser. When Supabase auth is fully connected, this same page can become the live signup flow.</p>
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <Button onClick={() => setPage("dashboard")} variant="primary">Open Dashboard</Button>
-                <Button onClick={() => setPage("discover")}>Start Exploring</Button>
+                <Button onClick={() => setPage("dashboard")} variant="primary">Open Mission Intelligence</Button>
+                <Button onClick={() => setPage("reports")}>Start Exploring</Button>
               </div>
             </div>
           ) : (
@@ -10976,7 +10983,7 @@ function BetaLaunch({ session, setPage, startCheckout }) {
                 {plan.features.slice(0, 6).map((feature) => <div key={feature}>✓ {feature}</div>)}
               </div>
               {plan.name === "Explorer" ? (
-                <Button onClick={() => setPage("discover")} className="mt-5 w-full">Start Exploring</Button>
+                <Button onClick={() => setPage("reports")} className="mt-5 w-full">Start Exploring</Button>
               ) : (
                 <Button onClick={() => startCheckout?.(plan.name)} variant="primary" className="mt-5 w-full">Upgrade to {plan.name}</Button>
               )}
@@ -11106,8 +11113,8 @@ function DiscoveryCommandCenter({ setPage, compare = ["Al", "Ti", "Hf"] }) {
         </div>
 
         <div className="relative z-10 mt-7 flex flex-wrap gap-3">
-          <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
-          <Button onClick={() => setPage("matterlab")}>Run Advanced Material Analysis</Button>
+          <Button onClick={() => setPage("reports")} variant="primary">Open Discovery Feed</Button>
+          <Button onClick={() => setPage("dashboard")}>Run Advanced Material Analysis</Button>
           <Button onClick={() => setPage("simreports")}>Create Dossier</Button>
           <Button onClick={() => setPage("lab")}>Open Workspace</Button>
         </div>
@@ -11235,7 +11242,7 @@ function WorkspaceVaultPanel({ setPage }) {
           <h2 className="mt-3 text-4xl font-black">This is where your discoveries live.</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Workspace now reads like a permanent research vault: discoveries, reports, simulations, Advanced Material Analysis targets and shareable pages.</p>
         </div>
-        <Button onClick={() => setPage("discover")} variant="primary">Add New Discovery</Button>
+        <Button onClick={() => setPage("reports")} variant="primary">Add New Discovery</Button>
       </div>
       <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {vault.map(([title, value, body, target, Icon]) => (
@@ -11257,11 +11264,11 @@ function CopilotEverywhereBar({ page, setPage }) {
     <div className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-r from-cyan-300/10 via-slate-950/80 to-blue-400/10 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Research Director</div>
+          <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Mission Intelligence</div>
           <div className="mt-1 text-sm text-slate-300">Ask why this matters, generate a report summary, explain it simply, or suggest the next experiment.</div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={() => setPage("copilot")} variant="primary" className="px-3 py-2 text-xs">Open Research Director</Button>
+          <Button onClick={() => setPage("dashboard")} variant="primary" className="px-3 py-2 text-xs">Open Mission Intelligence</Button>
           <Button onClick={() => setPage("simreports")} className="px-3 py-2 text-xs">One-click Report</Button>
         </div>
       </div>
@@ -11467,7 +11474,7 @@ function DiscoveryNetworkSubscriberEdition({ setPage }) {
           <h2 className="mt-3 text-4xl font-black">Live Discovery Network</h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">A simple activity feed showing recent reports, discoveries, public pages and media exports across ElementOS.</p>
         </div>
-        <Button onClick={() => setPage("discover")} variant="primary">Open Network Feed</Button>
+        <Button onClick={() => setPage("reports")} variant="primary">Open Network Feed</Button>
       </div>
       <div className="mt-6 grid gap-4 lg:grid-cols-[.95fr_1.05fr]">
         <div className="grid gap-3 sm:grid-cols-5 lg:grid-cols-1">
@@ -11480,7 +11487,7 @@ function DiscoveryNetworkSubscriberEdition({ setPage }) {
         </div>
         <div className="space-y-3">
           {feed.map(([who, action, asset]) => (
-            <button key={`${who}-${asset}`} onClick={() => setPage("discover")} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:bg-white/[.06]">
+            <button key={`${who}-${asset}`} onClick={() => setPage("reports")} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:bg-white/[.06]">
               <div>
                 <div className="text-sm font-black text-cyan-100">{who}</div>
                 <div className="mt-1 text-sm text-slate-300">{action}</div>
@@ -11714,7 +11721,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
             <h2 className="mt-3 text-4xl font-black">Four steps to your first research asset.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">ElementOS is easiest when the first journey is clear: select a material, compare it, generate a discovery, then create an executive report.</p>
           </div>
-          <Button onClick={() => setPage("discover")} variant="primary">Start Exploring</Button>
+          <Button onClick={() => setPage("reports")} variant="primary">Start Exploring</Button>
         </div>
         <div className="mt-6 grid gap-3 md:grid-cols-4">
           {[
@@ -11782,7 +11789,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
             <h2 className="mt-3 text-4xl font-black">One platform. Six daily reasons to come back.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">These are the core product loops: discover, scan, simulate, report, save and share. They make ElementOS feel like a daily scientific workspace.</p>
           </div>
-          <Button onClick={() => setPage('dashboard')} variant="primary">Open Dashboard</Button>
+          <Button onClick={() => setPage('dashboard')} variant="primary">Open Mission Intelligence</Button>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {operatingCards.map(([title, body, Icon, target, style]) => (
@@ -13182,7 +13189,7 @@ Generated in ElementOS.`,
             <h2 className="mt-3 text-4xl font-black">Make every discovery travel further.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">The same asset should be framed differently on each channel. Curiosity for X, credibility for LinkedIn, explanation for Reddit, launch proof for Product Hunt.</p>
           </div>
-          <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
+          <Button onClick={() => setPage("reports")} variant="primary">Open Discovery Feed</Button>
         </div>
         <div className="mt-6 grid gap-4 xl:grid-cols-4">
           {channels.map(([title, desc]) => (
@@ -13406,7 +13413,7 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
             AI Copilot <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Command Center</span>
           </h1>
           <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
-            Research Director what to explore. The Copilot turns plain-language goals into material recommendations, simulations, reports, viral cards and next actions.
+            Mission Intelligence what to explore. The Copilot turns plain-language goals into material recommendations, simulations, reports, viral cards and next actions.
           </p>
           <Info title="Why this matters">
             This gives the platform an intelligent operating-system feel. Instead of users wondering where to click, they can type a goal and ElementOS guides them to the strongest workflow.
@@ -13509,7 +13516,7 @@ function AICopilotCommandCenter({ selected, compare, setSelected, setCompare, se
             <h2 className="mt-3 text-4xl font-black">Suggested Pairings</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">These pairings are pulled from the existing ElementOS discovery engine and aligned with the current Copilot prompt.</p>
           </div>
-          <Button onClick={() => setPage("discover")} variant="primary">Open Discover</Button>
+          <Button onClick={() => setPage("reports")} variant="primary">Open Discover</Button>
         </div>
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {pairs.map((d) => (
@@ -13619,7 +13626,7 @@ function MissionControl({ setPage, session, isPro, startCheckout }) {
               The mission system is designed around one simple product truth: users do not pay for pages, they pay when the platform repeatedly gives them useful moments, clear next steps and impressive outputs.
             </p>
           </div>
-          <Button onClick={() => setPage("copilot")} variant="primary">Ask AI Copilot</Button>
+          <Button onClick={() => setPage("dashboard")} variant="primary">Ask AI Copilot</Button>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -13666,28 +13673,20 @@ function MobileBottomNav({ page, setPage }) {
   const [moreOpen, setMoreOpen] = useState(false);
 
   const coreItems = [
-    ["landing", "Home", Home],
-    ["explorer", "Explore", Search],
-    ["discover", "Discover", Sparkles],
+    ["dashboard", "Mission", Home],
+    ["explorer", "Explorer", Search],
+    ["periodic", "Map", Layers],
     ["reports", "Reports", FileText],
   ];
 
   const moreItems = [
-    ["compare", "Compare Materials", "Main workflow"],
-    ["copilot", "Research Director", "AI assistant"],
-    ["mission", "Mission Intelligence", "Guided path"],
-    ["scenario", "Scenario Builder", "Plain-English scenarios"],
-    ["viralcards", "Poster Studio", "Shareable exports"],
-    ["lab", "Saved Discoveries", "Vault"],
-    ["timemachine", "Future Simulation", "Long-term forecasts"],
-    ["matterlab", "Advanced Material Analysis", "Advanced lab"],
-    ["seismo", "Wave Intelligence", "P/S wave lab"],
-    ["welldriller", "Resource Discovery Lab", "Subsurface lab"],
-    ["periodic", "Periodic Map", "Element table"],
-    ["atlas", "Material Interaction Atlas", "Heat maps"],
-    ["universe", "Element Relationships", "Graph + similar materials"],
-    ["calculations", "Calculations", "Math tools"],
-    ["beta", "Create Account", "Explorer $0"],
+    ["compare", "Compare", "Material comparison workflow"],
+    ["timemachine", "Time Machine", "Long-term forecasts"],
+    ["atlas", "Interaction Atlas", "Material interaction heatmaps"],
+    ["lab", "Labs", "Specialist laboratories"],
+    ["isotopes", "Isotope Lab", "Nucleus builder"],
+    ["seismo", "Seismic Laboratory", "P/S wave lab"],
+    ["welldriller", "Well Driller", "Subsurface drilling lab"],
   ];
 
   return (
@@ -13894,15 +13893,14 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
     const add = (command) => list.push({ premium: false, dangerous: false, keywords: [], ...command });
 
     [
-      ["dashboard", "Open Dashboard", "Command centre, live network and launch workspace.", "Pages"],
-      ["compare", "Go to Compare Engine", "Compare 2–6 elements across behaviour metrics.", "Pages"],
-      ["periodic", "Go to Periodic Map", "Browse all 118 elements by behaviour layer.", "Pages"],
-      ["atlas", "Go to Material Interaction Atlas", "Visual map of material behaviour under different environments.", "Pages"],
-      ["universe", "Go to Element Relationships", "Combined universe and relationship graph hub.", "Pages"],
-      ["timemachine", "Go to Future Simulation", "Forecast ageing, corrosion and long-range survivability.", "Pages"],
-      ["scenario", "Go to Scenario Builder", "Build real-world material scenarios and risk outputs.", "Pages"],
-      ["calculations", "Go to Calculation Studio", "Calculator, equation builder, toolkit, formulas and whiteboard.", "Pages"],
-      ["reports", "Go to Reports", "Open research reports, public links and export options.", "Pages"],
+      ["dashboard", "Open Mission Intelligence", "Main decision workflow, AI Advisor and scenario intake.", "Pages"],
+      ["explorer", "Go to Element Explorer", "Inspect one material profile, applications and forecast launch.", "Pages"],
+      ["periodic", "Go to Element Map", "Browse all 118 elements by behaviour heatmap layer.", "Pages"],
+      ["compare", "Go to Compare", "Compare 2–6 elements across behaviour metrics.", "Pages"],
+      ["timemachine", "Go to Time Machine", "Forecast ageing, corrosion and long-range survivability.", "Pages"],
+      ["atlas", "Go to Interaction Atlas", "Understand material interactions and environment-driven pair signals.", "Pages"],
+      ["reports", "Go to Reports", "Reports, discoveries, public links and export options.", "Pages"],
+      ["lab", "Go to Labs", "Open Isotope Lab, Seismic Laboratory and Well Driller.", "Pages"],
       ["support", "Open Support Center", "Get help, report bugs or contact support.", "Help"],
     ].forEach(([pageId, title, description, category]) => add({ id: `page:${pageId}`, title, description, category, label: pageId, execute: () => pageId === "support" ? (setSupportOpen?.(true), onClose()) : openPage(pageId) }));
 
@@ -14235,7 +14233,7 @@ function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startC
       <div className="flex items-center gap-2">
         {session && <div className="hidden rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2 text-xs font-black text-slate-300 2xl:block">Welcome back · {isPro ? plan : "Explorer"}</div>}
         <button onClick={() => setSupportOpen?.(true)} className="rounded-xl border border-[#17365f] bg-[#06101d]/80 px-3 py-2 text-xs font-black text-cyan-100">Need Help?</button>
-        <button onClick={() => setPage("discover")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">🌐</button>
+        <button onClick={() => setPage("reports")} className="grid h-10 w-10 place-items-center rounded-xl border border-[#17365f] bg-[#06101d]/80 text-slate-300">🌐</button>
         {!session && <Button onClick={() => setPage("login")} className="py-2">Login</Button>}
         {!session && <Button onClick={() => setPage("login")} variant="primary" className="py-2">Create Account</Button>}
         {session && <Button onClick={!isPro ? startCheckout : () => showUpgradeModal("Manage your ElementOS subscription plan.")} variant={isPro ? "ghost" : "primary"} className="py-2">
@@ -14376,8 +14374,8 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
             </div>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <Button onClick={() => setPage("discover")} variant="primary" className="px-4 py-3 text-xs">Open Discovery Feed</Button>
-              <Button onClick={() => setPage("matterlab")} className="px-4 py-3 text-xs">Advanced Material Analysis</Button>
+              <Button onClick={() => setPage("reports")} variant="primary" className="px-4 py-3 text-xs">Open Discovery Feed</Button>
+              <Button onClick={() => setPage("dashboard")} className="px-4 py-3 text-xs">Advanced Material Analysis</Button>
               <Button onClick={() => setPage("viralcards")} className="px-4 py-3 text-xs">Media Engine</Button>
               <Button onClick={exportExecutivePack} className="px-4 py-3 text-xs">Export Pack</Button>
               <Button onClick={launchSocialPack} className="px-4 py-3 text-xs">Create Social Pack</Button>
@@ -14465,7 +14463,7 @@ function DiscoveryVaultV57({ session, selected, compare, setPage }) {
               Your personal science operating room: discoveries, reports, posters, watchlists, collections and public assets stored in one glowing workspace.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => setPage("discover")} variant="primary">Open Discovery Feed</Button>
+              <Button onClick={() => setPage("reports")} variant="primary">Open Discovery Feed</Button>
               <Button onClick={() => setPage("viralcards")}>Create Media</Button>
               <Button onClick={exportVault}>Export Vault</Button>
             </div>
@@ -14498,7 +14496,7 @@ function DiscoveryVaultV57({ session, selected, compare, setPage }) {
           <h2 className="mt-3 text-4xl font-black">Research Collections</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             {collections.map(([title, count, body]) => (
-              <button key={title} onClick={() => setPage("discover")} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-300/10 via-black/30 to-fuchsia-300/10 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/40">
+              <button key={title} onClick={() => setPage("reports")} className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-300/10 via-black/30 to-fuchsia-300/10 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/40">
                 <div className="text-xs uppercase tracking-[.22em] text-cyan-200">{count}</div>
                 <div className="mt-3 text-2xl font-black text-white">{title}</div>
                 <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
@@ -14890,9 +14888,9 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
 
   const exportBrief = () => {
     rememberPrompt();
-    if (!guardProAction("Export Research Director briefs as PDF, JSON and SVG with Pro Researcher.")) return;
-    const summary = `ElementOS Research Director Brief\n\nPrompt: ${prompt}\nMaterial: ${detectedMaterial.name} (${detectedMaterial.symbol})\nEnvironment: ${detectedEnvironment}\nHorizon: ${detectedHorizon}\nRisk: ${riskProfile.label} (${riskProfile.overall}%)\nRecommended lab: ${recommendedLab}\nConfidence: ${confidence}%\n\nExecutive Summary:\n${executiveSummary.map(([a,b]) => `${a}: ${b}`).join("\n")}\n\nSuggested materials:\n${materialStack.map((m, i) => `${i + 1}. ${m.name} (${m.symbol}) — ${m.aiScore}`).join("\n")}`;
-    exportAllFormats({ baseName: "elementos-research-director-brief", title: "ElementOS Research Director Brief", summary, payload: { prompt, detectedMaterial, detectedEnvironment, detectedHorizon, riskProfile, materialStack, executiveSummary } });
+    if (!guardProAction("Export Mission Intelligence briefs as PDF, JSON and SVG with Pro Researcher.")) return;
+    const summary = `ElementOS Mission Intelligence Brief\n\nPrompt: ${prompt}\nMaterial: ${detectedMaterial.name} (${detectedMaterial.symbol})\nEnvironment: ${detectedEnvironment}\nHorizon: ${detectedHorizon}\nRisk: ${riskProfile.label} (${riskProfile.overall}%)\nRecommended lab: ${recommendedLab}\nConfidence: ${confidence}%\n\nExecutive Summary:\n${executiveSummary.map(([a,b]) => `${a}: ${b}`).join("\n")}\n\nSuggested materials:\n${materialStack.map((m, i) => `${i + 1}. ${m.name} (${m.symbol}) — ${m.aiScore}`).join("\n")}`;
+    exportAllFormats({ baseName: "elementos-research-director-brief", title: "ElementOS Mission Intelligence Brief", summary, payload: { prompt, detectedMaterial, detectedEnvironment, detectedHorizon, riskProfile, materialStack, executiveSummary } });
   };
 
   return (
@@ -14904,10 +14902,10 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
           <div className="relative grid gap-8 xl:grid-cols-[1.12fr_.88fr] xl:items-center">
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-cyan-100">
-                <Bot size={13}/> Research Director
+                <Bot size={13}/> Mission Intelligence
               </div>
               <h1 className="max-w-5xl text-5xl font-black leading-[.95] tracking-tight sm:text-7xl">
-                Research Director <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">for Material Intelligence</span>
+                Mission Intelligence <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">for Material Intelligence</span>
               </h1>
               <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
                 Describe your goal and ElementOS will build the investigation, run the workflow and generate the outputs.
@@ -14964,7 +14962,7 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
         <Panel>
           <Pill gold><BriefcaseBusiness size={12}/> One-Click Research Packs</Pill>
           <h2 className="mt-3 text-4xl font-black">Start with an industry workflow.</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Pick a sector and Research Director prepares the investigation, material focus, workflow and outputs.</p>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Pick a sector and Mission Intelligence prepares the investigation, material focus, workflow and outputs.</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {industryPacks.map((pack) => (
               <button key={pack[0]} onClick={() => applyIndustryPack(pack)} className={`rounded-[1.5rem] border p-4 text-left transition hover:-translate-y-1 ${activePack === pack[0] ? "border-amber-300/45 bg-amber-300/10" : "border-white/10 bg-black/25 hover:border-cyan-300/35"}`}>
@@ -15108,7 +15106,7 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
               </div>
             ))}
           </div>
-          <Info title="Explain this page">Describe your goal. Research Director identifies the material, environment, timeline, risk profile, recommended workflow and export-ready outputs.</Info>
+          <Info title="Explain this page">Describe your goal. Mission Intelligence identifies the material, environment, timeline, risk profile, recommended workflow and export-ready outputs.</Info>
         </Panel>
       </div>
 
@@ -15337,7 +15335,7 @@ function VisualConversionStrip({ page, setPage, isPro, startCheckout }) {
             <button
               key={title}
               type="button"
-              onClick={() => index === 0 ? setPage("discover") : index === 1 ? setPage("viralcards") : setPage("scenario")}
+              onClick={() => index === 0 ? setPage("reports") : index === 1 ? setPage("viralcards") : setPage("dashboard")}
               className="eos-magic-tile group rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/10"
             >
               <div className="text-xs font-black uppercase tracking-[.20em] text-cyan-200">0{index + 1}</div>
@@ -15402,7 +15400,7 @@ function SystemHealth({ page, selected, compare, forecastRequest, session, isPro
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Button onClick={() => setPage?.("explorer")} variant="primary">Open Explorer</Button>
           <Button onClick={() => setPage?.("timemachine")}>Open Time Machine</Button>
-          <Button onClick={() => setPage?.("dashboard")}>Back to Dashboard</Button>
+          <Button onClick={() => setPage?.("dashboard")}>Back to Mission Intelligence</Button>
         </div>
       </Panel>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -15680,8 +15678,12 @@ const startCheckout = async (planName = "Pro Researcher") => {
     () => ({
       landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
-      copilot: <DiscoveryAIV57 selected={selected} compare={compare} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
-      mission: <MissionControlV57 setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
+      copilot: null,
+      mission: null,
+      scenario: null,
+      matterlab: null,
+      advisorreport: null,
+      discover: null,
       dashboard: (
         <Dashboard
           setPage={setPage}
@@ -15696,12 +15698,9 @@ const startCheckout = async (planName = "Pro Researcher") => {
           setForecastRequest={setForecastRequest}
         />
       ),
-      discover: <Discover setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
       publicdiscovery: <PublicDiscoveryPage discovery={publicDiscovery} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
       timemachine: <TimeMachineGenius selected={selected} setSelected={setSelected} setPage={setPage} forecastRequest={forecastRequest} />,
-      matterlab: <MatterIntelligenceLab />,
-      scenario: <ScenarioBuilderSafe selected={selected} setSelected={setSelected} setPage={setPage} />,
-      lab: <DiscoveryVaultV57 session={session} selected={selected} compare={compare} setPage={setPage} />,
+      lab: <AdvancedLabsLaunch setPage={setPage} />,
       visualization: <AdvancedVisualization selected={selected} compare={compare} setPage={setPage} />,
       welldriller: <AdvancedWellDriller setPage={setPage} />,
       seismo: <SeismoSimulator setPage={setPage} />,
@@ -15765,7 +15764,6 @@ const startCheckout = async (planName = "Pro Researcher") => {
       isotopes: <IsotopeLab />,
       calculations: <CalculationCore />,
       reports: <Reports compare={compare} session={session} isPro={isPro} startCheckout={startCheckout} selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />,
-      advisorreport: <V157AdvisorReportPage selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} isPro={isPro} startCheckout={startCheckout} />,
       systemhealth: <SystemHealth page={page} selected={selected} compare={compare} forecastRequest={forecastRequest} session={session} isPro={isPro} setPage={setPage} />,
     }),
     [page, selected, compare, session, isPro, forecastRequest]
@@ -15801,7 +15799,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         onClick={() => setCommandOpen(true)}
         className="eos-live-pulse fixed bottom-[156px] right-4 z-50 rounded-2xl border border-cyan-300/25 bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 shadow-[0_0_40px_rgba(34,211,238,.35)] lg:bottom-6"
       >
-        Research Director
+        Mission Intelligence
       </button>
 
       <main className="eos-scroll-root relative z-10 space-y-5 p-3 pb-44 lg:ml-[286px] lg:p-4 lg:pb-8 xl:p-5 2xl:p-6">
