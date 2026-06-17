@@ -6018,21 +6018,99 @@ function relatedComparisonsFor(symbol) {
 
 function ReactionVisual({ type = "water" }) {
   const palette = {
-    water: "from-cyan-300/35 via-blue-500/20 to-slate-950",
-    acid: "from-orange-300/35 via-red-500/20 to-slate-950",
-    alkali: "from-emerald-300/35 via-lime-500/20 to-slate-950",
-    gradient: "from-red-400/35 via-amber-300/20 to-emerald-400/25",
-    reverse: "from-emerald-400/30 via-cyan-300/20 to-red-400/25"
+    water: {
+      shell: "from-cyan-300/20 via-blue-500/10 to-slate-950",
+      liquid: "from-cyan-200/80 via-blue-400/55 to-cyan-950/80",
+      beam: "bg-cyan-200/70",
+      glow: "shadow-[0_0_38px_rgba(34,211,238,.42)]",
+      label: "aqueous exposure",
+    },
+    acid: {
+      shell: "from-amber-300/20 via-red-500/10 to-slate-950",
+      liquid: "from-orange-200/85 via-red-400/55 to-rose-950/80",
+      beam: "bg-orange-200/75",
+      glow: "shadow-[0_0_38px_rgba(251,146,60,.42)]",
+      label: "acid encounter",
+    },
+    alkali: {
+      shell: "from-emerald-300/20 via-lime-500/10 to-slate-950",
+      liquid: "from-emerald-200/80 via-lime-400/50 to-emerald-950/80",
+      beam: "bg-emerald-200/75",
+      glow: "shadow-[0_0_38px_rgba(52,211,153,.38)]",
+      label: "alkali encounter",
+    },
+    gradient: {
+      shell: "from-red-400/18 via-amber-300/10 to-emerald-400/18",
+      liquid: "from-red-300/70 via-amber-300/45 to-emerald-300/65",
+      beam: "bg-amber-100/75",
+      glow: "shadow-[0_0_38px_rgba(251,191,36,.38)]",
+      label: "thermal gradient",
+    },
+    reverse: {
+      shell: "from-emerald-400/18 via-cyan-300/10 to-red-400/18",
+      liquid: "from-emerald-300/70 via-cyan-300/45 to-red-300/60",
+      beam: "bg-cyan-100/75",
+      glow: "shadow-[0_0_38px_rgba(34,211,238,.36)]",
+      label: "reverse gradient",
+    }
   };
-  const bubbles = [14, 32, 49, 63, 78];
+  const p = palette[type] || palette.water;
+  const bubbles = [12, 22, 34, 47, 59, 70, 82];
+  const sparks = [18, 31, 44, 57, 73, 88];
   return (
-    <div className={`relative h-28 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${palette[type] || palette.water}`}>
-      <div className="absolute left-1/2 top-4 h-20 w-16 -translate-x-1/2 rounded-b-3xl rounded-t-lg border border-cyan-100/25 bg-black/25 backdrop-blur-sm" />
-      <div className="absolute bottom-3 left-1/2 h-9 w-20 -translate-x-1/2 rounded-[50%] border border-white/10 bg-white/10" />
-      <div className="absolute bottom-4 left-1/2 h-3 w-14 -translate-x-1/2 rounded-full bg-slate-300/35 shadow-[0_0_28px_rgba(125,211,252,.35)]" />
-      {bubbles.map((left, index) => <span key={left} className="absolute h-2 w-2 rounded-full bg-cyan-100/70 shadow-[0_0_14px_rgba(165,243,252,.8)]" style={{ left: `${left}%`, bottom: `${20 + (index % 3) * 14}px`, animation: `eosFloat ${2.4 + index * 0.35}s ease-in-out infinite` }} />)}
-      <div className="absolute inset-x-4 top-3 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-      <div className="absolute bottom-2 right-3 text-[10px] font-black uppercase tracking-[.18em] text-white/70">reaction view</div>
+    <div className={`relative h-40 overflow-hidden rounded-[1.35rem] border border-cyan-300/15 bg-gradient-to-br ${p.shell} ${p.glow}`}>
+      <div className="absolute inset-0 opacity-35" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.10) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.10) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+      <div className="absolute left-5 right-5 top-5 h-px bg-gradient-to-r from-transparent via-cyan-100/40 to-transparent" />
+      <div className="absolute bottom-5 left-1/2 h-24 w-28 -translate-x-1/2 overflow-hidden rounded-b-[2rem] rounded-t-xl border border-cyan-100/25 bg-black/35 backdrop-blur-sm">
+        <div className={`absolute bottom-0 left-0 right-0 h-[66%] bg-gradient-to-br ${p.liquid}`} />
+        <div className="absolute left-0 right-0 top-[34%] h-3 rounded-[50%] border border-white/20 bg-white/20" />
+        <div className="absolute left-1/2 top-3 h-12 w-12 -translate-x-1/2 rounded-full border border-white/10 bg-white/5 blur-[1px]" />
+      </div>
+      <div className="absolute left-1/2 top-5 h-12 w-20 -translate-x-1/2 rounded-t-[50%] border border-cyan-100/20 bg-cyan-100/5" />
+      <div className={`absolute bottom-[34px] left-1/2 h-1.5 w-20 -translate-x-1/2 rounded-full ${p.beam} blur-[1px]`} />
+      {bubbles.map((left, index) => (
+        <span
+          key={`bubble-${left}`}
+          className="absolute rounded-full bg-cyan-50/75 shadow-[0_0_16px_rgba(165,243,252,.85)]"
+          style={{
+            left: `${left}%`,
+            bottom: `${28 + (index % 4) * 16}px`,
+            width: `${5 + (index % 3) * 2}px`,
+            height: `${5 + (index % 3) * 2}px`,
+            animation: `eosFloat ${2.2 + index * 0.28}s ease-in-out infinite`,
+          }}
+        />
+      ))}
+      {sparks.map((left, index) => (
+        <span
+          key={`spark-${left}`}
+          className="absolute h-1 w-8 origin-left rounded-full bg-gradient-to-r from-cyan-100/70 to-transparent"
+          style={{
+            left: `${left}%`,
+            top: `${24 + (index % 3) * 26}px`,
+            transform: `rotate(${index % 2 ? -18 : 18}deg)`,
+            opacity: 0.35 + (index % 3) * 0.12,
+          }}
+        />
+      ))}
+      <div className="absolute bottom-3 left-4 rounded-full border border-cyan-300/20 bg-black/35 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-cyan-100">{p.label}</div>
+      <div className="absolute right-4 top-4 grid h-10 w-10 place-items-center border border-cyan-300/20 bg-black/30 text-[10px] font-black text-cyan-100">NOR</div>
+    </div>
+  );
+}
+
+function EncounterSignalMeter({ label, value }) {
+  const raw = String(value || "").toLowerCase();
+  const pct = raw.includes("excellent") || raw.includes("strong") || raw.includes("high") ? 88 : raw.includes("moderate") || raw.includes("watch") ? 58 : raw.includes("low") || raw.includes("stable") ? 34 : 50;
+  return (
+    <div className="rounded-xl border border-white/10 bg-black/25 p-3">
+      <div className="flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[.14em] text-slate-500">
+        <span>{label}</span>
+        <span className="text-cyan-100">{value}</span>
+      </div>
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-900">
+        <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-amber-200" style={{ width: `${pct}%` }} />
+      </div>
     </div>
   );
 }
@@ -6589,23 +6667,31 @@ function ExplorerEncounterCard({ encounter }) {
     ["Temperature Impact", encounter.temperatureImpact],
     ["Suitability", encounter.suitability],
   ];
+  const primary = rows.slice(0, 3);
+  const secondary = rows.slice(3);
   return (
-    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4">
-      <ReactionVisual type={encounter.visualType} />
-      <div className="mt-4 flex items-start justify-between gap-3">
-        <div>
-          <div className="text-lg font-black text-white">{encounter.title}</div>
-          <div className="mt-1 text-xs font-bold text-cyan-100">{encounter.reagent}</div>
-        </div>
-        <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] text-cyan-100">{encounter.suitability}</span>
-      </div>
-      <div className="mt-4 grid gap-2">
-        {rows.map(([label, value]) => (
-          <div key={label} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs">
-            <span className="font-bold text-slate-400">{label}</span>
-            <span className="text-right font-black text-slate-100">{value}</span>
+    <div className="group relative overflow-hidden rounded-[1.75rem] border border-cyan-300/14 bg-slate-950/80 p-4 shadow-[0_18px_60px_rgba(2,6,23,.32)] transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:shadow-[0_24px_80px_rgba(8,145,178,.18)]">
+      <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+      <div className="relative">
+        <ReactionVisual type={encounter.visualType} />
+        <div className="mt-4 flex items-start justify-between gap-3">
+          <div>
+            <div className="text-xl font-black text-white">{encounter.title}</div>
+            <div className="mt-1 text-xs font-black uppercase tracking-[.16em] text-cyan-100">{encounter.reagent}</div>
           </div>
-        ))}
+          <span className="rounded-full border border-cyan-300/25 bg-cyan-300/[0.08] px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] text-cyan-100">{encounter.suitability}</span>
+        </div>
+        <div className="mt-4 grid gap-3">
+          {primary.map(([label, value]) => <EncounterSignalMeter key={label} label={label} value={value} />)}
+        </div>
+        <div className="mt-3 grid gap-2 md:grid-cols-3">
+          {secondary.map(([label, value]) => (
+            <div key={label} className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+              <div className="text-[9px] font-black uppercase tracking-[.16em] text-slate-500">{label}</div>
+              <div className="mt-1 text-xs font-black text-slate-100">{value}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -8086,8 +8172,8 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
           </div>
 
           <Panel>
-            <SectionTitle eyebrow="encounters" title="Visual encounter simulator" body="A more useful version of acid, alkali, salt water and heat encounters: each mini-card behaves like a practical lab note." />
-            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+            <SectionTitle eyebrow="encounters" title="Visual encounter simulator" body="Cinematic lab-style encounter cards showing reaction energy, gas behaviour, corrosion pressure, visible change and forecast suitability." />
+            <div className="grid gap-5 lg:grid-cols-2 2xl:grid-cols-3">
               {encounters.map((encounter) => <ExplorerEncounterCard key={encounter.title} encounter={encounter} />)}
             </div>
           </Panel>
