@@ -4188,6 +4188,64 @@ function ElementOSThemeSkin() {
       @keyframes eosWaveTravel { 0% { left: -10%; opacity: .15; } 12% { opacity: 1; } 100% { left: 110%; opacity: .12; } }
       @keyframes eosTraceFlow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -42; } }
       @keyframes eosSvgPulse { 0%,100% { opacity: .55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.8); } }
+
+      /* V218 Visual Identity Pass: Element Map + Time Machine + Particle Accelerator only */
+      .eos-v218-map,
+      .eos-v218-time,
+      .eos-v218-accelerator {
+        --v218-cyan: #22d3ee;
+        --v218-ink: #020617;
+        --v218-panel: rgba(3, 10, 24, .92);
+        --v218-line: rgba(34, 211, 238, .16);
+        --v218-soft: rgba(255, 255, 255, .065);
+      }
+      .eos-v218-map > div,
+      .eos-v218-time > div,
+      .eos-v218-accelerator > div { isolation: isolate; }
+      .eos-v218-map button,
+      .eos-v218-time button,
+      .eos-v218-accelerator button,
+      .eos-v218-map select,
+      .eos-v218-time select,
+      .eos-v218-accelerator select,
+      .eos-v218-map input,
+      .eos-v218-time input,
+      .eos-v218-accelerator input { border-radius: 14px !important; }
+      .eos-v218-map .group.relative.overflow-hidden.rounded-\[12px\] {
+        border-radius: 10px !important;
+        min-height: 58px;
+        transform-origin: center;
+        backdrop-filter: blur(10px);
+      }
+      .eos-v218-map .group.relative.overflow-hidden.rounded-\[12px\]:hover {
+        transform: translateY(-3px) scale(1.035);
+        z-index: 30;
+        box-shadow: 0 18px 46px rgba(0,0,0,.42), 0 0 0 1px rgba(34,211,238,.42), inset 0 0 40px rgba(34,211,238,.10) !important;
+      }
+      .eos-v218-map aside { background: linear-gradient(180deg, rgba(2,6,23,.98), rgba(8,13,27,.96)) !important; }
+      .eos-v218-map main,
+      .eos-v218-time .relative.min-h-\[620px\],
+      .eos-v218-accelerator .relative.min-h-\[690px\] {
+        box-shadow: inset 0 0 0 1px rgba(34,211,238,.06), inset 0 0 90px rgba(34,211,238,.055), 0 28px 90px rgba(0,0,0,.36) !important;
+      }
+      .eos-v218-time .relative.min-h-\[620px\] { border-radius: 32px !important; min-height: 700px !important; }
+      .eos-v218-time svg polyline { stroke-width: 2.1px !important; }
+      .eos-v218-time .h-\[390px\] { height: 440px !important; border-radius: 28px !important; }
+      .eos-v218-time .rounded-\[1\.25rem\],
+      .eos-v218-time .rounded-\[1\.5rem\] { box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 14px 42px rgba(0,0,0,.22); }
+      .eos-v218-accelerator .relative.min-h-\[690px\] { min-height: 760px !important; border-radius: 0 !important; }
+      .eos-v218-accelerator .grid.gap-3.md\:grid-cols-4 > div,
+      .eos-v218-accelerator .grid.gap-3.md\:grid-cols-4 > button {
+        border-color: rgba(34,211,238,.18) !important;
+        background: linear-gradient(135deg, rgba(2,6,23,.94), rgba(8,18,34,.82)) !important;
+      }
+      .eos-v218-accelerator table,
+      .eos-v218-accelerator .overflow-auto { scrollbar-width: thin; scrollbar-color: rgba(34,211,238,.4) rgba(2,6,23,.8); }
+      @media (min-width: 1536px) {
+        .eos-v218-map .text-4xl { font-size: 3.85rem !important; }
+        .eos-v218-time .text-5xl { font-size: 4.35rem !important; }
+      }
+
     `}</style>
   );
 }
@@ -5595,7 +5653,7 @@ function TimeMachineGenius({ selected, setSelected, setPage, forecastRequest }) 
   };
 
   return (
-    <div className="space-y-6">
+    <div className="eos-v218-time space-y-6">
       <Panel className="overflow-hidden border-cyan-300/20 bg-slate-950/90">
         <div className="grid gap-8 xl:grid-cols-[.82fr_1.38fr_.82fr]">
           <div className="space-y-4">
@@ -9100,7 +9158,7 @@ function PeriodicTable({ selected, setSelected }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="eos-v218-map space-y-6">
       <ElementOSIntelligenceLayer page="map" context={{ selected }} />
       <div className="min-h-[calc(100vh-92px)] overflow-hidden rounded-[22px] border border-cyan-300/15 bg-slate-950 shadow-[0_0_80px_rgba(2,6,23,.65)]">
         <div className="relative border-b border-white/10 bg-[linear-gradient(90deg,rgba(34,211,238,.12),transparent_38%),linear-gradient(180deg,rgba(255,255,255,.045),transparent)] p-4 md:p-5">
@@ -11147,7 +11205,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
   };
 
   return (
-    <div className="space-y-6">
+    <div className="eos-v218-accelerator space-y-6">
       <PageHero
         eyebrow="Advanced Lab · Particle Accelerator"
         pill="Beam physics simulator"
