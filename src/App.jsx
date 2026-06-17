@@ -9998,6 +9998,62 @@ function CalculationCore() {
 
   const tokenKey = (item) => `${item.category}::${item.token}`;
   const activeItem = toolkit.find((item) => tokenKey(item) === activeTokenKey) || toolkit.find((item) => item.category === "A–Z" && item.token === "A") || toolkit[0];
+  const tokenIntelligence = (item) => {
+    const typeMap = {
+      number: {
+        label: "Number token",
+        description: "This token represents a numerical value that can be inserted directly into equations, unit conversions, simulations and saved calculation boards.",
+        importance: "Numbers are the measurable objects of mathematics: they let ElementOS quantify change, compare magnitudes and turn symbolic ideas into calculated results.",
+        uses: ["Direct calculation", "Unit conversion", "Formula inputs", "Report metrics"],
+      },
+      variable: {
+        label: "Variable token",
+        description: "This token represents a changeable quantity. It can stand for a material property, unknown value, input condition or simulation parameter.",
+        importance: "Variables are mathematical placeholders. They let one equation describe many possible situations instead of one fixed number.",
+        uses: ["Equation building", "Scenario modelling", "Material comparisons", "Forecast inputs"],
+      },
+      constant: {
+        label: "Constant token",
+        description: "This token represents a fixed value or stable relationship used across scientific and mathematical calculations.",
+        importance: "Constants anchor equations. They let calculations remain consistent across physics, geometry, materials analysis and report generation.",
+        uses: ["Physics formulas", "Scientific modelling", "Benchmark calculations", "Forecast reports"],
+      },
+      operator: {
+        label: "Operator token",
+        description: "This token performs an action inside an equation, such as addition, multiplication, differentiation, trigonometry or transformation.",
+        importance: "Operators are the grammar of mathematics. They define how values interact, transform, combine and produce new results.",
+        uses: ["Equation operations", "Formula construction", "Signal analysis", "Mathematical transformations"],
+      },
+      symbol: {
+        label: "Symbol token",
+        description: "This token represents a mathematical object, structure, relation, set, vector, matrix, quantum state or scientific notation item.",
+        importance: "Symbols compress complex ideas into readable notation, making advanced systems easier to model, compare and communicate.",
+        uses: ["Mathematical notation", "Advanced modelling", "Whiteboard logic", "Research reports"],
+      },
+    };
+
+    const categoryHints = {
+      Physics: ["Force, energy, waves and motion analysis", "Material stress calculations", "Scientific reports"],
+      Geometry: ["Area, volume and spatial modelling", "Shape-based material reasoning", "Engineering calculations"],
+      Calculus: ["Rates of change", "Growth and decay curves", "Forecast modelling"],
+      Statistics: ["Uncertainty", "Confidence scoring", "Dataset interpretation"],
+      Quantum: ["State notation", "Particle modelling", "Advanced lab analysis"],
+      Relativity: ["High-energy systems", "Velocity and spacetime modelling", "Accelerator-style calculations"],
+      Telemetry: ["Signal tracking", "Baseline comparison", "ElementOS intelligence scoring"],
+      Trigonometry: ["Waveforms", "Angles", "Oscillation and periodic systems"],
+    };
+
+    const base = typeMap[item?.tokenType] || typeMap.symbol;
+    const extraUses = categoryHints[item?.category] || [];
+    const examples = [
+      `${item?.token || item?.symbol} + A → equation construction`,
+      `${item?.token || item?.symbol} × signal → simulation input`,
+      `${item?.symbol || item?.token} → report-ready mathematical token`,
+    ];
+    return { ...base, uses: Array.from(new Set([...base.uses, ...extraUses])).slice(0, 6), examples };
+  };
+
+  const activeTokenInfo = tokenIntelligence(activeItem);
   const tokenCategories = ["All", "Numbers", "Number Systems", "A–Z", "a–z", "Greek", "Physics", "Constants", "Operators", "Trigonometry", "Calculus", "Geometry", "Relations", "Sets", "Logic", "Matrices", "Vectors", "Statistics", "Quantum", "Relativity", "Telemetry"];
   const visibleToolkit = toolkit.filter((item) => {
     const search = tokenSearch.trim().toLowerCase();
@@ -10241,7 +10297,35 @@ function CalculationCore() {
               <div className="mt-4 flex flex-wrap gap-3"><Button onClick={() => insertToken(activeItem)} variant="primary">Insert Selected Token</Button><Button onClick={() => addSelectedTokenToBoard(activeItem)}>Add Token to Whiteboard</Button><Button onClick={solve}>Save Equation</Button><Button onClick={clearEquation}>Clear</Button></div>
             </div>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Selected token</div><div className="mt-2 text-4xl font-black text-white">{activeItem.symbol}</div><div className="mt-1 font-mono text-sm text-cyan-100">{activeItem.token}</div><p className="mt-2 text-sm leading-6 text-slate-300">{activeItem.meaning}</p><p className="mt-2 text-xs leading-5 text-slate-500">Geometry tokens now insert working formulas into the equation area and can also be saved directly to the Whiteboard.</p></div>
+              <div className="rounded-[1.5rem] border border-cyan-300/20 bg-slate-950/75 p-5 shadow-[0_0_35px_rgba(34,211,238,.08)]">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Selected token</div>
+                    <div className="mt-3 flex items-end gap-3"><div className="text-5xl font-black text-white">{activeItem.symbol}</div><div className="pb-1 font-mono text-sm text-cyan-100">{activeItem.token}</div></div>
+                    <div className="mt-2 text-sm font-black uppercase tracking-[.16em] text-slate-500">{activeTokenInfo.label} · {activeItem.category}</div>
+                  </div>
+                  <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-black text-cyan-100">{activeItem.tokenType}</div>
+                </div>
+                <p className="mt-4 text-sm leading-6 text-slate-200">{activeItem.meaning}</p>
+                <div className="mt-4 rounded-2xl border border-white/10 bg-black/25 p-4">
+                  <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">What this token is</div>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{activeTokenInfo.description}</p>
+                </div>
+                <div className="mt-3 rounded-2xl border border-amber-300/15 bg-amber-300/[0.06] p-4">
+                  <div className="text-xs font-black uppercase tracking-[.18em] text-amber-200">Importance in mathematics</div>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{activeTokenInfo.importance}</p>
+                </div>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Uses inside ElementOS</div>
+                    <div className="mt-3 space-y-2">{activeTokenInfo.uses.map((use) => <div key={use} className="flex gap-2 text-xs leading-5 text-slate-300"><span className="text-cyan-200">✓</span><span>{use}</span></div>)}</div>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Example usage</div>
+                    <div className="mt-3 space-y-2">{activeTokenInfo.examples.map((example) => <div key={example} className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 font-mono text-xs text-cyan-100">{example}</div>)}</div>
+                  </div>
+                </div>
+              </div>
               <HelpBox title="Live interpretation">{displayLiveMessage}</HelpBox>
             </div>
           </Panel>
