@@ -1,4 +1,4 @@
-cimport React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { supabase } from "./supabaseClient";
 import {
@@ -666,6 +666,8 @@ function ScoreMeaningPanel({ page = "dashboard" }) {
 }
 
 
+const ELEMENTOS_BUILD_SAFE_PATCH = "V217 normalized Tailwind opacity classes for npm build";
+
 const ELEMENTOS_PRODUCTION_AUDIT = {
   version: "V154 Productized Subscriber Journey",
   buttonComponentsScanned: 193,
@@ -1264,7 +1266,7 @@ function MatterIntelligenceLab() {
 
   return (
     <div className="space-y-6">
-      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-blue-950/30 p-0">
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/[.35] via-slate-950 to-blue-950/30 p-0">
         <div className="relative p-6 md:p-8">
           <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
           <div className="pointer-events-none absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-amber-500/10 blur-3xl" />
@@ -1294,7 +1296,7 @@ function MatterIntelligenceLab() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 shadow-[0_0_80px_rgba(34,211,238,.12)]">
+            <div className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-black/[.35] p-5 shadow-[0_0_80px_rgba(34,211,238,.12)]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.16),transparent_35%)]" />
               <div className="relative z-10 flex items-start justify-between gap-4">
                 <div>
@@ -1486,7 +1488,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
 
   return (
     <>
-      <Panel className="border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-[#06101d]/95 to-amber-300/10">
+      <Panel className="border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-[#06101d]/[.95] to-amber-300/10">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <Pill gold><Sparkles size={12}/> public discovery page</Pill>
@@ -1526,7 +1528,7 @@ function PublicDiscoveryPage({ discovery, setPage, setPublicDiscovery }) {
           <div className="mt-5 rounded-[2rem] border border-amber-300/25 bg-amber-300/10 p-5">
             <div className="text-xs font-black uppercase tracking-[.22em] text-amber-100">Legendary Discovery</div>
             <div className="mt-2 text-2xl font-black text-white">ZDAR Event Detected</div>
-            <p className="mt-2 text-sm leading-6 text-amber-100/85">Exceptional multi-metric alignment across stability, thermal behaviour, pressure response and compatibility.</p>
+            <p className="mt-2 text-sm leading-6 text-amber-100/[.85]">Exceptional multi-metric alignment across stability, thermal behaviour, pressure response and compatibility.</p>
           </div>
           <h2 className="mt-6 text-3xl font-black">Research-ready output</h2>
           <div className="mt-5 space-y-3">
@@ -2230,7 +2232,7 @@ function Pill({ children, gold = false }) { return <span className={`inline-flex
 function Button({ children, onClick, variant = "ghost", className = "", disabled = false, title = "", ariaLabel = "", ...props }) {
   const styles =
     variant === "primary"
-      ? "border border-cyan-300/40 bg-slate-950/85 text-cyan-50 shadow-[0_0_0_1px_rgba(34,211,238,.12),0_18px_44px_rgba(0,0,0,.28)] hover:border-cyan-200/70 hover:bg-cyan-300/10"
+      ? "border border-cyan-300/40 bg-slate-950/[.85] text-cyan-50 shadow-[0_0_0_1px_rgba(34,211,238,.12),0_18px_44px_rgba(0,0,0,.28)] hover:border-cyan-200/70 hover:bg-cyan-300/10"
       : variant === "danger"
       ? "border border-rose-300/25 bg-rose-400/10 text-rose-100 shadow-[0_0_24px_rgba(244,63,94,.12)]"
       : "border border-[#17365f] bg-[#071425]/80 text-slate-100 hover:border-[#0ea5ff]/60 hover:bg-[#0b1d35]";
@@ -2280,7 +2282,7 @@ function PageHero({ eyebrow, title, description, children, icon: Icon = Sparkles
 
 function LuxuryActionCard({ title, body, icon: Icon = Sparkles, onClick, primary = false }) {
   return (
-    <button onClick={onClick} className={`group rounded-[1.65rem] border p-5 text-left transition duration-300 hover:-translate-y-1 ${primary ? "border-cyan-300/35 bg-cyan-300/10 shadow-[0_0_42px_rgba(34,211,238,.12)]" : "border-white/10 bg-white/[0.035] hover:border-white/20 hover:bg-white/[0.06]"}`}>
+    <button onClick={onClick} className={`group rounded-[1.65rem] border p-5 text-left transition duration-300 hover:-translate-y-1 ${primary ? "border-cyan-300/[.35] bg-cyan-300/10 shadow-[0_0_42px_rgba(34,211,238,.12)]" : "border-white/10 bg-white/[0.035] hover:border-white/20 hover:bg-white/[0.06]"}`}>
       <div className={`grid h-12 w-12 place-items-center rounded-2xl ${primary ? "bg-cyan-300 text-slate-950" : "border border-white/10 bg-black/25 text-cyan-100"}`}><Icon size={20}/></div>
       <div className="mt-5 text-xl font-black text-white">{title}</div>
       <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
@@ -2400,7 +2402,7 @@ function V155AdvisorResultCard({ result, setSelected, setCompare, setPage, setFo
       </div>
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {safeArray(result.recommended).map((item, index) => (
-          <button key={item.symbol} onClick={() => setSelected?.(item.symbol)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+          <button key={item.symbol} onClick={() => setSelected?.(item.symbol)} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
             <div className="flex items-center justify-between gap-3"><div className="text-2xl font-black text-cyan-100">{item.symbol}</div><div className="text-lg font-black text-white">{item.confidence}%</div></div>
             <div className="mt-1 text-sm font-black text-white">{index + 1}. {item.name}</div>
             <div className="mt-2 text-xs leading-5 text-slate-400">{safeArray(item.why).slice(0, 2).join(" · ")}</div>
@@ -2667,7 +2669,7 @@ function V157AdvisorReportPage({ selected = "Ti", setSelected, setCompare, setPa
         </div>
         <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {history.length ? history.slice(0, 6).map((item, index) => (
-            <button key={`${item.id || item.symbol}-${index}`} onClick={() => { v157SaveAdvisorReport(item); setReport(v157NormalizeAdvisorReport(item)); }} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+            <button key={`${item.id || item.symbol}-${index}`} onClick={() => { v157SaveAdvisorReport(item); setReport(v157NormalizeAdvisorReport(item)); }} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
               <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">{safeNumber(item.years, 50)} years</div>
               <div className="mt-2 text-xl font-black text-white">{item.elementName || item.top?.name || item.symbol}</div>
               <div className="mt-1 text-sm text-cyan-100">{safeNumber(item.missionScore || item.top?.confidence, 0)}% confidence</div>
@@ -2707,11 +2709,11 @@ function V155AIMaterialAdvisor({ selected = "Ti", setSelected, setCompare, setPa
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="mt-5 min-h-[126px] w-full rounded-[1.25rem] border border-white/10 bg-slate-950/85 p-4 text-sm font-bold text-white outline-none placeholder:text-slate-600"
+            className="mt-5 min-h-[126px] w-full rounded-[1.25rem] border border-white/10 bg-slate-950/[.85] p-4 text-sm font-bold text-white outline-none placeholder:text-slate-600"
             placeholder="Example: What material survives underwater geothermal exposure for 50 years?"
           />
           <div className="mt-3 flex flex-wrap gap-2">
-            {presets.map((preset) => <button key={preset} onClick={() => setInput(preset)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-300 hover:border-cyan-300/35 hover:bg-cyan-300/10">{preset}</button>)}
+            {presets.map((preset) => <button key={preset} onClick={() => setInput(preset)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-300 hover:border-cyan-300/[.35] hover:bg-cyan-300/10">{preset}</button>)}
           </div>
           <Button onClick={runAdvisor} variant="primary" className="mt-5 w-full">Analyze Material Need</Button>
         </div>
@@ -2781,7 +2783,7 @@ function V154SubscriberUpgradeGrid({ isPro, startCheckout, setPage }) {
   return (
     <Panel className="border-amber-300/20 bg-amber-300/[0.045]">
       <div className="flex flex-wrap items-start justify-between gap-4"><div><Pill gold><Crown size={12}/> subscriber journey</Pill><h2 className="mt-3 text-4xl font-bold text-white">Clear reason to upgrade.</h2><p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">Explorer stays useful for browsing. Pro turns missions into saved briefs, reports, exports and advanced lab workflows.</p></div><Button onClick={() => setPage?.("reports")} variant="primary">See Report Exports</Button></div>
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">{tiers.map((tier) => <div key={tier.name} className={`rounded-[1.75rem] border p-5 ${tier.primary ? "border-cyan-300/35 bg-cyan-300/[0.07]" : "border-white/10 bg-black/20"}`}><div className="flex flex-wrap items-start justify-between gap-3"><div><div className="text-xs font-bold uppercase tracking-[.22em] text-slate-500">{tier.badge}</div><div className="mt-2 text-3xl font-bold text-white">{tier.name}</div><div className="mt-1 text-xl font-bold text-cyan-100">{tier.price}</div></div>{isPro && <span className="rounded-full bg-emerald-300 px-3 py-1 text-xs font-bold text-emerald-950">Active / available</span>}</div><div className="mt-5 grid gap-2 sm:grid-cols-2">{tier.features.map((feature) => <div key={feature} className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-sm text-slate-200">✓ {feature}</div>)}</div><Button onClick={tier.action} variant={tier.primary ? "primary" : "ghost"} className="mt-5 w-full">{isPro ? "Open Workspace" : `Choose ${tier.name}`}</Button></div>)}</div>
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">{tiers.map((tier) => <div key={tier.name} className={`rounded-[1.75rem] border p-5 ${tier.primary ? "border-cyan-300/[.35] bg-cyan-300/[0.07]" : "border-white/10 bg-black/20"}`}><div className="flex flex-wrap items-start justify-between gap-3"><div><div className="text-xs font-bold uppercase tracking-[.22em] text-slate-500">{tier.badge}</div><div className="mt-2 text-3xl font-bold text-white">{tier.name}</div><div className="mt-1 text-xl font-bold text-cyan-100">{tier.price}</div></div>{isPro && <span className="rounded-full bg-emerald-300 px-3 py-1 text-xs font-bold text-emerald-950">Active / available</span>}</div><div className="mt-5 grid gap-2 sm:grid-cols-2">{tier.features.map((feature) => <div key={feature} className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-sm text-slate-200">✓ {feature}</div>)}</div><Button onClick={tier.action} variant={tier.primary ? "primary" : "ghost"} className="mt-5 w-full">{isPro ? "Open Workspace" : `Choose ${tier.name}`}</Button></div>)}</div>
     </Panel>
   );
 }
@@ -4240,7 +4242,7 @@ function Sidebar({ page, setPage }) {
         className={`eos-nav-item ${active ? "eos-nav-item-active text-white" : "text-slate-300 hover:border-[#2777ff]/50 hover:bg-[#071a30]"} flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition ${nested ? "ml-3 w-[calc(100%-0.75rem)]" : ""}`}
       >
         <span className="flex items-center gap-3">
-          <span className={`grid h-8 w-8 place-items-center rounded-lg border ${active ? "border-cyan-300/35 bg-blue-500/20 text-cyan-100" : "border-white/10 bg-white/[.025] text-slate-300"}`}>
+          <span className={`grid h-8 w-8 place-items-center rounded-lg border ${active ? "border-cyan-300/[.35] bg-blue-500/20 text-cyan-100" : "border-white/10 bg-white/[.025] text-slate-300"}`}>
             <Icon size={15} />
           </span>
           <span className="text-sm font-semibold">{label}</span>
@@ -4278,13 +4280,13 @@ function Sidebar({ page, setPage }) {
           const isOpen = openGroups[group.id];
 
           return (
-            <div key={group.id} className={`rounded-2xl border ${activeGroup ? "border-cyan-300/30 bg-cyan-400/5" : "border-[#17365f] bg-[#06101d]/55"} p-2`}>
+            <div key={group.id} className={`rounded-2xl border ${activeGroup ? "border-cyan-300/30 bg-cyan-400/5" : "border-[#17365f] bg-[#06101d]/[.55]"} p-2`}>
               <button
                 onClick={() => setOpenGroups((current) => ({ ...current, [group.id]: !current[group.id] }))}
                 className="flex w-full items-center justify-between rounded-xl px-2 py-2 text-left"
               >
                 <span className="flex items-center gap-2">
-                  <span className={`grid h-8 w-8 place-items-center rounded-lg border ${activeGroup ? "border-cyan-300/35 bg-blue-500/20 text-cyan-100" : "border-white/10 bg-white/[.025] text-slate-400"}`}>
+                  <span className={`grid h-8 w-8 place-items-center rounded-lg border ${activeGroup ? "border-cyan-300/[.35] bg-blue-500/20 text-cyan-100" : "border-white/10 bg-white/[.025] text-slate-400"}`}>
                     <GroupIcon size={15} />
                   </span>
                   <span>
@@ -4926,7 +4928,7 @@ function ScenarioBuilder({ selected, setSelected, setPage }) {
           <textarea
             value={scenarioText}
             onChange={(e) => setScenarioText(e.target.value)}
-            className="mt-5 min-h-[170px] w-full rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 text-lg leading-8 outline-none focus:border-cyan-300/60"
+            className="mt-5 min-h-[170px] w-full rounded-[2rem] border border-cyan-300/20 bg-black/[.35] p-5 text-lg leading-8 outline-none focus:border-cyan-300/60"
             placeholder="Describe the material, environment and timescale..."
           />
           <div className="mt-4 flex flex-wrap gap-2">
@@ -5338,14 +5340,14 @@ function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
                 </div>
                 <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-sm font-black text-cyan-100">5,000 scenarios</div>
               </div>
-              <input value={scenarioSearch} onChange={(e) => setScenarioSearch(e.target.value)} placeholder="Search scenarios: ocean, orbit, refinery, corrosion, pressure..." className="mt-4 w-full rounded-2xl border border-white/10 bg-black/35 p-4 text-sm outline-none placeholder:text-slate-600" />
+              <input value={scenarioSearch} onChange={(e) => setScenarioSearch(e.target.value)} placeholder="Search scenarios: ocean, orbit, refinery, corrosion, pressure..." className="mt-4 w-full rounded-2xl border border-white/10 bg-black/[.35] p-4 text-sm outline-none placeholder:text-slate-600" />
               <div className="mt-3 flex max-h-24 flex-wrap gap-2 overflow-auto rounded-2xl border border-white/10 bg-black/20 p-3">
                 {scenarioCategories.map((cat) => <button key={cat} onClick={() => setScenarioCategory(cat)} className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] ${scenarioCategory === cat ? "border-amber-300/50 bg-amber-300/15 text-amber-100" : "border-white/10 bg-white/[0.04] text-slate-400"}`}>{cat}</button>)}
               </div>
               <select value={selectedScenarioId} onChange={(e) => { const next = scenarioLibrary.find((item) => item.id === e.target.value); applyTimeScenario(next); }} className="mt-3 w-full rounded-2xl border border-white/10 bg-black/30 p-4 outline-none">
                 {(filteredScenarios.length ? filteredScenarios : scenarioLibrary).slice(0, 250).map((item) => <option key={item.id} value={item.id}>{item.id} — {item.name}</option>)}
               </select>
-              <div className="mt-3 rounded-2xl border border-amber-300/15 bg-black/25 p-3 text-sm leading-6 text-amber-50/85">
+              <div className="mt-3 rounded-2xl border border-amber-300/15 bg-black/25 p-3 text-sm leading-6 text-amber-50/[.85]">
                 <b>{selectedScenario?.name}</b><br />{selectedScenario?.description}
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -5424,7 +5426,7 @@ function TimeMachine({ selected, setSelected, setPage, forecastRequest }) {
           {timeline.slice(1).map((t) => {
             const insight = getMilestoneInsight(t);
             return (
-              <div key={t.year} className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-black/35 to-amber-400/10 p-5">
+              <div key={t.year} className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-black/[.35] to-amber-400/10 p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="text-xs uppercase tracking-[.22em] text-slate-500">year {t.year}</div>
@@ -5614,7 +5616,7 @@ function TimeMachineGenius({ selected, setSelected, setPage, forecastRequest }) 
               <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Environment preset</div>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {Object.keys(environmentProfiles).map((name) => (
-                  <button key={name} type="button" onClick={() => setEnvironment(name)} className={`rounded-xl border px-3 py-2 text-left text-xs font-black transition ${environment === name ? "border-cyan-300/60 bg-cyan-300/12 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[0.035] text-slate-300 hover:border-cyan-300/30"}`}>{name}</button>
+                  <button key={name} type="button" onClick={() => setEnvironment(name)} className={`rounded-xl border px-3 py-2 text-left text-xs font-black transition ${environment === name ? "border-cyan-300/60 bg-cyan-300/[.12] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[0.035] text-slate-300 hover:border-cyan-300/30"}`}>{name}</button>
                 ))}
               </div>
               <p className="mt-3 text-xs leading-5 text-slate-400">{profile.label}</p>
@@ -6225,36 +6227,36 @@ function ReactionVisual({ type = "water" }) {
   const palette = {
     water: {
       shell: "from-cyan-300/20 via-blue-500/10 to-slate-950",
-      liquid: "from-cyan-200/80 via-blue-400/55 to-cyan-950/80",
+      liquid: "from-cyan-200/80 via-blue-400/[.55] to-cyan-950/80",
       beam: "bg-cyan-200/70",
       glow: "shadow-[0_0_38px_rgba(34,211,238,.42)]",
       label: "aqueous exposure",
     },
     acid: {
       shell: "from-amber-300/20 via-red-500/10 to-slate-950",
-      liquid: "from-orange-200/85 via-red-400/55 to-rose-950/80",
-      beam: "bg-orange-200/75",
+      liquid: "from-orange-200/[.85] via-red-400/[.55] to-rose-950/80",
+      beam: "bg-orange-200/[.75]",
       glow: "shadow-[0_0_38px_rgba(251,146,60,.42)]",
       label: "acid encounter",
     },
     alkali: {
       shell: "from-emerald-300/20 via-lime-500/10 to-slate-950",
       liquid: "from-emerald-200/80 via-lime-400/50 to-emerald-950/80",
-      beam: "bg-emerald-200/75",
+      beam: "bg-emerald-200/[.75]",
       glow: "shadow-[0_0_38px_rgba(52,211,153,.38)]",
       label: "alkali encounter",
     },
     gradient: {
       shell: "from-red-400/18 via-amber-300/10 to-emerald-400/18",
-      liquid: "from-red-300/70 via-amber-300/45 to-emerald-300/65",
-      beam: "bg-amber-100/75",
+      liquid: "from-red-300/70 via-amber-300/45 to-emerald-300/[.65]",
+      beam: "bg-amber-100/[.75]",
       glow: "shadow-[0_0_38px_rgba(251,191,36,.38)]",
       label: "thermal gradient",
     },
     reverse: {
       shell: "from-emerald-400/18 via-cyan-300/10 to-red-400/18",
       liquid: "from-emerald-300/70 via-cyan-300/45 to-red-300/60",
-      beam: "bg-cyan-100/75",
+      beam: "bg-cyan-100/[.75]",
       glow: "shadow-[0_0_38px_rgba(34,211,238,.36)]",
       label: "reverse gradient",
     }
@@ -6266,7 +6268,7 @@ function ReactionVisual({ type = "water" }) {
     <div className={`relative h-40 overflow-hidden rounded-[1.35rem] border border-cyan-300/15 bg-gradient-to-br ${p.shell} ${p.glow}`}>
       <div className="absolute inset-0 opacity-35" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.10) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.10) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
       <div className="absolute left-5 right-5 top-5 h-px bg-gradient-to-r from-transparent via-cyan-100/40 to-transparent" />
-      <div className="absolute bottom-5 left-1/2 h-24 w-28 -translate-x-1/2 overflow-hidden rounded-b-[2rem] rounded-t-xl border border-cyan-100/25 bg-black/35 backdrop-blur-sm">
+      <div className="absolute bottom-5 left-1/2 h-24 w-28 -translate-x-1/2 overflow-hidden rounded-b-[2rem] rounded-t-xl border border-cyan-100/25 bg-black/[.35] backdrop-blur-sm">
         <div className={`absolute bottom-0 left-0 right-0 h-[66%] bg-gradient-to-br ${p.liquid}`} />
         <div className="absolute left-0 right-0 top-[34%] h-3 rounded-[50%] border border-white/20 bg-white/20" />
         <div className="absolute left-1/2 top-3 h-12 w-12 -translate-x-1/2 rounded-full border border-white/10 bg-white/5 blur-[1px]" />
@@ -6276,7 +6278,7 @@ function ReactionVisual({ type = "water" }) {
       {bubbles.map((left, index) => (
         <span
           key={`bubble-${left}`}
-          className="absolute rounded-full bg-cyan-50/75 shadow-[0_0_16px_rgba(165,243,252,.85)]"
+          className="absolute rounded-full bg-cyan-50/[.75] shadow-[0_0_16px_rgba(165,243,252,.85)]"
           style={{
             left: `${left}%`,
             bottom: `${28 + (index % 4) * 16}px`,
@@ -6298,7 +6300,7 @@ function ReactionVisual({ type = "water" }) {
           }}
         />
       ))}
-      <div className="absolute bottom-3 left-4 rounded-full border border-cyan-300/20 bg-black/35 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-cyan-100">{p.label}</div>
+      <div className="absolute bottom-3 left-4 rounded-full border border-cyan-300/20 bg-black/[.35] px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-cyan-100">{p.label}</div>
       <div className="absolute right-4 top-4 grid h-10 w-10 place-items-center border border-cyan-300/20 bg-black/30 text-[10px] font-black text-cyan-100">NOR</div>
     </div>
   );
@@ -6875,7 +6877,7 @@ function ExplorerEncounterCard({ encounter }) {
   const primary = rows.slice(0, 3);
   const secondary = rows.slice(3);
   return (
-    <div className="group relative overflow-hidden rounded-[1.75rem] border border-cyan-300/14 bg-slate-950/80 p-4 shadow-[0_18px_60px_rgba(2,6,23,.32)] transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:shadow-[0_24px_80px_rgba(8,145,178,.18)]">
+    <div className="group relative overflow-hidden rounded-[1.75rem] border border-cyan-300/14 bg-slate-950/80 p-4 shadow-[0_18px_60px_rgba(2,6,23,.32)] transition duration-300 hover:-translate-y-1 hover:border-cyan-300/[.35] hover:shadow-[0_24px_80px_rgba(8,145,178,.18)]">
       <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.08) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
       <div className="relative">
         <ReactionVisual type={encounter.visualType} />
@@ -6938,7 +6940,7 @@ function ExplorerInfoTip({ title, children }) {
   return (
     <span className="group relative inline-flex items-center gap-1 align-middle">
       <span className="grid h-4 w-4 place-items-center rounded-full border border-cyan-300/30 bg-cyan-300/10 text-[10px] font-black text-cyan-100">i</span>
-      <span className="pointer-events-none absolute left-1/2 top-6 z-30 hidden w-64 -translate-x-1/2 rounded-2xl border border-cyan-300/20 bg-slate-950/95 p-3 text-left text-xs leading-5 text-slate-300 shadow-2xl shadow-cyan-950/40 backdrop-blur-xl group-hover:block">
+      <span className="pointer-events-none absolute left-1/2 top-6 z-30 hidden w-64 -translate-x-1/2 rounded-2xl border border-cyan-300/20 bg-slate-950/[.95] p-3 text-left text-xs leading-5 text-slate-300 shadow-2xl shadow-cyan-950/40 backdrop-blur-xl group-hover:block">
         <b className="mb-1 block text-cyan-100">{title}</b>
         {children}
       </span>
@@ -7154,7 +7156,7 @@ function ElementArtwork({ el, profile, crystal, compact = false }) {
 
       <div className={`relative z-10 grid ${compact ? "h-full place-items-center" : "min-h-[390px] place-items-center rounded-[1.6rem] border border-white/10 bg-black/25 backdrop-blur-sm"}`}>
         {!compact && <div className="absolute left-5 top-5 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.2em] text-cyan-100">ElementOS AI Artwork</div>}
-        {!compact && <div className="absolute right-5 top-5 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-right"><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">Atomic</div><div className="text-3xl font-black text-cyan-100">{n}</div></div>}
+        {!compact && <div className="absolute right-5 top-5 rounded-2xl border border-white/10 bg-black/[.35] px-4 py-3 text-right"><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">Atomic</div><div className="text-3xl font-black text-cyan-100">{n}</div></div>}
 
         <div className={`relative grid place-items-center ${compact ? "h-12 w-12" : "h-72 w-72"}`}>
           {orbits.map((i) => (
@@ -7529,7 +7531,7 @@ function ScenarioTemplatesV149({ el, onLaunch }) {
       <h2 className="mt-2 text-3xl font-black text-white">One-click material missions</h2>
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {V149_SCENARIO_TEMPLATES.map(t => (
-          <button key={t.name} onClick={() => onLaunch?.(t)} className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/10">
+          <button key={t.name} onClick={() => onLaunch?.(t)} className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
             <div className="text-lg font-black text-white">✓ {t.name}</div>
             <div className="mt-2 text-xs leading-5 text-slate-400">{t.environment}</div>
             <div className="mt-3 text-xs font-black text-cyan-100">{t.years} year horizon</div>
@@ -7554,7 +7556,7 @@ function OpportunityEngineV149({ setSelected, setPage }) {
         </div>
         <div className="space-y-3">
           {results.map((r, index) => (
-            <button key={r.symbol} onClick={() => { setSelected?.(r.symbol); setPage?.("explorer"); }} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-emerald-300/35 hover:bg-emerald-300/10">
+            <button key={r.symbol} onClick={() => { setSelected?.(r.symbol); setPage?.("explorer"); }} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-emerald-300/[.35] hover:bg-emerald-300/10">
               <div><div className="text-xl font-black text-white">{index + 1}. {r.name}</div><div className="text-xs text-slate-400">{r.symbol} · {r.category}</div></div>
               <div className="text-3xl font-black text-emerald-100">{r.recommendationScore}%</div>
             </button>
@@ -7792,11 +7794,11 @@ function MissionIntelligencePipelineV151({ selected, setSelected, setCompare, se
           <textarea
             value={missionInput}
             onChange={(e) => setMissionInput(e.target.value)}
-            className="mt-5 min-h-[132px] w-full rounded-[1.25rem] border border-white/10 bg-slate-950/85 p-4 text-sm font-bold text-white outline-none placeholder:text-slate-600"
+            className="mt-5 min-h-[132px] w-full rounded-[1.25rem] border border-white/10 bg-slate-950/[.85] p-4 text-sm font-bold text-white outline-none placeholder:text-slate-600"
             placeholder="Example: Find a lightweight, corrosion-resistant material for marine use over 50 years"
           />
           <div className="mt-3 flex flex-wrap gap-2">
-            {presets.map((p) => <button key={p} onClick={() => setMissionInput(p)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-300 hover:border-cyan-300/35 hover:bg-cyan-300/10">{p}</button>)}
+            {presets.map((p) => <button key={p} onClick={() => setMissionInput(p)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-300 hover:border-cyan-300/[.35] hover:bg-cyan-300/10">{p}</button>)}
           </div>
           <Button onClick={analyze} variant="primary" className="mt-5 w-full">Analyze Mission</Button>
         </div>
@@ -8169,7 +8171,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
             <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Recent forecasts</div>
             <div className="mt-3 flex flex-wrap gap-2">
               {forecastHistory.map((item, index) => (
-                <button key={`${item.symbol}-${item.years}-${index}`} onClick={() => launchForecast(item.symbol, item.years)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+                <button key={`${item.symbol}-${item.years}-${index}`} onClick={() => launchForecast(item.symbol, item.years)} className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-200 transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
                   {item.symbol} · {item.years}y
                 </button>
               ))}
@@ -8505,7 +8507,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
               <SectionTitle eyebrow="related comparisons" title="Related comparisons with context" />
               <div className="grid gap-3">
                 {comparisons.map(c => (
-                  <button key={c.symbol} onClick={() => openCompare([c.symbol])} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+                  <button key={c.symbol} onClick={() => openCompare([c.symbol])} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
                     <div className="text-xl font-black text-white">{el.name} vs {c.name}</div>
                     <div className="mt-2 flex flex-wrap gap-2">{c.why.map(x => <span key={x} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-bold text-slate-300">{x}</span>)}</div>
                   </button>
@@ -8551,7 +8553,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
               </div>
               <div className="flex flex-wrap gap-2">
                 {recommendedInvestigations.map(([label, body, action]) => (
-                  <button key={label} onClick={action} className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-left text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+                  <button key={label} onClick={action} className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-left text-xs font-black text-slate-200 transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
                     <span className="block text-cyan-100">{label}</span>
                     <span className="block max-w-[220px] truncate font-medium text-slate-400">{body}</span>
                   </button>
@@ -9113,7 +9115,7 @@ function PeriodicTable({ selected, setSelected }) {
                 A premium 118-element command surface for scanning diffusion, thermal response, pressure behaviour, conductivity, stability, rarity and discovery potential.
               </p>
             </div>
-            <div className="grid min-w-[280px] grid-cols-3 gap-2 rounded-[16px] border border-cyan-300/15 bg-black/35 p-3 backdrop-blur-xl">
+            <div className="grid min-w-[280px] grid-cols-3 gap-2 rounded-[16px] border border-cyan-300/15 bg-black/[.35] p-3 backdrop-blur-xl">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">Layer</div>
                 <div className="mt-1 text-lg font-black text-cyan-100">{layerConfig[layer].label}</div>
@@ -9132,9 +9134,9 @@ function PeriodicTable({ selected, setSelected }) {
 
         <div className="grid min-h-[calc(100vh-235px)] 2xl:grid-cols-[minmax(0,1fr)_380px]">
           <main className="flex min-w-0 flex-col 2xl:border-r 2xl:border-white/10">
-            <div className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/95 p-3 md:p-4 backdrop-blur-xl">
+            <div className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/[.95] p-3 md:p-4 backdrop-blur-xl">
               <div className="grid gap-3 lg:grid-cols-[1fr_190px_190px]">
-                <div className="flex items-center gap-3 rounded-[14px] border border-white/10 bg-black/30 px-4 py-3 focus-within:border-cyan-300/35">
+                <div className="flex items-center gap-3 rounded-[14px] border border-white/10 bg-black/30 px-4 py-3 focus-within:border-cyan-300/[.35]">
                   <Search size={18} className="text-cyan-200" />
                   <input
                     value={query}
@@ -9192,9 +9194,9 @@ function PeriodicTable({ selected, setSelected }) {
             </div>
           </main>
 
-          <aside className="border-t border-white/10 bg-slate-950/95 p-4 2xl:border-t-0 2xl:max-h-[calc(100vh-140px)] 2xl:overflow-y-auto">
+          <aside className="border-t border-white/10 bg-slate-950/[.95] p-4 2xl:border-t-0 2xl:max-h-[calc(100vh-140px)] 2xl:overflow-y-auto">
             <div className="2xl:sticky 2xl:top-4">
-              <div className="rounded-[22px] border border-cyan-300/15 bg-black/35 p-5 shadow-[0_0_35px_rgba(34,211,238,.06)]">
+              <div className="rounded-[22px] border border-cyan-300/15 bg-black/[.35] p-5 shadow-[0_0_35px_rgba(34,211,238,.06)]">
                 <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">selected element</div>
                 <div className="mt-5 flex items-end gap-4">
                   <div className="text-7xl font-black tracking-[-.08em] text-white">{activeElement.symbol}</div>
@@ -9231,7 +9233,7 @@ function PeriodicTable({ selected, setSelected }) {
 
               <div className="mt-4 rounded-[22px] border border-white/10 bg-black/30 p-5">
                 <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">hover preview</div>
-                <div className="mt-3 flex items-center justify-between rounded-[16px] border border-white/10 bg-slate-950/75 p-4">
+                <div className="mt-3 flex items-center justify-between rounded-[16px] border border-white/10 bg-slate-950/[.75] p-4">
                   <div>
                     <div className="text-3xl font-black text-white">{inspectedElement.symbol}</div>
                     <div className="text-sm font-bold text-slate-400">{inspectedElement.name}</div>
@@ -9247,7 +9249,7 @@ function PeriodicTable({ selected, setSelected }) {
                 <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">best pairings</div>
                 <div className="mt-4 space-y-2">
                   {pairings.map((p) => (
-                    <button key={p.symbol} type="button" onClick={() => setSelected?.(p.symbol)} className="flex w-full items-center justify-between rounded-[14px] border border-white/10 bg-slate-950/70 px-3 py-3 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/[0.06]">
+                    <button key={p.symbol} type="button" onClick={() => setSelected?.(p.symbol)} className="flex w-full items-center justify-between rounded-[14px] border border-white/10 bg-slate-950/70 px-3 py-3 text-left transition hover:border-cyan-300/[.35] hover:bg-cyan-300/[0.06]">
                       <span><b className="text-white">{activeElement.symbol} + {p.symbol}</b><span className="block text-xs text-slate-500">{p.name}</span></span>
                       <span className="text-lg font-black text-cyan-100">{p.compatibility}%</span>
                     </button>
@@ -9259,7 +9261,7 @@ function PeriodicTable({ selected, setSelected }) {
                 <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">top {layerConfig[layer].label} signals</div>
                 <div className="mt-4 space-y-2">
                   {topSignals.map((item, index) => (
-                    <button key={item.symbol} type="button" onClick={() => setSelected?.(item.symbol)} className="grid w-full grid-cols-[28px_1fr_54px] items-center gap-3 rounded-[14px] border border-white/10 bg-slate-950/70 px-3 py-3 text-left transition hover:border-cyan-300/35">
+                    <button key={item.symbol} type="button" onClick={() => setSelected?.(item.symbol)} className="grid w-full grid-cols-[28px_1fr_54px] items-center gap-3 rounded-[14px] border border-white/10 bg-slate-950/70 px-3 py-3 text-left transition hover:border-cyan-300/[.35]">
                       <span className="text-xs font-black text-slate-500">{index + 1}</span>
                       <span><b className="text-white">{item.symbol}</b><span className="ml-2 text-xs text-slate-500">{item.name}</span></span>
                       <span className="text-right text-sm font-black text-cyan-100">{item.signal}%</span>
@@ -9523,7 +9525,7 @@ function BehaviourGraph({ selected, setSelected }) {
             <div className="absolute left-1/2 top-1/2 grid h-40 w-40 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[2rem] border border-amber-300/50 bg-amber-300/10 text-center shadow-[0_0_90px_rgba(251,191,36,.30)] backdrop-blur-xl">
               <div>
                 <div className="text-5xl font-black text-amber-100">{selected}</div>
-                <div className="mt-1 text-[10px] uppercase tracking-[.22em] text-amber-100/75">{metricLabels[metric]}</div>
+                <div className="mt-1 text-[10px] uppercase tracking-[.22em] text-amber-100/[.75]">{metricLabels[metric]}</div>
                 <div className="mt-2 rounded-full border border-amber-200/20 bg-black/25 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-amber-100">{modeLabels[mode]} lens</div>
               </div>
             </div>
@@ -9539,11 +9541,11 @@ function BehaviourGraph({ selected, setSelected }) {
                 >
                   <span className="text-lg leading-none">{n.symbol}</span>
                   <span className="rounded-full bg-black/30 px-2 py-0.5 text-[10px] text-slate-200">{mode === "rank" ? Number(n.metricValue).toFixed(metric === "alignment" ? 0 : 1) : `${n.similarity.toFixed(0)}%`}</span>
-                  <span className="pointer-events-none absolute -bottom-8 hidden whitespace-nowrap rounded-xl border border-white/10 bg-slate-950/95 px-3 py-1 text-[10px] text-slate-200 group-hover:block">{n.name}</span>
+                  <span className="pointer-events-none absolute -bottom-8 hidden whitespace-nowrap rounded-xl border border-white/10 bg-slate-950/[.95] px-3 py-1 text-[10px] text-slate-200 group-hover:block">{n.name}</span>
                 </button>
               );
             })}
-            <div className="absolute bottom-5 left-5 right-5 grid gap-3 rounded-[2rem] border border-white/10 bg-black/35 p-4 backdrop-blur-xl md:grid-cols-3">
+            <div className="absolute bottom-5 left-5 right-5 grid gap-3 rounded-[2rem] border border-white/10 bg-black/[.35] p-4 backdrop-blur-xl md:grid-cols-3">
               <div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Top match</div><div className="mt-1 text-lg font-black text-amber-100">{top.symbol} · {top.name}</div></div>
               <div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Relationship signal</div><div className="mt-1 text-lg font-black text-cyan-100">{Number(top.similarity || 0).toFixed(0)}% {metricLabels[metric]}</div></div>
               <div><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">Visual mode</div><div className="mt-1 text-lg font-black text-white">{modeLabels[mode]} relationship map</div></div>
@@ -9734,7 +9736,7 @@ function SimilarityUniverse({ selected, setSelected }) {
           <h2 className="mt-3 text-3xl font-black">Best matches for {base.symbol}</h2>
           <div className="mt-5 space-y-3">
             {ranked.slice(0, 10).map((r, i) => (
-              <button key={r.symbol} onClick={() => { setFocus(r.symbol); setSelected?.(r.symbol); }} className="w-full rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+              <button key={r.symbol} onClick={() => { setFocus(r.symbol); setSelected?.(r.symbol); }} className="w-full rounded-2xl border border-white/10 bg-black/25 p-4 text-left transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
                 <div className="flex items-center justify-between gap-4"><div><b className="text-cyan-100">#{i + 1} {r.symbol} · {r.name}</b><div className="text-sm text-slate-400">{modeLabels[mode]} relationship</div></div><div className="text-2xl font-black text-emerald-100">{r.similarity}%</div></div>
               </button>
             ))}
@@ -9838,7 +9840,7 @@ function IsotopeLab() {
           <label className="mt-5 block text-sm text-slate-400">Base element<select value={symbol} onChange={(e) => applyElement(e.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 p-3 outline-none">{elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.symbol} — {e.name}</option>)}</select></label>
           <div className="mt-5 grid gap-4">{[["Protons", protons, setProtons, 1, 118],["Neutrons", neutrons, setNeutrons, 0, 180],["Field Strength", field, setField, 0, 100],["Thermal Load", temperature, setTemperature, 0, 100],["Pressure Load", pressure, setPressure, 0, 100]].map(([label, value, setter, min, max]) => <label key={label} className="text-sm text-slate-400"><div className="flex justify-between"><span>{label}</span><span className="font-mono text-cyan-200">{value}</span></div><input type="range" min={min} max={max} value={value} onChange={(e) => setter(Number(e.target.value))} className="mt-2 w-full"/></label>)}</div>
           <div className="mt-5 grid gap-2 sm:grid-cols-2">{[["Carbon-12", "C", 6, 6], ["Iron-56", "Fe", 26, 30], ["Uranium-238", "U", 92, 146], ["Plutonium-239", "Pu", 94, 145]].map(([label, sym, pCount, nCount]) => (
-            <button key={label} type="button" onClick={() => { setSymbol(sym); setProtons(pCount); setNeutrons(nCount); }} className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3 text-left text-xs font-black text-slate-200 transition hover:border-cyan-300/35 hover:bg-cyan-300/10">{label}</button>
+            <button key={label} type="button" onClick={() => { setSymbol(sym); setProtons(pCount); setNeutrons(nCount); }} className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3 text-left text-xs font-black text-slate-200 transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10">{label}</button>
           ))}</div>
           <div className="mt-5 grid gap-2 sm:grid-cols-2">{Object.entries(isotopeModeLabels).map(([x, label]) => <Button key={x} onClick={() => setMode(x)} variant={mode === x ? "primary" : "ghost"}>{label}</Button>)}</div>
           <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><div className="text-xs uppercase tracking-[.2em] text-cyan-200">Active isotope lens</div><div className="mt-2 text-3xl font-black text-cyan-100">{isotopeModeLabels[mode]} · {Number(activeModeScore).toFixed(1)}%</div><p className="mt-2 text-sm leading-6 text-slate-300">{modeNarratives[mode]}</p></div><Button variant="primary" onClick={exportSummary} className="mt-6 w-full"><Download size={15} className="inline"/> Export Isotope PDF/JSON/SVG</Button>
@@ -9894,7 +9896,7 @@ function IsotopeLab() {
               ))}
 
               {[0,1,2,3,4].map(i => (
-                <div key={`beam-${i}`} className="absolute left-1/2 top-1/2 z-30 h-[1px] w-[82%] origin-left bg-gradient-to-r from-transparent via-cyan-300/35 to-transparent" style={{ transform: `rotate(${18 + i * 31}deg) translateX(-50%)`, opacity: 0.34 }} />
+                <div key={`beam-${i}`} className="absolute left-1/2 top-1/2 z-30 h-[1px] w-[82%] origin-left bg-gradient-to-r from-transparent via-cyan-300/[.35] to-transparent" style={{ transform: `rotate(${18 + i * 31}deg) translateX(-50%)`, opacity: 0.34 }} />
               ))}
               <div className="absolute left-1/2 top-1/2 z-30 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5 bg-slate-950/20 shadow-[0_0_110px_rgba(34,211,238,.1)]" />
               <div className="absolute left-1/2 top-1/2 z-30 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-amber-300/20" style={{ borderStyle: "dashed" }} />
@@ -9928,25 +9930,25 @@ function IsotopeLab() {
 
               {[0,1,2,3,4,5,6,7,8,9].map(i => <div key={`particle-${i}`} className="absolute z-50 h-2 w-2 rounded-full bg-amber-200 shadow-[0_0_18px_rgba(251,191,36,.85)]" style={{ left: `${12 + ((i * 83) % 76)}%`, top: `${18 + ((i * 47) % 64)}%`, opacity: 0.35 + (i % 4) * 0.12 }} />)}
 
-              <div className="absolute left-1/2 top-1/2 z-[70] flex h-36 w-36 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300/55 bg-slate-950/90 text-center shadow-[0_0_90px_rgba(251,191,36,.28)] backdrop-blur-md">
+              <div className="absolute left-1/2 top-1/2 z-[70] flex h-36 w-36 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300/[.55] bg-slate-950/90 text-center shadow-[0_0_90px_rgba(251,191,36,.28)] backdrop-blur-md">
                 <div>
                   <div className="text-5xl font-black leading-none text-amber-100">{selectedElement.symbol.toUpperCase()}</div>
                   <div className="mt-2 text-[10px] font-black uppercase tracking-[.2em] text-amber-200/80">active core</div>
                 </div>
               </div>
 
-              <div className="absolute left-5 top-1/2 z-50 hidden w-32 -translate-y-1/2 rounded-[1.5rem] border border-cyan-300/15 bg-slate-950/75 p-3 text-center shadow-2xl shadow-black/30 backdrop-blur-xl xl:block">
+              <div className="absolute left-5 top-1/2 z-50 hidden w-32 -translate-y-1/2 rounded-[1.5rem] border border-cyan-300/15 bg-slate-950/[.75] p-3 text-center shadow-2xl shadow-black/30 backdrop-blur-xl xl:block">
                 <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">binding</div>
                 <div className="mt-1 text-3xl font-black text-cyan-100">{bindingSignal.toFixed(0)}</div>
                 <div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-full rounded-full bg-cyan-300" style={{ width: `${Math.min(100, bindingSignal)}%` }} /></div>
               </div>
-              <div className="absolute right-5 top-1/2 z-50 hidden w-32 -translate-y-1/2 rounded-[1.5rem] border border-fuchsia-300/15 bg-slate-950/75 p-3 text-center shadow-2xl shadow-black/30 backdrop-blur-xl xl:block">
+              <div className="absolute right-5 top-1/2 z-50 hidden w-32 -translate-y-1/2 rounded-[1.5rem] border border-fuchsia-300/15 bg-slate-950/[.75] p-3 text-center shadow-2xl shadow-black/30 backdrop-blur-xl xl:block">
                 <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">decay</div>
                 <div className="mt-1 text-3xl font-black text-fuchsia-100">{decayRisk.toFixed(0)}</div>
                 <div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-full rounded-full bg-fuchsia-300" style={{ width: `${Math.min(100, decayRisk)}%` }} /></div>
               </div>
 
-              <div className="absolute bottom-5 left-5 right-5 z-50 grid gap-3 rounded-[1.75rem] border border-white/10 bg-slate-950/85 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:grid-cols-4">
+              <div className="absolute bottom-5 left-5 right-5 z-50 grid gap-3 rounded-[1.75rem] border border-white/10 bg-slate-950/[.85] p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:grid-cols-4">
                 {[["Protons", protons], ["Neutrons", neutrons], ["Mass", massNumber], ["Stability", `${stability.toFixed(1)}%`]].map(([label, value]) => (
                   <div key={label}>
                     <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{label}</div>
@@ -10335,7 +10337,7 @@ function CalculationCore() {
     <div className="space-y-6">
       <GuidePanel page="calculations" />
 
-      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-blue-950/20">
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/[.35] via-slate-950 to-blue-950/20">
         <div className="grid gap-8 xl:grid-cols-[1.05fr_.95fr] xl:items-center">
           <div>
             <Pill gold><Calculator size={12}/> Calculation Studio</Pill>
@@ -10405,7 +10407,7 @@ function CalculationCore() {
               <div className="mt-4 flex flex-wrap gap-3"><Button onClick={() => insertToken(activeItem)} variant="primary">Insert Selected Token</Button><Button onClick={() => addSelectedTokenToBoard(activeItem)}>Add Token to Whiteboard</Button><Button onClick={solve}>Save Equation</Button><Button onClick={clearEquation}>Clear</Button></div>
             </div>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
-              <div className="rounded-[1.5rem] border border-cyan-300/20 bg-slate-950/75 p-5 shadow-[0_0_35px_rgba(34,211,238,.08)]">
+              <div className="rounded-[1.5rem] border border-cyan-300/20 bg-slate-950/[.75] p-5 shadow-[0_0_35px_rgba(34,211,238,.08)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">Selected token</div>
@@ -10446,7 +10448,7 @@ function CalculationCore() {
             <input value={tokenSearch} onChange={(e) => setTokenSearch(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none" placeholder="Search symbols, variables, constants, operators..." />
             <div className="mt-5 max-h-[620px] overflow-auto rounded-2xl border border-white/10 bg-black/25">
               <table className="min-w-full text-left text-sm">
-                <thead className="sticky top-0 z-10 bg-slate-950/95 text-xs uppercase tracking-[.16em] text-slate-500"><tr><th className="p-3">Symbol</th><th className="p-3">Token</th><th className="p-3">Meaning</th><th className="p-3">Category</th><th className="p-3">Value</th></tr></thead>
+                <thead className="sticky top-0 z-10 bg-slate-950/[.95] text-xs uppercase tracking-[.16em] text-slate-500"><tr><th className="p-3">Symbol</th><th className="p-3">Token</th><th className="p-3">Meaning</th><th className="p-3">Category</th><th className="p-3">Value</th></tr></thead>
                 <tbody>{visibleToolkit.map((item) => {
                   const selectedToken = tokenKey(item) === activeTokenKey;
                   return <tr key={`${item.category}-${item.token}-${item.meaning}`} onClick={() => setActiveTokenKey(tokenKey(item))} className={`cursor-pointer border-t border-white/5 transition ${selectedToken ? "bg-cyan-300/15 text-cyan-50" : "hover:bg-white/[0.04]"}`}><td className="p-3 text-xl font-black">{item.symbol}</td><td className="p-3 font-mono text-cyan-100">{item.token}</td><td className="p-3 text-slate-300">{item.meaning}</td><td className="p-3 text-slate-400">{item.category}</td><td className="p-3">{variables[item.token] !== undefined ? <input value={variables[item.token]} onClick={(e) => e.stopPropagation()} onChange={(e) => setVariables((prev) => ({ ...prev, [item.token]: e.target.value }))} className="w-28 rounded-xl border border-white/10 bg-black/40 px-2 py-1 text-sm text-white" /> : <span className="text-slate-600">—</span>}</td></tr>;
@@ -10522,7 +10524,7 @@ function ReportsDiscoveryMergePanel({ setPage, setPublicDiscovery }) {
             key={d.dna}
             type="button"
             onClick={() => { setPublicDiscovery?.(d); setPage?.("publicdiscovery"); }}
-            className="rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10"
+            className="rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-left transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10"
           >
             <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{d.tier}</div>
             <div className="mt-2 text-2xl font-black text-cyan-100">{d.a} + {d.b}</div>
@@ -10643,7 +10645,7 @@ function V211ReportPipelineDock({ page, selected, compare, setPage }) {
     setPage?.("reports");
   };
   return (
-    <div className="rounded-[1.25rem] border border-cyan-300/12 bg-[#050b16]/88 p-3 shadow-[0_18px_60px_rgba(0,0,0,.22)] backdrop-blur-xl">
+    <div className="rounded-[1.25rem] border border-cyan-300/[.12] bg-[#050b16]/88 p-3 shadow-[0_18px_60px_rgba(0,0,0,.22)] backdrop-blur-xl">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
           <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">Report pipeline · {intent.sourceLabel}</div>
@@ -10652,7 +10654,7 @@ function V211ReportPipelineDock({ page, selected, compare, setPage }) {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={sendToReports} className="rounded-xl border border-cyan-300/35 bg-cyan-300/10 px-4 py-2 text-sm font-black text-cyan-50 transition hover:bg-cyan-300/16">
+          <button type="button" onClick={sendToReports} className="rounded-xl border border-cyan-300/[.35] bg-cyan-300/10 px-4 py-2 text-sm font-black text-cyan-50 transition hover:bg-cyan-300/16">
             Generate Report
           </button>
           <button type="button" onClick={() => setPage?.("reports")} className="rounded-xl border border-white/10 bg-white/[0.035] px-4 py-2 text-sm font-black text-slate-200 transition hover:border-cyan-300/25">
@@ -10696,7 +10698,7 @@ function V211ResearchCentreHub({ compare = [], selected = "Al", isPro, startChec
 
   return (
     <div className="space-y-5">
-      <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/95 p-0 shadow-[0_28px_120px_rgba(0,0,0,.35)]">
+      <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/[.95] p-0 shadow-[0_28px_120px_rgba(0,0,0,.35)]">
         <div className="relative grid gap-0 lg:grid-cols-[1.05fr_.95fr]">
           <div className="absolute inset-0 opacity-45" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.06) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
           <div className="relative p-6 lg:p-8">
@@ -10707,7 +10709,7 @@ function V211ResearchCentreHub({ compare = [], selected = "Al", isPro, startChec
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {[["Active source", defaultIntent.sourceLabel], ["Report type", defaultIntent.title], ["Current set", defaultIntent.compareSet]].map(([label, value]) => (
-                <div key={label} className="border border-cyan-300/12 bg-black/25 p-4">
+                <div key={label} className="border border-cyan-300/[.12] bg-black/25 p-4">
                   <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">{label}</div>
                   <div className="mt-2 text-lg font-black text-cyan-50">{value}</div>
                 </div>
@@ -10725,7 +10727,7 @@ function V211ResearchCentreHub({ compare = [], selected = "Al", isPro, startChec
             <p className="mt-3 text-sm leading-7 text-slate-300">{defaultIntent.summary}</p>
             <div className="mt-5 grid gap-2">
               {safeArray(defaultIntent.includes).map((item) => (
-                <div key={item} className="flex items-center justify-between gap-3 border border-white/10 bg-slate-950/65 p-3 text-sm text-slate-200">
+                <div key={item} className="flex items-center justify-between gap-3 border border-white/10 bg-slate-950/[.65] p-3 text-sm text-slate-200">
                   <span>{item}</span>
                   <span className="text-cyan-200">ready</span>
                 </div>
@@ -10743,7 +10745,7 @@ function V211ResearchCentreHub({ compare = [], selected = "Al", isPro, startChec
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {reportFamilies.map(([title, source, description, target]) => (
-          <button key={title} type="button" onClick={() => target === "reports" ? null : setPage?.(target)} className="group border border-white/10 bg-[#07111f]/88 p-5 text-left shadow-[0_18px_60px_rgba(0,0,0,.2)] transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/[.055]">
+          <button key={title} type="button" onClick={() => target === "reports" ? null : setPage?.(target)} className="group border border-white/10 bg-[#07111f]/88 p-5 text-left shadow-[0_18px_60px_rgba(0,0,0,.2)] transition hover:-translate-y-1 hover:border-cyan-300/[.35] hover:bg-cyan-300/[.055]">
             <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">{source}</div>
             <div className="mt-3 text-2xl font-black text-white group-hover:text-cyan-50">{title}</div>
             <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
@@ -10752,7 +10754,7 @@ function V211ResearchCentreHub({ compare = [], selected = "Al", isPro, startChec
         ))}
       </div>
 
-      <Panel className="border-cyan-300/12 bg-[#050b16]/90">
+      <Panel className="border-cyan-300/[.12] bg-[#050b16]/90">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <Pill><Save size={12}/> report intake queue</Pill>
@@ -11064,7 +11066,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           })}
         </div>
       )}
-      <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/12" />
+      <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/[.12]" />
       <div className="absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-300/10" />
       {simulationRunning && (
         <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-200/15 blur-xl shadow-[0_0_90px_rgba(251,191,36,.55)]" />
@@ -11079,7 +11081,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
       {detectorHits.map((hit) => (
         <div
           key={`hit-${hit.id}`}
-          className="absolute left-1/2 top-1/2 h-1.5 w-8 origin-left bg-gradient-to-r from-cyan-200/75 to-transparent shadow-[0_0_20px_rgba(34,211,238,.55)]"
+          className="absolute left-1/2 top-1/2 h-1.5 w-8 origin-left bg-gradient-to-r from-cyan-200/[.75] to-transparent shadow-[0_0_20px_rgba(34,211,238,.55)]"
           style={{ transform: `rotate(${hit.angle}deg) translateX(${250 + (hit.id % 3) * 38}px)`, opacity: simulationRunning ? hit.strength / 100 : 0.18 }}
         />
       ))}
@@ -11093,12 +11095,12 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
         <div className="absolute inset-x-8 top-1/2 h-36 -translate-y-1/2 border-y border-cyan-300/20 bg-cyan-300/[.035]">
           <div className={`absolute left-0 top-1/2 h-[3px] -translate-y-1/2 bg-cyan-200 shadow-[0_0_48px_rgba(34,211,238,.95)] ${simulationRunning ? "w-full" : "w-[72%]"}`} />
           {Array.from({ length: 13 }).map((_, i) => (
-            <div key={i} className="absolute top-1/2 h-32 w-8 -translate-y-1/2 border border-cyan-300/25 bg-black/55 shadow-[0_0_30px_rgba(34,211,238,.18)]" style={{ left: `${4 + i * 7.3}%` }}>
+            <div key={i} className="absolute top-1/2 h-32 w-8 -translate-y-1/2 border border-cyan-300/25 bg-black/[.55] shadow-[0_0_30px_rgba(34,211,238,.18)]" style={{ left: `${4 + i * 7.3}%` }}>
               <div className="absolute inset-x-2 top-2 h-3 bg-cyan-300/20" />
               <div className="absolute inset-x-2 bottom-2 h-3 bg-cyan-300/20" />
             </div>
           ))}
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 border border-cyan-100/35 bg-cyan-300/15 px-3 py-2 text-xs font-black text-cyan-50">{beamLabel}</div>
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 border border-cyan-100/[.35] bg-cyan-300/15 px-3 py-2 text-xs font-black text-cyan-50">{beamLabel}</div>
           <div className="absolute right-4 top-1/2 h-24 w-7 -translate-y-1/2 bg-amber-300/25 shadow-[0_0_55px_rgba(251,191,36,.45)]" />
         </div>
       );
@@ -11107,11 +11109,11 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
       return (
         <div className="absolute inset-x-10 top-1/2 h-60 -translate-y-1/2">
           <div className="absolute left-0 top-1/2 h-3 w-[62%] -translate-y-1/2 bg-cyan-200 shadow-[0_0_52px_rgba(34,211,238,.95)]" />
-          <div className="absolute left-5 top-[42%] border border-cyan-100/35 bg-cyan-300/15 px-3 py-2 text-xs font-black text-cyan-50">{beamLabel} beam</div>
+          <div className="absolute left-5 top-[42%] border border-cyan-100/[.35] bg-cyan-300/15 px-3 py-2 text-xs font-black text-cyan-50">{beamLabel} beam</div>
           <div className="absolute left-[62%] top-1/2 h-px w-[22%] -translate-y-1/2 bg-gradient-to-r from-amber-200 to-transparent shadow-[0_0_50px_rgba(251,191,36,.7)]" />
-          <div className="absolute right-[18%] top-1/2 flex h-64 w-14 -translate-y-1/2 items-center justify-center border border-amber-200/35 bg-amber-300/18 text-lg font-black text-amber-50 shadow-[0_0_90px_rgba(251,191,36,.5)]">{targetElement.symbol}</div>
+          <div className="absolute right-[18%] top-1/2 flex h-64 w-14 -translate-y-1/2 items-center justify-center border border-amber-200/[.35] bg-amber-300/18 text-lg font-black text-amber-50 shadow-[0_0_90px_rgba(251,191,36,.5)]">{targetElement.symbol}</div>
           {Array.from({ length: 14 }).map((_, i) => (
-            <div key={i} className="absolute h-px w-32 origin-left bg-amber-100/35" style={{ left: "72%", top: "50%", transform: `rotate(${-54 + i * 8}deg)` }} />
+            <div key={i} className="absolute h-px w-32 origin-left bg-amber-100/[.35]" style={{ left: "72%", top: "50%", transform: `rotate(${-54 + i * 8}deg)` }} />
           ))}
           <div className="absolute right-[7%] top-1/2 h-72 w-72 -translate-y-1/2 rounded-full border border-amber-200/20 bg-amber-300/[.045] blur-sm" />
         </div>
@@ -11166,7 +11168,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           ["Energy", `${collisionEnergyGeV} GeV`, `${(velocityFraction * 100).toFixed(2)}% light speed`],
           ["State", simulationRunning ? "Running" : "Ready", `${collisionQuality}% collision quality`],
         ].map(([label, value, note]) => (
-          <div key={label} className="border border-cyan-300/12 bg-[#050b16]/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
+          <div key={label} className="border border-cyan-300/[.12] bg-[#050b16]/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
             <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">{label}</div>
             <div className="mt-2 text-xl font-black text-white">{value}</div>
             <div className="mt-1 text-xs leading-5 text-slate-400">{note}</div>
@@ -11180,7 +11182,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           <p className="mt-3 text-xs leading-5 text-slate-400">Choose the machine geometry first. The centre chamber, telemetry and collision output adapt without changing the rest of the lab.</p>
           <div className="mt-4 grid gap-2">
             {machines.map((item) => (
-              <button key={item.id} onClick={() => setMachineId(item.id)} className={`group border p-4 text-left transition hover:-translate-y-0.5 ${machineId === item.id ? "border-cyan-300/55 bg-cyan-300/12 shadow-[0_0_32px_rgba(34,211,238,.14)]" : "border-white/10 bg-black/22 hover:border-cyan-300/25 hover:bg-cyan-300/[.06]"}`}>
+              <button key={item.id} onClick={() => setMachineId(item.id)} className={`group border p-4 text-left transition hover:-translate-y-0.5 ${machineId === item.id ? "border-cyan-300/[.55] bg-cyan-300/[.12] shadow-[0_0_32px_rgba(34,211,238,.14)]" : "border-white/10 bg-black/[.22] hover:border-cyan-300/25 hover:bg-cyan-300/[.06]"}`}>
                 <div className="flex items-center justify-between gap-3">
                   <div><div className="text-sm font-black text-white">{item.name}</div><div className="mt-1 text-[11px] text-slate-500">{item.subtitle}</div></div>
                   <div className="h-8 w-1 bg-cyan-300/45" />
@@ -11190,30 +11192,30 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           </div>
         </Panel>
 
-        <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/95 p-0 shadow-[0_28px_120px_rgba(0,0,0,.35)]">
+        <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]/[.95] p-0 shadow-[0_28px_120px_rgba(0,0,0,.35)]">
           <div className="relative min-h-[690px] overflow-hidden border border-cyan-300/10 bg-[linear-gradient(rgba(34,211,238,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,.06)_1px,transparent_1px),radial-gradient(circle_at_50%_44%,rgba(34,211,238,.18),transparent_34%),linear-gradient(135deg,#020617,#061120_65%,#020617)] bg-[size:64px_64px,64px_64px,auto,auto]">
             <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute left-1/2 top-0 h-full w-px bg-cyan-300/12" />
-              <div className="absolute left-0 top-1/2 h-px w-full bg-cyan-300/12" />
+              <div className="absolute left-1/2 top-0 h-full w-px bg-cyan-300/[.12]" />
+              <div className="absolute left-0 top-1/2 h-px w-full bg-cyan-300/[.12]" />
               <div className="absolute left-[12%] top-[18%] h-2 w-2 bg-cyan-200 shadow-[0_0_24px_rgba(34,211,238,.9)]" />
               <div className="absolute right-[14%] bottom-[16%] h-2 w-2 bg-amber-200 shadow-[0_0_24px_rgba(251,191,36,.8)]" />
               {simulationRunning && <div className="absolute inset-0 bg-cyan-300/[.04] animate-pulse" />}
             </div>
-            <div className="absolute left-6 top-6 z-20 max-w-[440px] border border-cyan-300/20 bg-black/55 px-5 py-4 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,.32)]">
+            <div className="absolute left-6 top-6 z-20 max-w-[440px] border border-cyan-300/20 bg-black/[.55] px-5 py-4 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,.32)]">
               <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">active accelerator</div>
               <div className="mt-1 text-3xl font-black text-white md:text-4xl">{machine.name}</div>
               <div className="text-sm text-cyan-100">{particle === "Element Ion" || particle === "Custom Nucleus" ? beamElement.name : particle} → {targetElement.name}</div>
               <div className="mt-2 max-w-sm text-xs leading-5 text-slate-400">{machine.focus}</div>
             </div>
-            <div className="absolute right-6 top-6 z-20 flex flex-wrap gap-2 rounded-none border border-cyan-300/15 bg-black/35 p-2 backdrop-blur-xl">
-              <button onClick={simulationRunning ? stopSimulation : runSimulation} className={`border px-4 py-3 text-sm font-black shadow-[0_0_24px_rgba(34,211,238,.12)] ${simulationRunning ? "border-amber-300/50 bg-amber-300/12 text-amber-50 hover:bg-amber-300/18" : "border-cyan-300/35 bg-cyan-300/10 text-cyan-50 hover:bg-cyan-300/18"}`}>{simulationRunning ? "Stop Simulation" : "Start Simulation"}</button>
+            <div className="absolute right-6 top-6 z-20 flex flex-wrap gap-2 rounded-none border border-cyan-300/15 bg-black/[.35] p-2 backdrop-blur-xl">
+              <button onClick={simulationRunning ? stopSimulation : runSimulation} className={`border px-4 py-3 text-sm font-black shadow-[0_0_24px_rgba(34,211,238,.12)] ${simulationRunning ? "border-amber-300/50 bg-amber-300/[.12] text-amber-50 hover:bg-amber-300/18" : "border-cyan-300/[.35] bg-cyan-300/10 text-cyan-50 hover:bg-cyan-300/18"}`}>{simulationRunning ? "Stop Simulation" : "Start Simulation"}</button>
             </div>
             <DetectorHalo />
             <BeamLine />
             <ParticleMotionOverlay />
             <div className="absolute bottom-6 left-6 right-6 z-20 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
               {eventSignatures.map((item, i) => (
-                <button key={item} onClick={() => setSelectedEvent(item)} className={`border p-3 text-left backdrop-blur-xl transition ${selectedEvent === item ? "border-cyan-300/45 bg-cyan-300/12" : "border-white/10 bg-black/45 hover:border-cyan-300/30"}`}>
+                <button key={item} onClick={() => setSelectedEvent(item)} className={`border p-3 text-left backdrop-blur-xl transition ${selectedEvent === item ? "border-cyan-300/45 bg-cyan-300/[.12]" : "border-white/10 bg-black/45 hover:border-cyan-300/30"}`}>
                   <div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">event {i + 1}</div>
                   <div className="mt-1 text-sm font-black text-cyan-100">{item}</div>
                 </button>
@@ -11237,7 +11239,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
           </Panel>
           <Panel className="border-amber-300/15 bg-[#0f0b05]/80 shadow-[0_24px_80px_rgba(0,0,0,.2)]">
             <Pill gold><ShieldCheck size={12}/> safety system</Pill>
-            <div className="mt-4 space-y-2">{warnings.map((item) => <div key={item} className="border border-amber-200/12 bg-black/25 p-3 text-sm leading-5 text-amber-50">⚠ {item}</div>)}</div>
+            <div className="mt-4 space-y-2">{warnings.map((item) => <div key={item} className="border border-amber-200/[.12] bg-black/25 p-3 text-sm leading-5 text-amber-50">⚠ {item}</div>)}</div>
           </Panel>
         </div>
       </div>
@@ -11250,16 +11252,16 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
             <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{collisionResult?.summary || "Start the accelerator to generate a full collision event. This command centre separates beam physics, target response, detector output and event reconstruction so the data is readable instead of cramped."}</p>
           </div>
           <div className="grid grid-cols-2 gap-3 text-right sm:grid-cols-4">
-            <div className="border border-cyan-300/12 bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{collisionQuality}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">quality</div></div>
-            <div className="border border-cyan-300/12 bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{collisionEnergyGeV}</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">GeV</div></div>
-            <div className="border border-cyan-300/12 bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{targetYield}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">yield</div></div>
-            <div className="border border-cyan-300/12 bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{efficiency}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">efficiency</div></div>
+            <div className="border border-cyan-300/[.12] bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{collisionQuality}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">quality</div></div>
+            <div className="border border-cyan-300/[.12] bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{collisionEnergyGeV}</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">GeV</div></div>
+            <div className="border border-cyan-300/[.12] bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{targetYield}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">yield</div></div>
+            <div className="border border-cyan-300/[.12] bg-black/25 p-3"><div className="text-2xl font-black text-cyan-100">{efficiency}%</div><div className="text-[10px] uppercase tracking-[.18em] text-slate-500">efficiency</div></div>
           </div>
         </div>
 
         <div className="mt-7 grid gap-4 md:grid-cols-5">
           {sequence.map(([label, value], i) => (
-            <div key={label} className="border border-cyan-300/12 bg-black/24 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
+            <div key={label} className="border border-cyan-300/[.12] bg-black/[.24] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
               <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">0{i + 1}</div>
               <div className="mt-2 text-xl font-black text-white">{label}</div>
               <div className="mt-3 h-2 bg-slate-900"><div className="h-full bg-cyan-300 shadow-[0_0_18px_rgba(34,211,238,.6)]" style={{ width: `${Math.max(4, Math.min(99, value))}%` }} /></div>
@@ -11275,7 +11277,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
             ["Detector Output", detectorOutputRows, `${selectedEvent} readout`],
             ["Collision Result", collisionResultRows, resultHeadline],
           ].map(([title, rows, subtitle]) => (
-            <div key={title} className="border border-cyan-300/12 bg-black/24 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
+            <div key={title} className="border border-cyan-300/[.12] bg-black/[.24] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">{title}</div>
@@ -11284,7 +11286,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
               </div>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 {rows.map(([label, value, note, signal]) => (
-                  <div key={`${title}-${label}`} className="border border-white/10 bg-slate-950/55 p-4 transition hover:border-cyan-300/20 hover:bg-slate-950/75">
+                  <div key={`${title}-${label}`} className="border border-white/10 bg-slate-950/[.55] p-4 transition hover:border-cyan-300/20 hover:bg-slate-950/[.75]">
                     <div className="flex items-start justify-between gap-3">
                       <div className="text-[11px] font-black uppercase tracking-[.18em] text-slate-500">{label}</div>
                       <div className="text-right text-sm font-black text-cyan-100">{value}</div>
@@ -11299,7 +11301,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
         </div>
 
         <div className="mt-7 grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
-          <div className="border border-cyan-300/12 bg-black/24 p-6">
+          <div className="border border-cyan-300/[.12] bg-black/[.24] p-6">
             <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">collision matrix</div>
             <div className="mt-2 text-xs leading-5 text-slate-500">Fast readout of energy transfer, material yield, target damage and detector confidence.</div>
             <div className="mt-4 space-y-4">
@@ -11316,12 +11318,12 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
             </div>
           </div>
 
-          <div className="border border-amber-300/12 bg-black/24 p-6">
+          <div className="border border-amber-300/[.12] bg-black/[.24] p-6">
             <div className="text-xs font-black uppercase tracking-[.22em] text-amber-200">live event feed</div>
             <div className="mt-2 text-xs leading-5 text-slate-500">Control-room sequence from injection through detector readout.</div>
             <div className="mt-4 max-h-[420px] space-y-3 overflow-auto pr-1">
               {eventLogRows.map(([time, title, body]) => (
-                <div key={`${time}-${title}`} className="border border-white/10 bg-slate-950/55 p-3">
+                <div key={`${time}-${title}`} className="border border-white/10 bg-slate-950/[.55] p-3">
                   <div className="flex items-center justify-between gap-3"><span className="text-xs font-black text-cyan-100">{time}</span><span className="text-[10px] uppercase tracking-[.18em] text-slate-500">{simulationRunning ? "live" : "preview"}</span></div>
                   <div className="mt-1 text-sm font-black text-white">{title}</div>
                   <div className="mt-1 text-xs leading-5 text-slate-400">{body}</div>
@@ -11332,7 +11334,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
         </div>
 
         <div className="mt-7 grid gap-6 xl:grid-cols-[1fr_420px]">
-          <div className="border border-cyan-300/12 bg-black/24 p-5">
+          <div className="border border-cyan-300/[.12] bg-black/[.24] p-5">
             <div className="flex flex-wrap items-center justify-between gap-3"><div><div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">full collision dataset</div><div className="mt-2 text-xs leading-5 text-slate-500">Expanded export-ready telemetry for the current source, target and accelerator mode.</div></div><span className="border border-cyan-300/20 bg-cyan-300/8 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-cyan-100">report ready</span></div>
             <div className="mt-4 overflow-x-auto">
               <div className="min-w-[760px]">
@@ -11347,7 +11349,7 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
             </div>
           </div>
 
-          <div className="border border-cyan-300/12 bg-black/24 p-5">
+          <div className="border border-cyan-300/[.12] bg-black/[.24] p-5">
             <Pill><Target size={12}/> 118 element collision target</Pill>
             <div className="mt-4 flex items-end justify-between gap-3">
               <div><div className="text-5xl font-black text-white">{targetElement.symbol}</div><div className="text-lg font-black text-cyan-100">{targetElement.name}</div></div>
@@ -11363,14 +11365,14 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
               <button onClick={sendTargetToExplorer} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Open Target in Explorer</button>
               <button onClick={compareTargetMaterials} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Compare Beam + Target</button>
               <button onClick={forecastTarget} className="border border-cyan-300/20 bg-black/30 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/10">Forecast Target Exposure</button>
-              <button onClick={saveReport} className="border border-cyan-300/35 bg-cyan-300/12 px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/18">Export Accelerator Report</button>
+              <button onClick={saveReport} className="border border-cyan-300/[.35] bg-cyan-300/[.12] px-4 py-3 text-sm font-black text-cyan-50 hover:bg-cyan-300/18">Export Accelerator Report</button>
             </div>
           </div>
         </div>
       </Panel>
 
       <Panel className="border-cyan-300/15 bg-[#050b16]/90 shadow-[0_24px_80px_rgba(0,0,0,.24)]">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><Pill><Settings size={12}/> accelerator controls</Pill><p className="mt-3 text-xs leading-5 text-slate-400">Tune source, target, energy, RF, vacuum and detector controls. All current dropdowns and simulation logic are preserved.</p></div><div className="border border-cyan-300/15 bg-black/24 px-4 py-3 text-right"><div className="text-xs uppercase tracking-[.18em] text-slate-500">simulation</div><div className="text-sm font-black text-cyan-100">{simulationRunning ? "Running" : "Ready"}</div></div></div>
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><Pill><Settings size={12}/> accelerator controls</Pill><p className="mt-3 text-xs leading-5 text-slate-400">Tune source, target, energy, RF, vacuum and detector controls. All current dropdowns and simulation logic are preserved.</p></div><div className="border border-cyan-300/15 bg-black/[.24] px-4 py-3 text-right"><div className="text-xs uppercase tracking-[.18em] text-slate-500">simulation</div><div className="text-sm font-black text-cyan-100">{simulationRunning ? "Running" : "Ready"}</div></div></div>
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <label><span className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Particle type</span><select value={particle} onChange={(e) => setParticle(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-slate-950 p-3 text-sm outline-none">{particles.map((item) => <option key={item}>{item}</option>)}</select></label>
           <label><span className="text-xs font-black uppercase tracking-[.2em] text-slate-500">Beam element source</span><select value={beamSymbol} onChange={(e) => setBeamSymbol(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-slate-950 p-3 text-sm outline-none">{elements.map((item) => <option key={item.symbol} value={item.symbol}>{item.atomicNumber}. {item.name} ({item.symbol})</option>)}</select></label>
@@ -11484,7 +11486,7 @@ function V212ReportOutputStudio({ compare = [], selected = "Al", isPro, startChe
 
   return (
     <div className="grid gap-5 xl:grid-cols-[1.05fr_.95fr]">
-      <Panel className="overflow-hidden border-cyan-300/15 bg-[#020817]/95 p-0">
+      <Panel className="overflow-hidden border-cyan-300/15 bg-[#020817]/[.95] p-0">
         <div className="border-b border-cyan-300/10 bg-cyan-300/[.035] p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
@@ -11522,7 +11524,7 @@ function V212ReportOutputStudio({ compare = [], selected = "Al", isPro, startChe
               ))}
             </div>
 
-            <div className="mt-5 border border-white/10 bg-[#08111f]/85 p-5 shadow-[0_18px_70px_rgba(0,0,0,.22)]">
+            <div className="mt-5 border border-white/10 bg-[#08111f]/[.85] p-5 shadow-[0_18px_70px_rgba(0,0,0,.22)]">
               <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">{active.label}</div>
               <h3 className="mt-3 text-3xl font-black text-white">{active.title}</h3>
               {section === "summary" && (
@@ -11553,7 +11555,7 @@ function V212ReportOutputStudio({ compare = [], selected = "Al", isPro, startChe
               {section === "exports" && (
                 <div className="mt-5 grid gap-3 md:grid-cols-4">
                   {["PDF", "JSON", "SVG", "TXT"].map((type) => (
-                    <div key={type} className="border border-cyan-300/12 bg-cyan-300/[.045] p-4 text-center"><div className="text-2xl font-black text-white">{type}</div><div className="mt-1 text-xs text-slate-400">{isPro ? "ready" : "Pro"}</div></div>
+                    <div key={type} className="border border-cyan-300/[.12] bg-cyan-300/[.045] p-4 text-center"><div className="text-2xl font-black text-white">{type}</div><div className="mt-1 text-xs text-slate-400">{isPro ? "ready" : "Pro"}</div></div>
                   ))}
                 </div>
               )}
@@ -11569,7 +11571,7 @@ function V212ReportOutputStudio({ compare = [], selected = "Al", isPro, startChe
         </div>
       </Panel>
 
-      <Panel className="border-cyan-300/12 bg-[#050b16]/92">
+      <Panel className="border-cyan-300/[.12] bg-[#050b16]/92">
         <Pill><Database size={12}/> report dataset</Pill>
         <h2 className="mt-3 text-3xl font-black text-white">Data included in this report</h2>
         <div className="mt-5 overflow-hidden border border-white/10">
@@ -12594,7 +12596,7 @@ function DiscoveryCommandCenter({ setPage, compare = ["Al", "Ti", "Hf"] }) {
 
   return (
     <div className="space-y-6">
-      <Panel className="poster-card-gold overflow-hidden border-cyan-300/30 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-blue-950/25">
+      <Panel className="poster-card-gold overflow-hidden border-cyan-300/30 bg-gradient-to-br from-cyan-950/[.35] via-slate-950 to-blue-950/25">
         <div className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full bg-cyan-300/15 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
         <div className="relative z-10 flex flex-wrap items-start justify-between gap-6">
@@ -12721,7 +12723,7 @@ function MissionProgressPanel({ setPage }) {
       </div>
       <div className="mt-6 grid gap-4 xl:grid-cols-4">
         {missions.map(([num, title, body, target, reward], index) => (
-          <button key={title} onClick={() => setPage(target)} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+          <button key={title} onClick={() => setPage(target)} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 text-left transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
             <div className="flex items-center justify-between gap-3">
               <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-300 text-sm font-black text-slate-950">{num}</div>
               <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">{index === 0 ? "Start" : "Next"}</div>
@@ -12794,7 +12796,7 @@ function WorkspaceVaultPanel({ setPage }) {
       </div>
       <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {vault.map(([title, value, body, target, Icon]) => (
-          <button key={title} onClick={() => setPage(target)} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 text-left transition hover:border-cyan-300/35 hover:bg-cyan-300/10">
+          <button key={title} onClick={() => setPage(target)} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 text-left transition hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
             <Icon size={22} className="text-cyan-200" />
             <div className="mt-4 text-4xl font-black text-cyan-100">{value}</div>
             <div className="mt-1 text-lg font-black text-white">{title}</div>
@@ -13179,7 +13181,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
                 ))}
               </div>
 
-              <div className="mx-auto mt-6 max-w-4xl overflow-hidden rounded-[2rem] border border-cyan-300/25 bg-black/35 p-5 text-left shadow-[0_0_75px_rgba(34,211,238,.14)] backdrop-blur-xl">
+              <div className="mx-auto mt-6 max-w-4xl overflow-hidden rounded-[2rem] border border-cyan-300/25 bg-black/[.35] p-5 text-left shadow-[0_0_75px_rgba(34,211,238,.14)] backdrop-blur-xl">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
                     <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.22em] text-amber-100">
@@ -13251,7 +13253,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
             ))}
           </div>
 
-          <div className="mt-7 grid gap-4 rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 backdrop-blur-xl md:grid-cols-4">
+          <div className="mt-7 grid gap-4 rounded-[2rem] border border-cyan-300/20 bg-black/[.35] p-5 backdrop-blur-xl md:grid-cols-4">
             {posterStats.map(([value, label, target], index) => (
               <button key={label} onClick={() => setPage(target)} className="rounded-2xl border border-white/10 bg-white/[.035] p-4 text-left transition hover:bg-white/[.07]">
                 <div className={index === 3 ? 'poster-gold text-4xl font-black' : 'poster-cyan text-4xl font-black'}>{value}</div>
@@ -13278,7 +13280,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
             ["03", "Generate a discovery", "Turn the result into a clear discovery card with score, class and use cases."],
             ["04", "Create a report", "Export an executive report or save it to your workspace."],
           ].map(([step, title, body]) => (
-            <button key={title} type="button" onClick={() => setPage(step === "01" ? "explorer" : step === "02" ? "compare" : step === "03" ? "discover" : "simreports")} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/10">
+            <button key={title} type="button" onClick={() => setPage(step === "01" ? "explorer" : step === "02" ? "compare" : step === "03" ? "discover" : "simreports")} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
               <div className="text-xs font-black text-cyan-200">{step}</div>
               <div className="mt-2 text-lg font-black text-white">{title}</div>
               <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
@@ -13384,29 +13386,29 @@ function AdvancedWellDriller({ setPage }) {
     { name: "Black Shale", category: "Sedimentary", hardness: 1.22, porosity: 36, permeability: 14, instability: 1.42, reservoir: 46, geothermal: 44, drillability: 52, color: "from-zinc-200/20 to-black/40", layer: "bg-zinc-800/28", texture: "laminated" },
     { name: "Limestone", category: "Sedimentary", hardness: 0.95, porosity: 60, permeability: 62, instability: 0.72, reservoir: 76, geothermal: 50, drillability: 78, color: "from-cyan-100/20 to-emerald-500/10", layer: "bg-cyan-100/14", texture: "block" },
     { name: "Dolomite", category: "Sedimentary", hardness: 1.05, porosity: 52, permeability: 58, instability: 0.82, reservoir: 70, geothermal: 52, drillability: 72, color: "from-emerald-200/20 to-teal-600/10", layer: "bg-emerald-200/14", texture: "block" },
-    { name: "Chalk", category: "Sedimentary", hardness: 0.58, porosity: 76, permeability: 48, instability: 1.05, reservoir: 60, geothermal: 38, drillability: 92, color: "from-white/25 to-sky-200/10", layer: "bg-white/12", texture: "soft" },
-    { name: "Marl", category: "Sedimentary", hardness: 0.76, porosity: 46, permeability: 28, instability: 1.02, reservoir: 44, geothermal: 40, drillability: 80, color: "from-lime-200/20 to-slate-500/10", layer: "bg-lime-200/12", texture: "band" },
+    { name: "Chalk", category: "Sedimentary", hardness: 0.58, porosity: 76, permeability: 48, instability: 1.05, reservoir: 60, geothermal: 38, drillability: 92, color: "from-white/25 to-sky-200/10", layer: "bg-white/[.12]", texture: "soft" },
+    { name: "Marl", category: "Sedimentary", hardness: 0.76, porosity: 46, permeability: 28, instability: 1.02, reservoir: 44, geothermal: 40, drillability: 80, color: "from-lime-200/20 to-slate-500/10", layer: "bg-lime-200/[.12]", texture: "band" },
     { name: "Conglomerate", category: "Sedimentary", hardness: 1.08, porosity: 56, permeability: 74, instability: 0.86, reservoir: 74, geothermal: 45, drillability: 68, color: "from-amber-200/25 to-stone-700/10", layer: "bg-amber-200/14", texture: "clast" },
     { name: "Breccia", category: "Sedimentary", hardness: 1.12, porosity: 54, permeability: 70, instability: 1.05, reservoir: 68, geothermal: 48, drillability: 64, color: "from-rose-200/20 to-stone-700/15", layer: "bg-rose-200/13", texture: "clast" },
     { name: "Coal Seam", category: "Sedimentary", hardness: 0.55, porosity: 32, permeability: 38, instability: 1.35, reservoir: 48, geothermal: 35, drillability: 86, color: "from-zinc-100/15 to-black/50", layer: "bg-black/36", texture: "soft" },
     { name: "Granite", category: "Igneous", hardness: 1.55, porosity: 18, permeability: 12, instability: 0.55, reservoir: 24, geothermal: 70, drillability: 38, color: "from-pink-200/25 to-fuchsia-700/10", layer: "bg-pink-300/14", texture: "crystal" },
     { name: "Granodiorite", category: "Igneous", hardness: 1.48, porosity: 20, permeability: 14, instability: 0.58, reservoir: 26, geothermal: 72, drillability: 42, color: "from-rose-200/20 to-slate-600/10", layer: "bg-rose-200/13", texture: "crystal" },
     { name: "Diorite", category: "Igneous", hardness: 1.42, porosity: 18, permeability: 12, instability: 0.6, reservoir: 23, geothermal: 68, drillability: 44, color: "from-slate-200/25 to-zinc-700/15", layer: "bg-slate-300/13", texture: "crystal" },
-    { name: "Gabbro", category: "Igneous", hardness: 1.5, porosity: 16, permeability: 10, instability: 0.62, reservoir: 20, geothermal: 66, drillability: 39, color: "from-zinc-300/20 to-black/35", layer: "bg-zinc-600/18", texture: "crystal" },
-    { name: "Basalt", category: "Igneous", hardness: 1.55, porosity: 24, permeability: 18, instability: 0.85, reservoir: 30, geothermal: 78, drillability: 36, color: "from-zinc-200/20 to-slate-700/20", layer: "bg-slate-700/22", texture: "volcanic" },
-    { name: "Andesite", category: "Igneous", hardness: 1.38, porosity: 24, permeability: 20, instability: 0.72, reservoir: 30, geothermal: 74, drillability: 46, color: "from-slate-300/20 to-purple-700/10", layer: "bg-purple-300/12", texture: "volcanic" },
-    { name: "Rhyolite", category: "Igneous", hardness: 1.32, porosity: 28, permeability: 24, instability: 0.68, reservoir: 34, geothermal: 76, drillability: 50, color: "from-fuchsia-200/20 to-rose-700/10", layer: "bg-fuchsia-200/12", texture: "volcanic" },
+    { name: "Gabbro", category: "Igneous", hardness: 1.5, porosity: 16, permeability: 10, instability: 0.62, reservoir: 20, geothermal: 66, drillability: 39, color: "from-zinc-300/20 to-black/[.35]", layer: "bg-zinc-600/18", texture: "crystal" },
+    { name: "Basalt", category: "Igneous", hardness: 1.55, porosity: 24, permeability: 18, instability: 0.85, reservoir: 30, geothermal: 78, drillability: 36, color: "from-zinc-200/20 to-slate-700/20", layer: "bg-slate-700/[.22]", texture: "volcanic" },
+    { name: "Andesite", category: "Igneous", hardness: 1.38, porosity: 24, permeability: 20, instability: 0.72, reservoir: 30, geothermal: 74, drillability: 46, color: "from-slate-300/20 to-purple-700/10", layer: "bg-purple-300/[.12]", texture: "volcanic" },
+    { name: "Rhyolite", category: "Igneous", hardness: 1.32, porosity: 28, permeability: 24, instability: 0.68, reservoir: 34, geothermal: 76, drillability: 50, color: "from-fuchsia-200/20 to-rose-700/10", layer: "bg-fuchsia-200/[.12]", texture: "volcanic" },
     { name: "Peridotite", category: "Igneous", hardness: 1.68, porosity: 12, permeability: 10, instability: 0.58, reservoir: 18, geothermal: 82, drillability: 28, color: "from-lime-300/20 to-emerald-900/15", layer: "bg-lime-500/14", texture: "crystal" },
-    { name: "Pegmatite", category: "Igneous", hardness: 1.25, porosity: 26, permeability: 26, instability: 0.66, reservoir: 38, geothermal: 65, drillability: 55, color: "from-cyan-200/20 to-fuchsia-500/10", layer: "bg-cyan-200/12", texture: "crystal" },
-    { name: "Obsidian", category: "Igneous", hardness: 1.18, porosity: 10, permeability: 8, instability: 0.7, reservoir: 12, geothermal: 58, drillability: 58, color: "from-zinc-100/15 to-black/55", layer: "bg-black/34", texture: "glass" },
-    { name: "Slate", category: "Metamorphic", hardness: 1.05, porosity: 22, permeability: 15, instability: 0.92, reservoir: 20, geothermal: 50, drillability: 62, color: "from-slate-300/25 to-indigo-700/10", layer: "bg-indigo-300/12", texture: "laminated" },
-    { name: "Schist", category: "Metamorphic", hardness: 1.22, porosity: 20, permeability: 18, instability: 1.05, reservoir: 22, geothermal: 54, drillability: 50, color: "from-violet-200/20 to-slate-700/15", layer: "bg-violet-300/12", texture: "foliated" },
-    { name: "Gneiss", category: "Metamorphic", hardness: 1.42, porosity: 16, permeability: 14, instability: 0.72, reservoir: 22, geothermal: 62, drillability: 42, color: "from-slate-100/20 to-blue-900/10", layer: "bg-blue-200/12", texture: "foliated" },
-    { name: "Quartzite", category: "Metamorphic", hardness: 1.62, porosity: 14, permeability: 12, instability: 0.56, reservoir: 18, geothermal: 58, drillability: 30, color: "from-cyan-100/20 to-white/10", layer: "bg-cyan-100/12", texture: "crystal" },
+    { name: "Pegmatite", category: "Igneous", hardness: 1.25, porosity: 26, permeability: 26, instability: 0.66, reservoir: 38, geothermal: 65, drillability: 55, color: "from-cyan-200/20 to-fuchsia-500/10", layer: "bg-cyan-200/[.12]", texture: "crystal" },
+    { name: "Obsidian", category: "Igneous", hardness: 1.18, porosity: 10, permeability: 8, instability: 0.7, reservoir: 12, geothermal: 58, drillability: 58, color: "from-zinc-100/15 to-black/[.55]", layer: "bg-black/34", texture: "glass" },
+    { name: "Slate", category: "Metamorphic", hardness: 1.05, porosity: 22, permeability: 15, instability: 0.92, reservoir: 20, geothermal: 50, drillability: 62, color: "from-slate-300/25 to-indigo-700/10", layer: "bg-indigo-300/[.12]", texture: "laminated" },
+    { name: "Schist", category: "Metamorphic", hardness: 1.22, porosity: 20, permeability: 18, instability: 1.05, reservoir: 22, geothermal: 54, drillability: 50, color: "from-violet-200/20 to-slate-700/15", layer: "bg-violet-300/[.12]", texture: "foliated" },
+    { name: "Gneiss", category: "Metamorphic", hardness: 1.42, porosity: 16, permeability: 14, instability: 0.72, reservoir: 22, geothermal: 62, drillability: 42, color: "from-slate-100/20 to-blue-900/10", layer: "bg-blue-200/[.12]", texture: "foliated" },
+    { name: "Quartzite", category: "Metamorphic", hardness: 1.62, porosity: 14, permeability: 12, instability: 0.56, reservoir: 18, geothermal: 58, drillability: 30, color: "from-cyan-100/20 to-white/10", layer: "bg-cyan-100/[.12]", texture: "crystal" },
     { name: "Marble", category: "Metamorphic", hardness: 1.08, porosity: 22, permeability: 18, instability: 0.75, reservoir: 24, geothermal: 56, drillability: 66, color: "from-white/25 to-emerald-200/10", layer: "bg-white/13", texture: "block" },
-    { name: "Fractured Reservoir", category: "Reservoir", hardness: 0.92, porosity: 78, permeability: 92, instability: 1.05, reservoir: 96, geothermal: 58, drillability: 72, color: "from-emerald-300/25 to-cyan-500/10", layer: "bg-emerald-300/22", texture: "fracture" },
+    { name: "Fractured Reservoir", category: "Reservoir", hardness: 0.92, porosity: 78, permeability: 92, instability: 1.05, reservoir: 96, geothermal: 58, drillability: 72, color: "from-emerald-300/25 to-cyan-500/10", layer: "bg-emerald-300/[.22]", texture: "fracture" },
     { name: "Tight Gas Reservoir", category: "Reservoir", hardness: 1.08, porosity: 38, permeability: 32, instability: 0.88, reservoir: 70, geothermal: 52, drillability: 62, color: "from-blue-300/20 to-cyan-700/10", layer: "bg-blue-300/13", texture: "grain" },
-    { name: "Heavy Oil Reservoir", category: "Reservoir", hardness: 0.74, porosity: 70, permeability: 74, instability: 1.12, reservoir: 82, geothermal: 46, drillability: 82, color: "from-amber-500/25 to-black/35", layer: "bg-amber-700/20", texture: "soft" },
+    { name: "Heavy Oil Reservoir", category: "Reservoir", hardness: 0.74, porosity: 70, permeability: 74, instability: 1.12, reservoir: 82, geothermal: 46, drillability: 82, color: "from-amber-500/25 to-black/[.35]", layer: "bg-amber-700/20", texture: "soft" },
     { name: "High Temperature Geothermal", category: "Geothermal", hardness: 1.35, porosity: 34, permeability: 42, instability: 0.82, reservoir: 45, geothermal: 96, drillability: 48, color: "from-orange-300/25 to-red-600/20", layer: "bg-orange-400/20", texture: "hot" },
     { name: "Enhanced Geothermal System", category: "Geothermal", hardness: 1.5, porosity: 28, permeability: 55, instability: 0.9, reservoir: 50, geothermal: 94, drillability: 40, color: "from-red-300/25 to-fuchsia-600/15", layer: "bg-red-400/20", texture: "hot" },
   ];
@@ -13515,7 +13517,7 @@ function AdvancedWellDriller({ setPage }) {
 
         <div className="mt-6 grid max-h-[520px] gap-3 overflow-y-auto pr-2 md:grid-cols-2 xl:grid-cols-4">
           {visibleFormations.map((f) => (
-            <button key={f.name} onClick={() => selectFormation(f.name)} className={`rounded-[1.5rem] border p-4 text-left transition ${formation === f.name ? "border-cyan-300/50 bg-cyan-300/12 shadow-[0_0_45px_rgba(34,211,238,.18)]" : "border-white/10 bg-black/25 hover:border-cyan-300/30 hover:bg-white/[.06]"}`}>
+            <button key={f.name} onClick={() => selectFormation(f.name)} className={`rounded-[1.5rem] border p-4 text-left transition ${formation === f.name ? "border-cyan-300/50 bg-cyan-300/[.12] shadow-[0_0_45px_rgba(34,211,238,.18)]" : "border-white/10 bg-black/25 hover:border-cyan-300/30 hover:bg-white/[.06]"}`}>
               <div className={`mb-4 h-20 rounded-2xl border border-white/10 bg-gradient-to-br ${f.color} relative overflow-hidden`}>
                 <div className="absolute inset-0 opacity-40 bg-[linear-gradient(135deg,rgba(255,255,255,.25)_1px,transparent_1px)] bg-[size:18px_18px]" />
                 <div className="absolute bottom-2 left-3 text-[10px] uppercase tracking-[.18em] text-white/70">{f.category}</div>
@@ -13598,7 +13600,7 @@ function AdvancedWellDriller({ setPage }) {
                   animation: `eosDrillPulse ${drillTempo}s ease-in-out infinite`,
                 }}
               >
-                <div className="absolute inset-x-2 top-0 h-[180%] rounded-full bg-gradient-to-b from-cyan-100/0 via-cyan-100/55 to-cyan-100/0" style={{ animation: `eosMudFlow ${mudPulseSpeed}s linear infinite` }} />
+                <div className="absolute inset-x-2 top-0 h-[180%] rounded-full bg-gradient-to-b from-cyan-100/0 via-cyan-100/[.55] to-cyan-100/0" style={{ animation: `eosMudFlow ${mudPulseSpeed}s linear infinite` }} />
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div
                     key={i}
@@ -13830,7 +13832,7 @@ function SeismoSimulator({ setPage }) {
               <div className="absolute left-[15%] top-[45%] h-5 w-[70%] overflow-hidden rounded-full bg-cyan-300/40 shadow-[0_0_70px_rgba(34,211,238,.5)]">
                 <div className="absolute top-0 h-full w-16 rounded-full bg-cyan-100 shadow-[0_0_40px_rgba(103,232,249,.95)]" style={{ animation: `eosWaveTravel ${pTraceSpeed}s linear infinite` }} />
               </div>
-              <div className="absolute left-[22%] top-[58%] h-5 w-[56%] overflow-hidden rounded-full bg-amber-300/35 shadow-[0_0_70px_rgba(251,191,36,.45)]">
+              <div className="absolute left-[22%] top-[58%] h-5 w-[56%] overflow-hidden rounded-full bg-amber-300/[.35] shadow-[0_0_70px_rgba(251,191,36,.45)]">
                 <div className="absolute top-0 h-full w-16 rounded-full bg-amber-100 shadow-[0_0_40px_rgba(253,230,138,.95)]" style={{ animation: `eosWaveTravel ${sTraceSpeed}s linear infinite`, animationDelay: `${gap * 0.08}s` }} />
               </div>
             </div>
@@ -14469,7 +14471,7 @@ Generated in ElementOS.`,
           <div className="absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-amber-300/10 blur-3xl" />
           <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:42px_42px]" />
 
-          <div className="relative z-10 flex h-full flex-col justify-between rounded-[2rem] border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
+          <div className="relative z-10 flex h-full flex-col justify-between rounded-[2rem] border border-white/10 bg-black/[.35] p-6 backdrop-blur-xl">
             <div>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <Pill gold>{cardData.badge}</Pill>
@@ -14498,7 +14500,7 @@ Generated in ElementOS.`,
               <div className="mt-3 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50"><b>{cardData.cardNumber}</b> · {cardData.hook}<br/><span className="text-amber-100">Constellation:</span> {cardData.constellation}</div>
               <div className="mt-5 grid gap-3 sm:grid-cols-4">
                 {[cardData.statA, cardData.statB, cardData.statC, cardData.tier].map((stat) => (
-                  <div key={stat} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-center text-sm font-black text-cyan-100">{stat}</div>
+                  <div key={stat} className="rounded-2xl border border-white/10 bg-black/[.35] p-4 text-center text-sm font-black text-cyan-100">{stat}</div>
                 ))}
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
@@ -15681,7 +15683,7 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
 
   return (
     <div className="eos-command-reset fixed inset-0 z-[80] bg-black/80 p-2 backdrop-blur-2xl sm:p-4" onClick={onClose} onKeyDown={onKeyDown} role="dialog" aria-modal="true" aria-label="ElementOS command engine" tabIndex={-1}>
-      <div className="eos-command-shell mx-auto mt-2 flex max-h-[94vh] w-[96vw] max-w-[1540px] flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/95 shadow-[0_0_180px_rgba(34,211,238,.35)] sm:mt-4" onClick={(e) => e.stopPropagation()}>
+      <div className="eos-command-shell mx-auto mt-2 flex max-h-[94vh] w-[96vw] max-w-[1540px] flex-col overflow-hidden rounded-[2rem] border border-cyan-300/30 bg-slate-950/[.95] shadow-[0_0_180px_rgba(34,211,238,.35)] sm:mt-4" onClick={(e) => e.stopPropagation()}>
         <div className="border-b border-white/10 p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -15706,11 +15708,11 @@ function CommandPalette({ open, onClose, page, setPage, selected, setSelected, c
           <div className="eos-command-scroll max-h-[66vh] min-h-[420px] p-5 xl:max-h-[72vh]">
             <div className="mb-4 flex flex-wrap gap-2">{Object.entries(categoryCounts).map(([category, count]) => <span key={category} className="rounded-full border border-white/10 bg-white/[.035] px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-slate-400">{category} · {count}</span>)}</div>
             <div className="grid gap-3">
-              {filtered.map((command, index) => <button key={command.id} onClick={() => runCommand(command)} onMouseEnter={() => setActiveIndex(index)} className={`group flex items-start justify-between gap-5 rounded-[1.5rem] border p-5 text-left transition ${index === activeIndex ? "border-cyan-300/45 bg-cyan-300/12 shadow-[0_0_35px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[.035] hover:border-cyan-300/35 hover:bg-cyan-300/10"}`}><div><div className="flex flex-wrap items-center gap-2"><span className="text-lg font-black text-cyan-100">{command.title}</span><span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{command.category}</span>{command.premium && <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-fuchsia-100">Pro</span>}{pinnedSet.has(command.id) && <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-cyan-100">Pinned</span>}</div><div className="mt-1 text-sm leading-6 text-slate-400">{command.description}</div></div><ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" /></button>)}
+              {filtered.map((command, index) => <button key={command.id} onClick={() => runCommand(command)} onMouseEnter={() => setActiveIndex(index)} className={`group flex items-start justify-between gap-5 rounded-[1.5rem] border p-5 text-left transition ${index === activeIndex ? "border-cyan-300/45 bg-cyan-300/[.12] shadow-[0_0_35px_rgba(34,211,238,.14)]" : "border-white/10 bg-white/[.035] hover:border-cyan-300/[.35] hover:bg-cyan-300/10"}`}><div><div className="flex flex-wrap items-center gap-2"><span className="text-lg font-black text-cyan-100">{command.title}</span><span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-amber-100">{command.category}</span>{command.premium && <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-fuchsia-100">Pro</span>}{pinnedSet.has(command.id) && <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[10px] uppercase tracking-[.18em] text-cyan-100">Pinned</span>}</div><div className="mt-1 text-sm leading-6 text-slate-400">{command.description}</div></div><ChevronRight size={18} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-200" /></button>)}
               {!filtered.length && <div className="rounded-2xl border border-white/10 bg-black/30 p-8 text-center text-slate-400">No command found. Try “compare aluminium and titanium”, “report”, “billing help” or “circle area”.</div>}
             </div>
           </div>
-          <div className="eos-command-scroll max-h-[66vh] min-h-[420px] border-t border-white/10 bg-black/24 p-6 xl:max-h-[72vh] xl:border-l xl:border-t-0">
+          <div className="eos-command-scroll max-h-[66vh] min-h-[420px] border-t border-white/10 bg-black/[.24] p-6 xl:max-h-[72vh] xl:border-l xl:border-t-0">
             <div className="text-xs uppercase tracking-[.22em] text-slate-500">Command preview</div>
             <div className="mt-2 text-2xl font-black text-cyan-100">{selectedCommand?.title || "No command selected"}</div>
             <div className="mt-2 text-sm leading-6 text-slate-400">{selectedCommand?.description || "Start typing to search the operating system."}</div>
@@ -15755,7 +15757,7 @@ function ToastCenter() {
   if (!message) return null;
 
   return (
-    <div className="fixed right-4 top-4 z-[90] rounded-2xl border border-cyan-300/25 bg-slate-950/95 px-4 py-3 text-sm font-bold text-cyan-100 shadow-[0_0_40px_rgba(34,211,238,.25)] backdrop-blur-2xl">
+    <div className="fixed right-4 top-4 z-[90] rounded-2xl border border-cyan-300/25 bg-slate-950/[.95] px-4 py-3 text-sm font-bold text-cyan-100 shadow-[0_0_40px_rgba(34,211,238,.25)] backdrop-blur-2xl">
       {message}
     </div>
   );
@@ -15866,7 +15868,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
   };
 
   return (
-    <Panel className="border-amber-300/25 bg-gradient-to-br from-slate-950 via-[#071a2d]/95 to-cyan-950/25 p-0">
+    <Panel className="border-amber-300/25 bg-gradient-to-br from-slate-950 via-[#071a2d]/[.95] to-cyan-950/25 p-0">
       <div className="relative overflow-hidden rounded-[1.15rem] p-5 md:p-6">
         <div className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full bg-cyan-300/20 blur-3xl" />
         <div className="pointer-events-none absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
@@ -15898,7 +15900,7 @@ function UltimateScienceCommandLayer({ page, setPage, selected = "Al", compare =
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-cyan-300/20 bg-black/35 p-5 shadow-[0_0_70px_rgba(34,211,238,.12)]">
+          <div className="rounded-[2rem] border border-cyan-300/20 bg-black/[.35] p-5 shadow-[0_0_70px_rgba(34,211,238,.12)]">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="text-xs uppercase tracking-[.24em] text-cyan-200">Recommended next move</div>
@@ -16001,7 +16003,7 @@ function DiscoveryVaultV57({ session, selected, compare, setPage }) {
 
   return (
     <>
-      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-amber-950/20">
+      <Panel className="overflow-hidden border-cyan-300/25 bg-gradient-to-br from-cyan-950/[.35] via-slate-950 to-amber-950/20">
         <div className="grid gap-8 xl:grid-cols-[1.1fr_.9fr] xl:items-center">
           <div>
             <Pill gold><Save size={12}/> subscriber home base</Pill>
@@ -16467,7 +16469,7 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
                   </div>
                 ))}
               </div>
-              <div className="mt-7 rounded-[2rem] border border-cyan-300/20 bg-black/35 p-4 shadow-[0_0_70px_rgba(34,211,238,.12)]">
+              <div className="mt-7 rounded-[2rem] border border-cyan-300/20 bg-black/[.35] p-4 shadow-[0_0_70px_rgba(34,211,238,.12)]">
                 <div className="mb-3 text-xs font-black uppercase tracking-[.22em] text-cyan-200">What would you like to investigate?</div>
                 <textarea
                   value={prompt}
@@ -16514,7 +16516,7 @@ function DiscoveryAIV57({ selected, compare, setSelected, setCompare, setPage })
           <p className="mt-2 text-sm leading-6 text-slate-400">Pick a sector and Mission Intelligence prepares the investigation, material focus, workflow and outputs.</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {industryPacks.map((pack) => (
-              <button key={pack[0]} onClick={() => applyIndustryPack(pack)} className={`rounded-[1.5rem] border p-4 text-left transition hover:-translate-y-1 ${activePack === pack[0] ? "border-amber-300/45 bg-amber-300/10" : "border-white/10 bg-black/25 hover:border-cyan-300/35"}`}>
+              <button key={pack[0]} onClick={() => applyIndustryPack(pack)} className={`rounded-[1.5rem] border p-4 text-left transition hover:-translate-y-1 ${activePack === pack[0] ? "border-amber-300/45 bg-amber-300/10" : "border-white/10 bg-black/25 hover:border-cyan-300/[.35]"}`}>
                 <div className="text-xs uppercase tracking-[.2em] text-cyan-200">{pack[0]}</div>
                 <div className="mt-2 text-lg font-black text-white">{pack[1]}</div>
                 <p className="mt-2 text-xs leading-5 text-slate-400">{pack[2]}</p>
@@ -16866,7 +16868,7 @@ function VisualConversionStrip({ page, setPage, isPro, startCheckout }) {
     ["Research flow", "Pick material → run scenario → inspect result → export insight."],
   ];
   return (
-    <div className="eos-wow-strip overflow-hidden rounded-[1.6rem] border border-cyan-300/20 bg-slate-950/55 p-4 shadow-[0_0_70px_rgba(34,211,238,.10)] backdrop-blur-2xl">
+    <div className="eos-wow-strip overflow-hidden rounded-[1.6rem] border border-cyan-300/20 bg-slate-950/[.55] p-4 shadow-[0_0_70px_rgba(34,211,238,.10)] backdrop-blur-2xl">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[.22em] text-amber-100">
@@ -16885,7 +16887,7 @@ function VisualConversionStrip({ page, setPage, isPro, startCheckout }) {
               key={title}
               type="button"
               onClick={() => index === 0 ? setPage("reports") : index === 1 ? setPage("viralcards") : setPage("dashboard")}
-              className="eos-magic-tile group rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/10"
+              className="eos-magic-tile group rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/[.35] hover:bg-cyan-300/10"
             >
               <div className="text-xs font-black uppercase tracking-[.20em] text-cyan-200">0{index + 1}</div>
               <div className="mt-2 font-black text-white group-hover:text-cyan-100">{title}</div>
