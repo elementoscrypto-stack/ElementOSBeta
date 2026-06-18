@@ -1602,6 +1602,11 @@ const PAGE_LABELS = {
   reports: "Reports",
   advisorreport: "Reports",
   lab: "Labs",
+  materialsdiscovery: "Materials Discovery Engine",
+  extremelab: "Extreme Environment Laboratory",
+  crystallab: "Crystal Structure Laboratory",
+  failurelab: "Failure Analysis Laboratory",
+  manufacturinglab: "Manufacturing Laboratory",
   beta: "Create Account",
   login: "Login",
   systemhealth: "Platform Readiness",
@@ -4289,6 +4294,11 @@ function Sidebar({ page, setPage }) {
       items: [
         ["lab", "Advanced Labs", Radar],
         ["accelerator", "Particle Accelerator", Zap],
+        ["materialsdiscovery", "Materials Discovery", Sparkles],
+        ["extremelab", "Extreme Environment", ShieldCheck],
+        ["crystallab", "Crystal Structure", Dna],
+        ["failurelab", "Failure Analysis", Activity],
+        ["manufacturinglab", "Manufacturing", Settings],
         ["isotopes", "Isotope Lab", Atom],
         ["seismo", "Seismic Laboratory", Network],
         ["welldriller", "Well Driller", Compass],
@@ -11713,9 +11723,163 @@ function ParticleAcceleratorLab({ setPage, setSelected, setCompare, setForecastR
 }
 
 
+
+function LabMetricCard({ label, value, note, accent = "cyan" }) {
+  const accentClass = accent === "amber" ? "text-amber-100 border-amber-300/18 bg-amber-300/[.045]" : accent === "rose" ? "text-rose-100 border-rose-300/18 bg-rose-300/[.045]" : accent === "emerald" ? "text-emerald-100 border-emerald-300/18 bg-emerald-300/[.045]" : "text-cyan-100 border-cyan-300/18 bg-cyan-300/[.045]";
+  return (
+    <div className={`border p-4 ${accentClass}`}>
+      <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">{label}</div>
+      <div className="mt-2 text-3xl font-black text-white">{value}</div>
+      <div className="mt-2 text-xs leading-5 text-slate-400">{note}</div>
+    </div>
+  );
+}
+
+function LabSignalBar({ label, value, note }) {
+  return (
+    <div className="border border-white/10 bg-black/25 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <div className="text-sm font-black text-white">{label}</div>
+          {note && <div className="mt-1 text-xs text-slate-500">{note}</div>}
+        </div>
+        <div className="text-lg font-black text-cyan-100">{value}%</div>
+      </div>
+      <div className="mt-3 h-2 bg-slate-950">
+        <div className="h-full bg-cyan-300" style={{ width: `${Math.max(3, Math.min(100, value))}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function labElementOptions() {
+  return elements.map((e) => <option key={e.symbol} value={e.symbol}>{e.atomicNumber}. {e.name} ({e.symbol})</option>);
+}
+
+function MaterialsDiscoveryEngine({ setPage, setSelected, setCompare, setForecastRequest }) {
+  const [need, setNeed] = useState("Lightweight heat resistant corrosion resistant marine component");
+  const [priority, setPriority] = useState("balanced");
+  const [environment, setEnvironment] = useState("Marine");
+  const lower = `${need} ${priority} ${environment}`.toLowerCase();
+  const ranked = elements.map((e) => {
+    const s = score(e.symbol);
+    let total = s.stability * 17 + s.thermal * 16 + s.pressure * 12 + s.diffusion * 10 + s.conductivity * 8;
+    if (/light|weight|aero/.test(lower)) total += Math.max(0, 45 - e.atomicNumber * 0.35);
+    if (/heat|thermal|turbine|space/.test(lower)) total += s.thermal * 10;
+    if (/corrosion|marine|ocean|salt/.test(lower)) total += s.stability * 8 + s.diffusion * 8;
+    if (/conduct|electric|battery|power/.test(lower)) total += s.conductivity * 13;
+    if (/radiation|nuclear|shield/.test(lower)) total += Math.min(35, e.atomicNumber * 0.32);
+    if (priority === "cost") total -= Math.min(20, s.rarity * 5);
+    if (priority === "performance") total += s.thermal * 6 + s.pressure * 6;
+    return { ...e, total: Math.round(Math.max(20, Math.min(99, total / 5.4))), metrics: s };
+  }).sort((a, b) => b.total - a.total).slice(0, 8);
+  const top = ranked[0] || elementMap.Ti;
+  const pairings = ranked.slice(1, 5).map((e) => ({ ...e, compatibility: compatibilityScore(top.symbol, e.symbol) })).sort((a, b) => b.compatibility - a.compatibility);
+  const sendForecast = () => {
+    setSelected?.(top.symbol);
+    setForecastRequest?.({ material: top.symbol, years: 50, environment, source: "Materials Discovery Engine" });
+    setPage?.("timemachine");
+  };
+  return (
+    <div className="space-y-6 pb-24">
+      <PageHero eyebrow="Advanced Lab" icon={Sparkles} title={<>Materials <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery Engine</span></>} description="Describe the performance need and ElementOS ranks candidate materials, pairings, risks and report-ready next actions." />
+      <div className="grid gap-6 xl:grid-cols-[360px_1fr]">
+        <Panel className="border-cyan-300/15 bg-slate-950/90">
+          <Pill gold><Bot size={12}/> discovery request</Pill>
+          <label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material requirement</span><textarea value={need} onChange={(e) => setNeed(e.target.value)} className="mt-2 min-h-[150px] w-full border border-cyan-300/15 bg-black/35 p-4 text-sm leading-6 text-white outline-none" /></label>
+          <label className="mt-4 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Environment</span><select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white outline-none">{["Marine", "Aerospace", "High Heat", "Deep Ocean", "Space", "Medical", "Mining", "Nuclear"].map((x) => <option key={x}>{x}</option>)}</select></label>
+          <div className="mt-4 grid grid-cols-3 gap-2">{[["balanced","Balanced"],["performance","Performance"],["cost","Cost aware"]].map(([id,label]) => <button key={id} onClick={() => setPriority(id)} className={`border px-3 py-3 text-xs font-black ${priority===id?"border-cyan-300/50 bg-cyan-300/[.12] text-white":"border-white/10 bg-white/[.03] text-slate-400"}`}>{label}</button>)}</div>
+          <Button onClick={sendForecast} variant="primary" className="mt-5 w-full">Send Best Material to Time Machine</Button>
+        </Panel>
+        <div className="space-y-5">
+          <Panel className="border-cyan-300/15 bg-[#050b16]/90">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div><div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">Top recommendation</div><h2 className="mt-2 text-5xl font-black text-white">{top.name}</h2><p className="mt-2 text-sm leading-6 text-slate-400">Ranked for {environment.toLowerCase()} use with {priority} weighting.</p></div>
+              <div className="border border-cyan-300/20 bg-black/30 px-5 py-4 text-right"><div className="text-[10px] uppercase tracking-[.22em] text-slate-500">fit score</div><div className="text-5xl font-black text-cyan-100">{top.total}%</div></div>
+            </div>
+            <div className="mt-6 grid gap-3 md:grid-cols-4">{ranked.slice(0,4).map((e) => <button key={e.symbol} onClick={() => { setSelected?.(e.symbol); setPage?.("explorer"); }} className="border border-cyan-300/12 bg-black/25 p-4 text-left hover:border-cyan-300/35"><div className="text-3xl font-black text-white">{e.symbol}</div><div className="mt-1 text-sm text-slate-300">{e.name}</div><div className="mt-3 h-2 bg-slate-950"><div className="h-full bg-cyan-300" style={{width:`${e.total}%`}} /></div><div className="mt-2 text-xs text-cyan-100">{e.total}% candidate fit</div></button>)}</div>
+          </Panel>
+          <div className="grid gap-5 lg:grid-cols-2">
+            <Panel><h3 className="text-2xl font-black text-white">Recommended pairings</h3><div className="mt-4 space-y-3">{pairings.map((p) => <div key={p.symbol} className="flex items-center justify-between border border-white/10 bg-black/25 p-4"><div><div className="font-black text-white">{top.symbol} + {p.symbol}</div><div className="text-xs text-slate-500">{top.name} with {p.name}</div></div><div className="text-2xl font-black text-cyan-100">{p.compatibility}%</div></div>)}</div><Button onClick={() => { setCompare?.([top.symbol, ...pairings.slice(0,3).map(p=>p.symbol)]); setPage?.("compare"); }} className="mt-4 w-full">Compare Recommendation Set</Button></Panel>
+            <Panel><h3 className="text-2xl font-black text-white">Discovery reasoning</h3><div className="mt-4 grid gap-3">{[["Performance fit", top.total, "Matches stated requirement and environment weighting."],["Thermal logic", Math.round(top.metrics.thermal*20), "Heat response and long-term forecast potential."],["Boundary stability", Math.round(top.metrics.diffusion*20), "Diffusion and corrosion-adjacent behaviour."],["Pressure response", Math.round(top.metrics.pressure*20), "Load, depth and compression behaviour."]].map(([a,b,c]) => <LabSignalBar key={a} label={a} value={b} note={c}/>)}</div></Panel>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExtremeEnvironmentLab({ selected = "Ti", setSelected, setPage, setForecastRequest }) {
+  const [material, setMaterial] = useState(selected || "Ti");
+  const [temp, setTemp] = useState(650);
+  const [pressure, setPressure] = useState(420);
+  const [radiation, setRadiation] = useState(35);
+  const [salinity, setSalinity] = useState(55);
+  const [years, setYears] = useState(50);
+  const e = elementMap[material] || elementMap.Ti;
+  const s = score(material);
+  const stress = temp/18 + pressure/15 + radiation*0.7 + salinity*0.55 + years*0.18;
+  const resistance = s.stability*18 + s.thermal*17 + s.pressure*13 + s.diffusion*9;
+  const survival = Math.round(Math.max(5, Math.min(99, resistance - stress*0.42 + 38)));
+  const failureYear = Math.max(1, Math.round(years * (survival / 100) + (s.stability * 2)));
+  const sendForecast = () => { setSelected?.(material); setForecastRequest?.({ material, years, environment: "Extreme Environment", source: "Extreme Environment Laboratory" }); setPage?.("timemachine"); };
+  return <div className="space-y-6 pb-24"><PageHero eyebrow="Advanced Lab" icon={ShieldCheck} title={<>Extreme Environment <span className="text-cyan-100">Laboratory</span></>} description="Stress-test materials under heat, pressure, radiation, salinity, vacuum-like exposure and long service durations." />
+    <div className="grid gap-6 xl:grid-cols-[360px_1fr]"><Panel><Pill><Activity size={12}/> chamber controls</Pill><label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span><select value={material} onChange={(ev)=>setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{labElementOptions()}</select></label>{[["Temperature °C", temp, setTemp, 20, 1600],["Pressure bar", pressure, setPressure, 1, 1200],["Radiation load", radiation, setRadiation, 0, 100],["Salinity / chemical exposure", salinity, setSalinity, 0, 100],["Duration years", years, setYears, 1, 500]].map(([label,val,setter,min,max]) => <label key={label} className="mt-4 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{val}</span></div><input type="range" min={min} max={max} value={val} onChange={(ev)=>setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" /></label>)}<Button onClick={sendForecast} variant="primary" className="mt-5 w-full">Open Future Forecast</Button></Panel>
+      <div className="space-y-5"><Panel className="overflow-hidden border-cyan-300/15 bg-[#040b15]"><div className="relative min-h-[470px] border border-cyan-300/10 bg-[linear-gradient(90deg,rgba(34,211,238,.05)_1px,transparent_1px),linear-gradient(rgba(34,211,238,.05)_1px,transparent_1px)] bg-[size:56px_56px]"><div className="absolute inset-8 border border-cyan-300/20 bg-cyan-300/[.025]"/><div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 border border-cyan-300/25 bg-black/35 shadow-[0_0_80px_rgba(34,211,238,.15)]"><div className="grid h-full place-items-center"><div className="text-center"><div className="text-7xl font-black text-white">{e.symbol}</div><div className="mt-2 text-lg font-black text-cyan-100">{e.name}</div><div className="mt-4 text-5xl font-black text-emerald-100">{survival}%</div><div className="text-xs uppercase tracking-[.22em] text-slate-500">survival projection</div></div></div></div>{[["HEAT", temp, "left-8 top-8"],["PRESSURE", pressure, "right-8 top-8"],["RADIATION", radiation, "left-8 bottom-8"],["SALINITY", salinity, "right-8 bottom-8"]].map(([label,val,pos]) => <div key={label} className={`absolute ${pos} border border-cyan-300/15 bg-black/45 p-4`}><div className="text-[10px] uppercase tracking-[.2em] text-slate-500">{label}</div><div className="mt-1 text-2xl font-black text-cyan-100">{val}</div></div>)}</div></Panel><div className="grid gap-4 md:grid-cols-4"><LabMetricCard label="Survival" value={`${survival}%`} note="Projected under selected chamber settings."/><LabMetricCard label="Failure horizon" value={`${failureYear}y`} note="Estimated first critical degradation point." accent="amber"/><LabMetricCard label="Damage index" value={`${100-survival}%`} note="Composite stress model." accent="rose"/><LabMetricCard label="Confidence" value={`${Math.max(61, Math.min(97, survival + 8))}%`} note="Simulation consistency." accent="emerald"/></div></div></div></div>;
+}
+
+function CrystalStructureLab({ selected = "C", setSelected, setPage }) {
+  const [material, setMaterial] = useState(selected || "C");
+  const [structure, setStructure] = useState("HCP");
+  const [defects, setDefects] = useState(18);
+  const [strain, setStrain] = useState(22);
+  const e = elementMap[material] || elementMap.C;
+  const structures = { FCC: "Face-centred cubic lattice for ductile metals.", BCC: "Body-centred cubic lattice with strong high-temperature behaviour.", HCP: "Hexagonal close-packed lattice common in titanium-style systems.", Diamond: "Tetrahedral lattice for diamond, silicon and strong covalent systems.", Graphene: "Planar carbon lattice with exceptional directional conductivity." };
+  const latticeScore = Math.round(Math.max(40, Math.min(99, score(material).stability*14 + score(material).thermal*8 + (100-defects)*0.18 + (100-strain)*0.14)));
+  const nodes = Array.from({length: 36}, (_, i) => ({ x: 8 + (i%6)*16, y: 10 + Math.floor(i/6)*15, hot: (i*e.atomicNumber + defects) % 7 === 0 }));
+  return <div className="space-y-6 pb-24"><PageHero eyebrow="Advanced Lab" icon={Dna} title={<>Crystal Structure <span className="text-cyan-100">Laboratory</span></>} description="Visualise lattice structures, bond integrity, defect density, strain response and crystalline behaviour." />
+  <div className="grid gap-6 xl:grid-cols-[360px_1fr]"><Panel><Pill><Dna size={12}/> lattice controls</Pill><label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span><select value={material} onChange={(ev)=>setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{labElementOptions()}</select></label><div className="mt-4 grid grid-cols-2 gap-2">{Object.keys(structures).map((x)=><button key={x} onClick={()=>setStructure(x)} className={`border p-3 text-xs font-black ${structure===x?"border-cyan-300/50 bg-cyan-300/[.12] text-white":"border-white/10 bg-white/[.03] text-slate-400"}`}>{x}</button>)}</div>{[["Defect density",defects,setDefects],["Lattice strain",strain,setStrain]].map(([label,val,setter])=><label key={label} className="mt-4 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{val}%</span></div><input type="range" min="0" max="100" value={val} onChange={(ev)=>setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" /></label>)}<Button onClick={()=>{setSelected?.(material); setPage?.("explorer");}} className="mt-5 w-full">Open Material Profile</Button></Panel><div className="space-y-5"><Panel className="border-cyan-300/15 bg-[#030a14]"><div className="flex flex-wrap justify-between gap-4"><div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">{structure} lattice</div><h2 className="mt-2 text-5xl font-black text-white">{e.name}</h2><p className="mt-2 text-sm leading-6 text-slate-400">{structures[structure]}</p></div><div className="text-right"><div className="text-5xl font-black text-cyan-100">{latticeScore}%</div><div className="text-xs uppercase tracking-[.2em] text-slate-500">integrity</div></div></div><svg viewBox="0 0 100 100" className="mt-6 h-[470px] w-full border border-cyan-300/10 bg-black/25">{nodes.map((n,i)=> <g key={i}>{i%6!==5 && <line x1={n.x} y1={n.y} x2={nodes[i+1].x} y2={nodes[i+1].y} stroke="rgba(34,211,238,.18)"/>}{i<30 && <line x1={n.x} y1={n.y} x2={nodes[i+6].x} y2={nodes[i+6].y} stroke="rgba(34,211,238,.14)"/>}<circle cx={n.x + (structure==="Graphene" && Math.floor(i/6)%2 ? 5 : 0)} cy={n.y} r={n.hot?2.2:1.55} fill={n.hot?"rgba(251,191,36,.95)":"rgba(34,211,238,.85)"}/></g>)}</svg></Panel><div className="grid gap-4 md:grid-cols-3"><LabMetricCard label="Bond integrity" value={`${latticeScore}%`} note="Combined lattice, defect and strain score."/><LabMetricCard label="Defect risk" value={`${defects}%`} note="Vacancies, dislocations and local disorder." accent="amber"/><LabMetricCard label="Strain load" value={`${strain}%`} note="Simulated deformation pressure." accent="rose"/></div></div></div></div>;
+}
+
+function FailureAnalysisLab({ selected = "Ti", setSelected, setPage, setForecastRequest }) {
+  const [material, setMaterial] = useState(selected || "Ti");
+  const [mode, setMode] = useState("Fatigue");
+  const [load, setLoad] = useState(64);
+  const [cycles, setCycles] = useState(75);
+  const [corrosion, setCorrosion] = useState(35);
+  const e = elementMap[material] || elementMap.Ti;
+  const s = score(material);
+  const failureRisk = Math.round(Math.max(5, Math.min(98, load*0.38 + cycles*0.32 + corrosion*0.28 - s.stability*6 - s.diffusion*4 + (mode === "Thermal Shock" ? 12 : 0))));
+  const remainingLife = Math.max(1, Math.round((100 - failureRisk) * 1.4));
+  const modes = ["Fatigue", "Crack Propagation", "Corrosion", "Thermal Shock", "Creep", "Impact Damage"];
+  return <div className="space-y-6 pb-24"><PageHero eyebrow="Advanced Lab" icon={Activity} title={<>Failure Analysis <span className="text-cyan-100">Laboratory</span></>} description="Model how a material fails: fatigue, cracks, corrosion, thermal shock, creep and impact damage." />
+  <div className="grid gap-6 xl:grid-cols-[360px_1fr]"><Panel><Pill><ShieldCheck size={12}/> failure setup</Pill><label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span><select value={material} onChange={(ev)=>setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{labElementOptions()}</select></label><div className="mt-4 grid gap-2">{modes.map((x)=><button key={x} onClick={()=>setMode(x)} className={`border px-3 py-3 text-left text-sm font-black ${mode===x?"border-cyan-300/50 bg-cyan-300/[.12] text-white":"border-white/10 bg-white/[.03] text-slate-400"}`}>{x}</button>)}</div>{[["Mechanical load",load,setLoad],["Cycle exposure",cycles,setCycles],["Corrosion exposure",corrosion,setCorrosion]].map(([label,val,setter])=><label key={label} className="mt-4 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{val}%</span></div><input type="range" min="0" max="100" value={val} onChange={(ev)=>setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" /></label>)}</Panel><div className="space-y-5"><Panel className="border-cyan-300/15 bg-[#040b15]"><div className="flex flex-wrap justify-between gap-4"><div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">failure mode</div><h2 className="mt-2 text-5xl font-black text-white">{mode}</h2><p className="mt-2 text-sm leading-6 text-slate-400">{e.name} under selected load, cycle and corrosion conditions.</p></div><div className="text-right"><div className="text-5xl font-black text-rose-100">{failureRisk}%</div><div className="text-xs uppercase tracking-[.2em] text-slate-500">failure risk</div></div></div><div className="relative mt-8 min-h-[360px] border border-cyan-300/10 bg-black/25"><div className="absolute left-8 right-8 top-1/2 h-px bg-cyan-300/25"/><div className="absolute left-[18%] top-[42%] h-10 w-20 border-t-2 border-rose-300/70 rotate-12"/><div className="absolute left-[36%] top-[44%] h-12 w-28 border-t-2 border-amber-300/70 -rotate-6"/><div className="absolute left-[58%] top-[42%] h-14 w-32 border-t-2 border-cyan-300/70 rotate-3"/><div className="absolute inset-x-8 bottom-8 grid grid-cols-4 gap-3">{["Initiation", "Propagation", "Critical", "Failure"].map((x,i)=><div key={x} className="border border-white/10 bg-slate-950/70 p-3"><div className="text-xs uppercase tracking-[.18em] text-slate-500">Stage {i+1}</div><div className="mt-1 text-sm font-black text-white">{x}</div></div>)}</div></div></Panel><div className="grid gap-4 md:grid-cols-4"><LabMetricCard label="Failure risk" value={`${failureRisk}%`} note="Composite failure likelihood." accent="rose"/><LabMetricCard label="Life remaining" value={`${remainingLife}y`} note="Simulated remaining service life."/><LabMetricCard label="Inspection priority" value={failureRisk>70?"High":"Medium"} note="Recommended urgency." accent="amber"/><LabMetricCard label="Mitigation" value="Report" note="Generate risk report and forecast." accent="emerald"/></div><div className="grid gap-3 md:grid-cols-3"><Button onClick={()=>{setSelected?.(material); setPage?.("explorer");}}>Open Explorer</Button><Button onClick={()=>{setForecastRequest?.({material, years: remainingLife, environment: `${mode} failure`, source: "Failure Analysis Lab"}); setPage?.("timemachine");}}>Forecast Failure</Button><Button onClick={()=>setPage?.("reports")} variant="primary">Generate Failure Report</Button></div></div></div></div>;
+}
+
+function ManufacturingLab({ selected = "Al", setSelected, setCompare, setPage }) {
+  const [material, setMaterial] = useState(selected || "Al");
+  const [process, setProcess] = useState("Additive Manufacturing");
+  const [precision, setPrecision] = useState(72);
+  const [volume, setVolume] = useState(48);
+  const [complexity, setComplexity] = useState(64);
+  const e = elementMap[material] || elementMap.Al;
+  const s = score(material);
+  const processes = ["Additive Manufacturing", "Casting", "CNC Machining", "Welding", "Forging", "Powder Metallurgy", "Composite Assembly"];
+  const manufacturability = Math.round(Math.max(12, Math.min(99, s.stability*15 + s.thermal*8 + (100-complexity)*0.22 + precision*0.16 + volume*0.1 - s.rarity*3)));
+  const costIndex = Math.round(Math.max(10, Math.min(99, s.rarity*14 + complexity*0.45 + precision*0.22 + (process === "CNC Machining" ? 10 : 0))));
+  const waste = Math.round(Math.max(2, Math.min(80, complexity*0.32 + (100-precision)*0.18 + (process === "Additive Manufacturing" ? -12 : 8))));
+  return <div className="space-y-6 pb-24"><PageHero eyebrow="Advanced Lab" icon={Settings} title={<>Manufacturing <span className="text-cyan-100">Laboratory</span></>} description="Evaluate manufacturability, process fit, cost pressure, waste, tolerance difficulty and production readiness." />
+  <div className="grid gap-6 xl:grid-cols-[360px_1fr]"><Panel><Pill><BriefcaseBusiness size={12}/> process setup</Pill><label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span><select value={material} onChange={(ev)=>setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{labElementOptions()}</select></label><label className="mt-4 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Process</span><select value={process} onChange={(ev)=>setProcess(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{processes.map((x)=><option key={x}>{x}</option>)}</select></label>{[["Tolerance precision",precision,setPrecision],["Production volume",volume,setVolume],["Part complexity",complexity,setComplexity]].map(([label,val,setter])=><label key={label} className="mt-4 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{val}%</span></div><input type="range" min="0" max="100" value={val} onChange={(ev)=>setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" /></label>)}</Panel><div className="space-y-5"><Panel className="border-cyan-300/15 bg-[#040b15]"><div className="flex flex-wrap justify-between gap-4"><div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">production readiness</div><h2 className="mt-2 text-5xl font-black text-white">{e.name}</h2><p className="mt-2 text-sm leading-6 text-slate-400">{process} model with precision, volume and complexity weighting.</p></div><div className="text-right"><div className="text-5xl font-black text-cyan-100">{manufacturability}%</div><div className="text-xs uppercase tracking-[.2em] text-slate-500">manufacturable</div></div></div><div className="mt-7 grid gap-4 md:grid-cols-4"><LabSignalBar label="Process fit" value={manufacturability} note="Ease of production."/><LabSignalBar label="Cost pressure" value={costIndex} note="Higher means more expensive."/><LabSignalBar label="Waste index" value={waste} note="Scrap, rework and material loss."/><LabSignalBar label="Tolerance risk" value={Math.round((complexity+precision)/2)} note="Difficulty holding spec."/></div><div className="mt-7 border border-cyan-300/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.22em] text-cyan-200">recommended manufacturing note</div><p className="mt-2 text-sm leading-7 text-slate-300">ElementOS estimates {e.name} is {manufacturability > 75 ? "a strong" : manufacturability > 55 ? "a moderate" : "a difficult"} candidate for {process.toLowerCase()} under the selected production constraints. Cost pressure is {costIndex}% and waste risk is {waste}%.</p></div></Panel><div className="grid gap-3 md:grid-cols-3"><Button onClick={()=>{setSelected?.(material); setPage?.("explorer");}}>Open Material</Button><Button onClick={()=>{setCompare?.([material,"Al","Ti","Fe"]); setPage?.("compare");}}>Compare Production Set</Button><Button onClick={()=>setPage?.("reports")} variant="primary">Generate Manufacturing Report</Button></div></div></div></div>;
+}
+
 function AdvancedLabsLaunch({ setPage }) {
   const labs = [
     ["accelerator", "Particle Accelerator Lab", "Simulate LINACs, cyclotrons, synchrotrons, hadron colliders, beamlines, target interactions and detector events.", Zap],
+    ["materialsdiscovery", "Materials Discovery Engine", "Enter a real material requirement and rank candidates, pairings, risks and forecast-ready recommendations.", Sparkles],
+    ["extremelab", "Extreme Environment Laboratory", "Stress-test materials under heat, pressure, radiation, salinity, vacuum-style exposure and long durations.", ShieldCheck],
+    ["crystallab", "Crystal Structure Laboratory", "Inspect FCC, BCC, HCP, diamond and graphene-style lattices with defect and strain modelling.", Dna],
+    ["failurelab", "Failure Analysis Laboratory", "Simulate fatigue, cracks, corrosion, thermal shock, creep and impact failure pathways.", Activity],
+    ["manufacturinglab", "Manufacturing Laboratory", "Evaluate process fit, manufacturability, cost pressure, waste and production readiness.", Settings],
     ["isotopes", "Isotope Lab", "Build nucleus structures, inspect stability, mass, protons and neutrons.", Atom],
     ["seismo", "Seismic Laboratory", "Model P-wave and S-wave behaviour through simulated subsurface fields.", Network],
     ["welldriller", "Well Driller", "Explore bore paths, formation pressure, depth and drilling-readiness.", Compass],
@@ -17587,6 +17751,11 @@ const startCheckout = async (planName = "Pro Researcher") => {
       publicdiscovery: <PublicDiscoveryPage discovery={publicDiscovery} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
       timemachine: <TimeMachineGenius selected={selected} setSelected={setSelected} setPage={setPage} forecastRequest={forecastRequest} />,
       lab: <AdvancedLabsLaunch setPage={setPage} />,
+      materialsdiscovery: <MaterialsDiscoveryEngine setPage={setPage} setSelected={setSelected} setCompare={setCompare} setForecastRequest={setForecastRequest} />,
+      extremelab: <ExtremeEnvironmentLab selected={selected} setSelected={setSelected} setPage={setPage} setForecastRequest={setForecastRequest} />,
+      crystallab: <CrystalStructureLab selected={selected} setSelected={setSelected} setPage={setPage} />,
+      failurelab: <FailureAnalysisLab selected={selected} setSelected={setSelected} setPage={setPage} setForecastRequest={setForecastRequest} />,
+      manufacturinglab: <ManufacturingLab selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} />,
       visualization: <AdvancedVisualization selected={selected} compare={compare} setPage={setPage} />,
       welldriller: <AdvancedWellDriller setPage={setPage} />,
       seismo: <SeismoSimulator setPage={setPage} />,
