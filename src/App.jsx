@@ -12115,17 +12115,193 @@ function CrystalStructureLab({ selected = "C", setSelected, setPage }) {
   const [defectDensity, setDefectDensity] = useState(18);
   const [strain, setStrain] = useState(26);
   const [temperature, setTemperature] = useState(22);
+
   const e = elementMap[material] || elementMap.C;
   const s = score(material);
-  const latticeMap = { FCC: ["12", "high ductility", "close-packed metal systems"], BCC: ["8", "high strength", "structural metals"], HCP: ["12", "directional strength", "titanium/magnesium style systems"], Diamond: ["4", "exceptional hardness", "covalent crystal networks"], Graphene: ["3", "2D conductivity", "carbon sheet systems"] };
+  const latticeMap = {
+    FCC: ["12", "high ductility", "close-packed metal systems", "face-centred cubic"],
+    BCC: ["8", "high strength", "structural metals", "body-centred cubic"],
+    HCP: ["12", "directional strength", "titanium/magnesium style systems", "hexagonal close packed"],
+    Diamond: ["4", "exceptional hardness", "covalent crystal networks", "tetrahedral diamond lattice"],
+    Graphene: ["3", "2D conductivity", "carbon sheet systems", "planar honeycomb lattice"],
+  };
   const info = latticeMap[lattice] || latticeMap.HCP;
   const bondStrength = Math.round(Math.max(15, Math.min(99, s.stability * 18 + s.pressure * 7 - defectDensity * 0.22)));
   const strainEnergy = Math.round(Math.min(100, strain * 0.78 + temperature * 0.16 + defectDensity * 0.18));
   const conductivityPath = Math.round(Math.max(8, Math.min(99, s.conductivity * 18 + (lattice === "Graphene" ? 18 : 0) - defectDensity * 0.1)));
   const dislocationRisk = Math.round(Math.min(100, defectDensity * 0.65 + strain * 0.42 + temperature * 0.08));
-  const cellNodes = Array.from({ length: lattice === "Graphene" ? 24 : 36 }, (_, i) => i);
-  return <div className="space-y-6 pb-24"><PageHero eyebrow="Advanced Lab" icon={Dna} title={<>Crystal Structure <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Laboratory</span></>} description="Inspect lattice systems, defect density, strain energy, dislocation risk, bond pathways and crystal-level material behaviour." />
-    <div className="grid gap-6 xl:grid-cols-[360px_1fr]"><Panel><Pill><Dna size={12}/> lattice setup</Pill><label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span><select value={material} onChange={(ev)=>setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{labElementOptions()}</select></label><label className="mt-4 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Lattice model</span><select value={lattice} onChange={(ev)=>setLattice(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{["FCC","BCC","HCP","Diamond","Graphene"].map((x)=><option key={x}>{x}</option>)}</select></label>{[["Defect density",defectDensity,setDefectDensity],["Applied strain",strain,setStrain],["Temperature load",temperature,setTemperature]].map(([label,val,setter])=><label key={label} className="mt-4 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{val}%</span></div><input type="range" min="0" max="100" value={val} onChange={(ev)=>setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" /></label>)}<div className="mt-5 grid gap-2"><Button onClick={()=>{setSelected?.(material); setPage?.("explorer");}}>Open Material</Button><Button onClick={()=>setPage?.("reports")} variant="primary">Generate Crystal Report</Button></div></Panel><div className="space-y-5"><Panel className="border-cyan-300/15 bg-[#030914]"><div className="grid gap-6 xl:grid-cols-[1fr_320px]"><div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">atomic lattice visualizer</div><h2 className="mt-2 text-5xl font-black text-white">{e.name} · {lattice}</h2><p className="mt-2 text-sm text-slate-400">Coordination {info[0]} · {info[1]} · {info[2]}</p><div className="mt-6 grid grid-cols-6 gap-3 border border-cyan-300/10 bg-black/25 p-5">{cellNodes.map((i)=><div key={i} className={`h-10 border ${i % 5 === 0 ? "border-amber-300/40 bg-amber-300/10" : "border-cyan-300/25 bg-cyan-300/10"}`} style={{ transform: `translate(${(i%3-1)*strain/35}px, ${(i%4-1)*defectDensity/45}px)` }} />)}</div></div><div className="grid gap-3"><AdvancedLabDataTile label="Bond strength" value={bondStrength} unit="%" note="Cohesive lattice estimate."/><AdvancedLabDataTile label="Strain energy" value={strainEnergy} unit="%" note="Stored mechanical distortion." tone="amber"/><AdvancedLabDataTile label="Conductive path" value={conductivityPath} unit="%" note="Electron pathway signal." tone="emerald"/></div></div></Panel><div className="grid gap-5 xl:grid-cols-2"><AdvancedLabSection eyebrow="crystal diagnostics" title="Structural behaviour"><div className="grid gap-3"><AdvancedLabDataStrip label="Dislocation risk" value={dislocationRisk} note="Defect and strain-driven slip risk." tone="rose"/><AdvancedLabDataStrip label="Lattice integrity" value={100-dislocationRisk/2} note="Remaining structural coherence."/><AdvancedLabDataStrip label="Thermal lattice tolerance" value={Math.round(s.thermal*18 - temperature*.08)} note="Resistance to heat distortion." tone="emerald"/></div></AdvancedLabSection><AdvancedLabSection eyebrow="data available" title="Customer outputs"><div className="grid gap-3 md:grid-cols-2">{["Coordination number", "Defect map", "Strain energy", "Bond pathway", "Dislocation warning", "Crystal report"].map((x)=><div key={x} className="border border-white/10 bg-black/25 p-3 text-sm font-bold text-slate-300">✓ {x}</div>)}</div></AdvancedLabSection></div></div></div></div>;
+  const packingEfficiency = lattice === "FCC" || lattice === "HCP" ? 74 : lattice === "BCC" ? 68 : lattice === "Diamond" ? 34 : 82;
+  const latticeConfidence = Math.round(Math.max(35, Math.min(99, bondStrength * 0.45 + conductivityPath * 0.22 + packingEfficiency * 0.22 - dislocationRisk * 0.14)));
+  const nodeCount = lattice === "Graphene" ? 30 : lattice === "Diamond" ? 32 : 36;
+  const latticeNodes = Array.from({ length: nodeCount }, (_, i) => {
+    const cols = lattice === "Graphene" ? 6 : 6;
+    const row = Math.floor(i / cols);
+    const col = i % cols;
+    const stagger = lattice === "Graphene" && row % 2 ? 5 : 0;
+    const zShift = lattice === "Diamond" ? ((i % 4) - 1.5) * 3 : lattice === "HCP" ? (row % 2) * 4 : 0;
+    return {
+      id: i,
+      x: 12 + col * 15 + stagger,
+      y: 12 + row * 13 + zShift,
+      defect: i % Math.max(3, Math.round(14 - defectDensity / 10)) === 0,
+      hot: i % 7 === 0,
+    };
+  });
+  const latticeLines = latticeNodes.flatMap((node, idx) => {
+    const links = [];
+    const right = latticeNodes[idx + 1];
+    const lower = latticeNodes[idx + 6];
+    if (right && Math.floor(right.id / 6) === Math.floor(node.id / 6)) links.push([node, right]);
+    if (lower) links.push([node, lower]);
+    return links;
+  }).slice(0, lattice === "Graphene" ? 42 : 52);
+
+  const openMaterial = () => { setSelected?.(material); setPage?.("explorer"); };
+  const openReport = () => setPage?.("reports");
+
+  return (
+    <div className="space-y-6 pb-24">
+      <PageHero
+        eyebrow="Advanced Lab"
+        icon={Dna}
+        title={<>Crystal Structure <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Laboratory</span></>}
+        description="Inspect lattice systems, defect density, strain energy, dislocation risk, bond pathways and crystal-level material behaviour."
+      />
+
+      <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
+        <Panel className="xl:sticky xl:top-6 xl:self-start">
+          <Pill><Dna size={12}/> lattice control rail</Pill>
+
+          <label className="mt-5 block">
+            <span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span>
+            <select value={material} onChange={(ev) => setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">
+              {labElementOptions()}
+            </select>
+          </label>
+
+          <label className="mt-4 block">
+            <span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Lattice type</span>
+            <select value={lattice} onChange={(ev) => setLattice(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">
+              {Object.keys(latticeMap).map((x) => <option key={x}>{x}</option>)}
+            </select>
+          </label>
+
+          {[
+            ["Defect density", defectDensity, setDefectDensity, "%"],
+            ["Strain field", strain, setStrain, "%"],
+            ["Thermal load", temperature, setTemperature, "°C"],
+          ].map(([label, val, setter, unit]) => (
+            <label key={label} className="mt-5 block">
+              <div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500">
+                <span>{label}</span>
+                <span className="text-cyan-100">{val}{unit}</span>
+              </div>
+              <input type="range" min="0" max="100" value={val} onChange={(ev) => setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" />
+            </label>
+          ))}
+
+          <div className="mt-6 grid gap-3">
+            <Button onClick={openMaterial}>Open Material Profile</Button>
+            <Button onClick={openReport} variant="primary">Generate Crystal Report</Button>
+          </div>
+        </Panel>
+
+        <div className="space-y-6">
+          <Panel className="overflow-hidden border-cyan-300/15 bg-[#020814]">
+            <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_360px]">
+              <div>
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <div className="text-xs uppercase tracking-[.24em] text-cyan-200">atomic lattice visualizer</div>
+                    <h2 className="mt-2 text-5xl font-black text-white">{e.name} · {lattice}</h2>
+                    <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-300">
+                      {info[3]} model with coordination number {info[0]}, {info[1]} behaviour and {info[2]}.
+                    </p>
+                  </div>
+                  <div className="border border-cyan-300/20 bg-cyan-300/[.06] p-4 text-right">
+                    <div className="text-5xl font-black text-cyan-100">{latticeConfidence}%</div>
+                    <div className="text-xs uppercase tracking-[.2em] text-slate-500">lattice confidence</div>
+                  </div>
+                </div>
+
+                <div className="mt-7 overflow-hidden border border-cyan-300/15 bg-black/35 p-4 shadow-[0_0_70px_rgba(34,211,238,.08)]">
+                  <div className="relative min-h-[540px] overflow-hidden border border-white/10 bg-[linear-gradient(90deg,rgba(34,211,238,.08)_1px,transparent_1px),linear-gradient(rgba(34,211,238,.08)_1px,transparent_1px)] bg-[size:44px_44px]">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_25%,rgba(34,211,238,.18),transparent_28%),radial-gradient(circle_at_72%_72%,rgba(251,191,36,.12),transparent_32%)]" />
+                    <div className="absolute left-6 top-6 border border-cyan-300/20 bg-black/40 px-4 py-3 backdrop-blur">
+                      <div className="text-xs uppercase tracking-[.22em] text-slate-500">unit cell</div>
+                      <div className="mt-1 text-2xl font-black text-white">{lattice}</div>
+                    </div>
+                    <div className="absolute right-6 top-6 border border-white/10 bg-black/40 px-4 py-3 text-right backdrop-blur">
+                      <div className="text-xs uppercase tracking-[.22em] text-slate-500">symbol</div>
+                      <div className="mt-1 text-3xl font-black text-cyan-100">{e.symbol}</div>
+                    </div>
+
+                    <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full p-8">
+                      <defs>
+                        <filter id="crystalGlow" x="-50%" y="-50%" width="200%" height="200%">
+                          <feGaussianBlur stdDeviation="1.4" result="blur" />
+                          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                        </filter>
+                      </defs>
+                      {latticeLines.map(([a, b], idx) => (
+                        <line key={`bond-${idx}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={idx % 5 === 0 ? "rgba(251,191,36,.55)" : "rgba(34,211,238,.32)"} strokeWidth={idx % 5 === 0 ? "0.65" : "0.42"} />
+                      ))}
+                      {latticeNodes.map((node) => (
+                        <g key={node.id} filter={node.hot ? "url(#crystalGlow)" : undefined}>
+                          <circle cx={node.x} cy={node.y} r={node.defect ? 1.85 : 1.35} fill={node.defect ? "rgba(251,113,133,.95)" : node.hot ? "rgba(251,191,36,.95)" : "rgba(165,243,252,.92)"} />
+                          <circle cx={node.x} cy={node.y} r={node.defect ? 3.2 : 2.35} fill="none" stroke={node.defect ? "rgba(251,113,133,.42)" : "rgba(34,211,238,.18)"} strokeWidth="0.35" />
+                        </g>
+                      ))}
+                    </svg>
+
+                    <div className="absolute bottom-6 left-6 right-6 grid gap-3 md:grid-cols-4">
+                      {[["Bond strength", bondStrength], ["Strain energy", strainEnergy], ["Conductive path", conductivityPath], ["Dislocation risk", dislocationRisk]].map(([label, value]) => (
+                        <div key={label} className="border border-white/10 bg-black/55 p-3 backdrop-blur">
+                          <div className="flex items-center justify-between gap-3 text-xs font-black uppercase tracking-[.16em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{value}%</span></div>
+                          <div className="mt-2 h-2 bg-slate-950"><div className="h-full bg-cyan-300" style={{ width: `${value}%` }} /></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 content-start">
+                <AdvancedLabDataTile label="Coordination" value={info[0]} unit="" note="Nearest-neighbour bonding count." />
+                <AdvancedLabDataTile label="Packing" value={packingEfficiency} unit="%" note="Estimated packing efficiency." tone="emerald" />
+                <AdvancedLabDataTile label="Bond strength" value={bondStrength} unit="%" note="Cohesion and lattice strength." />
+                <AdvancedLabDataTile label="Dislocation risk" value={dislocationRisk} unit="%" note="Defect-driven slip risk." tone="rose" />
+              </div>
+            </div>
+          </Panel>
+
+          <div className="grid gap-5 xl:grid-cols-3">
+            <AdvancedLabSection eyebrow="crystal behaviour" title="Lattice interpretation">
+              <p className="text-sm leading-7 text-slate-300">
+                {e.name} is being inspected through a {lattice} lattice model. ElementOS estimates {bondStrength}% bond strength, {conductivityPath}% pathway continuity and {dislocationRisk}% dislocation risk under the selected defect and strain conditions.
+              </p>
+            </AdvancedLabSection>
+
+            <AdvancedLabSection eyebrow="defect diagnostics" title="Defect and strain response">
+              <div className="grid gap-3">
+                <AdvancedLabDataStrip label="Defect pressure" value={defectDensity} note="Vacancies, substitutions and imperfections." tone="rose" />
+                <AdvancedLabDataStrip label="Strain energy" value={strainEnergy} note="Stored deformation energy." tone="amber" />
+                <AdvancedLabDataStrip label="Conductive path" value={conductivityPath} note="Continuity through lattice pathways." tone="emerald" />
+              </div>
+            </AdvancedLabSection>
+
+            <AdvancedLabSection eyebrow="outputs" title="Crystal report actions">
+              <div className="grid gap-3">
+                {["Unit cell summary", "Bond pathway map", "Defect risk profile", "Strain response brief", "Crystal report"].map((x) => (
+                  <div key={x} className="border border-white/10 bg-black/25 p-3 text-sm font-bold text-slate-300">✓ {x}</div>
+                ))}
+              </div>
+            </AdvancedLabSection>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function FailureAnalysisLab({ selected = "Ti", setSelected, setPage, setForecastRequest }) {
