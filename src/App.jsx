@@ -11781,13 +11781,92 @@ function AdvancedLabDataStrip({ label, value, note, tone = "cyan" }) {
 
 function AdvancedLabSection({ eyebrow, title, children, action }) {
   return (
-    <Panel className="border-cyan-300/15 bg-[#040b15]/95">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <Panel className="relative overflow-hidden border-cyan-300/20 bg-[#030914]/95 shadow-[0_0_54px_rgba(34,211,238,.055)]">
+      <div className="pointer-events-none absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.045) 1px, transparent 1px)", backgroundSize: "42px 42px" }} />
+      <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
         <div><div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">{eyebrow}</div><h2 className="mt-2 text-3xl font-black text-white">{title}</h2></div>
         {action}
       </div>
-      <div className="mt-5">{children}</div>
+      <div className="relative z-10 mt-5">{children}</div>
     </Panel>
+  );
+}
+
+function SpectacularLabOverview({ kind = "discovery" }) {
+  const lab = {
+    discovery: {
+      icon: Sparkles,
+      title: "Discovery command surface",
+      body: "A decision-led scan that turns requirements into ranked materials, pairings, pathways, risks and report-ready recommendations.",
+      primary: "Candidate Intelligence",
+      signal: 96,
+      metrics: [["Ranking depth", "Top 10"], ["Pairing scan", "10 paths"], ["Report readiness", "Live"], ["Confidence", "92%"]],
+      pipeline: ["Mission", "Requirements", "Ranking", "Pairings", "Forecast", "Report"],
+      tags: ["Lightweight", "Heat", "Corrosion", "Pressure", "Manufacturing"],
+    },
+    extreme: {
+      icon: ShieldCheck,
+      title: "Survival simulation chamber",
+      body: "Models material response under extreme temperature, pressure, radiation, salinity, vacuum exposure and long-duration service stress.",
+      primary: "Survival Forecast",
+      signal: 91,
+      metrics: [["Stress channels", "6"], ["Failure horizon", "Projected"], ["Snapshots", "1–100y"], ["Risk model", "Active"]],
+      pipeline: ["Preset", "Stress", "Material", "Survival", "Failure", "Report"],
+      tags: ["Venus", "Mars", "Deep Ocean", "Jet Engine", "Reactor Core"],
+    },
+    crystal: {
+      icon: Dna,
+      title: "Atomic lattice observatory",
+      body: "Visualizes structure type, unit cells, atom positions, bond networks, defects, strain and property response in a single crystal workspace.",
+      primary: "Lattice Integrity",
+      signal: 89,
+      metrics: [["Cell modes", "5"], ["Defects", "Mapped"], ["Strain", "Live"], ["Bond field", "Active"]],
+      pipeline: ["Structure", "Unit Cell", "Atoms", "Defects", "Properties", "Report"],
+      tags: ["FCC", "BCC", "HCP", "Diamond", "Graphene"],
+    },
+    failure: {
+      icon: Activity,
+      title: "Root-cause investigation deck",
+      body: "Tracks failure mode, crack growth, corrosion drivers, thermal shock, fatigue probability, mitigations and remaining useful life.",
+      primary: "Failure Probability",
+      signal: 84,
+      metrics: [["Failure modes", "5"], ["Root cause", "Ranked"], ["Mitigation", "Generated"], ["Timeline", "Active"]],
+      pipeline: ["Mode", "Cause", "Damage", "Timeline", "Mitigation", "Report"],
+      tags: ["Fatigue", "Corrosion", "Thermal", "Pressure", "Impact"],
+    },
+    manufacturing: {
+      icon: Settings,
+      title: "Production readiness console",
+      body: "Evaluates manufacturing route, cost pressure, process yield, tolerance risk, automation fit, waste and production scale readiness.",
+      primary: "Manufacturability",
+      signal: 88,
+      metrics: [["Processes", "5"], ["Yield", "Predicted"], ["Cost", "Modelled"], ["Scale", "Forecast"]],
+      pipeline: ["Material", "Process", "Cost", "Yield", "Tolerance", "Report"],
+      tags: ["Casting", "Forging", "Machining", "Additive", "Welding"],
+    },
+  }[kind] || {};
+  const Icon = lab.icon || Sparkles;
+  return (
+    <div className="relative overflow-hidden border border-cyan-300/20 bg-[#020712] p-5 shadow-[0_0_70px_rgba(34,211,238,.075)]">
+      <div className="pointer-events-none absolute inset-0 opacity-60" style={{ backgroundImage: "radial-gradient(circle at 18% 10%, rgba(34,211,238,.18), transparent 24%), radial-gradient(circle at 82% 35%, rgba(251,191,36,.12), transparent 26%), linear-gradient(rgba(34,211,238,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.04) 1px, transparent 1px)", backgroundSize: "100% 100%, 100% 100%, 46px 46px, 46px 46px" }} />
+      <div className="relative z-10 grid gap-5 xl:grid-cols-[1.15fr_.85fr]">
+        <div>
+          <div className="flex items-center gap-3"><div className="grid h-12 w-12 place-items-center border border-cyan-300/30 bg-cyan-300/10 text-cyan-100"><Icon size={22}/></div><div><div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">spectacular lab layer</div><h2 className="mt-1 text-3xl font-black text-white">{lab.title}</h2></div></div>
+          <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">{lab.body}</p>
+          <div className="mt-5 grid gap-2 sm:grid-cols-6">
+            {(lab.pipeline || []).map((step, index) => <div key={step} className="border border-white/10 bg-black/30 p-3 text-center"><div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">{String(index + 1).padStart(2, "0")}</div><div className="mt-1 text-xs font-black text-cyan-100">{step}</div></div>)}
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">{(lab.tags || []).map((tag)=><span key={tag} className="border border-cyan-300/15 bg-cyan-300/[.055] px-3 py-2 text-xs font-black uppercase tracking-[.16em] text-cyan-100">{tag}</span>)}</div>
+        </div>
+        <div className="grid gap-3">
+          <div className="border border-cyan-300/20 bg-cyan-300/[.055] p-5">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">{lab.primary}</div>
+            <div className="mt-2 flex items-end justify-between gap-4"><div className="text-7xl font-black leading-none text-cyan-100">{lab.signal}%</div><div className="h-28 w-28 border border-cyan-300/20 bg-black/30 p-3"><div className="h-full w-full border border-cyan-300/25" style={{ background: `linear-gradient(to top, rgba(34,211,238,.55) ${lab.signal}%, rgba(15,23,42,.55) ${lab.signal}%)` }} /></div></div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">{(lab.metrics || []).map(([label,value]) => <div key={label} className="border border-white/10 bg-black/25 p-4"><div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">{label}</div><div className="mt-2 text-2xl font-black text-white">{value}</div></div>)}</div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -11844,6 +11923,7 @@ function MaterialsDiscoveryEngine({ setPage, setSelected, setCompare, setForecas
   return (
     <div className="space-y-6 pb-24">
       <PageHero eyebrow="Advanced Lab" icon={Sparkles} title={<>Materials Discovery <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Engine</span></>} description="Turn a real material requirement into ranked candidates, pairings, trade-offs, pathways, forecasts and report-ready recommendations." />
+      <SpectacularLabOverview kind="discovery" />
       <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
         <Panel className="border-cyan-300/15 bg-[#040b15]">
           <Pill><Search size={12}/> discovery mission</Pill>
@@ -11915,6 +11995,7 @@ function ExtremeEnvironmentLab({ selected = "Ti", setSelected, setPage, setForec
   return (
     <div className="space-y-6 pb-24">
       <PageHero eyebrow="Advanced Lab" icon={ShieldCheck} title={<>Extreme Environment <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Laboratory</span></>} description="A survival simulator for impossible conditions: heat, pressure, radiation, vacuum, salinity and long-duration service exposure." />
+      <SpectacularLabOverview kind="extreme" />
       <div className="grid gap-6 xl:grid-cols-[370px_1fr]">
         <Panel className="border-cyan-300/15 bg-[#040b15]"><Pill><Settings size={12}/> environment builder</Pill><label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span><select value={material} onChange={(ev)=>setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{labElementOptions()}</select></label><div className="mt-5 grid grid-cols-2 gap-2">{Object.keys(presets).map((x)=><button key={x} onClick={()=>applyPreset(x)} className={`border px-3 py-2 text-xs font-black uppercase tracking-[.12em] ${preset===x ? "border-cyan-300/40 bg-cyan-300/[.08] text-cyan-100" : "border-white/10 bg-black/25 text-slate-400"}`}>{x}</button>)}</div>{[["Temperature",temperature,setTemperature,1400,"°C"],["Pressure",pressure,setPressure,100,"%"],["Radiation",radiation,setRadiation,100,"%"],["Salinity",salinity,setSalinity,100,"%"],["Vacuum",vacuum,setVacuum,100,"%"],["Duration",duration,setDuration,100,"yrs"]].map(([label,val,setter,max,unit])=><label key={label} className="mt-4 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{val}{unit}</span></div><input type="range" min={label==="Temperature"?-220:0} max={max} value={val} onChange={(ev)=>setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" /></label>)}<div className="mt-5 grid gap-2"><Button onClick={sendForecast} variant="primary">Send to Time Machine</Button><Button onClick={()=>setPage?.("reports")}>Generate Survival Report</Button></div></Panel>
         <div className="space-y-5"><Panel className="border-cyan-300/15 bg-[#030914]"><div className="grid gap-5 xl:grid-cols-[1fr_280px]"><div><div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">survival chamber · {preset}</div><h2 className="mt-2 text-6xl font-black text-white">{e.name}</h2><p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">Projected survival under {temperature}°C, {pressure}% pressure, {radiation}% radiation, {salinity}% salinity and {duration} years of exposure.</p></div><div className="border border-cyan-300/20 bg-cyan-300/[.055] p-5 text-center"><div className="text-7xl font-black text-cyan-100">{survival}%</div><div className="mt-2 text-xs uppercase tracking-[.2em] text-slate-500">survival index</div></div></div><div className="mt-7 grid gap-4 md:grid-cols-5"><AdvancedLabDataTile label="Thermal" value={thermalStress} unit="%" note="Heat stress" tone="amber"/><AdvancedLabDataTile label="Pressure" value={pressureStress} unit="%" note="Compression load"/><AdvancedLabDataTile label="Radiation" value={radiationStress} unit="%" note="Exposure load" tone="rose"/><AdvancedLabDataTile label="Corrosion" value={corrosionStress} unit="%" note="Chemical attack" tone="amber"/><AdvancedLabDataTile label="Vacuum" value={vacuumStress} unit="%" note="Surface risk"/></div></Panel>
@@ -11983,6 +12064,7 @@ function CrystalStructureLab({ selected = "C", setSelected, setPage }) {
         title={<>Crystal Structure <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Laboratory</span></>}
         description="Inspect lattice systems, defect density, strain energy, dislocation risk, bond pathways and crystal-level material behaviour."
       />
+      <SpectacularLabOverview kind="crystal" />
 
       <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
         <Panel className="xl:sticky xl:top-6 xl:self-start">
@@ -12142,6 +12224,7 @@ function FailureAnalysisLab({ selected = "Ti", setSelected, setPage, setForecast
   const sendForecast = () => { setSelected?.(material); setForecastRequest?.({ material, years: Math.max(5, remainingLife), environment: `${mode} Failure`, source: "Failure Analysis Laboratory" }); setPage?.("timemachine"); };
   return (
     <div className="space-y-6 pb-24"><PageHero eyebrow="Advanced Lab" icon={Activity} title={<>Failure Analysis <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Laboratory</span></>} description="Investigate how a material fails, why it fails, when risk accelerates and what can be done to reduce the failure pathway." />
+    <SpectacularLabOverview kind="failure" />
       <div className="grid gap-6 xl:grid-cols-[360px_1fr]"><Panel className="border-cyan-300/15 bg-[#040b15]"><Pill><Activity size={12}/> failure setup</Pill><label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span><select value={material} onChange={(ev)=>setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{labElementOptions()}</select></label><div className="mt-5 grid grid-cols-2 gap-2">{modes.map((x)=><button key={x} onClick={()=>setMode(x)} className={`border px-3 py-2 text-xs font-black uppercase tracking-[.12em] ${mode===x ? "border-cyan-300/40 bg-cyan-300/[.08] text-cyan-100" : "border-white/10 bg-black/25 text-slate-400"}`}>{x}</button>)}</div>{[["Load intensity",load,setLoad],["Cycle exposure",cycles,setCycles],["Corrosion exposure",corrosion,setCorrosion],["Thermal swing",temperature,setTemperature],["Initial defect",defect,setDefect]].map(([label,val,setter])=><label key={label} className="mt-4 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{val}%</span></div><input type="range" min="0" max="100" value={val} onChange={(ev)=>setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" /></label>)}</Panel>
       <div className="space-y-5"><Panel className="border-cyan-300/15 bg-[#030914]"><div className="flex flex-wrap justify-between gap-4"><div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">root cause analysis · {mode}</div><h2 className="mt-2 text-5xl font-black text-white">{e.name} failure model</h2><p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">Primary cause: <b className="text-white">{rootCause}</b>. ElementOS estimates remaining service life at {remainingLife}% with mitigation potential of {mitigationScore}%.</p></div><div className="text-right"><div className="text-7xl font-black text-rose-100">{fractureRisk}%</div><div className="text-xs uppercase tracking-[.2em] text-slate-500">failure risk</div></div></div><div className="mt-7 grid gap-4 md:grid-cols-5"><AdvancedLabDataTile label="Initiation" value={crackInitiation} unit="%" note="First weakness." tone="amber"/><AdvancedLabDataTile label="Growth" value={crackGrowth} unit="%" note="Propagation." tone="rose"/><AdvancedLabDataTile label="Thermal shock" value={thermalShock} unit="%" note="Cycle impact."/><AdvancedLabDataTile label="Remaining life" value={remainingLife} unit="%" note="Service margin." tone="emerald"/><AdvancedLabDataTile label="Mitigation" value={mitigationScore} unit="%" note="Recovery potential."/></div></Panel>
       <div className="grid gap-5 xl:grid-cols-[1fr_380px]"><AdvancedLabSection eyebrow="failure timeline" title="Failure pathway"><div className="space-y-3">{timeline.map(([stage,note,val], i)=><div key={stage} className="border border-white/10 bg-black/25 p-4"><div className="flex justify-between"><b className="text-white">{stage}</b><span className="text-cyan-100">Stage {i+1}</span></div><div className="mt-1 text-xs text-slate-500">{note}</div><div className="mt-3 h-2 bg-slate-950"><div className="h-full bg-cyan-300" style={{width:`${Math.max(4,Math.min(100,val))}%`}} /></div></div>)}</div></AdvancedLabSection><AdvancedLabSection eyebrow="damage heatmap" title="Critical zones"><div className="grid grid-cols-5 gap-2">{Array.from({length:25}).map((_,i)=>{const val=(fractureRisk+i*7+defect*2)%100;return <div key={i} className="h-12 border border-white/10" style={{background:`rgba(${Math.round(80+val)}, ${Math.round(30+val/3)}, ${Math.round(60+val/4)}, ${0.18+val/160})`}} />})}</div></AdvancedLabSection></div>
@@ -12168,6 +12251,7 @@ function ManufacturingLab({ selected = "Al", setSelected, setCompare, setPage })
   const toleranceRisk = Math.round(Math.max(8, Math.min(98, precision * 0.42 + complexity * 0.35 - manufacturability * 0.14)));
   const carbonIndex = Math.round(Math.max(5, Math.min(95, waste * 0.35 + costIndex * 0.18 + (process === "Heat Treatment" ? 18 : 0) + (process === "Additive Manufacturing" ? -8 : 4))));
   return <div className="space-y-6 pb-24"><PageHero eyebrow="Advanced Lab" icon={Settings} title={<>Manufacturing <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Laboratory</span></>} description="Evaluate process fit, manufacturability, cost pressure, waste, throughput, tolerance risk and production-readiness for selected materials." />
+  <SpectacularLabOverview kind="manufacturing" />
   <div className="grid gap-6 xl:grid-cols-[360px_1fr]"><Panel><Pill><BriefcaseBusiness size={12}/> process setup</Pill><label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span><select value={material} onChange={(ev)=>setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{labElementOptions()}</select></label><label className="mt-4 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Process</span><select value={process} onChange={(ev)=>setProcess(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{processes.map((x)=><option key={x}>{x}</option>)}</select></label>{[["Tolerance precision",precision,setPrecision],["Production volume",volume,setVolume],["Part complexity",complexity,setComplexity],["Automation level",automation,setAutomation]].map(([label,val,setter])=><label key={label} className="mt-4 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{val}%</span></div><input type="range" min="0" max="100" value={val} onChange={(ev)=>setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" /></label>)}</Panel><div className="space-y-5"><Panel className="border-cyan-300/15 bg-[#040b15]"><div className="flex flex-wrap justify-between gap-4"><div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">production readiness</div><h2 className="mt-2 text-5xl font-black text-white">{e.name} · {process}</h2><p className="mt-2 text-sm leading-6 text-slate-400">Process model with precision, volume, complexity and automation weighting.</p></div><div className="text-right"><div className="text-6xl font-black text-cyan-100">{manufacturability}%</div><div className="text-xs uppercase tracking-[.2em] text-slate-500">manufacturable</div></div></div><div className="mt-7 grid gap-4 md:grid-cols-3 xl:grid-cols-6"><AdvancedLabDataTile label="Cost" value={costIndex} unit="%" note="Cost pressure." tone="amber"/><AdvancedLabDataTile label="Waste" value={waste} unit="%" note="Scrap/rework." tone="rose"/><AdvancedLabDataTile label="Throughput" value={throughput} unit="%" note="Production speed." tone="emerald"/><AdvancedLabDataTile label="Tolerance risk" value={toleranceRisk} unit="%" note="Spec difficulty."/><AdvancedLabDataTile label="Carbon index" value={carbonIndex} unit="%" note="Energy/waste burden." tone="amber"/><AdvancedLabDataTile label="Automation fit" value={automation} unit="%" note="Line readiness."/></div><div className="mt-7 border border-cyan-300/10 bg-black/25 p-5"><div className="text-xs uppercase tracking-[.22em] text-cyan-200">recommended manufacturing note</div><p className="mt-2 text-sm leading-7 text-slate-300">ElementOS estimates {e.name} is {manufacturability > 75 ? "a strong" : manufacturability > 55 ? "a moderate" : "a difficult"} candidate for {process.toLowerCase()} under the selected constraints. Cost pressure is {costIndex}%, waste risk is {waste}% and throughput is {throughput}%.</p></div></Panel><div className="grid gap-5 xl:grid-cols-2"><AdvancedLabSection eyebrow="process plan" title="Production route"><div className="space-y-3">{["Material intake and certification", "Process parameter window", "Prototype validation", "Tolerance inspection", "Production readiness review"].map((x,i)=><div key={x} className="border border-white/10 bg-black/25 p-4"><div className="flex justify-between"><b className="text-white">{x}</b><span className="text-cyan-100">Step {i+1}</span></div><div className="mt-2 h-2 bg-slate-950"><div className="h-full bg-cyan-300" style={{width:`${Math.max(18,manufacturability-i*8)}%`}} /></div></div>)}</div></AdvancedLabSection><AdvancedLabSection eyebrow="actions" title="Commercial outputs"><div className="grid gap-3"><Button onClick={()=>{setSelected?.(material); setPage?.("explorer");}}>Open Material</Button><Button onClick={()=>{setCompare?.([material,"Al","Ti","Fe"]); setPage?.("compare");}}>Compare Production Set</Button><Button onClick={()=>setPage?.("reports")} variant="primary">Generate Manufacturing Report</Button></div></AdvancedLabSection></div></div></div></div>;
 }
 
