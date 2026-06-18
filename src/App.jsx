@@ -11851,7 +11851,7 @@ function SpectacularLabOverview({ kind = "discovery" }) {
       <div className="pointer-events-none absolute inset-0 opacity-60" style={{ backgroundImage: "radial-gradient(circle at 18% 10%, rgba(34,211,238,.18), transparent 24%), radial-gradient(circle at 82% 35%, rgba(251,191,36,.12), transparent 26%), linear-gradient(rgba(34,211,238,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.04) 1px, transparent 1px)", backgroundSize: "100% 100%, 100% 100%, 46px 46px, 46px 46px" }} />
       <div className="relative z-10 grid gap-5 xl:grid-cols-[1.15fr_.85fr]">
         <div>
-          <div className="flex items-center gap-3"><div className="grid h-12 w-12 place-items-center border border-cyan-300/30 bg-cyan-300/10 text-cyan-100"><Icon size={22}/></div><div><div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">spectacular lab command layer</div><h2 className="mt-1 text-3xl font-black text-white">{lab.title}</h2></div></div>
+          <div className="flex items-center gap-3"><div className="grid h-12 w-12 place-items-center border border-cyan-300/30 bg-cyan-300/10 text-cyan-100"><Icon size={22}/></div><div><div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">spectacular lab layer</div><h2 className="mt-1 text-3xl font-black text-white">{lab.title}</h2></div></div>
           <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300">{lab.body}</p>
           <div className="mt-5 grid gap-2 sm:grid-cols-6">
             {(lab.pipeline || []).map((step, index) => <div key={step} className="border border-white/10 bg-black/30 p-3 text-center"><div className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">{String(index + 1).padStart(2, "0")}</div><div className="mt-1 text-xs font-black text-cyan-100">{step}</div></div>)}
@@ -11870,79 +11870,6 @@ function SpectacularLabOverview({ kind = "discovery" }) {
   );
 }
 
-
-
-function LabCinematicStage({ kind = "discovery", subject = "Selected Material", scoreValue = 88 }) {
-  const scoreNum = Math.max(1, Math.min(99, Number(scoreValue) || 88));
-  const theme = {
-    discovery: { label: "DISCOVERY SCAN", pulse: "Candidate beams", left: "Requirements", right: "Rankings", nodes: ["Mission", "Weights", "Top 10", "Pairings", "Report"] },
-    extreme: { label: "SURVIVAL CHAMBER", pulse: "Stress waves", left: "Environment", right: "Failure horizon", nodes: ["Heat", "Pressure", "Radiation", "Vacuum", "Survival"] },
-    crystal: { label: "CRYSTAL FIELD", pulse: "Lattice trace", left: "Unit cell", right: "Bond response", nodes: ["FCC", "BCC", "HCP", "Defects", "Strain"] },
-    failure: { label: "FAILURE RECONSTRUCTION", pulse: "Crack propagation", left: "Cause tree", right: "Mitigation", nodes: ["Load", "Crack", "Growth", "Risk", "Repair"] },
-    manufacturing: { label: "PRODUCTION LINE", pulse: "Process telemetry", left: "Route", right: "Scale-up", nodes: ["Material", "Process", "Yield", "Cost", "Output"] },
-  }[kind] || {};
-  const particles = Array.from({ length: 16 }, (_, index) => index);
-  const lanes = theme.nodes || [];
-  return (
-    <div className="relative mt-5 overflow-hidden border border-cyan-300/20 bg-black/35 p-5 shadow-[inset_0_0_80px_rgba(34,211,238,.06)]">
-      <div className="pointer-events-none absolute inset-0 opacity-70" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.045) 1px, transparent 1px), radial-gradient(circle at 50% 50%, rgba(34,211,238,.22), transparent 34%)", backgroundSize: "34px 34px, 34px 34px, 100% 100%" }} />
-      <div className="relative z-10 flex items-center justify-between gap-4 border-b border-white/10 pb-3">
-        <div>
-          <div className="text-[10px] font-black uppercase tracking-[.28em] text-cyan-200">{theme.label}</div>
-          <div className="mt-1 text-sm font-black text-white">{subject} · {theme.pulse}</div>
-        </div>
-        <div className="text-right">
-          <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">live intensity</div>
-          <div className="text-2xl font-black text-cyan-100">{scoreNum}%</div>
-        </div>
-      </div>
-      <div className="relative z-10 mt-5 grid min-h-[230px] gap-4 lg:grid-cols-[.8fr_1.4fr_.8fr]">
-        <div className="grid content-between gap-3 border border-white/10 bg-slate-950/70 p-4">
-          <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">input rail</div>
-          <div className="text-2xl font-black text-white">{theme.left}</div>
-          <div className="h-2 bg-slate-900"><div className="h-full bg-cyan-300" style={{ width: `${Math.max(18, scoreNum - 14)}%` }} /></div>
-          <div className="text-xs leading-5 text-slate-400">Source signals enter the lab chamber and are normalised into a report-ready simulation state.</div>
-        </div>
-        <div className="relative overflow-hidden border border-cyan-300/20 bg-[#030816] p-4">
-          <div className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 border border-cyan-300/25 bg-cyan-300/[.035]" />
-          <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 border border-amber-200/20" />
-          <div className="absolute left-8 right-8 top-1/2 h-px bg-cyan-300/25" />
-          <div className="absolute bottom-8 top-8 left-1/2 w-px bg-cyan-300/25" />
-          {particles.map((index) => {
-            const angle = (index / particles.length) * Math.PI * 2;
-            const radius = 42 + (index % 4) * 24;
-            const x = 50 + Math.cos(angle) * radius / 2.6;
-            const y = 50 + Math.sin(angle) * radius / 2.6;
-            return <span key={index} className="absolute h-1.5 w-1.5 bg-cyan-200 shadow-[0_0_18px_rgba(103,232,249,.8)]" style={{ left: `${x}%`, top: `${y}%`, opacity: 0.35 + (index % 5) * 0.12 }} />;
-          })}
-          <div className="relative z-10 grid h-full place-items-center text-center">
-            <div>
-              <div className="mx-auto grid h-24 w-24 place-items-center border border-cyan-300/30 bg-black/55 shadow-[0_0_45px_rgba(34,211,238,.2)]">
-                <div className="text-4xl font-black text-cyan-100">{scoreNum}</div>
-              </div>
-              <div className="mt-3 text-[10px] font-black uppercase tracking-[.24em] text-slate-400">cinematic run core</div>
-              <div className="mt-1 text-sm font-black text-white">Live lab state · ready for report generation</div>
-            </div>
-          </div>
-        </div>
-        <div className="grid content-between gap-3 border border-white/10 bg-slate-950/70 p-4">
-          <div className="text-[10px] font-black uppercase tracking-[.22em] text-slate-500">output rail</div>
-          <div className="text-2xl font-black text-white">{theme.right}</div>
-          <div className="h-2 bg-slate-900"><div className="h-full bg-amber-200" style={{ width: `${Math.max(18, scoreNum - 6)}%` }} /></div>
-          <div className="text-xs leading-5 text-slate-400">The lab resolves the strongest signal into a decision, action and export pathway.</div>
-        </div>
-      </div>
-      <div className="relative z-10 mt-4 grid gap-2 md:grid-cols-5">
-        {lanes.map((lane, index) => (
-          <div key={lane} className="border border-white/10 bg-black/30 p-3">
-            <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">node {index + 1}</div>
-            <div className="mt-1 text-xs font-black text-cyan-100">{lane}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function CinematicLabDataSuite({ kind = "discovery", subject = "Selected Material", scoreValue = 88, onReport, onForecast, onCompare }) {
   const config = {
@@ -11991,10 +11918,9 @@ function CinematicLabDataSuite({ kind = "discovery", subject = "Selected Materia
       <div className="pointer-events-none absolute inset-0 opacity-55" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.045) 1px, transparent 1px), radial-gradient(circle at 16% 20%, rgba(34,211,238,.17), transparent 25%), radial-gradient(circle at 84% 18%, rgba(251,191,36,.12), transparent 24%)", backgroundSize: "42px 42px, 42px 42px, 100% 100%, 100% 100%" }} />
       <div className="relative z-10 grid gap-5 xl:grid-cols-[1.15fr_.85fr]">
         <div>
-          <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">cinematic data command suite</div>
+          <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">cinematic data suite</div>
           <h3 className="mt-2 text-3xl font-black text-white">{config.title}</h3>
           <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-300">{config.subtitle}</p>
-          <LabCinematicStage kind={kind} subject={subject} scoreValue={scoreNum} />
           <div className="mt-5 grid gap-2 md:grid-cols-3 xl:grid-cols-6">
             {stages.map((stage, index) => (
               <div key={stage} className="border border-white/10 bg-black/30 p-3">
@@ -12245,7 +12171,7 @@ function CrystalStructureLab({ selected = "C", setSelected, setPage }) {
         description="Inspect lattice systems, defect density, strain energy, dislocation risk, bond pathways and crystal-level material behaviour."
       />
       <SpectacularLabOverview kind="crystal" />
-      <CinematicLabDataSuite kind="crystal" subject={`${e.name} ${lattice}`} scoreValue={latticeConfidence} onCompare={() => setPage?.("compare")} onForecast={() => setPage?.("timemachine")} onReport={() => setPage?.("reports")} />
+      <CinematicLabDataSuite kind="crystal" subject={structure} scoreValue={latticeIntegrity} onCompare={() => setPage?.("compare")} onForecast={() => setPage?.("timemachine")} onReport={() => setPage?.("reports")} />
 
       <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
         <Panel className="xl:sticky xl:top-6 xl:self-start">
@@ -12406,7 +12332,7 @@ function FailureAnalysisLab({ selected = "Ti", setSelected, setPage, setForecast
   return (
     <div className="space-y-6 pb-24"><PageHero eyebrow="Advanced Lab" icon={Activity} title={<>Failure Analysis <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Laboratory</span></>} description="Investigate how a material fails, why it fails, when risk accelerates and what can be done to reduce the failure pathway." />
     <SpectacularLabOverview kind="failure" />
-  <CinematicLabDataSuite kind="failure" subject={e.name} scoreValue={fractureRisk} onCompare={() => setPage?.("compare")} onForecast={() => { setForecastRequest?.({ material, years: Math.max(5, remainingLife), environment: mode, source: "Failure Analysis Laboratory" }); setPage?.("timemachine"); }} onReport={() => setPage?.("reports")} />
+  <CinematicLabDataSuite kind="failure" subject={e.name} scoreValue={risk} onCompare={() => setPage?.("compare")} onForecast={() => { setForecastRequest?.({ material, years: duration, environment: mode, source: "Failure Analysis Laboratory" }); setPage?.("timemachine"); }} onReport={() => setPage?.("reports")} />
       <div className="grid gap-6 xl:grid-cols-[360px_1fr]"><Panel className="border-cyan-300/15 bg-[#040b15]"><Pill><Activity size={12}/> failure setup</Pill><label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material</span><select value={material} onChange={(ev)=>setMaterial(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">{labElementOptions()}</select></label><div className="mt-5 grid grid-cols-2 gap-2">{modes.map((x)=><button key={x} onClick={()=>setMode(x)} className={`border px-3 py-2 text-xs font-black uppercase tracking-[.12em] ${mode===x ? "border-cyan-300/40 bg-cyan-300/[.08] text-cyan-100" : "border-white/10 bg-black/25 text-slate-400"}`}>{x}</button>)}</div>{[["Load intensity",load,setLoad],["Cycle exposure",cycles,setCycles],["Corrosion exposure",corrosion,setCorrosion],["Thermal swing",temperature,setTemperature],["Initial defect",defect,setDefect]].map(([label,val,setter])=><label key={label} className="mt-4 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>{label}</span><span className="text-cyan-100">{val}%</span></div><input type="range" min="0" max="100" value={val} onChange={(ev)=>setter(Number(ev.target.value))} className="mt-3 w-full accent-cyan-300" /></label>)}</Panel>
       <div className="space-y-5"><Panel className="border-cyan-300/15 bg-[#030914]"><div className="flex flex-wrap justify-between gap-4"><div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">root cause analysis · {mode}</div><h2 className="mt-2 text-5xl font-black text-white">{e.name} failure model</h2><p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">Primary cause: <b className="text-white">{rootCause}</b>. ElementOS estimates remaining service life at {remainingLife}% with mitigation potential of {mitigationScore}%.</p></div><div className="text-right"><div className="text-7xl font-black text-rose-100">{fractureRisk}%</div><div className="text-xs uppercase tracking-[.2em] text-slate-500">failure risk</div></div></div><div className="mt-7 grid gap-4 md:grid-cols-5"><AdvancedLabDataTile label="Initiation" value={crackInitiation} unit="%" note="First weakness." tone="amber"/><AdvancedLabDataTile label="Growth" value={crackGrowth} unit="%" note="Propagation." tone="rose"/><AdvancedLabDataTile label="Thermal shock" value={thermalShock} unit="%" note="Cycle impact."/><AdvancedLabDataTile label="Remaining life" value={remainingLife} unit="%" note="Service margin." tone="emerald"/><AdvancedLabDataTile label="Mitigation" value={mitigationScore} unit="%" note="Recovery potential."/></div></Panel>
       <div className="grid gap-5 xl:grid-cols-[1fr_380px]"><AdvancedLabSection eyebrow="failure timeline" title="Failure pathway"><div className="space-y-3">{timeline.map(([stage,note,val], i)=><div key={stage} className="border border-white/10 bg-black/25 p-4"><div className="flex justify-between"><b className="text-white">{stage}</b><span className="text-cyan-100">Stage {i+1}</span></div><div className="mt-1 text-xs text-slate-500">{note}</div><div className="mt-3 h-2 bg-slate-950"><div className="h-full bg-cyan-300" style={{width:`${Math.max(4,Math.min(100,val))}%`}} /></div></div>)}</div></AdvancedLabSection><AdvancedLabSection eyebrow="damage heatmap" title="Critical zones"><div className="grid grid-cols-5 gap-2">{Array.from({length:25}).map((_,i)=>{const val=(fractureRisk+i*7+defect*2)%100;return <div key={i} className="h-12 border border-white/10" style={{background:`rgba(${Math.round(80+val)}, ${Math.round(30+val/3)}, ${Math.round(60+val/4)}, ${0.18+val/160})`}} />})}</div></AdvancedLabSection></div>
