@@ -12245,7 +12245,7 @@ function CrystalStructureLab({ selected = "C", setSelected, setPage }) {
         description="Inspect lattice systems, defect density, strain energy, dislocation risk, bond pathways and crystal-level material behaviour."
       />
       <SpectacularLabOverview kind="crystal" />
-      <CinematicLabDataSuite kind="crystal" subject={structure} scoreValue={latticeIntegrity} onCompare={() => setPage?.("compare")} onForecast={() => setPage?.("timemachine")} onReport={() => setPage?.("reports")} />
+      <CinematicLabDataSuite kind="crystal" subject={`${e.name} ${lattice}`} scoreValue={latticeConfidence} onCompare={() => setPage?.("compare")} onForecast={() => setPage?.("timemachine")} onReport={() => setPage?.("reports")} />
 
       <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
         <Panel className="xl:sticky xl:top-6 xl:self-start">
