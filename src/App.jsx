@@ -11797,65 +11797,294 @@ function MaterialsDiscoveryEngine({ setPage, setSelected, setCompare, setForecas
   const [environment, setEnvironment] = useState("Marine");
   const [constraint, setConstraint] = useState("Performance");
   const [budgetSensitivity, setBudgetSensitivity] = useState(42);
-  const lower = `${need} ${priority} ${environment} ${constraint}`.toLowerCase();
-  const weights = {
-    stability: /marine|medical|deep ocean|ocean|corrosion/.test(lower) ? 1.25 : 1,
-    thermal: /heat|turbine|aerospace|space|reentry|engine/.test(lower) ? 1.35 : 1,
-    pressure: /deep|ocean|mining|pressure|load|structural/.test(lower) ? 1.35 : 1,
-    diffusion: /corrosion|salt|marine|boundary|seal/.test(lower) ? 1.25 : 1,
-    conductivity: /electric|battery|power|conductor|circuit/.test(lower) ? 1.45 : 0.85,
-    rarityPenalty: priority === "cost" || constraint === "Cost" ? 1.4 : 0.65,
+  const [scanRunning, setScanRunning] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState("Ti");
+  const [requirements, setRequirements] = useState({
+    lightweight: true,
+    heat: true,
+    corrosion: true,
+    pressure: false,
+    conductive: false,
+    radiation: false,
+    lowCost: false,
+    manufacturable: true,
+    biocompatible: false,
+    strength: true,
+  });
+
+  const requirementLabels = [
+    ["lightweight", "Lightweight", "Prioritises lower atomic mass and structure efficiency."],
+    ["heat", "Heat resistant", "Prioritises thermal endurance and high-temperature behaviour."],
+    ["corrosion", "Corrosion resistant", "Prioritises diffusion resistance and long-service exposure."],
+    ["pressure", "High pressure", "Prioritises pressure response and structural loading."],
+    ["conductive", "Conductive", "Prioritises electrical pathway behaviour."],
+    ["radiation", "Radiation resistant", "Prioritises high-Z shielding and nuclear exposure tolerance."],
+    ["lowCost", "Low cost", "Penalises rarity and difficult sourcing."],
+    ["manufacturable", "Easy to manufacture", "Prioritises process feasibility and lower complexity."],
+    ["biocompatible", "Biocompatible", "Boosts materials used in medical and body-safe contexts."],
+    ["strength", "High strength", "Prioritises stability, pressure and structural resilience."],
+  ];
+
+  const toggleRequirement = (id) => {
+    setRequirements((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const selectedRequirements = requirementLabels.filter(([id]) => requirements[id]);
+  const lower = `${need} ${priority} ${environment} ${constraint} ${selectedRequirements.map(([, label]) => label).join(" ")}`.toLowerCase();
+  const activeCount = Math.max(1, selectedRequirements.length);
+
+  const weights = {
+    stability: (requirements.strength ? 1.24 : 1) * (/medical|reliability|long|service/.test(lower) ? 1.18 : 1),
+    thermal: (requirements.heat ? 1.42 : 1) * (/heat|turbine|aerospace|space|engine|reentry/.test(lower) ? 1.28 : 1),
+    pressure: (requirements.pressure || requirements.strength ? 1.32 : 1) * (/deep|ocean|mining|pressure|load|structural/.test(lower) ? 1.26 : 1),
+    diffusion: (requirements.corrosion ? 1.38 : 1) * (/corrosion|salt|marine|boundary|seal/.test(lower) ? 1.24 : 1),
+    conductivity: requirements.conductive || /electric|battery|power|conductor|circuit/.test(lower) ? 1.55 : 0.82,
+    rarityPenalty: requirements.lowCost || priority === "cost" || constraint === "Cost" ? 1.55 : 0.68,
+  };
+
+  const categoryBoost = (e) => {
+    let boost = 0;
+    if (requirements.biocompatible && ["Ti", "Zr", "Ta", "Nb", "C", "Au"].includes(e.symbol)) boost += 22;
+    if (requirements.conductive && ["Cu", "Ag", "Au", "Al"].includes(e.symbol)) boost += 24;
+    if (requirements.radiation && ["W", "Pb", "Ta", "Hf", "U", "B"].includes(e.symbol)) boost += 18;
+    if (requirements.heat && ["Hf", "W", "Ta", "Ti", "Zr", "Mo"].includes(e.symbol)) boost += 18;
+    if (requirements.corrosion && ["Ti", "Zr", "Hf", "Ta", "Ni", "Cr"].includes(e.symbol)) boost += 16;
+    if (/marine|deep ocean|ocean/.test(lower) && ["Ti", "Zr", "Ni", "Cr", "Al"].includes(e.symbol)) boost += 14;
+    if (/aerospace|vehicle|light/.test(lower) && ["Al", "Ti", "Mg", "Be", "C"].includes(e.symbol)) boost += 16;
+    return boost;
+  };
+
   const ranked = elements.map((e) => {
     const s = score(e.symbol);
-    let total = s.stability * 18 * weights.stability + s.thermal * 16 * weights.thermal + s.pressure * 14 * weights.pressure + s.diffusion * 12 * weights.diffusion + s.conductivity * 10 * weights.conductivity;
-    if (/light|weight|aero|vehicle|drone/.test(lower)) total += Math.max(0, 48 - e.atomicNumber * 0.34);
-    if (/radiation|nuclear|shield|reactor/.test(lower)) total += Math.min(42, e.atomicNumber * 0.34);
-    if (/medical|implant|bio/.test(lower) && ["Ti", "Zr", "Ta", "Nb", "C"].includes(e.symbol)) total += 18;
-    if (/conduct|electric|power/.test(lower) && ["Cu", "Ag", "Au", "Al"].includes(e.symbol)) total += 20;
+    let total =
+      s.stability * 18 * weights.stability +
+      s.thermal * 16 * weights.thermal +
+      s.pressure * 14 * weights.pressure +
+      s.diffusion * 12 * weights.diffusion +
+      s.conductivity * 10 * weights.conductivity +
+      categoryBoost(e);
+
+    if (requirements.lightweight || /light|weight|aero|vehicle|drone/.test(lower)) total += Math.max(0, 52 - e.atomicNumber * 0.38);
+    if (requirements.radiation || /radiation|nuclear|shield|reactor/.test(lower)) total += Math.min(44, e.atomicNumber * 0.34);
+    if (requirements.manufacturable) total += e.category.includes("metal") ? 8 : -4;
     total -= (s.rarity * 3.5 + budgetSensitivity / 10) * weights.rarityPenalty;
     if (priority === "performance") total += s.thermal * 7 + s.pressure * 5;
     if (priority === "reliability") total += s.stability * 9 + s.diffusion * 5;
-    const suitability = Math.round(Math.max(22, Math.min(99, total / 5.25)));
+
+    const suitability = Math.round(Math.max(18, Math.min(99, total / 5.15)));
     const costRisk = Math.round(Math.max(8, Math.min(96, s.rarity * 15 + e.atomicNumber * 0.18 + budgetSensitivity * 0.35)));
-    const manufacturability = Math.round(Math.max(18, Math.min(97, 86 - s.rarity * 8 + (e.category.includes("metal") ? 8 : 0) - e.atomicNumber * 0.08)));
-    const confidence = Math.round(Math.max(55, Math.min(99, suitability * 0.72 + manufacturability * 0.18 + (100 - costRisk) * 0.1)));
-    return { ...e, suitability, metrics: s, costRisk, manufacturability, confidence };
-  }).sort((a, b) => b.suitability - a.suitability).slice(0, 10);
+    const manufacturability = Math.round(Math.max(18, Math.min(97, 88 - s.rarity * 8 + (e.category.includes("metal") ? 8 : 0) - e.atomicNumber * 0.08 + (requirements.manufacturable ? 6 : 0))));
+    const longTerm = Math.round(Math.max(25, Math.min(99, s.stability * 13 + s.diffusion * 10 + s.pressure * 7 + (environment === "Marine" ? s.diffusion * 5 : 0))));
+    const discoveryPotential = Math.round(Math.max(30, Math.min(99, suitability * 0.62 + compatibilityScore(e.symbol, "Ti") * 0.18 + longTerm * 0.2)));
+    const confidence = Math.round(Math.max(55, Math.min(99, suitability * 0.62 + manufacturability * 0.16 + longTerm * 0.14 + (100 - costRisk) * 0.08)));
+    const requirementHits = selectedRequirements.filter(([id]) => {
+      if (id === "lightweight") return e.atomicNumber < 50 || ["Ti", "Al", "Mg", "C", "Be"].includes(e.symbol);
+      if (id === "heat") return s.thermal >= 3.4 || ["Hf", "W", "Ta", "Mo"].includes(e.symbol);
+      if (id === "corrosion") return s.diffusion >= 3.1 || ["Ti", "Zr", "Ni", "Cr", "Ta"].includes(e.symbol);
+      if (id === "pressure") return s.pressure >= 3.3;
+      if (id === "conductive") return s.conductivity >= 3.6 || ["Cu", "Ag", "Au", "Al"].includes(e.symbol);
+      if (id === "radiation") return e.atomicNumber > 70 || ["B", "W", "Pb", "Ta"].includes(e.symbol);
+      if (id === "lowCost") return costRisk < 62;
+      if (id === "manufacturable") return manufacturability > 58;
+      if (id === "biocompatible") return ["Ti", "Zr", "Ta", "Nb", "C", "Au"].includes(e.symbol);
+      if (id === "strength") return s.stability >= 3.2 && s.pressure >= 3;
+      return false;
+    }).length;
+    return { ...e, suitability, metrics: s, costRisk, manufacturability, longTerm, discoveryPotential, confidence, requirementHits };
+  }).sort((a, b) => b.suitability - a.suitability).slice(0, 12);
+
   const top = ranked[0] || elementMap.Ti;
-  const pairings = ranked.slice(1, 6).map((e) => ({ ...e, compatibility: compatibilityScore(top.symbol, e.symbol) })).sort((a, b) => b.compatibility - a.compatibility);
-  const failureModes = [
-    top.costRisk > 70 ? "High acquisition cost" : "Manageable procurement pressure",
-    top.metrics.thermal < 3 ? "Thermal margin needs validation" : "Thermal behaviour is favourable",
-    top.metrics.diffusion < 3 ? "Boundary diffusion risk requires mitigation" : "Boundary stability is acceptable",
-    top.manufacturability < 55 ? "Manufacturing complexity may increase lead time" : "Manufacturing path appears feasible",
+  const selected = ranked.find((e) => e.symbol === selectedCandidate) || top;
+  const pairings = ranked
+    .filter((e) => e.symbol !== selected.symbol)
+    .slice(0, 7)
+    .map((e) => ({
+      ...e,
+      compatibility: compatibilityScore(selected.symbol, e.symbol),
+      useCase: selected.metrics.thermal + e.metrics.thermal > 7 ? "high-temperature structural system" : selected.metrics.conductivity + e.metrics.conductivity > 7 ? "conductive pathway candidate" : selected.metrics.diffusion + e.metrics.diffusion > 6.5 ? "corrosion-resistant boundary system" : "balanced material pairing",
+    }))
+    .sort((a, b) => b.compatibility - a.compatibility);
+
+  const selectedPair = pairings[0] || ranked.find((e) => e.symbol !== selected.symbol) || elementMap.Al;
+  const missionScore = Math.round(Math.max(40, Math.min(99, top.suitability * 0.52 + top.confidence * 0.24 + activeCount * 3 + (scanRunning ? 4 : 0))));
+  const pipeline = ["Mission", "Requirements", "Candidate Ranking", "Pairing Discovery", "Forecast", "Report"];
+  const tradeOffs = [
+    selected.costRisk > 68 ? "Higher cost and sourcing pressure" : "Cost profile appears manageable",
+    selected.manufacturability < 58 ? "Manufacturing route needs process planning" : "Manufacturing pathway appears feasible",
+    selected.metrics.thermal < 3.1 ? "Thermal behaviour needs validation" : "Thermal behaviour supports the mission",
+    selected.metrics.diffusion < 3.1 ? "Corrosion or boundary movement risk requires mitigation" : "Boundary and diffusion stability are favourable",
   ];
-  const sendForecast = () => { setSelected?.(top.symbol); setForecastRequest?.({ material: top.symbol, years: 50, environment, source: "Materials Discovery Engine" }); setPage?.("timemachine"); };
+  const alternatives = [
+    ["If cost matters", ranked.find((e) => e.costRisk < 55)?.symbol || "Al"],
+    ["If heat matters", ranked.slice().sort((a, b) => b.metrics.thermal - a.metrics.thermal)[0]?.symbol || "Hf"],
+    ["If corrosion matters", ranked.slice().sort((a, b) => b.metrics.diffusion - a.metrics.diffusion)[0]?.symbol || "Zr"],
+    ["If conductivity matters", ranked.slice().sort((a, b) => b.metrics.conductivity - a.metrics.conductivity)[0]?.symbol || "Cu"],
+  ].map(([label, sym]) => ({ label, element: elementMap[sym] || ranked[0] || elementMap.Al }));
+
+  const runScan = () => {
+    setScanRunning(true);
+    setTimeout(() => setScanRunning(false), 900);
+  };
+  const sendForecast = () => {
+    setSelected?.(selected.symbol);
+    setForecastRequest?.({ material: selected.symbol, years: 50, environment, source: "Materials Discovery Engine" });
+    setPage?.("timemachine");
+  };
+  const compareSet = [selected.symbol, ...pairings.slice(0, 3).map((p) => p.symbol)];
+
   return (
     <div className="space-y-6 pb-24">
-      <PageHero eyebrow="Advanced Lab" icon={Sparkles} title={<>Materials <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery Engine</span></>} description="Describe the mission and ElementOS ranks materials with suitability, cost, manufacturing, risk and forecast-readiness data." />
+      <PageHero
+        eyebrow="Advanced Lab"
+        icon={Sparkles}
+        title={<>Materials <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery Engine</span></>}
+        description="Start with a material problem. ElementOS ranks candidates, explains trade-offs, generates pairings and turns the result into forecast-ready reports."
+      />
+
+      <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]">
+        <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
+          <div>
+            <Pill gold><Bot size={12}/> invention machine</Pill>
+            <h2 className="mt-4 text-5xl font-black text-white md:text-6xl">What material problem are you solving?</h2>
+            <textarea
+              value={need}
+              onChange={(e) => setNeed(e.target.value)}
+              className="mt-6 min-h-[150px] w-full border border-cyan-300/15 bg-black/40 p-5 text-lg leading-8 text-white outline-none focus:border-cyan-300/45"
+              placeholder="Example: lightweight heat resistant corrosion resistant marine component"
+            />
+            <div className="mt-4 flex flex-wrap gap-2">
+              {["Lightweight aerospace structure", "Deep ocean corrosion resistance", "High heat turbine material", "Medical implant compatibility", "Battery electrode stability", "Particle accelerator target material"].map((prompt) => (
+                <button key={prompt} onClick={() => setNeed(prompt)} className="border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-300 hover:border-cyan-300/35 hover:text-cyan-100">{prompt}</button>
+              ))}
+            </div>
+          </div>
+          <div className="border border-cyan-300/15 bg-cyan-300/[.045] p-6">
+            <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">discovery status</div>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <AdvancedLabDataTile label="Mission Score" value={missionScore} unit="%" note="Overall requirement fit." tone="emerald" />
+              <AdvancedLabDataTile label="Active Requirements" value={activeCount} note="Current toggles." />
+              <AdvancedLabDataTile label="Top Candidate" value={top.symbol} note={top.name} tone="amber" />
+              <AdvancedLabDataTile label="Report Ready" value={top.confidence} unit="%" note="Evidence confidence." />
+            </div>
+            <div className="mt-5 grid gap-3">
+              <Button onClick={runScan} variant="primary">{scanRunning ? "Scanning Materials..." : "Run Discovery Scan"}</Button>
+              <Button onClick={() => setPage?.("reports")}>Generate Discovery Report</Button>
+            </div>
+          </div>
+        </div>
+      </Panel>
+
       <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
         <Panel className="border-cyan-300/15 bg-slate-950/90">
-          <Pill gold><Bot size={12}/> discovery request</Pill>
-          <label className="mt-5 block"><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material requirement</span><textarea value={need} onChange={(e) => setNeed(e.target.value)} className="mt-2 min-h-[160px] w-full border border-cyan-300/15 bg-black/35 p-4 text-sm leading-6 text-white outline-none" /></label>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+          <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">requirements builder</div>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Toggle the mission requirements. Rankings update immediately.</p>
+          <div className="mt-5 grid gap-2">
+            {requirementLabels.map(([id, label, note]) => (
+              <button key={id} onClick={() => toggleRequirement(id)} className={`border p-3 text-left transition ${requirements[id] ? "border-cyan-300/35 bg-cyan-300/[.10] text-cyan-50" : "border-white/10 bg-black/25 text-slate-400 hover:border-cyan-300/20"}`}>
+                <div className="flex items-center justify-between gap-3"><span className="font-black">{label}</span><span className="text-xs">{requirements[id] ? "ON" : "OFF"}</span></div>
+                <div className="mt-1 text-xs leading-5 text-slate-500">{note}</div>
+              </button>
+            ))}
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
             <label><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Environment</span><select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white outline-none">{["Marine", "Aerospace", "High Heat", "Deep Ocean", "Space", "Medical", "Mining", "Nuclear"].map((x) => <option key={x}>{x}</option>)}</select></label>
             <label><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Commercial constraint</span><select value={constraint} onChange={(e) => setConstraint(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white outline-none">{["Performance", "Cost", "Manufacturing", "Reliability"].map((x) => <option key={x}>{x}</option>)}</select></label>
           </div>
           <div className="mt-4 grid grid-cols-3 gap-2">{[["balanced","Balanced"],["performance","Performance"],["reliability","Reliability"]].map(([id,label]) => <button key={id} onClick={() => setPriority(id)} className={`border px-3 py-3 text-xs font-black ${priority === id ? "border-cyan-300/35 bg-cyan-300/[.12] text-cyan-50" : "border-white/10 bg-black/25 text-slate-400"}`}>{label}</button>)}</div>
           <label className="mt-5 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>Budget sensitivity</span><span className="text-cyan-100">{budgetSensitivity}%</span></div><input type="range" min="0" max="100" value={budgetSensitivity} onChange={(e) => setBudgetSensitivity(Number(e.target.value))} className="mt-3 w-full accent-cyan-300" /></label>
-          <div className="mt-5 grid gap-2"><Button onClick={sendForecast} variant="primary">Send Top Candidate to Time Machine</Button><Button onClick={() => { setCompare?.([top.symbol, ...pairings.slice(0,3).map((p)=>p.symbol)]); setPage?.("compare"); }}>Compare Candidate Set</Button><Button onClick={() => setPage?.("reports")}>Generate Discovery Report</Button></div>
         </Panel>
+
         <div className="space-y-5">
           <Panel className="border-cyan-300/15 bg-[#030914]">
-            <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
-              <div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">recommended material</div><h2 className="mt-2 text-6xl font-black text-white">{top.name}</h2><p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">ElementOS recommends {top.name} ({top.symbol}) for this requirement because the weighted model prioritises {environment.toLowerCase()} performance, {priority} behaviour and {constraint.toLowerCase()} constraints.</p><div className="mt-6 grid gap-3 md:grid-cols-4"><AdvancedLabDataTile label="Suitability" value={top.suitability} unit="%" note="Weighted fit for the mission." /><AdvancedLabDataTile label="Confidence" value={top.confidence} unit="%" note="Model consistency across metrics." tone="emerald" /><AdvancedLabDataTile label="Cost risk" value={top.costRisk} unit="%" note="Procurement and rarity pressure." tone="amber" /><AdvancedLabDataTile label="Manufacturing" value={top.manufacturability} unit="%" note="Process feasibility estimate." /></div></div>
-              <div className="border border-cyan-300/15 bg-black/30 p-5"><div className="text-xs uppercase tracking-[.22em] text-slate-500">top pairings</div><div className="mt-4 space-y-3">{pairings.map((p) => <div key={p.symbol} className="border border-white/10 bg-black/25 p-3"><div className="flex justify-between"><b className="text-white">{top.symbol} + {p.symbol}</b><span className="text-cyan-100 font-black">{p.compatibility}%</span></div><div className="mt-1 text-xs text-slate-500">{p.name} · secondary candidate</div></div>)}</div></div>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="text-xs uppercase tracking-[.24em] text-cyan-200">recommended candidate</div>
+                <h2 className="mt-2 text-6xl font-black text-white">{selected.name}</h2>
+                <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+                  {selected.name} ranked highly because it satisfies <b className="text-cyan-100">{selected.requirementHits} of {activeCount}</b> active requirements and balances performance, long-term survival, manufacturing feasibility and commercial risk.
+                </p>
+              </div>
+              <div className="border border-cyan-300/15 bg-black/30 p-5 text-right">
+                <div className="text-6xl font-black text-cyan-100">{selected.suitability}%</div>
+                <div className="text-xs uppercase tracking-[.22em] text-slate-500">suitability</div>
+              </div>
+            </div>
+            <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+              <AdvancedLabDataTile label="Confidence" value={selected.confidence} unit="%" note="Model agreement." tone="emerald" />
+              <AdvancedLabDataTile label="Long-Term" value={selected.longTerm} unit="%" note="Forecast readiness." />
+              <AdvancedLabDataTile label="Discovery" value={selected.discoveryPotential} unit="%" note="Opportunity signal." tone="amber" />
+              <AdvancedLabDataTile label="Cost Risk" value={selected.costRisk} unit="%" note="Procurement pressure." tone="rose" />
+              <AdvancedLabDataTile label="Manufacturing" value={selected.manufacturability} unit="%" note="Process feasibility." />
             </div>
           </Panel>
+
           <div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
-            <AdvancedLabSection eyebrow="candidate ranking" title="Top ranked materials"><div className="space-y-3">{ranked.map((e, idx) => <div key={e.symbol} className="grid gap-3 border border-white/10 bg-black/25 p-4 md:grid-cols-[50px_1fr_120px_120px]"><div className="text-2xl font-black text-cyan-100">#{idx+1}</div><div><div className="font-black text-white">{e.name} ({e.symbol})</div><div className="text-xs text-slate-500">{e.category}</div></div><div className="text-sm"><b className="text-white">{e.suitability}%</b><br/><span className="text-xs text-slate-500">Suitability</span></div><div className="text-sm"><b className="text-white">{e.confidence}%</b><br/><span className="text-xs text-slate-500">Confidence</span></div></div>)}</div></AdvancedLabSection>
-            <AdvancedLabSection eyebrow="risk and evidence" title="Decision evidence"><div className="space-y-3">{failureModes.map((m) => <div key={m} className="border border-white/10 bg-black/25 p-4 text-sm leading-6 text-slate-300"><span className="text-cyan-200">✓</span> {m}</div>)}<div className="border border-amber-300/15 bg-amber-300/[.045] p-4 text-sm leading-6 text-amber-50">Report note: this lab produces a shortlist and decision direction. Validate final materials with engineering test data before certification use.</div></div></AdvancedLabSection>
+            <AdvancedLabSection eyebrow="candidate ranking" title="Top ranked materials">
+              <div className="space-y-3">
+                {ranked.map((e, idx) => (
+                  <button key={e.symbol} onClick={() => setSelectedCandidate(e.symbol)} className={`grid w-full gap-3 border p-4 text-left transition md:grid-cols-[54px_1fr_120px_120px_120px] ${selected.symbol === e.symbol ? "border-cyan-300/45 bg-cyan-300/[.09]" : "border-white/10 bg-black/25 hover:border-cyan-300/25"}`}>
+                    <div className="text-2xl font-black text-cyan-100">#{idx + 1}</div>
+                    <div><div className="font-black text-white">{e.name} ({e.symbol})</div><div className="text-xs text-slate-500">{e.category} · hits {e.requirementHits}/{activeCount}</div></div>
+                    <div className="text-sm"><b className="text-white">{e.suitability}%</b><br/><span className="text-xs text-slate-500">Suitability</span></div>
+                    <div className="text-sm"><b className="text-white">{e.confidence}%</b><br/><span className="text-xs text-slate-500">Confidence</span></div>
+                    <div className="text-sm"><b className="text-white">{e.manufacturability}%</b><br/><span className="text-xs text-slate-500">Manufacturing</span></div>
+                  </button>
+                ))}
+              </div>
+            </AdvancedLabSection>
+
+            <AdvancedLabSection eyebrow="why this won" title={`${selected.symbol} decision evidence`}>
+              <div className="space-y-3">
+                {tradeOffs.map((m) => <div key={m} className="border border-white/10 bg-black/25 p-4 text-sm leading-6 text-slate-300"><span className="text-cyan-200">✓</span> {m}</div>)}
+                <div className="border border-cyan-300/15 bg-cyan-300/[.045] p-4 text-sm leading-6 text-cyan-50">
+                  ElementOS recommends using this result as a shortlist direction: compare the candidate set, run a 50-year forecast and generate a discovery report before final material selection.
+                </div>
+              </div>
+            </AdvancedLabSection>
+          </div>
+
+          <Panel className="border-cyan-300/15 bg-[#040b15]/95">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">generated pairings</div><h2 className="mt-2 text-3xl font-black text-white">Best combinations from {selected.symbol}</h2></div>
+              <div className="text-sm text-slate-400">Pairings are ranked by compatibility and mission fit.</div>
+            </div>
+            <div className="mt-5 grid gap-4 lg:grid-cols-3">
+              {pairings.slice(0, 6).map((p) => (
+                <div key={p.symbol} className="border border-white/10 bg-black/25 p-5">
+                  <div className="flex items-start justify-between gap-3"><div><div className="text-2xl font-black text-white">{selected.symbol} + {p.symbol}</div><div className="mt-1 text-xs uppercase tracking-[.16em] text-slate-500">{p.useCase}</div></div><div className="text-3xl font-black text-cyan-100">{p.compatibility}%</div></div>
+                  <p className="mt-4 text-sm leading-6 text-slate-400">{p.name} strengthens the candidate set as a secondary material for pairing, comparison or report evidence.</p>
+                </div>
+              ))}
+            </div>
+          </Panel>
+
+          <div className="grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
+            <AdvancedLabSection eyebrow="alternatives" title="Decision alternatives">
+              <div className="space-y-3">
+                {alternatives.map(({ label, element }) => (
+                  <div key={label} className="border border-white/10 bg-black/25 p-4">
+                    <div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div>
+                    <div className="mt-1 text-2xl font-black text-white">{element.name} ({element.symbol})</div>
+                  </div>
+                ))}
+              </div>
+            </AdvancedLabSection>
+
+            <AdvancedLabSection eyebrow="discovery pipeline" title="Mission → report workflow">
+              <div className="grid gap-3 md:grid-cols-6">
+                {pipeline.map((step, idx) => (
+                  <div key={step} className={`border p-4 text-center ${idx < 4 || scanRunning ? "border-cyan-300/30 bg-cyan-300/[.075]" : "border-white/10 bg-black/25"}`}>
+                    <div className="text-xs font-black text-cyan-100">0{idx + 1}</div>
+                    <div className="mt-2 text-sm font-black text-white">{step}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 grid gap-3 md:grid-cols-3">
+                <Button onClick={sendForecast} variant="primary">Forecast {selected.symbol}</Button>
+                <Button onClick={() => { setCompare?.(compareSet); setPage?.("compare"); }}>Compare Candidate Set</Button>
+                <Button onClick={() => setPage?.("reports")}>Generate Discovery Report</Button>
+              </div>
+            </AdvancedLabSection>
           </div>
         </div>
       </div>
