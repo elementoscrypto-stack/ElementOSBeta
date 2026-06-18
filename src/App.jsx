@@ -11798,7 +11798,9 @@ function MaterialsDiscoveryEngine({ setPage, setSelected, setCompare, setForecas
   const [constraint, setConstraint] = useState("Performance");
   const [budgetSensitivity, setBudgetSensitivity] = useState(42);
   const [scanRunning, setScanRunning] = useState(false);
+  const [selectedMaterial, setSelectedMaterial] = useState("Ti");
   const [selectedCandidate, setSelectedCandidate] = useState("Ti");
+  const [scope, setScope] = useState("Selected Element + Pairings");
   const [requirements, setRequirements] = useState({
     lightweight: true,
     heat: true,
@@ -11825,13 +11827,10 @@ function MaterialsDiscoveryEngine({ setPage, setSelected, setCompare, setForecas
     ["strength", "High strength", "Prioritises stability, pressure and structural resilience."],
   ];
 
-  const toggleRequirement = (id) => {
-    setRequirements((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
+  const toggleRequirement = (id) => setRequirements((prev) => ({ ...prev, [id]: !prev[id] }));
   const selectedRequirements = requirementLabels.filter(([id]) => requirements[id]);
-  const lower = `${need} ${priority} ${environment} ${constraint} ${selectedRequirements.map(([, label]) => label).join(" ")}`.toLowerCase();
-  const activeCount = Math.max(1, selectedRequirements.length);
+  const selectedBase = elementMap[selectedMaterial] || elementMap.Ti;
+  const lower = `${need} ${priority} ${environment} ${constraint} ${selectedBase.name} ${selectedRequirements.map(([, label]) => label).join(" ")}`.toLowerCase();
 
   const weights = {
     stability: (requirements.strength ? 1.24 : 1) * (/medical|reliability|long|service/.test(lower) ? 1.18 : 1),
@@ -11854,7 +11853,7 @@ function MaterialsDiscoveryEngine({ setPage, setSelected, setCompare, setForecas
     return boost;
   };
 
-  const ranked = elements.map((e) => {
+  const scoreCandidate = (e) => {
     const s = score(e.symbol);
     let total =
       s.stability * 18 * weights.stability +
@@ -11875,7 +11874,7 @@ function MaterialsDiscoveryEngine({ setPage, setSelected, setCompare, setForecas
     const costRisk = Math.round(Math.max(8, Math.min(96, s.rarity * 15 + e.atomicNumber * 0.18 + budgetSensitivity * 0.35)));
     const manufacturability = Math.round(Math.max(18, Math.min(97, 88 - s.rarity * 8 + (e.category.includes("metal") ? 8 : 0) - e.atomicNumber * 0.08 + (requirements.manufacturable ? 6 : 0))));
     const longTerm = Math.round(Math.max(25, Math.min(99, s.stability * 13 + s.diffusion * 10 + s.pressure * 7 + (environment === "Marine" ? s.diffusion * 5 : 0))));
-    const discoveryPotential = Math.round(Math.max(30, Math.min(99, suitability * 0.62 + compatibilityScore(e.symbol, "Ti") * 0.18 + longTerm * 0.2)));
+    const discoveryPotential = Math.round(Math.max(30, Math.min(99, suitability * 0.62 + compatibilityScore(e.symbol, selectedBase.symbol) * 0.18 + longTerm * 0.2)));
     const confidence = Math.round(Math.max(55, Math.min(99, suitability * 0.62 + manufacturability * 0.16 + longTerm * 0.14 + (100 - costRisk) * 0.08)));
     const requirementHits = selectedRequirements.filter(([id]) => {
       if (id === "lightweight") return e.atomicNumber < 50 || ["Ti", "Al", "Mg", "C", "Be"].includes(e.symbol);
@@ -11891,46 +11890,53 @@ function MaterialsDiscoveryEngine({ setPage, setSelected, setCompare, setForecas
       return false;
     }).length;
     return { ...e, suitability, metrics: s, costRisk, manufacturability, longTerm, discoveryPotential, confidence, requirementHits };
-  }).sort((a, b) => b.suitability - a.suitability).slice(0, 12);
+  };
 
-  const top = ranked[0] || elementMap.Ti;
-  const selected = ranked.find((e) => e.symbol === selectedCandidate) || top;
-  const pairings = ranked
-    .filter((e) => e.symbol !== selected.symbol)
-    .slice(0, 7)
-    .map((e) => ({
-      ...e,
-      compatibility: compatibilityScore(selected.symbol, e.symbol),
-      useCase: selected.metrics.thermal + e.metrics.thermal > 7 ? "high-temperature structural system" : selected.metrics.conductivity + e.metrics.conductivity > 7 ? "conductive pathway candidate" : selected.metrics.diffusion + e.metrics.diffusion > 6.5 ? "corrosion-resistant boundary system" : "balanced material pairing",
-    }))
-    .sort((a, b) => b.compatibility - a.compatibility);
+  const rankedAll = elements.map(scoreCandidate).sort((a, b) => b.suitability - a.suitability);
+  const top10Materials = rankedAll.slice(0, 10);
+  const selectedRanked = scoreCandidate(selectedBase);
+  const top10Pairings = elements
+    .filter((e) => e.symbol !== selectedBase.symbol)
+    .map((e) => {
+      const candidate = scoreCandidate(e);
+      const compat = compatibilityScore(selectedBase.symbol, e.symbol);
+      const missionFit = Math.round(candidate.suitability * 0.48 + compat * 0.36 + candidate.longTerm * 0.16);
+      const useCase = selectedRanked.metrics.thermal + candidate.metrics.thermal > 7 ? "High-temperature structural system" : compat > 88 ? "Rare compatibility pairing" : candidate.metrics.conductivity > 3.6 ? "Conductive pathway candidate" : "Mission-fit material pairing";
+      return { ...candidate, compatibility: compat, missionFit, useCase };
+    })
+    .sort((a, b) => b.missionFit - a.missionFit)
+    .slice(0, 10);
 
-  const selectedPair = pairings[0] || ranked.find((e) => e.symbol !== selected.symbol) || elementMap.Al;
-  const missionScore = Math.round(Math.max(40, Math.min(99, top.suitability * 0.52 + top.confidence * 0.24 + activeCount * 3 + (scanRunning ? 4 : 0))));
-  const pipeline = ["Mission", "Requirements", "Candidate Ranking", "Pairing Discovery", "Forecast", "Report"];
-  const tradeOffs = [
-    selected.costRisk > 68 ? "Higher cost and sourcing pressure" : "Cost profile appears manageable",
-    selected.manufacturability < 58 ? "Manufacturing route needs process planning" : "Manufacturing pathway appears feasible",
-    selected.metrics.thermal < 3.1 ? "Thermal behaviour needs validation" : "Thermal behaviour supports the mission",
-    selected.metrics.diffusion < 3.1 ? "Corrosion or boundary movement risk requires mitigation" : "Boundary and diffusion stability are favourable",
-  ];
+  const activeResults = scope === "Entire Periodic Table" ? top10Materials : scope === "Selected Element" ? [selectedRanked, ...top10Materials.filter((e) => e.symbol !== selectedBase.symbol).slice(0, 9)] : top10Pairings;
+  const selected = activeResults.find((e) => e.symbol === selectedCandidate) || activeResults[0] || selectedRanked;
+  const selectedIsPairing = scope.includes("Pairings") && selected.symbol !== selectedBase.symbol;
+  const compareSet = selectedIsPairing ? [selectedBase.symbol, selected.symbol] : [selected.symbol, ...top10Pairings.slice(0, 3).map((p) => p.symbol)].slice(0, 4);
+
   const alternatives = [
-    ["If cost matters", ranked.find((e) => e.costRisk < 55)?.symbol || "Al"],
-    ["If heat matters", ranked.slice().sort((a, b) => b.metrics.thermal - a.metrics.thermal)[0]?.symbol || "Hf"],
-    ["If corrosion matters", ranked.slice().sort((a, b) => b.metrics.diffusion - a.metrics.diffusion)[0]?.symbol || "Zr"],
-    ["If conductivity matters", ranked.slice().sort((a, b) => b.metrics.conductivity - a.metrics.conductivity)[0]?.symbol || "Cu"],
-  ].map(([label, sym]) => ({ label, element: elementMap[sym] || ranked[0] || elementMap.Al }));
+    { label: "If cost matters", element: top10Materials.find((e) => e.costRisk < 62) || top10Materials[0] },
+    { label: "If heat matters", element: top10Materials.find((e) => e.metrics.thermal >= 3.7) || top10Materials[1] || top10Materials[0] },
+    { label: "If corrosion matters", element: top10Materials.find((e) => e.metrics.diffusion >= 3.2 || ["Ti", "Zr", "Ni", "Cr"].includes(e.symbol)) || top10Materials[2] || top10Materials[0] },
+    { label: "If conductivity matters", element: top10Materials.find((e) => e.metrics.conductivity >= 3.8 || ["Cu", "Ag", "Au", "Al"].includes(e.symbol)) || top10Materials[3] || top10Materials[0] },
+  ].filter((item) => item.element);
 
+  const opportunities = top10Pairings.slice(0, 10).map((p, index) => ({
+    title: `${selectedBase.name} + ${p.name}`,
+    level: p.missionFit >= 90 ? "Very High" : p.missionFit >= 82 ? "High" : "Promising",
+    score: p.missionFit,
+    reason: p.useCase,
+    rank: index + 1,
+  }));
+
+  const pipeline = ["Mission", "Requirements", "Top 10", "Pairings", "Forecast", "Report"];
   const runScan = () => {
     setScanRunning(true);
     setTimeout(() => setScanRunning(false), 900);
   };
-  const sendForecast = () => {
-    setSelected?.(selected.symbol);
-    setForecastRequest?.({ material: selected.symbol, years: 50, environment, source: "Materials Discovery Engine" });
+  const sendForecast = (sym = selected.symbol) => {
+    setSelected?.(sym);
+    setForecastRequest?.({ material: sym, years: 50, environment, source: "Materials Discovery Engine" });
     setPage?.("timemachine");
   };
-  const compareSet = [selected.symbol, ...pairings.slice(0, 3).map((p) => p.symbol)];
 
   return (
     <div className="space-y-6 pb-24">
@@ -11938,159 +11944,147 @@ function MaterialsDiscoveryEngine({ setPage, setSelected, setCompare, setForecas
         eyebrow="Advanced Lab"
         icon={Sparkles}
         title={<>Materials <span className="bg-gradient-to-r from-cyan-200 via-white to-amber-200 bg-clip-text text-transparent">Discovery Engine</span></>}
-        description="Start with a material problem. ElementOS ranks candidates, explains trade-offs, generates pairings and turns the result into forecast-ready reports."
+        description="Select from all 118 elements, define a material mission, and receive only the Top 10 materials, pairings and opportunities worth acting on."
+        action={<Button onClick={runScan} variant="primary">{scanRunning ? "Scanning Top 10..." : "Run Discovery Scan"}</Button>}
       />
 
-      <Panel className="overflow-hidden border-cyan-300/15 bg-[#030914]">
-        <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
-          <div>
-            <Pill gold><Bot size={12}/> invention machine</Pill>
-            <h2 className="mt-4 text-5xl font-black text-white md:text-6xl">What material problem are you solving?</h2>
-            <textarea
-              value={need}
-              onChange={(e) => setNeed(e.target.value)}
-              className="mt-6 min-h-[150px] w-full border border-cyan-300/15 bg-black/40 p-5 text-lg leading-8 text-white outline-none focus:border-cyan-300/45"
-              placeholder="Example: lightweight heat resistant corrosion resistant marine component"
-            />
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["Lightweight aerospace structure", "Deep ocean corrosion resistance", "High heat turbine material", "Medical implant compatibility", "Battery electrode stability", "Particle accelerator target material"].map((prompt) => (
-                <button key={prompt} onClick={() => setNeed(prompt)} className="border border-white/10 bg-black/25 px-3 py-2 text-xs font-black text-slate-300 hover:border-cyan-300/35 hover:text-cyan-100">{prompt}</button>
-              ))}
-            </div>
-          </div>
-          <div className="border border-cyan-300/15 bg-cyan-300/[.045] p-6">
-            <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">discovery status</div>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <AdvancedLabDataTile label="Mission Score" value={missionScore} unit="%" note="Overall requirement fit." tone="emerald" />
-              <AdvancedLabDataTile label="Active Requirements" value={activeCount} note="Current toggles." />
-              <AdvancedLabDataTile label="Top Candidate" value={top.symbol} note={top.name} tone="amber" />
-              <AdvancedLabDataTile label="Report Ready" value={top.confidence} unit="%" note="Evidence confidence." />
-            </div>
-            <div className="mt-5 grid gap-3">
-              <Button onClick={runScan} variant="primary">{scanRunning ? "Scanning Materials..." : "Run Discovery Scan"}</Button>
-              <Button onClick={() => setPage?.("reports")}>Generate Discovery Report</Button>
-            </div>
-          </div>
-        </div>
-      </Panel>
-
       <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
-        <Panel className="border-cyan-300/15 bg-slate-950/90">
-          <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">requirements builder</div>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Toggle the mission requirements. Rankings update immediately.</p>
+        <Panel className="border-cyan-300/15 bg-[#040b15]/95">
+          <Pill><Sparkles size={12}/> discovery universe</Pill>
+          <label className="mt-5 block">
+            <span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Selected element</span>
+            <select value={selectedMaterial} onChange={(ev) => { setSelectedMaterial(ev.target.value); setSelectedCandidate(ev.target.value); }} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">
+              {labElementOptions()}
+            </select>
+          </label>
+          <label className="mt-4 block">
+            <span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Discovery scope</span>
+            <select value={scope} onChange={(ev) => setScope(ev.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white">
+              <option>Selected Element + Pairings</option>
+              <option>Entire Periodic Table</option>
+              <option>Selected Element</option>
+              <option>Top 10 Only</option>
+            </select>
+          </label>
+          <label className="mt-4 block">
+            <span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Material mission</span>
+            <textarea value={need} onChange={(ev) => setNeed(ev.target.value)} className="mt-2 min-h-[118px] w-full border border-cyan-300/15 bg-black/35 p-4 text-sm leading-6 text-white" />
+          </label>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <label><span className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Priority</span><select value={priority} onChange={(ev)=>setPriority(ev.target.value)} className="mt-2 w-full border border-white/10 bg-black/35 p-3 text-sm text-white"><option value="balanced">Balanced</option><option value="performance">Performance</option><option value="reliability">Reliability</option><option value="cost">Cost</option></select></label>
+            <label><span className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Environment</span><select value={environment} onChange={(ev)=>setEnvironment(ev.target.value)} className="mt-2 w-full border border-white/10 bg-black/35 p-3 text-sm text-white"><option>Marine</option><option>Aerospace</option><option>Deep Ocean</option><option>High Heat</option><option>Medical</option><option>Space</option><option>Mining</option><option>Electrical</option></select></label>
+          </div>
+          <label className="mt-4 block"><span className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Budget sensitivity</span><div className="mt-2 flex items-center gap-3"><input type="range" min="0" max="100" value={budgetSensitivity} onChange={(ev)=>setBudgetSensitivity(Number(ev.target.value))} className="w-full accent-cyan-300"/><span className="w-10 text-right text-sm font-black text-cyan-100">{budgetSensitivity}%</span></div></label>
           <div className="mt-5 grid gap-2">
-            {requirementLabels.map(([id, label, note]) => (
-              <button key={id} onClick={() => toggleRequirement(id)} className={`border p-3 text-left transition ${requirements[id] ? "border-cyan-300/35 bg-cyan-300/[.10] text-cyan-50" : "border-white/10 bg-black/25 text-slate-400 hover:border-cyan-300/20"}`}>
-                <div className="flex items-center justify-between gap-3"><span className="font-black">{label}</span><span className="text-xs">{requirements[id] ? "ON" : "OFF"}</span></div>
-                <div className="mt-1 text-xs leading-5 text-slate-500">{note}</div>
-              </button>
-            ))}
+            <Button onClick={runScan} variant="primary">{scanRunning ? "Scanning..." : "Run Top 10 Discovery"}</Button>
+            <Button onClick={() => setPage?.("reports")}>Open Research Centre</Button>
           </div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-            <label><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Environment</span><select value={environment} onChange={(e) => setEnvironment(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white outline-none">{["Marine", "Aerospace", "High Heat", "Deep Ocean", "Space", "Medical", "Mining", "Nuclear"].map((x) => <option key={x}>{x}</option>)}</select></label>
-            <label><span className="text-xs font-black uppercase tracking-[.22em] text-slate-500">Commercial constraint</span><select value={constraint} onChange={(e) => setConstraint(e.target.value)} className="mt-2 w-full border border-cyan-300/15 bg-black/35 p-3 text-sm text-white outline-none">{["Performance", "Cost", "Manufacturing", "Reliability"].map((x) => <option key={x}>{x}</option>)}</select></label>
-          </div>
-          <div className="mt-4 grid grid-cols-3 gap-2">{[["balanced","Balanced"],["performance","Performance"],["reliability","Reliability"]].map(([id,label]) => <button key={id} onClick={() => setPriority(id)} className={`border px-3 py-3 text-xs font-black ${priority === id ? "border-cyan-300/35 bg-cyan-300/[.12] text-cyan-50" : "border-white/10 bg-black/25 text-slate-400"}`}>{label}</button>)}</div>
-          <label className="mt-5 block"><div className="flex justify-between text-xs font-black uppercase tracking-[.18em] text-slate-500"><span>Budget sensitivity</span><span className="text-cyan-100">{budgetSensitivity}%</span></div><input type="range" min="0" max="100" value={budgetSensitivity} onChange={(e) => setBudgetSensitivity(Number(e.target.value))} className="mt-3 w-full accent-cyan-300" /></label>
         </Panel>
 
         <div className="space-y-5">
-          <Panel className="border-cyan-300/15 bg-[#030914]">
+          <Panel className="border-cyan-300/20 bg-[#040b15]/95">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <div className="text-xs uppercase tracking-[.24em] text-cyan-200">recommended candidate</div>
-                <h2 className="mt-2 text-6xl font-black text-white">{selected.name}</h2>
-                <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-                  {selected.name} ranked highly because it satisfies <b className="text-cyan-100">{selected.requirementHits} of {activeCount}</b> active requirements and balances performance, long-term survival, manufacturing feasibility and commercial risk.
-                </p>
+                <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">top 10 discovery output</div>
+                <h2 className="mt-2 text-4xl font-black text-white">{scope.includes("Pairings") ? `Top 10 pairings for ${selectedBase.name}` : "Top 10 recommended materials"}</h2>
+                <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-400">The engine now limits output to the ten strongest candidates so the customer sees a clear decision set instead of an overwhelming universe.</p>
               </div>
-              <div className="border border-cyan-300/15 bg-black/30 p-5 text-right">
-                <div className="text-6xl font-black text-cyan-100">{selected.suitability}%</div>
-                <div className="text-xs uppercase tracking-[.22em] text-slate-500">suitability</div>
+              <div className="border border-cyan-300/20 bg-cyan-300/[.06] p-4 text-right">
+                <div className="text-4xl font-black text-cyan-100">10</div>
+                <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">ranked results only</div>
               </div>
             </div>
-            <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-              <AdvancedLabDataTile label="Confidence" value={selected.confidence} unit="%" note="Model agreement." tone="emerald" />
-              <AdvancedLabDataTile label="Long-Term" value={selected.longTerm} unit="%" note="Forecast readiness." />
-              <AdvancedLabDataTile label="Discovery" value={selected.discoveryPotential} unit="%" note="Opportunity signal." tone="amber" />
-              <AdvancedLabDataTile label="Cost Risk" value={selected.costRisk} unit="%" note="Procurement pressure." tone="rose" />
-              <AdvancedLabDataTile label="Manufacturing" value={selected.manufacturability} unit="%" note="Process feasibility." />
+            <div className="mt-6 grid gap-3 xl:grid-cols-2">
+              {activeResults.slice(0, 10).map((item, index) => (
+                <button key={`${scope}-${item.symbol}`} onClick={() => setSelectedCandidate(item.symbol)} className={`border p-4 text-left transition ${selected.symbol === item.symbol ? "border-cyan-300/45 bg-cyan-300/[.09]" : "border-white/10 bg-black/25 hover:border-cyan-300/25 hover:bg-cyan-300/[.045]"}`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-xs font-black uppercase tracking-[.18em] text-slate-500">#{index + 1} {item.category}</div>
+                      <div className="mt-1 text-2xl font-black text-white">{scope.includes("Pairings") ? `${selectedBase.symbol} + ${item.symbol}` : `${item.name} (${item.symbol})`}</div>
+                      <div className="mt-2 text-sm leading-6 text-slate-400">{scope.includes("Pairings") ? item.useCase : `${item.requirementHits}/${Math.max(1, selectedRequirements.length)} requirement matches · ${environment} mission fit`}</div>
+                    </div>
+                    <div className="text-right"><div className="text-3xl font-black text-cyan-100">{scope.includes("Pairings") ? item.missionFit : item.suitability}%</div><div className="text-[10px] uppercase tracking-[.16em] text-slate-500">score</div></div>
+                  </div>
+                  <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                    <AdvancedLabDataStrip label="Confidence" value={item.confidence} note="Decision confidence" />
+                    <AdvancedLabDataStrip label="Long term" value={item.longTerm} note="Service outlook" tone="emerald" />
+                    <AdvancedLabDataStrip label="Cost risk" value={item.costRisk} note="Commercial risk" tone="amber" />
+                  </div>
+                </button>
+              ))}
             </div>
           </Panel>
 
-          <div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
-            <AdvancedLabSection eyebrow="candidate ranking" title="Top ranked materials">
-              <div className="space-y-3">
-                {ranked.map((e, idx) => (
-                  <button key={e.symbol} onClick={() => setSelectedCandidate(e.symbol)} className={`grid w-full gap-3 border p-4 text-left transition md:grid-cols-[54px_1fr_120px_120px_120px] ${selected.symbol === e.symbol ? "border-cyan-300/45 bg-cyan-300/[.09]" : "border-white/10 bg-black/25 hover:border-cyan-300/25"}`}>
-                    <div className="text-2xl font-black text-cyan-100">#{idx + 1}</div>
-                    <div><div className="font-black text-white">{e.name} ({e.symbol})</div><div className="text-xs text-slate-500">{e.category} · hits {e.requirementHits}/{activeCount}</div></div>
-                    <div className="text-sm"><b className="text-white">{e.suitability}%</b><br/><span className="text-xs text-slate-500">Suitability</span></div>
-                    <div className="text-sm"><b className="text-white">{e.confidence}%</b><br/><span className="text-xs text-slate-500">Confidence</span></div>
-                    <div className="text-sm"><b className="text-white">{e.manufacturability}%</b><br/><span className="text-xs text-slate-500">Manufacturing</span></div>
-                  </button>
-                ))}
+          <div className="grid gap-5 xl:grid-cols-[1fr_.82fr]">
+            <AdvancedLabSection eyebrow="why this won" title={`${selected.name} decision brief`}>
+              <div className="grid gap-4 md:grid-cols-3">
+                <AdvancedLabDataTile label="Discovery score" value={scope.includes("Pairings") ? selected.missionFit : selected.discoveryPotential} unit="%" note="Overall opportunity score." />
+                <AdvancedLabDataTile label="Confidence" value={selected.confidence} unit="%" note="Model fit confidence." tone="emerald" />
+                <AdvancedLabDataTile label="Risk" value={selected.costRisk} unit="%" note="Cost and sourcing risk." tone="amber" />
+              </div>
+              <div className="mt-5 border border-white/10 bg-black/25 p-5">
+                <div className="text-sm font-black text-white">Why ElementOS selected this result</div>
+                <p className="mt-2 text-sm leading-7 text-slate-400">{scope.includes("Pairings") ? `${selectedBase.name} + ${selected.name} ranked highly because compatibility, long-term stability and the ${environment.toLowerCase()} mission weighting aligned strongly.` : `${selected.name} ranked highly because it satisfies ${selected.requirementHits} of ${Math.max(1, selectedRequirements.length)} active requirements while maintaining strong long-term and manufacturability scores.`}</p>
+                <div className="mt-4 flex flex-wrap gap-2">{selectedRequirements.slice(0, 8).map(([, label]) => <span key={label} className="border border-cyan-300/15 bg-cyan-300/[.06] px-3 py-1 text-xs font-black text-cyan-100">✓ {label}</span>)}</div>
+              </div>
+              <div className="mt-5 grid gap-3 md:grid-cols-3">
+                <Button onClick={() => { setCompare?.(compareSet); setPage?.("compare"); }}>Compare</Button>
+                <Button onClick={() => sendForecast(scope.includes("Pairings") ? selectedBase.symbol : selected.symbol)} variant="primary">Forecast</Button>
+                <Button onClick={() => setPage?.("reports")}>Generate Report</Button>
               </div>
             </AdvancedLabSection>
 
-            <AdvancedLabSection eyebrow="why this won" title={`${selected.symbol} decision evidence`}>
-              <div className="space-y-3">
-                {tradeOffs.map((m) => <div key={m} className="border border-white/10 bg-black/25 p-4 text-sm leading-6 text-slate-300"><span className="text-cyan-200">✓</span> {m}</div>)}
-                <div className="border border-cyan-300/15 bg-cyan-300/[.045] p-4 text-sm leading-6 text-cyan-50">
-                  ElementOS recommends using this result as a shortlist direction: compare the candidate set, run a 50-year forecast and generate a discovery report before final material selection.
-                </div>
+            <AdvancedLabSection eyebrow="selected universe" title="118-element dropdown active">
+              <div className="border border-cyan-300/15 bg-cyan-300/[.055] p-5">
+                <div className="text-xs uppercase tracking-[.22em] text-cyan-200">Selected material</div>
+                <div className="mt-2 text-5xl font-black text-white">{selectedBase.symbol}</div>
+                <div className="mt-1 text-xl font-black text-cyan-100">{selectedBase.name}</div>
+                <div className="mt-4 text-sm leading-7 text-slate-400">All 118 elements are available as the source material for discovery, but the output is intentionally restricted to Top 10 rankings for clarity.</div>
+              </div>
+              <div className="mt-4 grid gap-3">
+                {alternatives.map(({ label, element }) => (
+                  <div key={label} className="border border-white/10 bg-black/25 p-4">
+                    <div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div>
+                    <div className="mt-1 text-xl font-black text-white">{element.name} ({element.symbol})</div>
+                  </div>
+                ))}
               </div>
             </AdvancedLabSection>
           </div>
 
           <Panel className="border-cyan-300/15 bg-[#040b15]/95">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div><div className="text-xs uppercase tracking-[.24em] text-cyan-200">generated pairings</div><h2 className="mt-2 text-3xl font-black text-white">Best combinations from {selected.symbol}</h2></div>
-              <div className="text-sm text-slate-400">Pairings are ranked by compatibility and mission fit.</div>
+              <div>
+                <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">top 10 opportunities</div>
+                <h2 className="mt-2 text-3xl font-black text-white">Pairing opportunities for {selectedBase.name}</h2>
+              </div>
+              <Button onClick={() => { setCompare?.([selectedBase.symbol, ...top10Pairings.slice(0, 3).map((p) => p.symbol)]); setPage?.("compare"); }}>Compare Top Pairings</Button>
             </div>
-            <div className="mt-5 grid gap-4 lg:grid-cols-3">
-              {pairings.slice(0, 6).map((p) => (
-                <div key={p.symbol} className="border border-white/10 bg-black/25 p-5">
-                  <div className="flex items-start justify-between gap-3"><div><div className="text-2xl font-black text-white">{selected.symbol} + {p.symbol}</div><div className="mt-1 text-xs uppercase tracking-[.16em] text-slate-500">{p.useCase}</div></div><div className="text-3xl font-black text-cyan-100">{p.compatibility}%</div></div>
-                  <p className="mt-4 text-sm leading-6 text-slate-400">{p.name} strengthens the candidate set as a secondary material for pairing, comparison or report evidence.</p>
+            <div className="mt-5 grid gap-3 xl:grid-cols-2">
+              {opportunities.map((op) => (
+                <div key={op.title} className="border border-white/10 bg-black/25 p-4">
+                  <div className="flex items-start justify-between gap-4"><div><div className="text-xs uppercase tracking-[.18em] text-slate-500">#{op.rank} · {op.level} opportunity</div><div className="mt-1 text-xl font-black text-white">{op.title}</div><div className="mt-2 text-sm text-slate-400">{op.reason}</div></div><div className="text-2xl font-black text-cyan-100">{op.score}%</div></div>
                 </div>
               ))}
             </div>
           </Panel>
 
-          <div className="grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
-            <AdvancedLabSection eyebrow="alternatives" title="Decision alternatives">
-              <div className="space-y-3">
-                {alternatives.map(({ label, element }) => (
-                  <div key={label} className="border border-white/10 bg-black/25 p-4">
-                    <div className="text-xs uppercase tracking-[.18em] text-slate-500">{label}</div>
-                    <div className="mt-1 text-2xl font-black text-white">{element.name} ({element.symbol})</div>
-                  </div>
-                ))}
-              </div>
-            </AdvancedLabSection>
-
-            <AdvancedLabSection eyebrow="discovery pipeline" title="Mission → report workflow">
-              <div className="grid gap-3 md:grid-cols-6">
-                {pipeline.map((step, idx) => (
-                  <div key={step} className={`border p-4 text-center ${idx < 4 || scanRunning ? "border-cyan-300/30 bg-cyan-300/[.075]" : "border-white/10 bg-black/25"}`}>
-                    <div className="text-xs font-black text-cyan-100">0{idx + 1}</div>
-                    <div className="mt-2 text-sm font-black text-white">{step}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-5 grid gap-3 md:grid-cols-3">
-                <Button onClick={sendForecast} variant="primary">Forecast {selected.symbol}</Button>
-                <Button onClick={() => { setCompare?.(compareSet); setPage?.("compare"); }}>Compare Candidate Set</Button>
-                <Button onClick={() => setPage?.("reports")}>Generate Discovery Report</Button>
-              </div>
-            </AdvancedLabSection>
-          </div>
+          <AdvancedLabSection eyebrow="discovery pipeline" title="Mission → Top 10 → Report workflow">
+            <div className="grid gap-3 md:grid-cols-6">
+              {pipeline.map((step, idx) => (
+                <div key={step} className={`border p-4 text-center ${idx < 4 || scanRunning ? "border-cyan-300/30 bg-cyan-300/[.075]" : "border-white/10 bg-black/25"}`}>
+                  <div className="text-xs font-black text-cyan-100">0{idx + 1}</div>
+                  <div className="mt-2 text-sm font-black text-white">{step}</div>
+                </div>
+              ))}
+            </div>
+          </AdvancedLabSection>
         </div>
       </div>
     </div>
   );
 }
+
 
 function ExtremeEnvironmentLab({ selected = "Ti", setSelected, setPage, setForecastRequest }) {
   const [material, setMaterial] = useState(selected || "Ti");
