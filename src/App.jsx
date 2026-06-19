@@ -11976,13 +11976,84 @@ function CinematicLabDataSuite({ kind = "discovery", subject = "Selected Materia
 
 
 
+
+function SafeAdvancedLabCinematicChamber({ title = "Advanced Lab", score = 88, subject = "Active run" }) {
+  const pct = Math.max(1, Math.min(99, Math.round(Number(score) || 88)));
+  const safeTitle = String(title || "Advanced Lab");
+  const safeSubject = String(subject || "Active run");
+  const beams = [18, 34, 50, 66, 82];
+  const nodes = [
+    ["Input", Math.max(20, pct - 18)],
+    ["Model", Math.max(24, pct - 10)],
+    ["Signal", pct],
+    ["Output", Math.max(22, pct - 6)],
+  ];
+  return (
+    <div className="relative overflow-hidden border border-cyan-300/20 bg-[#020712] p-5 shadow-[0_0_70px_rgba(34,211,238,.08)]">
+      <div className="pointer-events-none absolute inset-0 opacity-60" style={{ backgroundImage: "linear-gradient(rgba(34,211,238,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,.04) 1px, transparent 1px), radial-gradient(circle at 18% 18%, rgba(34,211,238,.18), transparent 26%), radial-gradient(circle at 78% 32%, rgba(251,191,36,.12), transparent 24%)", backgroundSize: "44px 44px, 44px 44px, 100% 100%, 100% 100%" }} />
+      <div className="relative z-10 grid gap-5 xl:grid-cols-[1fr_360px]">
+        <div>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">cinematic lab chamber</div>
+              <h3 className="mt-2 text-3xl font-black text-white">{safeTitle}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-400">{safeSubject} is passing through an ElementOS analysis chamber: inputs, model weighting, signal extraction and report-ready outputs.</p>
+            </div>
+            <div className="hidden text-right md:block">
+              <div className="text-5xl font-black text-cyan-100">{pct}%</div>
+              <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500">lab signal</div>
+            </div>
+          </div>
+
+          <div className="relative mt-6 min-h-[210px] overflow-hidden border border-cyan-300/15 bg-black/35 p-5">
+            <div className="absolute left-6 right-6 top-1/2 h-px bg-cyan-300/20" />
+            <div className="absolute bottom-6 left-1/2 top-6 w-px bg-cyan-300/10" />
+            {beams.map((left, index) => (
+              <div key={left} className="absolute top-1/2 h-2 w-16 -translate-y-1/2 bg-cyan-300/50 shadow-[0_0_22px_rgba(34,211,238,.45)]" style={{ left: `${left}%`, opacity: 0.36 + index * 0.1 }} />
+            ))}
+            <div className="relative z-10 grid h-full min-h-[170px] grid-cols-4 items-center gap-3">
+              {nodes.map(([label, value], index) => (
+                <div key={label} className="text-center">
+                  <div className="mx-auto grid h-20 w-20 place-items-center border border-cyan-300/25 bg-cyan-300/[.055] shadow-[0_0_24px_rgba(34,211,238,.12)]">
+                    <div className="grid h-12 w-12 place-items-center border border-cyan-300/30 bg-black/45 text-lg font-black text-cyan-100">{index + 1}</div>
+                  </div>
+                  <div className="mt-3 text-xs font-black uppercase tracking-[.18em] text-cyan-100">{label}</div>
+                  <div className="mx-auto mt-2 h-1.5 max-w-[110px] bg-slate-950"><div className="h-full bg-cyan-300" style={{ width: `${value}%` }} /></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-3">
+          <div className="border border-cyan-300/20 bg-cyan-300/[.055] p-4">
+            <div className="text-xs font-black uppercase tracking-[.22em] text-slate-500">run state</div>
+            <div className="mt-2 text-2xl font-black text-white">Signal locked</div>
+            <div className="mt-3 h-2 bg-slate-950"><div className="h-full bg-cyan-300" style={{ width: `${pct}%` }} /></div>
+          </div>
+          {["Input coherence", "Model stability", "Output confidence"].map((label, index) => {
+            const value = Math.max(12, Math.min(99, pct - index * 7 + 4));
+            return (
+              <div key={label} className="border border-white/10 bg-black/25 p-4">
+                <div className="flex items-center justify-between gap-3"><span className="text-xs font-black uppercase tracking-[.16em] text-slate-500">{label}</span><span className="text-lg font-black text-cyan-100">{value}%</span></div>
+                <div className="mt-3 h-2 bg-slate-950"><div className="h-full bg-cyan-300" style={{ width: `${value}%` }} /></div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AdvancedLabRunSummary({ title = "Lab run summary", score = 88, findings = [], actions = [], onReport, onForecast, onCompare }) {
   const pct = Math.max(1, Math.min(99, Math.round(Number(score) || 88)));
   const safeFindings = Array.isArray(findings) && findings.length ? findings : ["Inputs validated", "Simulation data generated", "Report-ready summary available"];
   const safeActions = Array.isArray(actions) && actions.length ? actions : ["Review output", "Compare alternatives", "Generate report"];
   return (
     <Panel className="border-cyan-300/15 bg-[#030914]">
-      <div className="grid gap-5 xl:grid-cols-[1fr_320px]">
+      <SafeAdvancedLabCinematicChamber title={title} score={pct} subject={safeFindings[0] || title} />
+      <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_320px]">
         <div>
           <div className="text-xs font-black uppercase tracking-[.24em] text-cyan-200">stable lab output</div>
           <h3 className="mt-2 text-3xl font-black text-white">{title}</h3>
