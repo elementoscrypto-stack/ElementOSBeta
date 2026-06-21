@@ -80,7 +80,7 @@ class ElementOSPageErrorBoundary extends React.Component {
     return (
       <div className="rounded-[2rem] border border-red-300/25 bg-red-300/[0.08] p-6 text-red-50">
         <div className="text-xs font-black uppercase tracking-[.22em] text-red-200">Page safety guard</div>
-        <h2 className="mt-2 text-3xl font-black">{pageLabel(this.props.page)} hit a render error.</h2>
+        <h2 className="mt-2 text-3xl font-black">{pageLabel(this.props.page)} is temporarily unavailable.</h2>
         <p className="mt-3 text-sm leading-6 text-red-100/90">This view could not load cleanly. The rest of ElementOS is still available, so return to the dashboard or retry the page.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" onClick={() => this.setState({ error: null })} className="rounded-full bg-red-100 px-4 py-2 text-sm font-black text-red-950">Retry Page</button>
@@ -1597,9 +1597,9 @@ const PAGE_LABELS = {
   isotopes: "Isotope Lab",
   matterlab: "Mission Intelligence",
   publicdiscovery: "Public Discovery Page",
-  simreports: "Reports",
+  simreports: "Research Centre",
   viralcards: "Reports & Media",
-  reports: "Reports",
+  reports: "Research Centre",
   advisorreport: "Reports",
   lab: "Labs",
   materialsdiscovery: "Materials Discovery Engine",
@@ -2266,7 +2266,9 @@ function Button({ children, onClick, variant = "ghost", className = "", disabled
       disabled={disabled}
       title={title}
       aria-label={ariaLabel || (typeof children === "string" ? children : undefined)}
-      className={`eos-button eos-touch-glow eos-liquid-button rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none ${styles} ${className}`}
+      className={`eos-button eos-button-fit eos-touch-glow eos-liquid-button inline-flex min-w-0 max-w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-center font-bold leading-tight transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none ${styles} ${className}`}
+      data-eos-control="button"
+      data-eos-fit="auto"
       {...props}
     >
       {children}
@@ -2285,6 +2287,130 @@ function PageHero({ eyebrow, title, description, children, icon: Icon = Sparkles
           {description && <p className="mt-5 max-w-4xl text-base leading-8 text-slate-300 sm:text-lg">{description}</p>}
         </div>
         {children && <div className="shrink-0">{children}</div>}
+      </div>
+    </Panel>
+  );
+}
+
+
+function V240LaunchReadinessStrip({ page, setPage, isPro, startCheckout }) {
+  const show = ["landing", "dashboard", "reports", "timemachine", "periodic", "atlas"].includes(page);
+  if (!show) return null;
+  const pillars = [
+    ["Stable workflow", "Pages are isolated with safety guards so one lab cannot blank the whole app."],
+    ["Report-driven", "Every serious workflow points toward a professional Research Centre output."],
+    ["Launch-ready path", "Mission → Discovery → Forecast → Report is the primary commercial journey."],
+  ];
+  return (
+    <div className="rounded-[1.35rem] border border-cyan-300/15 bg-slate-950/78 p-3 shadow-[0_16px_50px_rgba(0,0,0,.24)] backdrop-blur-xl">
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+        <div className="grid gap-2 md:grid-cols-3">
+          {pillars.map(([title, body]) => (
+            <div key={title} className="rounded-xl border border-white/10 bg-black/25 p-3">
+              <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">{title}</div>
+              <div className="mt-1 text-xs leading-5 text-slate-400">{body}</div>
+            </div>
+          ))}
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <Button onClick={() => setPage?.("reports")} variant="primary" className="px-4 py-3 text-xs">Open Research Centre</Button>
+          {!isPro && <Button onClick={() => startCheckout?.("Pro Researcher")} className="px-4 py-3 text-xs">Unlock Exports</Button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function V240EnterpriseReadinessPanel({ setPage, isPro, startCheckout }) {
+  const readiness = [
+    ["Stability", "9.0 target", "Error boundaries, safe fallbacks, guarded exports and lab isolation reduce blank-screen risk."],
+    ["Commercial", "9.5 target", "Research Centre, Pro export locks and report outcomes turn tools into paid deliverables."],
+    ["Launch", "9.0 target", "Focused navigation, one main CTA per workflow, and clean upgrade moments make the product easier to sell."],
+  ];
+  const funnel = [
+    ["Mission", "Ask a material question"],
+    ["Discovery", "Rank candidates and pairings"],
+    ["Forecast", "Run Time Machine"],
+    ["Report", "Export the deliverable"],
+  ];
+  return (
+    <Panel className="border-cyan-300/18 bg-slate-950/78">
+      <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+        <div>
+          <Pill gold><ShieldCheck size={12}/> enterprise readiness</Pill>
+          <h2 className="mt-4 text-4xl font-black tracking-tight text-white">Built around stability, revenue and launch readiness.</h2>
+          <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-300">
+            V240 tightens ElementOS around the commercial loop: answer the user’s material question, simulate the result, explain the risk, and export a professional report.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setPage?.("reports")} variant="primary">Generate Report</Button>
+          {!isPro && <Button onClick={() => startCheckout?.("Pro Researcher")}>Upgrade to Pro</Button>}
+        </div>
+      </div>
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        {readiness.map(([label, score, body]) => (
+          <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+            <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">{label}</div>
+            <div className="mt-2 text-3xl font-black text-white">{score}</div>
+            <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 rounded-2xl border border-cyan-300/15 bg-cyan-300/[.06] p-4">
+        <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Revenue funnel</div>
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          {funnel.map(([label, body], index) => (
+            <div key={label} className="rounded-xl border border-white/10 bg-slate-950/70 p-3">
+              <div className="text-2xl font-black text-cyan-100">0{index + 1}</div>
+              <div className="mt-1 font-black text-white">{label}</div>
+              <div className="mt-1 text-xs leading-5 text-slate-400">{body}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function V240ResearchCentreUpgradePanel({ compare = [], selected = "Ti", isPro, startCheckout, setPage }) {
+  const selectedElement = elementMap[selected] || elementMap.Ti || elements[0];
+  const reportTypes = [
+    ["Mission Report", "Decision-ready answer to a material problem."],
+    ["Discovery Report", "Top ranked material candidates, pairings and opportunities."],
+    ["Forecast Report", "Time Machine risk, timeline and future-state projections."],
+    ["Lab Report", "Advanced lab diagnostics, telemetry and generated findings."],
+  ];
+  return (
+    <Panel className="border-emerald-300/15 bg-emerald-300/[.045]">
+      <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
+        <div>
+          <Pill gold><FileText size={12}/> report engine 2.0</Pill>
+          <h2 className="mt-4 text-4xl font-black text-white">The Research Centre is the paid-product hub.</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">
+            Current focus: {selectedElement?.name || selected}. Active compare set: {(compare || []).join(" + ") || "not selected"}. Convert missions, forecasts, maps, comparisons and lab simulations into deliverables users can save, share and export.
+          </p>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {reportTypes.map(([title, body]) => (
+              <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="font-black text-emerald-100">{title}</div>
+                <div className="mt-1 text-sm leading-6 text-slate-400">{body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-[1.5rem] border border-cyan-300/20 bg-slate-950/75 p-5">
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Conversion moment</div>
+          <div className="mt-4 text-5xl font-black text-white">Export</div>
+          <p className="mt-3 text-sm leading-6 text-slate-300">Free users can preview intelligence. Pro Researcher unlocks professional PDF, JSON, SVG, saved report history and share-ready outputs.</p>
+          <div className="mt-5 grid gap-2 text-sm text-slate-300">
+            {['PDF executive report', 'JSON research dataset', 'SVG share card', 'Cloud report vault'].map((item) => <div key={item}>✓ {item}</div>)}
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {!isPro && <Button onClick={() => startCheckout?.("Pro Researcher")} variant="primary">Upgrade to Export</Button>}
+            <Button onClick={() => setPage?.("dashboard")}>Start New Mission</Button>
+          </div>
+        </div>
       </div>
     </Panel>
   );
@@ -3375,6 +3501,102 @@ function ElementOSThemeSkin() {
         }
       }
 
+      /* V241 Button Fit + NOR/SOR interface refinement.
+         NOR remains the structural grid. SOR is used only as controlled skew accents
+         so text, buttons, and windows stay readable and perpendicular. */
+      .eos-button,
+      .eos-button-fit,
+      .eos-nor-grid-interface button,
+      .eos-nor-grid-interface a[role="button"] {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+        line-height: 1.14 !important;
+        text-align: center !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: .5rem !important;
+        position: relative;
+        isolation: isolate;
+      }
+      .eos-button > *,
+      .eos-button-fit > *,
+      .eos-nor-grid-interface button > * {
+        min-width: 0;
+      }
+      .eos-button svg,
+      .eos-nor-grid-interface button svg {
+        flex: 0 0 auto;
+      }
+      .eos-button-text-overflow {
+        font-size: clamp(.72rem, 1.6vw, .9rem) !important;
+        padding-inline: .7rem !important;
+        letter-spacing: .01em !important;
+      }
+      .eos-button::after,
+      .eos-nor-grid-interface button::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        background:
+          linear-gradient(90deg, rgba(34,211,238,.18), transparent 28%, transparent 72%, rgba(34,211,238,.08));
+        opacity: .16;
+        z-index: -1;
+      }
+      .eos-nor-grid-interface button[class*="bg-cyan-300"],
+      .eos-nor-grid-interface button[class*="bg-emerald-300"],
+      .eos-nor-grid-interface button[class*="bg-amber-300"],
+      .eos-nor-grid-interface button[class*="bg-red-300"],
+      .eos-nor-grid-interface button[class*="bg-blue-"],
+      .eos-nor-grid-interface button[class*="bg-purple-"],
+      .eos-nor-grid-interface button[class*="bg-fuchsia-"] {
+        color: #e6fbff !important;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)),
+          linear-gradient(90deg, rgba(34,211,238,.18), rgba(2,6,23,.92)) !important;
+        border: 1px solid rgba(34,211,238,.38) !important;
+      }
+      .eos-sor-accent {
+        position: relative;
+      }
+      .eos-sor-accent::before {
+        content: "";
+        position: absolute;
+        inset: 8px auto 8px -1px;
+        width: 3px;
+        background: linear-gradient(180deg, transparent, rgba(34,211,238,.62), transparent);
+        transform: skewY(-12deg);
+        transform-origin: center;
+        pointer-events: none;
+      }
+      .eos-sor-energy-line {
+        position: relative;
+        overflow: hidden;
+      }
+      .eos-sor-energy-line::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -20%;
+        width: 38%;
+        background: linear-gradient(105deg, transparent, rgba(34,211,238,.16), transparent);
+        transform: skewX(-14deg);
+        pointer-events: none;
+      }
+      @media (max-width: 767px) {
+        .eos-button,
+        .eos-nor-grid-interface button {
+          min-height: 44px !important;
+          padding-inline: .85rem !important;
+        }
+      }
+
       /* V131: normal-resolution interface.
          The app should look correct at 100% browser zoom.
          Density is handled by grids and spacing, not browser-style scaling. */
@@ -4283,7 +4505,7 @@ function Sidebar({ page, setPage }) {
     ["timemachine", "Time Machine", Clock3],
     ["calculations", "Calculation Studio", Calculator],
     ["atlas", "Interaction Atlas", Radar],
-    ["reports", "Reports", BookOpen],
+    ["reports", "Research Centre", BookOpen],
   ];
 
   const groups = [
@@ -4439,6 +4661,7 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
       </PageHero>
 
       <ElementOSIntelligenceLayer page="mission" context={{ selected }} setPage={setPage} />
+      <V240EnterpriseReadinessPanel setPage={setPage} isPro={isPro} startCheckout={startCheckout} />
 
       <V154MissionFirstHero setPage={setPage} />
 
@@ -12887,21 +13110,22 @@ Status: Presentation-ready platform export.`;
 
     const slug = slugifyExportName(title);
     pdf.save(`${slug}.pdf`);
-    downloadFile(`${slug}.json`, JSON.stringify({ title, description: desc, content, compareSet: compare, generatedAt: new Date().toLocaleString(), source: "ElementOS Reports Centre" }, null, 2), "application/json");
+    downloadFile(`${slug}.json`, JSON.stringify({ title, description: desc, content, compareSet: compare, generatedAt: new Date().toLocaleString(), source: "ElementOS Research Centre" }, null, 2), "application/json");
     downloadFile(`${slug}.svg`, makeExportSvg({ title, summary: content, payload: { title, compareSet: compare.join(" + "), rows: compareRows.length } }), "image/svg+xml");
   };
 
   return (
     <>
       <ElementOSIntelligenceLayer page="reports" context={{ selected }} setPage={setPage} />
+      <V240ResearchCentreUpgradePanel compare={compare} selected={selected} isPro={isPro} startCheckout={startCheckout} setPage={setPage} />
       <V211ResearchCentreHub compare={compare} selected={selected} isPro={isPro} startCheckout={startCheckout} setPage={setPage} />
       <V212ReportOutputStudio compare={compare} selected={selected} isPro={isPro} startCheckout={startCheckout} setPage={setPage} saveReport={saveReport} exportPDF={exportPDF} />
       <V200ReportRevenueLock isPro={isPro} startCheckout={startCheckout} />
       <V154ExecutiveReportPreview compare={compare} isPro={isPro} startCheckout={startCheckout} />
       <ReportsDiscoveryMergePanel setPage={setPage} setPublicDiscovery={() => {}} />
       <Panel>
-        <Pill gold><BookOpen size={12}/> PDF publishing layer</Pill>
-        <h1 className="mt-4 text-5xl font-black">Reports Centre</h1>
+        <Pill gold><BookOpen size={12}/> Research publishing layer</Pill>
+        <h1 className="mt-4 text-5xl font-black">Research Centre</h1>
         <Info title="PDF upgrade">
           Reports now save to Supabase and export as branded PDFs with timestamps, compare sets and material metrics. This gives ElementOS a stronger paid-product export layer.
         </Info>
@@ -18116,6 +18340,27 @@ export default function App() {
   const [supportOpen, setSupportOpen] = useState(false);
   const [forecastRequest, setForecastRequest] = useState(null);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const auditButtons = () => {
+      const buttons = Array.from(document.querySelectorAll("button"));
+      const report = buttons.map((button, index) => {
+        const label = (button.textContent || button.getAttribute("aria-label") || `button-${index}`).replace(/\s+/g, " ").trim();
+        const overflowX = button.scrollWidth > button.clientWidth + 2;
+        const overflowY = button.scrollHeight > button.clientHeight + 2;
+        const overflow = overflowX || overflowY;
+        button.dataset.eosTextFit = overflow ? "overflow" : "ok";
+        button.classList.toggle("eos-button-text-overflow", overflow);
+        return { label, overflow, width: button.clientWidth, scrollWidth: button.scrollWidth, height: button.clientHeight, scrollHeight: button.scrollHeight };
+      });
+      window.__ELEMENTOS_BUTTON_AUDIT__ = () => report;
+      return report;
+    };
+    requestAnimationFrame(auditButtons);
+    window.addEventListener("resize", auditButtons);
+    return () => window.removeEventListener("resize", auditButtons);
+  }, [page, plan, commandOpen, upgradeModalOpen, supportOpen]);
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -18504,6 +18749,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
+        <V240LaunchReadinessStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />
         {page !== "landing" && page !== "login" && (
           <V155AdvisorMiniBar selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
         )}
