@@ -1,8 +1,8 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./index.html', './src/**/*.{js,jsx}'],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
+# Engines
+
+Future extraction targets:
+- scoring engine
+- discovery engine
+- report engine
+- export engine
+- pricing/plan helpers

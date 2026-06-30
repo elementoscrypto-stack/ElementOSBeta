@@ -1,20 +1,9 @@
-# ElementOS Beta
+import { createClient } from "@supabase/supabase-js";
 
-Deploy-ready Vite + React build for ElementOS.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-## Local run
-
-```bash
-npm install
-npm run dev
-```
-
-## Vercel settings
-
-- Framework: Vite
-- Install Command: npm install
-- Build Command: npm run build
-- Output Directory: dist
-- Node: 20.x
-
-Upload the repository root to GitHub, then import it into Vercel.
+export const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
