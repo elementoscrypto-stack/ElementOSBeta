@@ -1,1 +1,6 @@
-export { supabase } from "../supabaseClient.js";
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
