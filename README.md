@@ -1,37 +1,44 @@
-# ElementOS V233 Resurrected Folder Bundle
+# ElementOS Beta — V400 Safe Refactor Bundle
 
-This bundle restores the attached V233 cinematic launch candidate as the live `src/App.jsx`.
+This bundle is built from the uploaded current project files.
 
-## Why this fixes the stripped-back bundle
+## What V400 does
 
-The previous structured bundle used clean placeholder pages and plain CSS.  
-The attached V233 build uses the original Tailwind cinematic interface, advanced labs, discovery systems, reports, exports, mobile navigation, command palette, subscription UI, and safety guards.
+- Preserves the existing `src/App.jsx` application logic, pages, labs, reports, Supabase and Stripe flow.
+- Keeps the Vite root structure: `index.html` loads `/src/main.jsx`.
+- Keeps Tailwind/PostCSS enabled.
+- Uses Node `24.x` for future Vercel compatibility.
+- Adds a full-site cinematic visual system in `src/style.css`.
+- Adds npm install safeguards for Vercel.
 
 ## Deploy
 
-```bash
-npm install
-npm run build
-```
+1. Replace your repository files with this bundle.
+2. Commit and push to GitHub.
+3. In Vercel, redeploy.
+4. If styling looks stale, use **Redeploy → Clear Build Cache**.
 
-## Vercel
+## Vercel Settings
 
-Framework preset: Vite  
-Build command: `npm run build`  
-Output directory: `dist`
+- Framework: Vite
+- Install Command: `npm install --no-audit --no-fund --prefer-online`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Node: `24.x`
 
-## Supabase
+## Environment Variables
 
-Add these environment variables only if you want cloud features active:
+Recommended if using Supabase/Stripe:
 
-```bash
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
-```
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_SECRET_KEY`
+- `VITE_STRIPE_PRICE_ID`
 
-The app will still render without them because `supabaseClient.js` safely returns `null` if the variables are missing.
+The uploaded Supabase client has a safe fallback when Supabase env vars are missing, so the site should not blank just because Supabase is not configured.
 
-## Important
 
-This is a resurrection build. It prioritizes making the website look and feel like V233 again.
-The folder structure is present for the next controlled refactor, but the original app remains intact in `src/App.jsx` to avoid breaking working features.
+## V401 Magnificent Visual Upgrade
+
+This bundle keeps the working ElementOS functionality intact and adds a safe full-site cinematic visual layer in `src/style.css`.
