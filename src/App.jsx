@@ -80,7 +80,7 @@ class ElementOSPageErrorBoundary extends React.Component {
     return (
       <div className="rounded-[2rem] border border-red-300/25 bg-red-300/[0.08] p-6 text-red-50">
         <div className="text-xs font-black uppercase tracking-[.22em] text-red-200">Page safety guard</div>
-        <h2 className="mt-2 text-3xl font-black">{pageLabel(this.props.page)} hit a render error.</h2>
+        <h2 className="mt-2 text-3xl font-black">{pageLabel(this.props.page)} is temporarily unavailable.</h2>
         <p className="mt-3 text-sm leading-6 text-red-100/90">This view could not load cleanly. The rest of ElementOS is still available, so return to the dashboard or retry the page.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" onClick={() => this.setState({ error: null })} className="rounded-full bg-red-100 px-4 py-2 text-sm font-black text-red-950">Retry Page</button>
@@ -809,7 +809,7 @@ function DiscoveryOSFeed({ discoveries = [], setPage, setPublicDiscovery }) {
           <button
             key={item.dna}
             onClick={() => { setPublicDiscovery?.(item); setPage?.("publicdiscovery"); }}
-            className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/45 hover:bg-cyan-300/10"
+            className="eos-feature-card rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-5 text-center transition hover:-translate-y-1 hover:border-cyan-300/45 hover:bg-cyan-300/10"
           >
             <div className="text-xs uppercase tracking-[.22em] text-slate-500">{item.tier}</div>
             <div className="mt-2 text-3xl font-black text-cyan-100">{item.a} + {item.b}</div>
@@ -857,10 +857,10 @@ function CoreLoopPanel({ setPage }) {
       </div>
       <div className="mt-6 grid gap-3 md:grid-cols-4">
         {steps.map(([num, title, body, target]) => (
-          <button key={title} onClick={() => setPage?.(target)} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-300/10">
+          <button key={title} onClick={() => setPage?.(target)} className="eos-action-card rounded-2xl border border-white/10 bg-black/20 p-4 text-center transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-300/10">
             <div className="text-xs font-black text-cyan-200">{num}</div>
-            <div className="mt-2 text-lg font-black text-white">{title}</div>
-            <div className="mt-2 text-xs leading-5 text-slate-400">{body}</div>
+            <div className="eos-card-title mt-2 text-lg font-black text-white">{title}</div>
+            <div className="eos-card-description mt-2 text-xs leading-5 text-slate-400">{body}</div>
           </button>
         ))}
       </div>
@@ -1053,8 +1053,8 @@ function MISidebar({ active, setActive }) {
   ];
 
   return (
-    <aside className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-4 shadow-2xl shadow-black/30 lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)]">
-      <div className="mb-8 flex items-center gap-3">
+    <aside className="eos-v306-sidebar eos-v307-sidebar rounded-[2rem] border border-white/10 bg-white/[0.035] p-4 shadow-2xl shadow-black/30 lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)]">
+      <div className="eos-v306-brand mb-8 flex items-center gap-3">
         <div className="rounded-2xl bg-cyan-300 p-3 text-slate-950"><Atom size={24} /></div>
         <div>
           <div className="text-lg font-black">M.I.OS</div>
@@ -1392,7 +1392,7 @@ function MatterIntelligenceLab() {
           {pipeline.map(([step, title, body]) => (
             <div key={title} className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/5 p-4">
               <div className="text-xs font-black text-cyan-200">{step}</div>
-              <div className="mt-2 text-lg font-black text-white">{title}</div>
+              <div className="eos-card-title mt-2 text-lg font-black text-white">{title}</div>
               <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
             </div>
           ))}
@@ -1597,9 +1597,9 @@ const PAGE_LABELS = {
   isotopes: "Isotope Lab",
   matterlab: "Mission Intelligence",
   publicdiscovery: "Public Discovery Page",
-  simreports: "Reports",
+  simreports: "Research Centre",
   viralcards: "Reports & Media",
-  reports: "Reports",
+  reports: "Research Centre",
   advisorreport: "Reports",
   lab: "Labs",
   materialsdiscovery: "Materials Discovery Engine",
@@ -1623,6 +1623,7 @@ const MOBILE_PAGE_ORDER = [
   "atlas",
   "reports",
   "lab",
+  "lab-element-analyzer",
 ];
 
 function pageLabel(page) {
@@ -2266,7 +2267,9 @@ function Button({ children, onClick, variant = "ghost", className = "", disabled
       disabled={disabled}
       title={title}
       aria-label={ariaLabel || (typeof children === "string" ? children : undefined)}
-      className={`eos-button eos-touch-glow eos-liquid-button rounded-xl px-4 py-3 font-bold transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none ${styles} ${className}`}
+      className={`eos-button eos-button-fit eos-touch-glow eos-liquid-button inline-flex min-w-[8.5rem] max-w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-center font-bold leading-tight whitespace-nowrap transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,145,255,.22)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none ${styles} ${className}`}
+      data-eos-control="button"
+      data-eos-fit="auto"
       {...props}
     >
       {children}
@@ -2290,13 +2293,148 @@ function PageHero({ eyebrow, title, description, children, icon: Icon = Sparkles
   );
 }
 
+
+function V240LaunchReadinessStrip({ page, setPage, isPro, startCheckout }) {
+  const show = ["landing", "dashboard", "reports", "timemachine", "periodic", "atlas"].includes(page);
+  if (!show) return null;
+  const pillars = [
+    ["Stable workflow", "Pages are isolated with safety guards so one lab cannot blank the whole app."],
+    ["Report-driven", "Every serious workflow points toward a professional Research Centre output."],
+    ["Launch-ready path", "Mission → Discovery → Forecast → Report is the primary commercial journey."],
+  ];
+  return (
+    <div className="rounded-[1.35rem] border border-cyan-300/15 bg-slate-950/78 p-3 shadow-[0_16px_50px_rgba(0,0,0,.24)] backdrop-blur-xl">
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+        <div className="grid gap-2 md:grid-cols-3">
+          {pillars.map(([title, body]) => (
+            <div key={title} className="rounded-xl border border-white/10 bg-black/25 p-3">
+              <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-200">{title}</div>
+              <div className="mt-1 text-xs leading-5 text-slate-400">{body}</div>
+            </div>
+          ))}
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <Button onClick={() => setPage?.("reports")} variant="primary" className="px-4 py-3 text-xs">Open Research Centre</Button>
+          {!isPro && <Button onClick={() => startCheckout?.("Pro Researcher")} className="px-4 py-3 text-xs">Unlock Exports</Button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function V240EnterpriseReadinessPanel({ setPage, isPro, startCheckout }) {
+  const readiness = [
+    ["Stability", "9.0 target", "Error boundaries, safe fallbacks, guarded exports and lab isolation reduce blank-screen risk."],
+    ["Commercial", "9.5 target", "Research Centre, Pro export locks and report outcomes turn tools into paid deliverables."],
+    ["Launch", "9.0 target", "Focused navigation, one main CTA per workflow, and clean upgrade moments make the product easier to sell."],
+  ];
+  const funnel = [
+    ["Mission", "Ask a material question"],
+    ["Discovery", "Rank candidates and pairings"],
+    ["Forecast", "Run Time Machine"],
+    ["Report", "Export the deliverable"],
+  ];
+  return (
+    <Panel className="border-cyan-300/18 bg-slate-950/78">
+      <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+        <div>
+          <Pill gold><ShieldCheck size={12}/> enterprise readiness</Pill>
+          <h2 className="mt-4 text-4xl font-black tracking-tight text-white">Built around stability, revenue and launch readiness.</h2>
+          <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-300">
+            V240 tightens ElementOS around the commercial loop: answer the user’s material question, simulate the result, explain the risk, and export a professional report.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setPage?.("reports")} variant="primary">Generate Report</Button>
+          {!isPro && <Button onClick={() => startCheckout?.("Pro Researcher")}>Upgrade to Pro</Button>}
+        </div>
+      </div>
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        {readiness.map(([label, score, body]) => (
+          <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+            <div className="text-xs font-black uppercase tracking-[.2em] text-cyan-200">{label}</div>
+            <div className="mt-2 text-3xl font-black text-white">{score}</div>
+            <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 rounded-2xl border border-cyan-300/15 bg-cyan-300/[.06] p-4">
+        <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Revenue funnel</div>
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          {funnel.map(([label, body], index) => (
+            <div key={label} className="rounded-xl border border-white/10 bg-slate-950/70 p-3">
+              <div className="text-2xl font-black text-cyan-100">0{index + 1}</div>
+              <div className="mt-1 font-black text-white">{label}</div>
+              <div className="mt-1 text-xs leading-5 text-slate-400">{body}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function V240ResearchCentreUpgradePanel({ compare = [], selected = "Ti", isPro, startCheckout, setPage }) {
+  const selectedElement = elementMap[selected] || elementMap.Ti || elements[0];
+  const reportTypes = [
+    ["Mission Report", "Decision-ready answer to a material problem."],
+    ["Discovery Report", "Top ranked material candidates, pairings and opportunities."],
+    ["Forecast Report", "Time Machine risk, timeline and future-state projections."],
+    ["Lab Report", "Advanced lab diagnostics, telemetry and generated findings."],
+  ];
+  return (
+    <Panel className="border-emerald-300/15 bg-emerald-300/[.045]">
+      <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
+        <div>
+          <Pill gold><FileText size={12}/> report engine 2.0</Pill>
+          <h2 className="mt-4 text-4xl font-black text-white">The Research Centre is the paid-product hub.</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">
+            Current focus: {selectedElement?.name || selected}. Active compare set: {(compare || []).join(" + ") || "not selected"}. Convert missions, forecasts, maps, comparisons and lab simulations into deliverables users can save, share and export.
+          </p>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {reportTypes.map(([title, body]) => (
+              <div key={title} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                <div className="font-black text-emerald-100">{title}</div>
+                <div className="mt-1 text-sm leading-6 text-slate-400">{body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-[1.5rem] border border-cyan-300/20 bg-slate-950/75 p-5">
+          <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Conversion moment</div>
+          <div className="mt-4 text-5xl font-black text-white">Export</div>
+          <p className="mt-3 text-sm leading-6 text-slate-300">Free users can preview intelligence. Pro Researcher unlocks professional PDF, JSON, SVG, saved report history and share-ready outputs.</p>
+          <div className="mt-5 grid gap-2 text-sm text-slate-300">
+            {['PDF executive report', 'JSON research dataset', 'SVG share card', 'Cloud report vault'].map((item) => <div key={item}>✓ {item}</div>)}
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {!isPro && <Button onClick={() => startCheckout?.("Pro Researcher")} variant="primary">Upgrade to Export</Button>}
+            <Button onClick={() => setPage?.("dashboard")}>Start New Mission</Button>
+          </div>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function LuxuryActionCard({ title, body, icon: Icon = Sparkles, onClick, primary = false }) {
   return (
-    <button onClick={onClick} className={`group rounded-[1.65rem] border p-5 text-left transition duration-300 hover:-translate-y-1 ${primary ? "border-cyan-300/[.35] bg-cyan-300/10 shadow-[0_0_42px_rgba(34,211,238,.12)]" : "border-white/10 bg-white/[0.035] hover:border-white/20 hover:bg-white/[0.06]"}`}>
-      <div className={`grid h-12 w-12 place-items-center rounded-2xl ${primary ? "bg-cyan-300 text-slate-950" : "border border-white/10 bg-black/25 text-cyan-100"}`}><Icon size={20}/></div>
-      <div className="mt-5 text-xl font-black text-white">{title}</div>
-      <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
-      <div className="mt-4 text-xs font-black uppercase tracking-[.22em] text-cyan-200 opacity-70 transition group-hover:opacity-100">Open workflow →</div>
+    <button
+      type="button"
+      onClick={onClick}
+      data-eos-card="action"
+      className={`eos-action-card-v303 group flex min-h-[260px] w-full flex-col items-center justify-between rounded-[2rem] border p-6 text-center transition duration-300 hover:-translate-y-1 ${primary ? "border-cyan-300/[.38] bg-cyan-300/[.105] shadow-[0_0_54px_rgba(34,211,238,.16)]" : "border-white/10 bg-white/[0.035] hover:border-cyan-300/25 hover:bg-cyan-300/[.055]"}`}
+    >
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className={`eos-action-icon-v303 grid h-16 w-16 place-items-center rounded-[1.35rem] ${primary ? "bg-cyan-300 text-slate-950 shadow-[0_0_38px_rgba(34,211,238,.25)]" : "border border-cyan-300/15 bg-black/30 text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,.06)]"}`}>
+          <Icon size={25}/>
+        </div>
+        <div className="eos-action-title-v303 mt-5 text-2xl font-black leading-tight tracking-[-.02em] text-white">{title}</div>
+        <p className="eos-action-body-v303 mx-auto mt-3 max-w-[24rem] text-sm leading-6 text-slate-400">{body}</p>
+      </div>
+      <div className="eos-action-launch-v303 mt-6 inline-flex items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/[.08] px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-cyan-100 transition group-hover:border-cyan-200/45 group-hover:bg-cyan-300/[.16]">
+        Launch →
+      </div>
     </button>
   );
 }
@@ -2747,7 +2885,7 @@ function V155AdvisorMiniBar({ selected, setSelected, setCompare, setPage, setFor
     <div className="rounded-[1.25rem] border border-cyan-300/15 bg-cyan-300/[0.055] p-3">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="shrink-0 text-xs font-black uppercase tracking-[.2em] text-cyan-200">Ask Material Advisor</div>
-        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="What material should I use?" className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm font-bold text-white outline-none placeholder:text-slate-600" />
+        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="What material should I use?" className="min-w-fit flex-1 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm font-bold text-white outline-none placeholder:text-slate-600" />
         <Button onClick={analyze} variant="primary" className="shrink-0">Analyze</Button>
       </div>
     </div>
@@ -3372,6 +3510,145 @@ function ElementOSThemeSkin() {
         .eos-nor-grid-interface input,
         .eos-nor-grid-interface textarea {
           min-height: 44px;
+        }
+      }
+
+      /* V302 Button Text Rescue.
+         The old V241 rule caused vertical letter-by-letter buttons by forcing
+         min-width: 0 + white-space: normal + overflow-wrap:anywhere on every button.
+         Real CTAs now stay horizontal; card-like buttons are handled separately. */
+      .eos-button,
+      .eos-button-fit,
+      .eos-nor-grid-interface button[data-eos-control="button"],
+      .eos-nor-grid-interface a[role="button"] {
+        min-width: 8.5rem !important;
+        max-width: 100% !important;
+        white-space: nowrap !important;
+        overflow-wrap: normal !important;
+        word-break: keep-all !important;
+        line-height: 1.14 !important;
+        text-align: center !important;
+        display: inline-flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: .5rem !important;
+        position: relative;
+        isolation: isolate;
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+      }
+      .eos-button.w-full,
+      .eos-button-fit.w-full,
+      .eos-nor-grid-interface button[data-eos-control="button"].w-full {
+        width: 100% !important;
+        min-width: min(100%, 10rem) !important;
+      }
+      .eos-button > *,
+      .eos-button-fit > *,
+      .eos-nor-grid-interface button[data-eos-control="button"] > * {
+        min-width: auto !important;
+        max-width: 100% !important;
+        white-space: nowrap !important;
+        overflow-wrap: normal !important;
+        word-break: keep-all !important;
+      }
+      .eos-button svg,
+      .eos-nor-grid-interface button svg {
+        flex: 0 0 auto;
+      }
+      .eos-button-text-overflow {
+        font-size: clamp(.78rem, 1.2vw, .95rem) !important;
+        padding-inline: .9rem !important;
+        letter-spacing: -.005em !important;
+        white-space: nowrap !important;
+      }
+      /* Homepage/action tiles are allowed to contain descriptions, so they stack vertically. */
+      .eos-magic-tile,
+      .eos-action-card-v300,
+      .eos-action-card-v301,
+      .eos-action-card-v302,
+      .eos-nor-grid-interface button[data-eos-card="action"] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: .75rem !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        white-space: normal !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+        text-align: center !important;
+      }
+      .eos-magic-tile *,
+      .eos-action-card-v300 *,
+      .eos-action-card-v301 *,
+      .eos-action-card-v302 *,
+      .eos-nor-grid-interface button[data-eos-card="action"] * {
+        white-space: normal !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+        text-align: center !important;
+      }
+      .eos-button::after,
+      .eos-nor-grid-interface button::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        background:
+          linear-gradient(90deg, rgba(34,211,238,.18), transparent 28%, transparent 72%, rgba(34,211,238,.08));
+        opacity: .16;
+        z-index: -1;
+      }
+      .eos-nor-grid-interface button[class*="bg-cyan-300"],
+      .eos-nor-grid-interface button[class*="bg-emerald-300"],
+      .eos-nor-grid-interface button[class*="bg-amber-300"],
+      .eos-nor-grid-interface button[class*="bg-red-300"],
+      .eos-nor-grid-interface button[class*="bg-blue-"],
+      .eos-nor-grid-interface button[class*="bg-purple-"],
+      .eos-nor-grid-interface button[class*="bg-fuchsia-"] {
+        color: #e6fbff !important;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)),
+          linear-gradient(90deg, rgba(34,211,238,.18), rgba(2,6,23,.92)) !important;
+        border: 1px solid rgba(34,211,238,.38) !important;
+      }
+      .eos-sor-accent {
+        position: relative;
+      }
+      .eos-sor-accent::before {
+        content: "";
+        position: absolute;
+        inset: 8px auto 8px -1px;
+        width: 3px;
+        background: linear-gradient(180deg, transparent, rgba(34,211,238,.62), transparent);
+        transform: skewY(-12deg);
+        transform-origin: center;
+        pointer-events: none;
+      }
+      .eos-sor-energy-line {
+        position: relative;
+        overflow: hidden;
+      }
+      .eos-sor-energy-line::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -20%;
+        width: 38%;
+        background: linear-gradient(105deg, transparent, rgba(34,211,238,.16), transparent);
+        transform: skewX(-14deg);
+        pointer-events: none;
+      }
+      @media (max-width: 767px) {
+        .eos-button,
+        .eos-nor-grid-interface button {
+          min-height: 44px !important;
+          padding-inline: .85rem !important;
         }
       }
 
@@ -4256,6 +4533,104 @@ function ElementOSThemeSkin() {
         .eos-v218-time .text-5xl { font-size: 4.35rem !important; }
       }
 
+
+
+      /* V303 Premium UI Polish Pass — homepage/action-card layout, typography, and safe CTA sizing. */
+      .eos-page-stage {
+        container-type: inline-size;
+      }
+      .eos-card-grid-4 {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+        gap: 1.1rem !important;
+        align-items: stretch !important;
+      }
+      .eos-action-card-v303,
+      .eos-nor-grid-interface button[data-eos-card="action"].eos-action-card-v303 {
+        position: relative !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        min-height: 260px !important;
+        white-space: normal !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        text-align: center !important;
+        isolation: isolate !important;
+      }
+      .eos-action-card-v303::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(103,232,249,.18), transparent 38%),
+          linear-gradient(135deg, rgba(255,255,255,.045), transparent 46%);
+        opacity: .75;
+        transition: opacity .25s ease, transform .25s ease;
+      }
+      .eos-action-card-v303::after {
+        content: "";
+        position: absolute;
+        inset: auto 18% 0 18%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(103,232,249,.42), transparent);
+        opacity: .62;
+      }
+      .eos-action-card-v303:hover::before {
+        opacity: 1;
+        transform: translateY(2px) scale(1.02);
+      }
+      .eos-action-card-v303 *,
+      .eos-action-title-v303,
+      .eos-action-body-v303,
+      .eos-action-launch-v303 {
+        white-space: normal !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        text-align: center !important;
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+      }
+      .eos-action-title-v303 {
+        text-wrap: balance;
+      }
+      .eos-action-body-v303 {
+        text-wrap: pretty;
+      }
+      .eos-action-launch-v303 {
+        white-space: nowrap !important;
+        min-width: max-content !important;
+      }
+      .eos-action-icon-v303 {
+        flex: 0 0 auto !important;
+        transition: transform .25s ease, box-shadow .25s ease;
+      }
+      .eos-action-card-v303:hover .eos-action-icon-v303 {
+        transform: translateY(-2px) scale(1.045);
+      }
+      .eos-hero-panel h1 {
+        text-wrap: balance;
+      }
+      .eos-hero-panel p {
+        text-wrap: pretty;
+      }
+      @media (max-width: 640px) {
+        .eos-card-grid-4 {
+          grid-template-columns: 1fr !important;
+        }
+        .eos-action-card-v303 {
+          min-height: 230px !important;
+          padding: 1.25rem !important;
+        }
+        .eos-action-title-v303 {
+          font-size: 1.35rem !important;
+        }
+      }
     `}</style>
   );
 }
@@ -4283,7 +4658,7 @@ function Sidebar({ page, setPage }) {
     ["timemachine", "Time Machine", Clock3],
     ["calculations", "Calculation Studio", Calculator],
     ["atlas", "Interaction Atlas", Radar],
-    ["reports", "Reports", BookOpen],
+    ["reports", "Research Centre", BookOpen],
   ];
 
   const groups = [
@@ -4293,6 +4668,17 @@ function Sidebar({ page, setPage }) {
       icon: Radar,
       items: [
         ["lab", "Advanced Labs", Radar],
+
+        ['lab-element-analyzer', 'Element Analyzer', Atom],
+        ['lab-materials-engineering', 'Materials Engineering', Gem],
+        ['lab-bioelements', 'BioElements', Dna],
+        ['lab-geoscience', 'GeoScience', Globe2],
+        ['lab-industrial', 'Industrial Applications', BriefcaseBusiness],
+        ['lab-energy', 'Energy Lab', Zap],
+        ['lab-chemistry', 'Chemistry Simulator', Calculator],
+        ['lab-safety-risk', 'Safety & Risk', ShieldCheck],
+        ['lab-material-discovery', 'Material Discovery', Orbit],
+
         ["accelerator", "Particle Accelerator", Zap],
         ["materialsdiscovery", "Materials Discovery", Sparkles],
         ["extremelab", "Extreme Environment", ShieldCheck],
@@ -4439,6 +4825,7 @@ function Dashboard({ setPage, saveWorkspace, loadWorkspace, session, isPro, star
       </PageHero>
 
       <ElementOSIntelligenceLayer page="mission" context={{ selected }} setPage={setPage} />
+      <V240EnterpriseReadinessPanel setPage={setPage} isPro={isPro} startCheckout={startCheckout} />
 
       <V154MissionFirstHero setPage={setPage} />
 
@@ -7186,7 +7573,7 @@ function ElementPicture({ el, compact = false }) {
       </div>
       <div className="border-t border-white/10 bg-slate-950/80 p-4 sm:p-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="min-w-0">
+          <div className="min-w-fit">
             <div className="truncate text-2xl font-black text-white sm:text-3xl">
               {safe.name} <span className="text-cyan-100">{safe.symbol}</span>
             </div>
@@ -8177,9 +8564,9 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
         .eos-explorer-premium-v203 { --explorer-cyan: rgba(34,211,238,.34); --explorer-glow: rgba(34,211,238,.12); }
         .eos-explorer-premium-v203 .eos-hero-panel { border-radius: 34px !important; border-color: rgba(34,211,238,.22) !important; background: radial-gradient(circle at 18% 8%, rgba(34,211,238,.18), transparent 34%), linear-gradient(135deg, rgba(2,6,23,.98), rgba(15,23,42,.94) 48%, rgba(3,7,18,.98)) !important; box-shadow: 0 28px 90px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.06); }
         .eos-explorer-premium-v203 .eos-explorer-command-strip { border-radius: 30px; border: 1px solid rgba(34,211,238,.18); background: linear-gradient(135deg, rgba(15,23,42,.86), rgba(2,6,23,.96)); box-shadow: 0 24px 80px rgba(2,6,23,.32); }
-        .eos-explorer-premium-v203 .eos-explorer-list-frame { max-height: min(78vh, 880px); border-radius: 28px; background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(2,6,23,.98)); border: 1px solid rgba(34,211,238,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 22px 60px rgba(0,0,0,.28); }
-        .eos-explorer-premium-v203 .eos-explorer-list-frame button { border-radius: 20px !important; }
-        .eos-explorer-premium-v203 .eos-explorer-list-frame button:hover { transform: translateX(3px); border-color: rgba(34,211,238,.42) !important; }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame eos-explorer-list-frame-v404 { max-height: min(78vh, 880px); border-radius: 28px; background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(2,6,23,.98)); border: 1px solid rgba(34,211,238,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 22px 60px rgba(0,0,0,.28); }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame eos-explorer-list-frame-v404 button { border-radius: 20px !important; }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame eos-explorer-list-frame-v404 button:hover { transform: translateX(3px); border-color: rgba(34,211,238,.42) !important; }
         .eos-explorer-premium-v203 .eos-explorer-search { background: rgba(2,6,23,.72); border-color: rgba(34,211,238,.18) !important; }
         .eos-explorer-premium-v203 .eos-explorer-search:focus-within { border-color: rgba(34,211,238,.48) !important; box-shadow: 0 0 0 4px rgba(34,211,238,.08); }
         .eos-explorer-premium-v203 .eos-explorer-premium-panel { border-radius: 30px !important; border-color: rgba(255,255,255,.09) !important; background: linear-gradient(135deg, rgba(15,23,42,.9), rgba(2,6,23,.96)) !important; }
@@ -8281,7 +8668,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
       </Panel>
 
       <div className="grid gap-8 xl:grid-cols-[380px_1fr] 2xl:grid-cols-[420px_1fr]">
-        <Panel className="eos-explorer-list-frame xl:sticky xl:top-4 xl:self-start">
+        <Panel className="eos-explorer-list-frame eos-explorer-list-frame-v404 eos-v403-element-index xl:sticky xl:top-24 xl:self-start">
           <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div>
               <div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">element index</div>
@@ -8291,7 +8678,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
           </div>
           <div className="max-h-[calc(min(78vh,880px)-110px)] overflow-auto pr-2">
             {filtered.map(e => (
-              <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/40 bg-cyan-300/10" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
+              <button key={e.symbol} onClick={() => chooseElement(e.symbol)} className={`mb-2 grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border p-3 text-left transition ${e.symbol === el.symbol ? "border-cyan-300/30 bg-slate-950/70 ring-1 ring-cyan-300/15" : "border-white/10 bg-black/20 hover:bg-white/[0.05]"}`}>
                 <ElementPicture el={e} compact />
                 <div>
                   <div className="font-black text-white">{e.name}</div>
@@ -8597,7 +8984,7 @@ function Explorer({ selected, setSelected, setCompare, setPage, setForecastReque
                   <div key={`${year}-${label}`} className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
                     <div className="text-2xl font-black text-cyan-100">{year}</div>
                     <div className="mt-2 text-sm font-black text-white">{label}</div>
-                    <div className="mt-2 text-xs leading-5 text-slate-400">{body}</div>
+                    <div className="eos-card-description mt-2 text-xs leading-5 text-slate-400">{body}</div>
                   </div>
                 ))}
               </div>
@@ -9166,7 +9553,7 @@ function PeriodicTable({ selected, setSelected }) {
             <div className="text-[clamp(7px,.5vw,10px)] font-black uppercase tracking-[.12em] text-slate-600">{pct}</div>
             <div className="mt-0.5 text-[clamp(18px,1.65vw,32px)] font-black tracking-[-.08em] text-white">{el.symbol}</div>
           </div>
-          <div className="min-w-0 truncate text-[clamp(8px,.62vw,11px)] font-semibold text-slate-400 group-hover:text-slate-200">{el.name}</div>
+          <div className="min-w-fit truncate text-[clamp(8px,.62vw,11px)] font-semibold text-slate-400 group-hover:text-slate-200">{el.name}</div>
         </div>
       </button>
     );
@@ -9206,7 +9593,7 @@ function PeriodicTable({ selected, setSelected }) {
         </div>
 
         <div className="grid min-h-[calc(100vh-235px)] 2xl:grid-cols-[minmax(0,1fr)_380px]">
-          <main className="flex min-w-0 flex-col 2xl:border-r 2xl:border-white/10">
+          <main className="flex min-w-fit flex-col 2xl:border-r 2xl:border-white/10">
             <div className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/[.95] p-3 md:p-4 backdrop-blur-xl">
               <div className="grid gap-3 lg:grid-cols-[1fr_190px_190px]">
                 <div className="flex items-center gap-3 rounded-[14px] border border-white/10 bg-black/30 px-4 py-3 focus-within:border-cyan-300/[.35]">
@@ -10980,7 +11367,7 @@ function V211ReportPipelineDock({ page, selected, compare, setPage }) {
   return (
     <div className="rounded-[1.25rem] border border-cyan-300/[.12] bg-[#050b16]/88 p-3 shadow-[0_18px_60px_rgba(0,0,0,.22)] backdrop-blur-xl">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="min-w-0">
+        <div className="min-w-fit">
           <div className="text-[10px] font-black uppercase tracking-[.24em] text-cyan-200">Report pipeline · {intent.sourceLabel}</div>
           <div className="mt-1 text-sm leading-6 text-slate-300">
             Turn this page into a <b className="text-white">{intent.title}</b> for {intent.selectedName} / {intent.compareSet}.
@@ -12887,21 +13274,22 @@ Status: Presentation-ready platform export.`;
 
     const slug = slugifyExportName(title);
     pdf.save(`${slug}.pdf`);
-    downloadFile(`${slug}.json`, JSON.stringify({ title, description: desc, content, compareSet: compare, generatedAt: new Date().toLocaleString(), source: "ElementOS Reports Centre" }, null, 2), "application/json");
+    downloadFile(`${slug}.json`, JSON.stringify({ title, description: desc, content, compareSet: compare, generatedAt: new Date().toLocaleString(), source: "ElementOS Research Centre" }, null, 2), "application/json");
     downloadFile(`${slug}.svg`, makeExportSvg({ title, summary: content, payload: { title, compareSet: compare.join(" + "), rows: compareRows.length } }), "image/svg+xml");
   };
 
   return (
     <>
       <ElementOSIntelligenceLayer page="reports" context={{ selected }} setPage={setPage} />
+      <V240ResearchCentreUpgradePanel compare={compare} selected={selected} isPro={isPro} startCheckout={startCheckout} setPage={setPage} />
       <V211ResearchCentreHub compare={compare} selected={selected} isPro={isPro} startCheckout={startCheckout} setPage={setPage} />
       <V212ReportOutputStudio compare={compare} selected={selected} isPro={isPro} startCheckout={startCheckout} setPage={setPage} saveReport={saveReport} exportPDF={exportPDF} />
       <V200ReportRevenueLock isPro={isPro} startCheckout={startCheckout} />
       <V154ExecutiveReportPreview compare={compare} isPro={isPro} startCheckout={startCheckout} />
       <ReportsDiscoveryMergePanel setPage={setPage} setPublicDiscovery={() => {}} />
       <Panel>
-        <Pill gold><BookOpen size={12}/> PDF publishing layer</Pill>
-        <h1 className="mt-4 text-5xl font-black">Reports Centre</h1>
+        <Pill gold><BookOpen size={12}/> Research publishing layer</Pill>
+        <h1 className="mt-4 text-5xl font-black">Research Centre</h1>
         <Info title="PDF upgrade">
           Reports now save to Supabase and export as branded PDFs with timestamps, compare sets and material metrics. This gives ElementOS a stronger paid-product export layer.
         </Info>
@@ -14389,7 +14777,7 @@ function LandingPage({ setPage, session, isPro, startCheckout }) {
           ].map(([step, title, body]) => (
             <button key={title} type="button" onClick={() => setPage(step === "01" ? "explorer" : step === "02" ? "compare" : step === "03" ? "discover" : "simreports")} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-left transition hover:-translate-y-1 hover:border-cyan-300/[.35] hover:bg-cyan-300/10">
               <div className="text-xs font-black text-cyan-200">{step}</div>
-              <div className="mt-2 text-lg font-black text-white">{title}</div>
+              <div className="eos-card-title mt-2 text-lg font-black text-white">{title}</div>
               <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
             </button>
           ))}
@@ -15717,7 +16105,7 @@ Generated in ElementOS.`,
           {abVariants.map(([label, title, text, bestFor]) => (
             <div key={label} className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
               <div className="text-xs uppercase tracking-[.22em] text-amber-100">Variant {label}</div>
-              <div className="mt-2 text-lg font-black text-white">{title}</div>
+              <div className="eos-card-title mt-2 text-lg font-black text-white">{title}</div>
               <p className="mt-3 text-sm leading-6 text-slate-300">{text}</p>
               <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 p-3 text-xs font-bold text-cyan-100">{bestFor}</div>
             </div>
@@ -16873,7 +17261,7 @@ function ToastCenter() {
 function ElementOSTopBar({ page, setPage, setCommandOpen, session, isPro, startCheckout, setSupportOpen, plan = "Explorer" }) {
   return (
     <div className="eos-topbar sticky top-4 z-20 mb-6 hidden items-center justify-between gap-4 rounded-2xl px-4 py-3 backdrop-blur-2xl lg:flex">
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="flex min-w-fit items-center gap-3">
         <div className="rounded-xl border border-blue-400/25 bg-blue-500/10 px-3 py-2 text-xs font-black uppercase tracking-[.22em] text-cyan-100">
           {pageLabel(page)}
         </div>
@@ -18047,9 +18435,9 @@ function SystemHealth({ page, selected, compare, forecastRequest, session, isPro
         .eos-explorer-premium-v203 { --explorer-cyan: rgba(34,211,238,.34); --explorer-glow: rgba(34,211,238,.12); }
         .eos-explorer-premium-v203 .eos-hero-panel { border-radius: 34px !important; border-color: rgba(34,211,238,.22) !important; background: radial-gradient(circle at 18% 8%, rgba(34,211,238,.18), transparent 34%), linear-gradient(135deg, rgba(2,6,23,.98), rgba(15,23,42,.94) 48%, rgba(3,7,18,.98)) !important; box-shadow: 0 28px 90px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.06); }
         .eos-explorer-premium-v203 .eos-explorer-command-strip { border-radius: 30px; border: 1px solid rgba(34,211,238,.18); background: linear-gradient(135deg, rgba(15,23,42,.86), rgba(2,6,23,.96)); box-shadow: 0 24px 80px rgba(2,6,23,.32); }
-        .eos-explorer-premium-v203 .eos-explorer-list-frame { max-height: min(78vh, 880px); border-radius: 28px; background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(2,6,23,.98)); border: 1px solid rgba(34,211,238,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 22px 60px rgba(0,0,0,.28); }
-        .eos-explorer-premium-v203 .eos-explorer-list-frame button { border-radius: 20px !important; }
-        .eos-explorer-premium-v203 .eos-explorer-list-frame button:hover { transform: translateX(3px); border-color: rgba(34,211,238,.42) !important; }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame eos-explorer-list-frame-v404 { max-height: min(78vh, 880px); border-radius: 28px; background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(2,6,23,.98)); border: 1px solid rgba(34,211,238,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 22px 60px rgba(0,0,0,.28); }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame eos-explorer-list-frame-v404 button { border-radius: 20px !important; }
+        .eos-explorer-premium-v203 .eos-explorer-list-frame eos-explorer-list-frame-v404 button:hover { transform: translateX(3px); border-color: rgba(34,211,238,.42) !important; }
         .eos-explorer-premium-v203 .eos-explorer-search { background: rgba(2,6,23,.72); border-color: rgba(34,211,238,.18) !important; }
         .eos-explorer-premium-v203 .eos-explorer-search:focus-within { border-color: rgba(34,211,238,.48) !important; box-shadow: 0 0 0 4px rgba(34,211,238,.08); }
         .eos-explorer-premium-v203 .eos-explorer-premium-panel { border-radius: 30px !important; border-color: rgba(255,255,255,.09) !important; background: linear-gradient(135deg, rgba(15,23,42,.9), rgba(2,6,23,.96)) !important; }
@@ -18099,6 +18487,249 @@ function SystemHealth({ page, selected, compare, forecastRequest, session, isPro
   );
 }
 
+
+
+function V305CinematicHomepage({ setPage, session, isPro, startCheckout }) {
+  const discoveries = useMemo(() => adaptiveDiscoveryRank(generateDiscoveryEngine(12)).slice(0, 3), []);
+  const commandCards = [
+    {
+      id: "compare",
+      icon: Calculator,
+      title: "Compare Engine",
+      description: "Compare materials, elements and compounds with computed compatibility scoring.",
+      accent: "violet",
+    },
+    {
+      id: "explorer",
+      icon: Globe2,
+      title: "Explorer",
+      description: "Explore the periodic table, properties and intelligence profiles for every element.",
+      accent: "cyan",
+    },
+    {
+      id: "timemachine",
+      icon: Clock3,
+      title: "Time Machine",
+      description: "Predict future material behaviour across pressure, heat, corrosion and time.",
+      accent: "emerald",
+    },
+    {
+      id: "discover",
+      icon: Sparkles,
+      title: "Discovery Feed",
+      description: "Open AI-ranked discoveries, trending material signals and public research cards.",
+      accent: "amber",
+    },
+    {
+      id: "seismo",
+      icon: Waves,
+      title: "Seismo",
+      description: "Monitor wave behaviour, seismic response and subsurface intelligence models.",
+      accent: "pink",
+    },
+    {
+      id: "welldriller",
+      icon: Target,
+      title: "Well Driller",
+      description: "Simulate drilling operations and analyse subsurface material compositions.",
+      accent: "blue",
+    },
+    {
+      id: "reports",
+      icon: FileText,
+      title: "Reports",
+      description: "Generate professional reports, export data and share research instantly.",
+      accent: "purple",
+    },
+    {
+      id: "graph",
+      icon: Network,
+      title: "Material Graph",
+      description: "Visualise relationships and hidden connections between materials and elements.",
+      accent: "teal",
+    },
+  ];
+
+  const stats = [
+    [Atom, "118", "Elements", "In Periodic Table", "cyan"],
+    [Layers, "10.4M+", "Material Combinations", "Analysed", "violet"],
+    [Activity, "2.7M+", "Simulations Run", "Across All Engines", "emerald"],
+    [Radar, "24,812", "Active Discoveries", "This Month", "pink"],
+    [ShieldCheck, "98.6%", "Prediction Accuracy", "Enterprise Grade", "blue"],
+    [FileText, "1.2K+", "Research Reports", "Generated", "amber"],
+  ];
+
+  const workspaces = [
+    ["Battery Research", "Updated 2h ago", FileText],
+    ["High Temp Alloys", "Updated 5h ago", Sparkles],
+    ["Quantum Materials", "Updated 1d ago", Dna],
+    ["Seismic Analysis", "Updated 2d ago", Waves],
+  ];
+
+  const reports = [
+    "Top Conductor Materials 2024",
+    "Rare Earth Analysis Report",
+    "Battery Material Forecast Q3",
+    "Seismic Risk Assessment",
+  ];
+
+  return (
+    <div className="eos-v305-homepage">
+      <div className="eos-v306-molecule" aria-hidden="true" />
+      <section className="eos-v305-hero">
+        <div className="eos-v305-hero-copy">
+          <div className="eos-v305-kicker"><Sparkles size={14} /> MATERIAL INTELLIGENCE OS</div>
+          <h1>
+            THE OPERATING SYSTEM
+            <span> FOR MATERIAL</span>
+            <em> INTELLIGENCE</em>
+          </h1>
+          <p className="eos-v305-tagline">Search. Compare. Predict. Discover.</p>
+          <p className="eos-v305-description">
+            ElementOS unifies the periodic table, real-world data, advanced simulation and research-grade reporting into one cinematic intelligence platform.
+          </p>
+          <div className="eos-v305-hero-actions">
+            <button type="button" onClick={() => setPage("dashboard")} className="eos-v305-primary-cta">Explore Platform <ChevronRight size={16} /></button>
+            <button type="button" onClick={() => setPage("compare")} className="eos-v305-secondary-cta">Run Compare <ChevronRight size={16} /></button>
+            {!isPro && (
+              <button type="button" onClick={() => startCheckout?.("Pro Researcher")} className="eos-v305-ghost-cta">Upgrade Research</button>
+            )}
+          </div>
+        </div>
+
+        <div className="eos-v305-molecule-stage" aria-hidden="true">
+          <div className="eos-v305-orbit orbit-one" />
+          <div className="eos-v305-orbit orbit-two" />
+          <div className="eos-v305-orbit orbit-three" />
+          <div className="eos-v305-node node-a" />
+          <div className="eos-v305-node node-b" />
+          <div className="eos-v305-node node-c" />
+          <div className="eos-v305-node node-d" />
+          <div className="eos-v305-node node-e" />
+          <div className="eos-v305-bond bond-a" />
+          <div className="eos-v305-bond bond-b" />
+          <div className="eos-v305-bond bond-c" />
+          <div className="eos-v305-bond bond-d" />
+        </div>
+      </section>
+
+      <section className="eos-v305-stats-grid">
+        {stats.map(([Icon, value, label, detail, accent]) => (
+          <button type="button" key={label} onClick={() => setPage(label.includes("Report") ? "reports" : "discover")} className={`eos-v305-stat-card ${accent}`}>
+            <span className="eos-v305-stat-icon"><Icon size={24} /></span>
+            <strong>{value}</strong>
+            <span>{label}</span>
+            <small>{detail}</small>
+          </button>
+        ))}
+      </section>
+
+      <section className="eos-v305-main-grid">
+        <div className="eos-v305-command-center">
+          <div className="eos-v305-section-head">
+            <div>
+              <span>PLATFORM COMMAND CENTER</span>
+              <h2>Choose your intelligence path.</h2>
+            </div>
+            <button type="button" onClick={() => setPage("mission")} className="eos-v305-mini-link">Mission Control</button>
+          </div>
+
+          <div className="eos-v305-command-grid">
+            {commandCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <button type="button" key={card.id} onClick={() => setPage(card.id)} className={`eos-v305-command-card eos-v403-command-card ${card.accent}`}>
+                  <span className="eos-v305-command-icon eos-v403-command-icon"><Icon size={26} /></span>
+                  <strong>{card.title}</strong>
+                  <p>{card.description}</p>
+                  <span className="eos-v305-launch eos-v403-launch">Launch <ChevronRight size={14} /></span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <aside className="eos-v305-trending-panel">
+          <div className="eos-v305-section-head compact">
+            <div>
+              <span>TRENDING DISCOVERIES</span>
+              <h2>Live material signals.</h2>
+            </div>
+            <button type="button" onClick={() => setPage("discover")} className="eos-v305-mini-link">View All</button>
+          </div>
+          <div className="eos-v305-trending-list">
+            {discoveries.map((item, index) => (
+              <button type="button" key={item.dna} onClick={() => setPage("discover")} className="eos-v305-trend-card">
+                <span className={`eos-v305-crystal crystal-${index}`}><Gem size={28} /></span>
+                <span>
+                  <strong>{item.a}<sub>{index + 2}</sub>{item.b}<sub>{index + 1}</sub></strong>
+                  <small>{item.type}</small>
+                </span>
+                <em>+{item.velocity || 18}.{index}%</em>
+              </button>
+            ))}
+          </div>
+        </aside>
+      </section>
+
+      <section className="eos-v305-lower-grid">
+        <div className="eos-v305-mini-panel">
+          <div className="eos-v305-section-head compact">
+            <div><span>RECENT WORKSPACES</span><h2>Continue research.</h2></div>
+            <button type="button" onClick={() => setPage(session ? "lab" : "login")} className="eos-v305-mini-link">View All</button>
+          </div>
+          <div className="eos-v305-workspace-grid">
+            {workspaces.map(([title, time, Icon]) => (
+              <button type="button" key={title} onClick={() => setPage("lab")} className="eos-v305-workspace-card">
+                <Icon size={20} />
+                <span><strong>{title}</strong><small>{time}</small></span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="eos-v305-mini-panel">
+          <div className="eos-v305-section-head compact">
+            <div><span>LATEST REPORTS</span><h2>Research outputs.</h2></div>
+            <button type="button" onClick={() => setPage("reports")} className="eos-v305-mini-link">View All</button>
+          </div>
+          <div className="eos-v305-report-grid">
+            {reports.map((title, index) => (
+              <button type="button" key={title} onClick={() => setPage("reports")} className="eos-v305-report-card">
+                <strong>{title}</strong>
+                <span>Generated {index + 2}h ago <em>PDF</em></span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+
+
+// =====================================================
+// ELEMENTOS V500 ADDITIVE ADVANCED LABS
+// Safe additive pages only. Existing systems preserved.
+// =====================================================
+const V500_LABS = [
+  {id:'lab-element-analyzer', title:'Element Analyzer Laboratory', short:'Element Analyzer', icon:Atom, tone:'cyan', tagline:'The digital twin of every element.', desc:'A living research environment for atomic identity, shells, crystal structure, safety, uses and market intelligence.', nav:['Search Element','Periodic Table','Compare','Isotopes','Crystal Structure','Uses','Safety','Market Availability'], metrics:[['Atomic Radius',86],['Density',58],['Conductivity',94],['Thermal Expansion',46],['Elastic Modulus',78]], outputs:['Rotating atom','Electron shell isolation','Orbital transition animation','Historical discovery timeline']},
+  {id:'lab-materials-engineering', title:'Materials Engineering Laboratory', short:'Materials Engineering', icon:Gem, tone:'violet', tagline:'Design, simulate and optimize advanced materials.', desc:'Build composite recipes and estimate strength, conductivity, corrosion, density, manufacturability, cost and carbon footprint.', nav:['Material Builder','Composition','Crystal Viewer','Simulation','Alternatives','Cost','Carbon','Report'], metrics:[['Strength',88],['Conductivity',73],['Corrosion',81],['Manufacturability',69],['Carbon Score',64]], outputs:['Aluminium 65%','Copper 20%','Titanium 15%','AI improvement recommendation']},
+  {id:'lab-bioelements', title:'BioElements Laboratory', short:'BioElements', icon:Dna, tone:'emerald', tagline:'Map the elements of life itself.', desc:'Connect elements to biology, organs, nutrition, enzymes, medical uses, deficiencies and health-related roles.', nav:['Human Map','Organs','Trace Elements','Nutrition','Blood','Enzymes','Medical Uses','Report'], metrics:[['Blood Role',94],['Enzyme Role',72],['Nutrition',86],['Medical Uses',66],['Toxicity Boundary',54]], outputs:['Iron','Copper','Zinc','Selenium']},
+  {id:'lab-geoscience', title:'GeoScience Laboratory', short:'GeoScience', icon:Globe2, tone:'amber', tagline:'Google Earth meets NASA for material intelligence.', desc:'Peel through planetary layers, simulate core samples and estimate minerals, temperature, pressure and rare-earth potential.', nav:['Earth Model','Crust','Mantle','Core','Drill Point','Ore Estimate','Rare Earths','Export'], metrics:[['Mineral Signal',82],['Temperature',77],['Pressure',91],['Ore Potential',68],['Rare Earth Potential',74]], outputs:['Atmosphere','Crust','Upper Mantle','Lower Mantle','Outer Core','Inner Core']},
+  {id:'lab-industrial', title:'Industrial Applications Laboratory', short:'Industrial Applications', icon:BriefcaseBusiness, tone:'blue', tagline:'Turn material intelligence into commercial decisions.', desc:'Explore industries, components, substitutions and alternatives for aerospace, automotive, medical, marine, energy and more.', nav:['Industries','Aerospace','Automotive','Marine','Medical','Components','Alternatives','Report'], metrics:[['Suitability',88],['Replacement Fit',76],['Cost Efficiency',71],['Supply Risk',42],['Manufacturing Fit',84]], outputs:['Wing','Landing Gear','Engine','Fuselage','Fasteners']},
+  {id:'lab-energy', title:'Energy Laboratory', short:'Energy Lab', icon:Zap, tone:'yellow', tagline:'Build and compare future energy materials.', desc:'Design battery cells, fuel cells and storage concepts while comparing energy density, cost, heat, lifetime and safety.', nav:['Cell Builder','Lithium-ion','Solid State','Sodium-ion','Hydrogen','Fuel Cells','Safety','Carbon'], metrics:[['Energy Density',87],['Charge Speed',69],['Lifetime',76],['Heat Risk',48],['Safety',81]], outputs:['Lithium','Nickel','Graphite','Aluminium','Copper']},
+  {id:'lab-chemistry', title:'Chemistry Simulator', short:'Chemistry Simulator', icon:Calculator, tone:'pink', tagline:'The Wolfram-style reaction engine for ElementOS.', desc:'Type a reaction, view a balanced equation, animate products, inspect heat and safety, then explain chemistry plainly.', nav:['Reaction Input','Balancer','Molecules','Heat','Energy','Products','Safety','Plain English'], metrics:[['Balance Confidence',96],['Energy Release',64],['Heat',71],['Product Stability',83],['Safety Rating',58]], outputs:['Al + O₂','Balanced equation','Electron transfer','Industrial uses']},
+  {id:'lab-safety-risk', title:'Safety & Risk Laboratory', short:'Safety & Risk', icon:ShieldCheck, tone:'red', tagline:'Analyze hazards before material decisions become expensive.', desc:'Evaluate material risk by temperature, pressure, environment and exposure with colour-coded handling guidance.', nav:['Material','Temperature','Pressure','Environment','Exposure','Storage','Transport','Disposal'], metrics:[['Risk Score',38],['Fire Rating',54],['Corrosion',71],['Toxicity',46],['Handling Safety',82]], outputs:['Green','Amber','Red','Handling','Storage','Transport','Disposal']},
+  {id:'lab-material-discovery', title:'Material Discovery Laboratory', short:'Material Discovery', icon:Orbit, tone:'cosmic', tagline:'Explore possible materials, not just known materials.', desc:'Define goals like maximum strength, minimum weight, high conductivity, low cost and sustainability, then explore a material galaxy.', nav:['Goal Builder','Strength','Weight','Conductivity','Cost','Corrosion','Sustainability','Galaxy'], metrics:[['Discovery Score',92],['Strength Goal',88],['Weight Goal',74],['Cost Goal',67],['Sustainability',81]], outputs:['Material galaxy','Candidate nodes','Composition filters','Objective scoring']},
+];
+
+function V500Metric({label,value}){return <div className="eos-v500-metric"><div className="flex justify-between gap-3 text-xs"><span className="font-black uppercase tracking-[.16em] text-slate-300">{label}</span><b className="text-cyan-100">{value}%</b></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-300 to-violet-300" style={{width:`${value}%`}} /></div></div>}
+function V500Orb({lab}){const Icon=lab.icon;return <div className="eos-v500-visual"><div className="eos-v500-orbit one"/><div className="eos-v500-orbit two"/><div className="eos-v500-orbit three"/><div className="eos-v500-core"><Icon size={72}/></div><div className="eos-v500-data a">118</div><div className="eos-v500-data b">AI</div><div className="eos-v500-data c">LAB</div></div>}
+function V500AdvancedLabPage({labId,setPage}){const lab=V500_LABS.find(l=>l.id===labId)||V500_LABS[0];const Icon=lab.icon;return <div className={`eos-v500-page eos-v500-${lab.tone}`}><section className="eos-v500-hero"><div><div className="eos-v500-pill"><Icon size={14}/> Advanced Lab</div><h1>{lab.title}</h1><p className="eos-v500-tagline">{lab.tagline}</p><p className="eos-v500-desc">{lab.desc}</p><div className="eos-v500-actions"><button type="button" className="eos-v500-primary" onClick={()=>showToast(`${lab.short} simulation generated`)}>Generate Simulation <ChevronRight size={16}/></button><button type="button" className="eos-v500-secondary" onClick={()=>setPage('reports')}>Build Report <FileText size={16}/></button><button type="button" className="eos-v500-secondary" onClick={()=>setPage('compare')}>Compare Mode <BarChart3 size={16}/></button></div></div><V500Orb lab={lab}/></section><section className="eos-v500-grid"><aside className="eos-v500-side"><div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Lab navigation</div><div className="mt-4 grid gap-2">{lab.nav.map((n,i)=><button key={n} type="button" className="eos-v500-nav" onClick={()=>showToast(`${n} opened`)}><span>{String(i+1).padStart(2,'0')}</span>{n}</button>)}</div></aside><main className="eos-v500-center"><div className="eos-v500-sim"><div className="flex flex-wrap items-start justify-between gap-4"><div><div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Live simulation</div><h2>{lab.short} engine</h2><p>{lab.outputs.join(' · ')}</p></div><div className="eos-v500-status">Prototype Ready</div></div><div className="eos-v500-live"><div className="eos-v500-wave"/><div className="eos-v500-node n1"/><div className="eos-v500-node n2"/><div className="eos-v500-node n3"/><div className="eos-v500-node n4"/><div className="eos-v500-scan"/></div></div><div className="eos-v500-shared">{[["AI Research Assistant",lab.desc,Bot],["Experiment History","Every generated scenario becomes a reusable lab timeline entry.",Clock3],["Compare Mode","Open two analyses side-by-side and compare material signals.",BarChart3],["Report Builder","Create a polished research-ready report from this lab.",FileText]].map(([t,b,I])=><div key={t} className="eos-v500-card"><I size={22}/><h3>{t}</h3><p>{b}</p></div>)}</div></main><aside className="eos-v500-intel"><div className="text-xs font-black uppercase tracking-[.22em] text-cyan-200">Material Intelligence</div><div className="mt-5 grid gap-4">{lab.metrics.map(([l,v])=><V500Metric key={l} label={l} value={v}/>)}</div><div className="eos-v500-ai"><div className="flex items-center gap-2 text-sm font-black text-white"><Bot size={16}/> AI Lab Assistant</div><p>Ask questions, suggest experiments, compare outputs and generate reports inside this lab.</p></div></aside></section></div>}
+function V500AdvancedLabsHub({setPage}){return <div className="eos-v500-hub"><section className="eos-v500-hubhero"><div className="eos-v500-pill"><Sparkles size={14}/> Advanced Labs</div><h1>Deep Science. Real Data. Limitless Discovery.</h1><p>Nine cinematic research labs that turn ElementOS into a full operating system for material intelligence.</p></section><section className="eos-v500-hubgrid">{V500_LABS.map((lab,i)=>{const Icon=lab.icon;return <button key={lab.id} type="button" className={`eos-v500-hubcard eos-v500-${lab.tone}`} onClick={()=>setPage(lab.id)}><div className="eos-v500-num">LAB {String(i+1).padStart(2,'0')}</div><Icon size={42}/><h2>{lab.short}</h2><p>{lab.tagline}</p><span>Open Lab <ChevronRight size={14}/></span></button>})}</section></div>}
+
 export default function App() {
   const [page, setPage] = useState("landing");
   const [selected, setSelected] = useState("Al");
@@ -18115,6 +18746,27 @@ export default function App() {
   const [upgradeReason, setUpgradeReason] = useState("");
   const [supportOpen, setSupportOpen] = useState(false);
   const [forecastRequest, setForecastRequest] = useState(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const auditButtons = () => {
+      const buttons = Array.from(document.querySelectorAll("button"));
+      const report = buttons.map((button, index) => {
+        const label = (button.textContent || button.getAttribute("aria-label") || `button-${index}`).replace(/\s+/g, " ").trim();
+        const overflowX = button.scrollWidth > button.clientWidth + 2;
+        const overflowY = button.scrollHeight > button.clientHeight + 2;
+        const overflow = overflowX || overflowY;
+        button.dataset.eosTextFit = overflow ? "overflow" : "ok";
+        button.classList.toggle("eos-button-text-overflow", overflow);
+        return { label, overflow, width: button.clientWidth, scrollWidth: button.scrollWidth, height: button.clientHeight, scrollHeight: button.scrollHeight };
+      });
+      window.__ELEMENTOS_BUTTON_AUDIT__ = () => report;
+      return report;
+    };
+    requestAnimationFrame(auditButtons);
+    window.addEventListener("resize", auditButtons);
+    return () => window.removeEventListener("resize", auditButtons);
+  }, [page, plan, commandOpen, upgradeModalOpen, supportOpen]);
 
 
   useEffect(() => {
@@ -18346,7 +18998,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
   
   const pages = useMemo(
     () => ({
-      landing: <LandingPage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
+      landing: <V305CinematicHomepage setPage={setPage} session={session} isPro={isPro} startCheckout={startCheckout} />,
       beta: <BetaLaunch session={session} setPage={setPage} startCheckout={startCheckout} />,
       copilot: null,
       mission: null,
@@ -18370,7 +19022,18 @@ const startCheckout = async (planName = "Pro Researcher") => {
       ),
       publicdiscovery: <PublicDiscoveryPage discovery={publicDiscovery} setPage={setPage} setPublicDiscovery={setPublicDiscovery} />,
       timemachine: <TimeMachineGenius selected={selected} setSelected={setSelected} setPage={setPage} forecastRequest={forecastRequest} />,
-      lab: <AdvancedLabsLaunch setPage={setPage} />,
+      lab: <V500AdvancedLabsHub setPage={setPage} />,
+
+      'lab-element-analyzer': <V500AdvancedLabPage labId="lab-element-analyzer" setPage={setPage} />,
+      'lab-materials-engineering': <V500AdvancedLabPage labId="lab-materials-engineering" setPage={setPage} />,
+      'lab-bioelements': <V500AdvancedLabPage labId="lab-bioelements" setPage={setPage} />,
+      'lab-geoscience': <V500AdvancedLabPage labId="lab-geoscience" setPage={setPage} />,
+      'lab-industrial': <V500AdvancedLabPage labId="lab-industrial" setPage={setPage} />,
+      'lab-energy': <V500AdvancedLabPage labId="lab-energy" setPage={setPage} />,
+      'lab-chemistry': <V500AdvancedLabPage labId="lab-chemistry" setPage={setPage} />,
+      'lab-safety-risk': <V500AdvancedLabPage labId="lab-safety-risk" setPage={setPage} />,
+      'lab-material-discovery': <V500AdvancedLabPage labId="lab-material-discovery" setPage={setPage} />,
+
       materialsdiscovery: <MaterialsDiscoveryEngine setPage={setPage} setSelected={setSelected} setCompare={setCompare} setForecastRequest={setForecastRequest} />,
       extremelab: <ExtremeEnvironmentLab selected={selected} setSelected={setSelected} setPage={setPage} setForecastRequest={setForecastRequest} />,
       crystallab: <CrystalStructureLab selected={selected} setSelected={setSelected} setPage={setPage} />,
@@ -18504,6 +19167,7 @@ const startCheckout = async (planName = "Pro Researcher") => {
         </div>
 
         <ElementOSTopBar page={page} setPage={setPage} setCommandOpen={setCommandOpen} session={session} isPro={isPro} startCheckout={startCheckout} setSupportOpen={setSupportOpen} plan={plan} />
+        <V240LaunchReadinessStrip page={page} setPage={setPage} isPro={isPro} startCheckout={startCheckout} />
         {page !== "landing" && page !== "login" && (
           <V155AdvisorMiniBar selected={selected} setSelected={setSelected} setCompare={setCompare} setPage={setPage} setForecastRequest={setForecastRequest} />
         )}
